@@ -1,7 +1,9 @@
 kvirc (2:3.4.0-1) UNRELEASED; urgency=low
 
   * New upstream release.
-  * Change maintainership.
+  * New version (3.4) available. (Closes: #473454)
+  * Adopt package after pinging several times maintainer without answer. See
+    bug #473454.
   * Patches:
     + Removed patches 05_Kvi_Avatar_Resize and 06_resizeavatar.patch. Applied
       upstream.
