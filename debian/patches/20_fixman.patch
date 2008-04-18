@@ -1,0 +1,11 @@
+--- data/man/kvirc.1~	2007-07-01 05:29:03.000000000 +0200
++++ data/man/kvirc.1	2008-04-18 00:28:16.000000000 +0200
+@@ -11,7 +11,7 @@
+ It is intended to be an "user friendly" interface to the IRC protocol (see \fIRFC1459\fP)
+ and its extensions.
+ .SH OPTIONS
+-.l 
++.I 
+ \fIKVIrc\fP accepts the following options:
+ .TP 8
+ .B  \-h, \-\-help
