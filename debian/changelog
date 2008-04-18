@@ -7,8 +7,9 @@ kvirc (2:3.4.0-1) UNRELEASED; urgency=low
       upstream.
     + Added patches for build system preparation: 01_am_maintainer_mode and
       98_buildprep.
-    + Added patch 20_fixman to fix a typo on man package. 
+    + Added patch 20_fixman to fix a typo on man package.
     + Refreshed patch 09_plugin_dir to modify admin/acinclude.m4.in.
+    + Reworked 02_rpath to deal with rpath removal on build.
   * Dependencies:
     + Tighting depends for kvirc and kvirc-data.
     + Addind automake1.10 to build-deps.
@@ -22,7 +23,7 @@ kvirc (2:3.4.0-1) UNRELEASED; urgency=low
   * Adding Homepage field in control file. Removing from package description.
   * Updated copyright file with information about repackaging and upstream
     copyright holders. 
-  * Adding Vcs-Svn and Vcs-Browser control fields.
+  * Adding Vcs-Svn and Vcs-Browser control fields. 
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 02 Apr 2008 00:13:00 +0200
 
