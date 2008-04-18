@@ -16,8 +16,10 @@ kvirc (2:3.4.0-1) UNRELEASED; urgency=low
     + Tighting depends for kvirc and kvirc-data.
     + Addind automake1.10 to build-deps.
   * Bump policy to 3.7.3: Updated menu file to menu policy 1.4.
-  * Changed 3.2 references in rules,kvirc-data installation scripts to 3.4. 
-  * Removing empty maintainer scripts: kvirc-dev and kvirc.prerm.
+  * Changed 3.2 references in rules,kvirc-data installation scripts to 3.4.
+  * Maintainer scripts:
+    + Removing empty: kvirc-dev and kvirc.prerm.
+    + Removing not needed: kvirc.postrm, kvirc.postinst.
   * Removing link to manpage for kvi_make_scriptdist.sh no longer existing.
   * Fixing installation paths for some files in kvirc and kvirc-data, taking
     those paths from a patch.
