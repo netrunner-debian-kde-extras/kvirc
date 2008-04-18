@@ -22,6 +22,7 @@ kvirc (2:3.4.0-1) UNRELEASED; urgency=low
   * Adding Homepage field in control file. Removing from package description.
   * Updated copyright file with information about repackaging and upstream
     copyright holders. 
+  * Adding Vcs-Svn and Vcs-Browser control fields.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 02 Apr 2008 00:13:00 +0200
 
