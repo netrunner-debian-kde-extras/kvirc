@@ -1,4 +1,4 @@
-kvirc (2:3.4.0-1) UNRELEASED; urgency=low
+kvirc (2:3.4.0-1) unstable; urgency=low
 
   * New upstream release.
   * New version (3.4) available. (Closes: #473454)
