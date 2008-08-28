@@ -1,3 +1,12 @@
+kvirc (2:3.4.0-2) UNRELEASED; urgency=low
+
+  * embedding perl needs PERL_SYS_INIT3() (Closes: #495064) Taken from svn and
+    added as 51_PERL_SYS_INIT3_r2271-bug495064.patch
+  * Fix rejoin on diconnection issue. Taken from svn and added as
+    50_rejoin-channels_r2094.patch
+
+ -- Raúl Sánchez Siles <rasasi@gmail.com>  Tue, 26 Aug 2008 15:20:00 +0200
+
 kvirc (2:3.4.0-1) unstable; urgency=low
 
   * New upstream release.
