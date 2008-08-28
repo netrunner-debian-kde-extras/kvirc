@@ -1,0 +1,11 @@
+Index: 3.4/src/kvilib/irc/kvi_ircserver.cpp
+===================================================================
+--- 3.4/src/kvilib/irc/kvi_ircserver.cpp (revision 1085)
++++ 3.4/src/kvilib/irc/kvi_ircserver.cpp (revision 2094)
+@@ -71,5 +71,5 @@
+ KviIrcServer::KviIrcServer(const KviIrcServer &serv)
+ {
+-	m_pReconnectInfo     = 0;
++	m_pReconnectInfo     = serv.m_pReconnectInfo;
+ 	m_szHostname         = serv.m_szHostname;
+ 	m_szIp               = serv.m_szIp;

@@ -1,0 +1,25 @@
+Index: 3.4/src/modules/perlcore/libkviperlcore.cpp
+===================================================================
+--- 3.4/src/modules/perlcore/libkviperlcore.cpp (revision 1085)
++++ 3.4/src/modules/perlcore/libkviperlcore.cpp (revision 2271)
+@@ -150,4 +150,8 @@
+ {
+ 	if(m_pInterpreter)done();
++	int daArgc = 4;
++	char * daArgs[] = { "yo", "-e", "0", "-w" };
++	char ** daEnv=NULL;
++	PERL_SYS_INIT3(&daArgc,(char ***)&daArgs,&daEnv);
+ 	m_pInterpreter = perl_alloc();
+ 	if(!m_pInterpreter)return false;
+@@ -155,5 +159,4 @@
+ 	PL_perl_destruct_level = 1;
+ 	perl_construct(m_pInterpreter);
+-	char * daArgs[] = { "yo", "-e", "0", "-w" };
+ 	perl_parse(m_pInterpreter,xs_init,4,daArgs,NULL);
+ 	QString szInitCode;
+@@ -200,4 +203,5 @@
+ 	perl_destruct(m_pInterpreter);
+ 	perl_free(m_pInterpreter);
++	PERL_SYS_TERM();
+ 	m_pInterpreter = 0;
+ }
