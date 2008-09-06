@@ -6,6 +6,8 @@ kvirc (2:3.4.0-2) UNRELEASED; urgency=low
     added as 51_PERL_SYS_INIT3_r2271-bug495064.patch 
   * GPL code linked against OpenSSL in KVirc (Closes: #495269) Updated copyright
     file according to Copyright Holder license additions.
+  * Adding 52_windowmenu-crashes_r1991.patch taken upstream to fix Window menu
+    options crashing.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Tue, 26 Aug 2008 15:20:00 +0200
 
