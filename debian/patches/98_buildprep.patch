@@ -1,54 +1,5 @@
 #DPATCHLEVEL=0
 # vi: ft=diff
---- acinclude.m4
-+++ acinclude.m4
-@@ -756,6 +756,7 @@
- 			echo "###  It looks that your system has no interface to the dynamic linker ?"
- 			echo "###  If you're on linux, you either miss libdl , or the linker is not"
- 			echo "###  able to find it. Make sure that libdl is in /lib or /usr/lib."
-+			echo "###  If you're sure you have libdl, make sure you have also g++ installed."
- 			echo "###  If you're not on linux, please drop a mail to pragma at kvirc dot net"
- 			echo "###  describing your system and I'll try to fix it."
- 			echo "################################################################################"
-@@ -1104,7 +1105,7 @@
- 			ss_save_LIBS="$LIBS"
- 			CPPFLAGS="-I$SS_X_INCDIR -I$SS_QT3_INCDIR -I$SS_KDE_INCDIR $CPPFLAGS $X_CFLAGS"
- 			CXXFLAGS="-O2 -Wall $CXXFLAGS"
--			LIBS="-L$SS_KDE_LIBDIR -L$SS_X_LIBDIR $SS_X_LDFLAGS $SS_X_LIBLINK -L$SS_QT3_LIBDIR $LIBS -lsoundserver_idl -lkdecore -l$SS_QTLIB_NAME -Wl,-rpath $SS_KDE_LIBDIR"
-+			LIBS="-L$SS_KDE_LIBDIR -L$SS_X_LIBDIR $SS_X_LDFLAGS $SS_X_LIBLINK -L$SS_QT3_LIBDIR $LIBS -lsoundserver_idl -lkdecore -l$SS_QTLIB_NAME"
- 			if test "$SS_LINK_TO_LIBDL" = "yes"; then
- 				LIBS="$LIBS -ldl";
- 			fi
-@@ -2251,7 +2252,7 @@
- 		if test -n "$SS_X_LIBLINK"; then
- 			LIBS="$LIBS $SS_X_LIBLINK"
- 		fi
--		LIBS="-L$SS_KDE_LIBDIR -L$SS_QT3_LIBDIR -lkdecore -l$SS_QTLIB_NAME $LIBS -Wl,-rpath $SS_KDE_LIBDIR"
-+		LIBS="-L$SS_KDE_LIBDIR -L$SS_QT3_LIBDIR -lkdecore -l$SS_QTLIB_NAME $LIBS"
- 		if test "$SS_LINK_TO_LIBDL" = "yes"; then
- 			LIBS="$LIBS -ldl";
- 		fi
-@@ -2504,6 +2505,7 @@
- 	AC_SUBST(SS_CPPFLAGS)
- 	AC_SUBST(SS_INCDIRS)
- 	AC_SUBST(SS_LDFLAGS)
-+	SS_RPATH=""
- 	AC_SUBST(SS_RPATH)
- 	AC_SUBST(SS_LIBDIRS)
- 	AC_SUBST(SS_LIBLINK)
-@@ -2561,10 +2563,10 @@
- 	helpdir="\${globalkvircdir}/help/en"
- 	AC_SUBST(helpdir)
- 
--	pluglibdir="\${globalkvircdir}/modules"
-+	pluglibdir="\${exec_prefix}/lib/kvirc/$SS_DIRTAG/modules"
- 	AC_SUBST(pluglibdir)
- 
--	modulelibdir="\${globalkvircdir}/modules"
-+	modulelibdir="\${exec_prefix}/lib/kvirc/$SS_DIRTAG/modules"
- 	AC_SUBST(modulelibdir)
- 
- 	defscriptdir="\${globalkvircdir}/defscript"
 --- aclocal.m4
 +++ aclocal.m4
 @@ -1,7 +1,7 @@
@@ -1052,7 +1003,7 @@
  PACKAGE=libtool
 -VERSION=1.5.24
 -TIMESTAMP=" (1.1220.2.455 2007/06/24 02:13:29)"
-+VERSION="1.5.26 Debian 1.5.26-3"
++VERSION="1.5.26 Debian 1.5.26-4"
 +TIMESTAMP=" (1.1220.2.493 2008/02/01 16:58:18)"
  
  # Be Bourne compatible (taken from Autoconf:_AS_BOURNE_COMPATIBLE).
