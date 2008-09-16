@@ -11,7 +11,7 @@
 	# will all be building the same source, with no deviation because they
 	# might have an outdated autotools-dev version.
 common-configure-impl::
-#	./autogen.sh
+	./autogen.sh
 
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
@@ -66,3 +66,4 @@ common-install-indep::
 	#
 	mv $(CURDIR)/debian/tmp/$(DEB_CONFIGURE_PREFIX)/share/services \
 	   $(CURDIR)/debian/tmp/$(DEB_CONFIGURE_PREFIX)/share/kvirc/3.4/
+
