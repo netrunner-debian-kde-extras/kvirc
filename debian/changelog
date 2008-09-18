@@ -1,4 +1,4 @@
-kvirc (2:3.4.0-2) UNRELEASED; urgency=low
+kvirc (2:3.4.0-2) unstable; urgency=low
 
   * Adding 30_security-cipherlist-bad-order_r1990.patch collected upstream.This
     solves SSL ciphering security bug: https://svn.kvirc.de/kvirc/ticket/155
@@ -11,7 +11,7 @@ kvirc (2:3.4.0-2) UNRELEASED; urgency=low
   * Moved patches to quilt since double compilation fails (see: #414305).
   * Tighten build-depends for automake >= 1.10
 
- -- Raúl Sánchez Siles <rasasi78@gmail.com>  Tue, 26 Aug 2008 15:20:00 +0200
+ -- Raúl Sánchez Siles <rasasi78@gmail.com>  Thu, 18 Sep 2008 21:37:50 +0200
 
 kvirc (2:3.4.0-1) unstable; urgency=low
 
