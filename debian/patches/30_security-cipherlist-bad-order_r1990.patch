@@ -1,7 +1,7 @@
-Index: src/kvilib/net/kvi_ssl.cpp
+Index: kvirc/src/kvilib/net/kvi_ssl.cpp
 ===================================================================
---- src/kvilib/net/kvi_ssl.cpp	(revisión: 1989)
-+++ src/kvilib/net/kvi_ssl.cpp	(revisión: 1990)
+--- kvirc/src/kvilib/net/kvi_ssl.cpp	(revisión: 1989)
++++ kvirc/src/kvilib/net/kvi_ssl.cpp	(revisión: 1990)
 @@ -305,7 +305,8 @@
  	m_pSSLCtx = SSL_CTX_new(m == Client ? SSLv23_client_method() : SSLv23_server_method());
  	if(!m_pSSLCtx)return false;

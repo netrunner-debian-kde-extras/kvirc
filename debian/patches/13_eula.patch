@@ -1,6 +1,6 @@
 unchanged:
---- src/modules/about/aboutdialog.cpp	2008-03-30 18:49:51.000000000 +0200
-+++ src/modules/about/aboutdialog.cpp.2	2008-03-30 18:49:46.000000000 +0200
+--- kvirc/src/modules/about/aboutdialog.cpp	2008-03-30 18:49:51.000000000 +0200
++++ kvirc/src/modules/about/aboutdialog.cpp.2	2008-03-30 18:49:46.000000000 +0200
 @@ -130,7 +130,7 @@
  	QString szLicense;
  
@@ -12,8 +12,8 @@ unchanged:
  	{
 only in patch2:
 unchanged:
---- src/modules/setup/setupwizard.cpp	2008-03-30 18:49:51.000000000 +0200
-+++ src/modules/setup/setupwizard.cpp.2	2008-03-30 18:47:49.000000000 +0200
+--- kvirc/src/modules/setup/setupwizard.cpp	2008-03-30 18:49:51.000000000 +0200
++++ kvirc/src/modules/setup/setupwizard.cpp.2	2008-03-30 18:47:49.000000000 +0200
 @@ -197,7 +197,7 @@
  	ed->setWordWrap(KviTalTextEdit::NoWrap);
  	QString szLicense;

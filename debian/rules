@@ -10,12 +10,12 @@
 	# This is done outside of debian/rules now, so that Debian autobuilders
 	# will all be building the same source, with no deviation because they
 	# might have an outdated autotools-dev version.
-common-configure-impl::
-	./autogen.sh
+#common-configure-impl::
+#	./autogen.sh
 
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
-include /usr/share/cdbs/1/rules/simple-patchsys.mk
+include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 
 	#
 	#	Specify extra configure options:

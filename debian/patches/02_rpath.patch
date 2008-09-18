@@ -1,6 +1,6 @@
-diff -u admin/acinclude.m4.in.2 admin/acinclude.m4.in
---- admin/acinclude.m4.in.2	2008-03-30 18:39:06.000000000 +0200
-+++ admin/acinclude.m4.in	2008-04-15 09:48:33.000000000 +0200
+diff -u kvirc/admin/acinclude.m4.in.2 kvirc/admin/acinclude.m4.in
+--- kvirc/admin/acinclude.m4.in.2	2008-03-30 18:39:06.000000000 +0200
++++ kvirc/admin/acinclude.m4.in	2008-04-15 09:48:33.000000000 +0200
 @@ -1105,7 +1105,7 @@
  			ss_save_LIBS="$LIBS"
  			CPPFLAGS="-I$SS_X_INCDIR -I$SS_QT3_INCDIR -I$SS_KDE_INCDIR $CPPFLAGS $X_CFLAGS"

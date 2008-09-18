@@ -1,7 +1,7 @@
-Index: src/kvirc/ui/kvi_mdimanager.cpp
+Index: kvirc/src/kvirc/ui/kvi_mdimanager.cpp
 ===================================================================
---- src/kvirc/ui/kvi_mdimanager.cpp	(revisión: 1990)
-+++ src/kvirc/ui/kvi_mdimanager.cpp	(revisión: 1991)
+--- kvirc/src/kvirc/ui/kvi_mdimanager.cpp	(revisión: 1990)
++++ kvirc/src/kvirc/ui/kvi_mdimanager.cpp	(revisión: 1991)
 @@ -805,7 +805,9 @@
  	if(g_pApp->closingDown())return;
  
