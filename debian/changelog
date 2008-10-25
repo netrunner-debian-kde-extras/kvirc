@@ -1,3 +1,10 @@
+kvirc (2:3.4.0-3) UNRELEASED; urgency=high
+
+  * try to start command via irc:// handler (Closes: #503401)
+  * Urgency high due to security bug fix.
+
+ -- Raúl Sánchez Siles <rasasi78@gmail.com>  Sat, 25 Oct 2008 20:23:28 +0200
+
 kvirc (2:3.4.0-2) unstable; urgency=low
 
   * Adding 30_security-cipherlist-bad-order_r1990.patch collected upstream.This

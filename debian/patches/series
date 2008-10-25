@@ -7,6 +7,7 @@
 17_awaybackaction.patch
 20_fixman.patch
 30_security-cipherlist-bad-order_r1990.patch
+31_r1997-irchandler-exploit-bug503401.patch
 51_PERL_SYS_INIT3_r2271-bug495064.patch
 52_windowmenu-crashes_r1991.patch
 98_buildprep.diff -p0
