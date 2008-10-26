@@ -1,6 +1,6 @@
 kvirc (2:3.4.0-3) unstable; urgency=medium
 
-  * try to start command via irc:// handler (Closes: #503401). 
+  * Try to start command via irc:// handler (Closes: #503401). 
     Added 31_r1997-irchandler-exploit-bug503401.patch
   * Urgency medium due to potential security bug fix.
 
