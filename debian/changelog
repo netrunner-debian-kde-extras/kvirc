@@ -1,10 +1,10 @@
-kvirc (2:3.4.0-3) UNRELEASED; urgency=medium
+kvirc (2:3.4.0-3) unstable; urgency=medium
 
   * try to start command via irc:// handler (Closes: #503401). 
     Added 31_r1997-irchandler-exploit-bug503401.patch
   * Urgency medium due to potential security bug fix.
 
- -- Raúl Sánchez Siles <rasasi78@gmail.com>  Sat, 25 Oct 2008 20:23:28 +0200
+ -- Raúl Sánchez Siles <rasasi78@gmail.com>  Sun, 26 Oct 2008 21:14:02 +0100
 
 kvirc (2:3.4.0-2) unstable; urgency=low
 
