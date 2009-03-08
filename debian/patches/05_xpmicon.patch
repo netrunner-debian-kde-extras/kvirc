@@ -1,6 +1,6 @@
-diff -Nur kvirc/data/icons/32x32/kvirc.xpm kvirc.new/data/icons/32x32/kvirc.xpm
---- kvirc/data/icons/32x32/kvirc.xpm	1970-01-01 01:00:00.000000000 +0100
-+++ kvirc.new/data/icons/32x32/kvirc.xpm	2005-02-09 12:31:44.000000000 +0100
+diff -Nur kvirc/data/icons/32x32/kvirc32x32.xpm kvirc.new/data/icons/32x32/kvirc32x32.xpm
+--- kvirc/data/icons/32x32/kvirc32x32.xpm	1970-01-01 01:00:00.000000000 +0100
++++ kvirc.new/data/icons/32x32/kvirc32x32.xpm	2005-02-09 12:31:44.000000000 +0100
 @@ -0,0 +1,295 @@
 +/* XPM */
 +static char *kvirc3[] = {
@@ -297,19 +297,9 @@ diff -Nur kvirc/data/icons/32x32/kvirc.xpm kvirc.new/data/icons/32x32/kvirc.xpm
 +"YXYXYXYXYXYXYXYXYXYXYXYX  % t t t u &   YXYXYXYXYXYXYXYXYXYXYXYX",
 +"YXYXYXYXYXYXYXYXYXYXYXYX    o o o o     YXYXYXYXYXYXYXYXYXYXYXYX"
 +};
-diff -Nur kvirc/data/icons/32x32/Makefile.am kvirc.new/data/icons/32x32/Makefile.am
---- kvirc/data/icons/32x32/Makefile.am	2003-02-25 09:46:27.000000000 +0100
-+++ kvirc.new/data/icons/32x32/Makefile.am	2005-02-09 17:13:00.000000000 +0100
-@@ -1,4 +1,5 @@
--iconapps32data_DATA = kvirc.png
-+iconapps32data_DATA = kvirc.png \
-+	kvirc.xpm
- 
- iconmime32data_DATA = kvs.png
-    
-diff -Nur kvirc/data/icons/48x48/kvirc.xpm kvirc.new/data/icons/48x48/kvirc.xpm
---- kvirc/data/icons/48x48/kvirc.xpm	1970-01-01 01:00:00.000000000 +0100
-+++ kvirc.new/data/icons/48x48/kvirc.xpm	2005-02-09 12:32:20.000000000 +0100
+diff -Nur kvirc/data/icons/48x48/kvirc48x48.xpm kvirc.new/data/icons/48x48/kvirc48x48.xpm
+--- kvirc/data/icons/48x48/kvirc48x48.xpm	1970-01-01 01:00:00.000000000 +0100
++++ kvirc.new/data/icons/48x48/kvirc48x48.xpm	2005-02-09 12:32:20.000000000 +0100
 @@ -0,0 +1,311 @@
 +/* XPM */
 +static char *kvirc3[] = {
@@ -622,11 +612,29 @@ diff -Nur kvirc/data/icons/48x48/kvirc.xpm kvirc.new/data/icons/48x48/kvirc.xpm
 +"YXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYX  X # # # # # # X   YXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYX",
 +"YXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYX                    YXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYXYX"
 +};
-diff -Nur kvirc/data/icons/48x48/Makefile.am kvirc.new/data/icons/48x48/Makefile.am
---- kvirc/data/icons/48x48/Makefile.am	2003-02-25 09:46:27.000000000 +0100
-+++ kvirc.new/data/icons/48x48/Makefile.am	2005-02-09 17:13:29.000000000 +0100
-@@ -1,4 +1,4 @@
--iconapps48data_DATA = kvirc.png
-+iconapps48data_DATA = kvirc.png kvirc.xpm
- 
- iconmime48data_DATA = kvs.png
+diff -Nur kvirc/data/icons/32x32/CMakeLists.txt kvirc.new/data/icons/32x32/CMakeLists.txt
+--- kvirc/data/icons/32x32/CMakeLists.txt	2009-01-28 11:51:40.000000000 -0330
++++ kvirc.new/data/icons/32x32/CMakeLists.txt	2009-01-28 11:54:40.000000000 -0330
+@@ -8,6 +8,9 @@
+ 	ELSE()
+ 		# Assume linux
+ 		INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/)
++		# Install xpm for ${CMAKE_INSTALL_PREFIX}/share/menu/kvirc
++		FILE(GLOB files "*.xpm")
++		INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/pixmaps/)
+ 	ENDIF()
+ ELSEIF(WIN32)
+ 	INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/icons/32x32/)
+diff -Nur kvirc/data/icons/48x48/CMakeLists.txt kvirc.new/data/icons/48x48/CMakeLists.txt
+--- kvirc/data/icons/48x48/CMakeLists.txt	2009-01-28 11:51:40.000000000 -0330
++++ kvirc.new/data/icons/48x48/CMakeLists.txt	2009-01-28 11:54:40.000000000 -0330
+@@ -8,6 +8,9 @@
+ 	ELSE()
+ 		# Assume linux
+ 		INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/)
++		# Install xpm for ${CMAKE_INSTALL_PREFIX}/share/menu/kvirc
++		FILE(GLOB files "*.xpm")
++		INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/pixmaps/)
+ 	ENDIF()
+ ELSEIF(WIN32)
+ 	INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/icons/48x48/)

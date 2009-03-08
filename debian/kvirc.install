@@ -1,4 +1,3 @@
-debian/overrides/kvirc usr/share/lintian/overrides
-debian/tmp/usr/bin/kvirc
-debian/tmp/usr/lib/*.so.*
-debian/tmp/usr/lib/kvirc/*/modules/*.so
+usr/bin/kvirc4
+usr/lib/*.so.*
+usr/lib/kvirc/*/modules/*.so

@@ -2,6 +2,8 @@
  needs="x11"\
  section="Applications/Network/Communication"\
  title="KVIrc"\
- command="/usr/bin/kvirc"\
- hints="irc,scripting"\
- icon="/usr/share/icons/hicolor/32x32/apps/kvirc.xpm"
+ command="/usr/bin/kvirc4"\
+ hints="KDE,irc,scripting"\
+ icon="/usr/share/pixmaps/kvirc32x32.xpm"\
+ icon32x32="/usr/share/pixmaps/kvirc32x32.xpm"\
+ icon48x48="/usr/share/pixmaps/kvirc48x48.xpm"\

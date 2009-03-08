@@ -1,6 +1,33 @@
+kvirc (4:4.0.0~svn3039-0ubuntu1) jaunty; urgency=low
+
+  * SVN pre-release (2009/01/26)
+  * Update debian/copyright
+  * Update packaging to use kde4.mk and cmake
+  * Update build deps
+  * Update compat (debhelper >= 6)
+  * Update standards to 3.8.0
+  * Update *.install to comply with new standards version
+  * Fix post/pre scripts to update alternatives for irc.protocol
+  * Remove unnecessary patches
+    - 01_am_maintainer_mode.patch
+    - 02_rpath.patch
+    - 09_plugin_dir.patch
+    - 13_eula.patch
+    - 30_security-cipherlist-bad-order_r1990.patch
+    - 31_r1997-irchandler-exploit-bug503401.patch
+    - 51_PERL_SYS_INIT3_r2271-bug495064.patch
+    - 52_windowmenu-crashes_r1991.patch
+    - 98_buildprep.diff
+  * New patches
+    - kubuntu_01_fix_desktop_entry.patch
+  * Update patches
+    - 05_xpmicon.patch
+
+ -- Roderick B. Greening <roderick.greening@gmail.com>  Tue, 27 Jan 2009 00:33:18 -0330
+
 kvirc (2:3.4.0-3) unstable; urgency=medium
 
-  * Try to start command via irc:// handler (Closes: #503401). 
+  * try to start command via irc:// handler (Closes: #503401). 
     Added 31_r1997-irchandler-exploit-bug503401.patch
   * Urgency medium due to potential security bug fix.
 
