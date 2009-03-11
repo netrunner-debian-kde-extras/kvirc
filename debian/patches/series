@@ -1,5 +1,7 @@
 05_xpmicon.patch
+09_plugin_dir.patch
 10_gcc4.3_fix.patch
 17_awaybackaction.patch
 20_fixman.patch
+51_PERL_SYS_INIT3_r2271-bug495064
 kubuntu_01_fix_desktop_entry.patch
