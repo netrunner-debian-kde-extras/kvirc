@@ -9,15 +9,15 @@ kvirc (4:4.0.0~svn3039-0ubuntu1) jaunty; urgency=low
   * Update *.install to comply with new standards version
   * Fix post/pre scripts to update alternatives for irc.protocol
   * Remove unnecessary patches
-    - 01_am_maintainer_mode.patch
-    - 02_rpath.patch
+    - 01_am_maintainer_mode.patch (N/App)
+    - 02_rpath.patch (N/App)
     - 09_plugin_dir.patch
-    - 13_eula.patch
+    - 13_eula.patch (N/App)
     - 30_security-cipherlist-bad-order_r1990.patch
     - 31_r1997-irchandler-exploit-bug503401.patch
     - 51_PERL_SYS_INIT3_r2271-bug495064.patch
     - 52_windowmenu-crashes_r1991.patch
-    - 98_buildprep.diff
+    - 98_buildprep.diff (N/App)
   * New patches
     - kubuntu_01_fix_desktop_entry.patch
   * Update patches
