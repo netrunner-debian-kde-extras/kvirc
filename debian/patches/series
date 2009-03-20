@@ -1,4 +1,5 @@
 05_xpmicon.patch
+kubuntu_02_fix_cmakelist_icons.patch
 10_gcc4.3_fix.patch
 17_awaybackaction.patch
 20_fixman.patch

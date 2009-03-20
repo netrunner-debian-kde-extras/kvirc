@@ -24,7 +24,6 @@ Description:  KDE based next generation IRC client with module support
  you need to install the kvirc-dev package.
 
 Package: kvirc-data
-Section: net
 Architecture: all
 Depends: kvirc (>= ${source:Version})
 Conflicts: kvirc-doc, kvirc (<< 2:3.0.0)

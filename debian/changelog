@@ -1,3 +1,15 @@
+kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
+
+  [ Alessandro Ghersi ]
+  * Fix missing icon in menu (LP: #335023)
+  * Add kubuntu_02_fix_cmakelist_icons.patch and refresh 05_xpmicon.patch
+
+  [ Alessio Treglia ]
+  * Section field in kvirc-data duplicates the value inherited from source package,
+    fixed.
+
+ -- Alessandro Ghersi <alessandro.ghersi@fastwebnet.it>  Wed, 25 Feb 2009 05:32:10 +0100
+
 kvirc (4:4.0.0~svn3039-0ubuntu1) jaunty; urgency=low
 
   * SVN pre-release (2009/01/26)
