@@ -1,5 +1,5 @@
 Source: kvirc
-Build-Depends: cdbs (>= 0.4.51), debhelper (>= 6), quilt, cmake (>= 2.6.0), kdelibs5-dev, libesd0-dev, libperl-dev
+Build-Depends: cdbs (>= 0.4.51), debhelper (>= 6), quilt, cmake (>= 2.6.0), kdelibs5-dev, libesd0-dev, libperl-dev, pkg-kde-tools
 Section: net
 Priority: optional
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
