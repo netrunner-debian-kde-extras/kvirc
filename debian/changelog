@@ -1,3 +1,10 @@
+kvirc (4:4.0.0~svn3154-1) UNRELEASED; urgency=low
+
+  * Removing debian/patches/kubuntu_02_fix_cmakelist_icons.patch. Included upstream.
+  * 
+
+ -- Raúl Sánchez Siles <rasasi78@gmail.com>  Fri, 20 Mar 2009 22:45:16 +0100
+
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 
   [ Alessandro Ghersi ]
