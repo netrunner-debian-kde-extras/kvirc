@@ -3,6 +3,8 @@ kvirc (4:4.0.0~svn3154-1) UNRELEASED; urgency=low
   * Patches:
     - Removed kubuntu_02_fix_cmakelist_icons.patch. Included upstream.
     - Removed 10_gcc4.3_fix.patch. Included upstream.
+    - Removed 17_awaybackaction.patch. Included upstream
+    - Removed 20_fixman.patch. Fixed upstream.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Fri, 20 Mar 2009 22:45:16 +0100
 
