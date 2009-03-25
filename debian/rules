@@ -1,4 +1,5 @@
 #! /usr/bin/make -f
 #
+DEB_DH_ALWAYS_EXCLUDE:=CVS:.svn:.svnignore:.hg:.hgignore
 
 include /usr/share/pkg-kde-tools/makefiles/1/cdbs/kde.mk

@@ -1,4 +1,4 @@
-kvirc (4:4.0.0~svn3154-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3154-3) UNRELEASED; urgency=low
 
   * Using Debian pkg-kde-tools kde4.mk
   * Patches:
@@ -6,8 +6,9 @@ kvirc (4:4.0.0~svn3154-1) UNRELEASED; urgency=low
     - Removed 10_gcc4.3_fix.patch. Included upstream.
     - Removed 17_awaybackaction.patch. Included upstream
     - Removed 20_fixman.patch. Fixed upstream.
+  * Added DEB_DH_ALWAYS_EXCLUDE
 
- -- Raúl Sánchez Siles <rasasi78@gmail.com>  Fri, 20 Mar 2009 22:45:16 +0100
+ -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 25 Mar 2009 01:39:37 +0100
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 
