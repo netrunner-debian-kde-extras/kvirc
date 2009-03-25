@@ -1,6 +1,9 @@
 kvirc (4:4.0.0~svn3154-3) UNRELEASED; urgency=low
 
-  * Using Debian pkg-kde-tools kde4.mk
+  * rules:
+    - Using Debian pkg-kde-tools kde4.mk
+    - Added debhelper.mk
+    - Added patchsys-quilt.mk
   * Patches:
     - Removed kubuntu_02_fix_cmakelist_icons.patch. Included upstream.
     - Removed 10_gcc4.3_fix.patch. Included upstream.
