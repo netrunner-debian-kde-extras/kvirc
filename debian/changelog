@@ -13,6 +13,7 @@ kvirc (4:4.0.0~svn3154-3) UNRELEASED; urgency=low
   * Fixed installing files per package paths.
   * Setting back maintainer to Debian KDE Extras Team.
   * Fixed menu file syntax error.
+  * Moved desktop file from kvirc-data to kvirc package.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 25 Mar 2009 01:39:37 +0100
 
