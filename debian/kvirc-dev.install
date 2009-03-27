@@ -1,2 +1,2 @@
-usr/bin/kvirc4-config
-usr/lib/*.so
+debian/tmp/usr/bin/kvirc4-config
+debian/tmp/usr/lib/*.so

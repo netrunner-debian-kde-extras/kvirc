@@ -10,6 +10,7 @@ kvirc (4:4.0.0~svn3154-3) UNRELEASED; urgency=low
     - Removed 17_awaybackaction.patch. Included upstream
     - Removed 20_fixman.patch. Fixed upstream.
   * Added DEB_DH_ALWAYS_EXCLUDE
+  * Fixed installing files per package paths.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 25 Mar 2009 01:39:37 +0100
 
