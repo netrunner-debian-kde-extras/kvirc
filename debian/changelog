@@ -12,6 +12,7 @@ kvirc (4:4.0.0~svn3154-3) UNRELEASED; urgency=low
   * Added DEB_DH_ALWAYS_EXCLUDE
   * Fixed installing files per package paths.
   * Setting back maintainer to Debian KDE Extras Team.
+  * Fixed menu file syntax error.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 25 Mar 2009 01:39:37 +0100
 
