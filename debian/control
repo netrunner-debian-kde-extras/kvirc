@@ -2,8 +2,7 @@ Source: kvirc
 Build-Depends: cdbs (>= 0.4.51), debhelper (>= 6), quilt, cmake (>= 2.6.0), kdelibs5-dev, libesd0-dev, libperl-dev, pkg-kde-tools
 Section: net
 Priority: optional
-Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
-XSBC-Original-Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
+Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
 Uploaders: Raúl Sánchez Siles <rasasi78@gmail.com>
 Standards-Version: 3.8.0
 Vcs-Svn: svn://svn.debian.org/svn/pkg-kde/kde-extras/kvirc/trunk
