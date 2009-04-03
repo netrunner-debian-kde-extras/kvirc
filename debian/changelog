@@ -19,6 +19,7 @@ kvirc (4:4.0.0~svn3154-3) UNRELEASED; urgency=low
   * Moved desktop file from kvirc-data to kvirc package.
   * Disabled coexistence with kvirc3.
   * Moving manpage from kvirc-data to kvirc package.
+  * Invoke dh_desktop in rules so update-desktop-database is called when needed.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 25 Mar 2009 01:39:37 +0100
 
