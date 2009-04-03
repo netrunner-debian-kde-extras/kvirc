@@ -1,4 +1,4 @@
-kvirc (4:4.0.0~svn3154-3) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3154-1) UNRELEASED; urgency=low
 
   * rules:
     - Using Debian pkg-kde-tools kde4.mk
