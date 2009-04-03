@@ -314,7 +314,4 @@ Index: kvirc-4.0.0~svn3039/data/icons/32x32/kvirc32x32.xpm
 +"YXYXYXYXYXYXYXYXYXYXYXYX  % t t t u &   YXYXYXYXYXYXYXYXYXYXYXYX",
 +"YXYXYXYXYXYXYXYXYXYXYXYX    o o o o     YXYXYXYXYXYXYXYXYXYXYXYX"
 +};
-Index: kvirc-4.0.0~svn3039/data/icons/48x48/CMakeLists.txt
-===================================================================
-Index: kvirc-4.0.0~svn3039/data/icons/48x48/kvirc48x48.xpm
-===================================================================
+
