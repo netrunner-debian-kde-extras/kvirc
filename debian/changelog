@@ -12,7 +12,10 @@ kvirc (4:4.0.0~svn3154-3) UNRELEASED; urgency=low
   * Added DEB_DH_ALWAYS_EXCLUDE
   * Fixed installing files per package paths.
   * Setting back maintainer to Debian KDE Extras Team.
-  * Fixed menu file syntax error.
+  * Menu:
+    - Fixed menu file syntax error.
+    - Correctly point to 32x32 icon.
+    - Reworked 05_xpmicon.patch to only include 32x32 icons.
   * Moved desktop file from kvirc-data to kvirc package.
   * Disabled coexistence with kvirc3.
   * Moving manpage from kvirc-data to kvirc package.

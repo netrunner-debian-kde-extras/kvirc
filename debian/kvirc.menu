@@ -4,6 +4,4 @@
  title="KVIrc"\
  command="/usr/bin/kvirc"\
  hints="KDE,irc,scripting"\
- icon="/usr/share/pixmaps/kvirc32x32.xpm"\
- icon32x32="/usr/share/pixmaps/kvirc32x32.xpm"\
- icon48x48="/usr/share/pixmaps/kvirc48x48.xpm"
+ icon="/usr/share/pixmaps/kvirc32x32.xpm"
