@@ -23,6 +23,7 @@ kvirc (4:4.0.0~svn3154-1) UNRELEASED; urgency=low
   * Bump Standards-Version to 3.8.1. No changes needed.
   * Add lintian override exception for kvirc menu icon.
   * Fixed pointer to GPLv2 in copyright file.
+  * Corrected upstream website url.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 25 Mar 2009 01:39:37 +0100
 

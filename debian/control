@@ -7,7 +7,7 @@ Uploaders: Raúl Sánchez Siles <rasasi78@gmail.com>
 Standards-Version: 3.8.1
 Vcs-Svn: svn://svn.debian.org/svn/pkg-kde/kde-extras/kvirc/trunk
 Vcs-Browser: http://svn.debian.org/wsvn/pkg-kde/kde-extras/kvirc/trunk
-Homepage: http://kvirc.net/
+Homepage: http://www.kvirc.de/
 
 Package: kvirc
 Architecture: any
