@@ -4,7 +4,7 @@ Wed,  8 Sep 2004 18:49:44 +0100 and reworked by Raúl Sánchez Siles
 
 The Debian packaging is Copyright 2008, Raul Sánchez Siles <rasasi78@gmail.com>
 and is licensed under the GPLv2, which can be found at
-'/usr/share/common-licenses/GPL-2'.
+'/usr/share/common-licenses/GPL-2' on Debian GNU/Linux systems
 
 It was updated to 4.0.0 pre-release (svn 20090126) by Roderick B. Greening <roderick.greening@gmail.com>
 on Mon, 26 Jan 2009 12:15:00 -330
@@ -87,6 +87,9 @@ src/kvirc/sparser/kvi_numeric.h:
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+On Debian GNU/Linux systems, the complete text of the GNU General Public 
+License can be found in `/usr/share/common-licenses/GPL'.
+
 src/modules/my/idle_x11.cpp:
 
     Copyright (C) 2003  Justin Karneges
@@ -107,3 +110,7 @@ src/modules/my/idle_x11.cpp:
 
     On Debian GNU/Linux systems, the complete text of the GNU Lesser General
     Public License can be found in `/usr/share/common-licenses/LGPL'.
+
+On Debian GNU/Linux systems, the complete text of the GNU Lesser General Public
+License can be found in `/usr/share/common-licenses/LGPL'.
+

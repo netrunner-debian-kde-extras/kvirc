@@ -28,6 +28,7 @@ kvirc (4:4.0.0~svn3154-1) UNRELEASED; urgency=low
     kvirc (Closes: #525037)
   * Fix "kvirc website, upstream 3.4.2" Corrected upstream website 
     url. (Closes: #526886)
+  * Adding license file Debian path on copyright file.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 25 Mar 2009 01:39:37 +0100
 
