@@ -1,23 +1,20 @@
-Index: kvirc-4.0.0~svn3039/data/icons/32x32/CMakeLists.txt
-===================================================================
---- kvirc-4.0.0~svn3039.orig/data/icons/32x32/CMakeLists.txt	2009-02-25 05:40:07.492560684 +0100
-+++ kvirc-4.0.0~svn3039/data/icons/32x32/CMakeLists.txt	2009-02-25 05:41:22.073960940 +0100
-@@ -7,7 +7,10 @@
- 		INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/Contents/Resources/icons/32x32/)
- 	ELSE()
+diff --git a/data/icons/32x32/CMakeLists.txt b/data/icons/32x32/CMakeLists.txt
+--- a/data/icons/32x32/CMakeLists.txt
++++ b/data/icons/32x32/CMakeLists.txt
+@@ -19,6 +19,9 @@
  		# Assume linux
--		INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/)
-+		INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps/)
+ 		INSTALL(FILES ${iconapps} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps/)
+ 		INSTALL(FILES ${iconmime} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/mimetypes/)
 +		# Install xpm for ${CMAKE_INSTALL_PREFIX}/share/menu/kvirc
 +		FILE(GLOB files "*.xpm")
 +		INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/pixmaps/)
  	ENDIF()
  ELSEIF(WIN32)
- 	INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/icons/32x32/)
-Index: kvirc-4.0.0~svn3039/data/icons/32x32/kvirc32x32.xpm
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ kvirc-4.0.0~svn3039/data/icons/32x32/kvirc32x32.xpm	2009-02-25 05:47:09.609573000 +0100
+ 	INSTALL(FILES ${iconapps} DESTINATION ${CMAKE_INSTALL_PREFIX}/icons/32x32/apps/)
+diff --git a/data/icons/32x32/kvirc32x32.xpm b/data/icons/32x32/kvirc32x32.xpm
+new file mode 100644
+--- /dev/null
++++ b/data/icons/32x32/kvirc32x32.xpm
 @@ -0,0 +1,295 @@
 +/* XPM */
 +static char *kvirc3[] = {
@@ -314,4 +311,3 @@ Index: kvirc-4.0.0~svn3039/data/icons/32x32/kvirc32x32.xpm
 +"YXYXYXYXYXYXYXYXYXYXYXYX  % t t t u &   YXYXYXYXYXYXYXYXYXYXYXYX",
 +"YXYXYXYXYXYXYXYXYXYXYXYX    o o o o     YXYXYXYXYXYXYXYXYXYXYXYX"
 +};
-
