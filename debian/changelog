@@ -1,5 +1,6 @@
-kvirc (4:4.0.0~svn3154-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3193-1) UNRELEASED; urgency=low
 
+  * Fix "kvirc website, upstream 3.4.2" New upstream release. (Closes: #526886)
   * rules:
     - Using Debian pkg-kde-tools kde4.mk
     - Added debhelper.mk
@@ -26,8 +27,6 @@ kvirc (4:4.0.0~svn3154-1) UNRELEASED; urgency=low
   * Fixed pointer to GPLv2 in copyright file.
   * Fix "kvirc has circular Depends on kvirc-data". Now kvirc-data suggests 
     kvirc (Closes: #525037)
-  * Fix "kvirc website, upstream 3.4.2" Corrected upstream website 
-    url. (Closes: #526886)
   * Adding license file Debian path on copyright file.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 25 Mar 2009 01:39:37 +0100
