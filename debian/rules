@@ -15,3 +15,14 @@ ifdef _cdbs_rules_debhelper
 $(patsubst %,binary-install/%,$(DEB_PACKAGES)) :: binary-install/%:
 	$(if $(wildcard /usr/bin/dh_desktop),dh_desktop -p$(cdbs_curpkg) $(DEB_DH_DESKTOP_ARGS))
 endif
+
+#Remove the upstream provided license file since it's already provided by debian copyright
+common-install-indep::
+	rm -r $(CURDIR)/debian/tmp/$(DEB_CONFIGURE_PREFIX)/share/kvirc/4.0/license
+
+#	#
+#	#	Move KDE service files to a better position
+#	#
+#	mv $(CURDIR)/debian/tmp/$(DEB_CONFIGURE_PREFIX)/share/services \
+#	   $(CURDIR)/debian/tmp/$(DEB_CONFIGURE_PREFIX)/share/kvirc/3.4/
+
