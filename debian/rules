@@ -10,11 +10,6 @@ include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 DEB_CMAKE_EXTRA_FLAGS += -DWANT_COEXISTENCE=OFF
 # -DWITH_ix86_ASM COMPILE_MMX_ASM -DCOEXISTENCE
 
-#Hook and add dh_desktop debhelper script. Taken from gnome.mk class
-ifdef _cdbs_rules_debhelper
-$(patsubst %,binary-install/%,$(DEB_PACKAGES)) :: binary-install/%:
-	$(if $(wildcard /usr/bin/dh_desktop),dh_desktop -p$(cdbs_curpkg) $(DEB_DH_DESKTOP_ARGS))
-endif
 
 #Remove the upstream provided license file since it's already provided by debian copyright
 common-install-indep::
@@ -25,4 +20,3 @@ common-install-indep::
 #	#
 #	mv $(CURDIR)/debian/tmp/$(DEB_CONFIGURE_PREFIX)/share/services \
 #	   $(CURDIR)/debian/tmp/$(DEB_CONFIGURE_PREFIX)/share/kvirc/3.4/
-
