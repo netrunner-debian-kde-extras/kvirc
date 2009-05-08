@@ -20,7 +20,8 @@ It contains all the GPL terms and conditions and adds a special exception
 (see Terms and Conditions , clause 13 and 14) to its distribution limitations.
 
 Note that the GPL below is copyrighted by the Free Software
-Foundation, but the instance of code that it refers to is copyrighted by Me.
+Foundation, but the instance of code that it refers to is copyrighted by
+Szymon Stefanek and other members of the KVIrc Development Team.
 
 The source code for all versions of KVIrc is freely
 available at http://www.kvirc.de
@@ -85,11 +86,16 @@ src/kvirc/sparser/kvi_numeric.h:
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+    02110-1301, USA.
 
 On Debian GNU/Linux systems, the complete text of the GNU General Public 
 License can be found in `/usr/share/common-licenses/GPL'.
 
+src/modules/my/idle.cpp
+src/modules/my/idle.h
+src/modules/my/idle_mac.cpp
+src/modules/my/idle_win.cpp
 src/modules/my/idle_x11.cpp:
 
     Copyright (C) 2003  Justin Karneges
@@ -106,10 +112,8 @@ src/modules/my/idle_x11.cpp:
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
-    On Debian GNU/Linux systems, the complete text of the GNU Lesser General
-    Public License can be found in `/usr/share/common-licenses/LGPL'.
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+    02110-1301, USA.
 
 On Debian GNU/Linux systems, the complete text of the GNU Lesser General Public
 License can be found in `/usr/share/common-licenses/LGPL'.
