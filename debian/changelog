@@ -19,7 +19,7 @@ kvirc (4:4.0.0~svn3193-1) UNRELEASED; urgency=low
     - Reworked 05_xpmicon.patch to only include 32x32 icons.
   * Moved desktop file from kvirc-data to kvirc package.
   * Disabled coexistence with kvirc3.
-  * Moving manpage from kvirc-data to kvirc package.
+  * Moving manpage from kvirc-data to kvirc package. kvirc replaces kvirc-data
   * Bump Standards-Version to 3.8.1. No changes needed.
   * Add lintian override exception for kvirc menu icon.
   * Fixed pointer to GPLv2 in copyright file.
