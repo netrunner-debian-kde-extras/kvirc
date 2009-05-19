@@ -9,7 +9,7 @@ debian/tmp/usr/share/kvirc/*/modules/caps/
 debian/tmp/usr/share/kvirc/*/msgcolors/
 debian/tmp/usr/share/kvirc/*/pics/
 debian/tmp/usr/share/kvirc/*/themes/
-debian/tmp/usr/share/mimelnk/applications/x-kva.desktop
-debian/tmp/usr/share/mimelnk/applications/x-kvt.desktop
+debian/tmp/usr/share/mimelnk/application/x-kva.desktop
+debian/tmp/usr/share/mimelnk/application/x-kvt.desktop
 debian/tmp/usr/share/mimelnk/text/x-kvc.desktop
 debian/tmp/usr/share/mimelnk/text/x-kvs.desktop
