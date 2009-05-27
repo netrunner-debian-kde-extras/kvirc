@@ -1,5 +1,5 @@
 Source: kvirc
-Build-Depends: cdbs (>= 0.4.51), debhelper (>= 6), quilt, cmake (>= 2.6.0), kdelibs5-dev, libesd0-dev, libperl-dev, pkg-kde-tools
+Build-Depends: cdbs (>= 0.4.51), debhelper (>= 6), quilt, cmake (>= 2.6.0), kdelibs5-dev, libesd0-dev, libperl-dev, pkg-kde-tools, zlib1g-dev
 Section: net
 Priority: optional
 Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>

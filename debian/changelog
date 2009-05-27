@@ -27,6 +27,7 @@ kvirc (4:4.0.0~svn3193-1) UNRELEASED; urgency=low
     kvirc (Closes: #525037)
   * More detailed and updated copyright file.
   * Removing upstream license. Already provided by package.
+  * Adding zlib1g-dev to Build-Depends. Thanks to Kai Wasserbäch.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 25 Mar 2009 01:39:37 +0100
 
