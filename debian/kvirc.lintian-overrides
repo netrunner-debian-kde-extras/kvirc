@@ -1,2 +1,4 @@
 #The file is in the kvirc-data on which kvirc depends.
 kvirc: menu-icon-missing /usr/share/pixmaps/kvirc32x32.xpm
+#Library just used for kvirc.
+kvirc: package-name-doesnt-match-sonames libkvilib4

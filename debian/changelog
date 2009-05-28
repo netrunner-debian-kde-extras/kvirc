@@ -21,7 +21,7 @@ kvirc (4:4.0.0~svn3193-1) UNRELEASED; urgency=low
   * Disabled coexistence with kvirc3.
   * Moving manpage from kvirc-data to kvirc package. kvirc replaces kvirc-data
   * Bump Standards-Version to 3.8.1. No changes needed.
-  * Add lintian override exception for kvirc menu icon.
+  * Add lintian override exception for kvirc menu icon and kvirc library.
   * Fixed pointer to GPLv2 in copyright file.
   * Fix "kvirc has circular Depends on kvirc-data". Now kvirc-data suggests 
     kvirc (Closes: #525037)
