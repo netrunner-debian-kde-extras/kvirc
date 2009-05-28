@@ -29,6 +29,7 @@ kvirc (4:4.0.0~svn3193-1) UNRELEASED; urgency=low
   * Removing upstream license. Already provided by package.
   * Adding zlib1g-dev, libx11-dev and libxrender-dev to Build-Depends.
     Thanks to Kai Wasserbäch.
+  * Using shared-mime-info to add filetypes to system mime database.
 
  -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 25 Mar 2009 01:39:37 +0100
 
