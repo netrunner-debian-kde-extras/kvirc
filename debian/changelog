@@ -1,4 +1,4 @@
-kvirc (4:4.0.0~svn3193-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3228-1) UNRELEASED; urgency=low
 
   * Fix "kvirc website, upstream 3.4.2" New upstream release. (Closes: #526886)
   * rules:
