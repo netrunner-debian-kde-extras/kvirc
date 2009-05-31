@@ -10,22 +10,23 @@ kvirc (4:4.0.0~svn3228-1) UNRELEASED; urgency=low
     - Removed 10_gcc4.3_fix.patch. Included upstream.
     - Removed 17_awaybackaction.patch. Included upstream
     - Removed 20_fixman.patch. Fixed upstream.
-  * Added DEB_DH_ALWAYS_EXCLUDE
-  * Fixed installing files per package paths.
-  * Setting back maintainer to Debian KDE Extras Team.
+  * Copyright:
+    - Fixed pointer to GPLv2 in copyright file.
+    - More detailed and updated copyright file.
   * Menu:
     - Fixed menu file syntax error.
     - Correctly point to 32x32 icon.
     - Reworked 05_xpmicon.patch to only include 32x32 icons.
+  * Bump Standards-Version to 3.8.1. No changes needed.
+  * Added DEB_DH_ALWAYS_EXCLUDE
+  * Fixed installing files per package paths.
+  * Setting back maintainer to Debian KDE Extras Team.
   * Moved desktop file from kvirc-data to kvirc package.
   * Disabled coexistence with kvirc3.
   * Moving manpage from kvirc-data to kvirc package. kvirc replaces kvirc-data
-  * Bump Standards-Version to 3.8.1. No changes needed.
   * Add lintian override exception for kvirc menu icon and kvirc library.
-  * Fixed pointer to GPLv2 in copyright file.
   * Fix "kvirc has circular Depends on kvirc-data". Now kvirc-data suggests 
     kvirc (Closes: #525037)
-  * More detailed and updated copyright file.
   * Removing upstream license. Already provided by package.
   * Adding zlib1g-dev, libx11-dev and libxrender-dev to Build-Depends.
     Thanks to Kai Wasserbäch.
