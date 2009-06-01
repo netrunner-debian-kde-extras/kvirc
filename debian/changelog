@@ -28,7 +28,7 @@ kvirc (4:4.0.0~svn3239-1) UNRELEASED; urgency=low
   * Add lintian override exception for kvirc menu icon and kvirc library.
   * Fix "kvirc has circular Depends on kvirc-data". Now kvirc-data suggests 
     kvirc (Closes: #525037)
-  * Removing upstream license. Already provided by package.
+  * Pointing upstream license path to Debian copyright file.
   * Using shared-mime-info to add filetypes to system mime database.
 
   [ Kai Wasserbäch ]

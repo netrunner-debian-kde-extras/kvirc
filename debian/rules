@@ -11,9 +11,9 @@ DEB_CMAKE_EXTRA_FLAGS += -DWANT_COEXISTENCE=OFF -DWITHOUT_PYTHON=YES
 # -DWITH_ix86_ASM COMPILE_MMX_ASM -DCOEXISTENCE
 
 
-#Remove the upstream provided license file since it's already provided by debian copyright
+#Point upstream provided license file path to debian copyright
 common-install-indep::
-	rm -r $(CURDIR)/debian/tmp/$(DEB_CMAKE_INSTALL_PREFIX)/share/kvirc/4.0/license
+	ln -s /usr/share/doc/kvirc-data/copyright $(CURDIR)/debian/tmp/$(DEB_CMAKE_INSTALL_PREFIX)/share/kvirc/4.0/license/
 
 #	#
 #	#	Move KDE service files to a better position
