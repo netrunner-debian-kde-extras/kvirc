@@ -10,7 +10,6 @@ include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 DEB_CMAKE_EXTRA_FLAGS += -DWANT_COEXISTENCE=OFF -DWITHOUT_PYTHON=YES
 # -DWITH_ix86_ASM COMPILE_MMX_ASM -DCOEXISTENCE
 
-
 #Point upstream provided license file path to debian copyright
 common-install-indep::
 	ln -s /usr/share/doc/kvirc-data/copyright $(CURDIR)/debian/tmp/$(DEB_CMAKE_INSTALL_PREFIX)/share/kvirc/4.0/license/

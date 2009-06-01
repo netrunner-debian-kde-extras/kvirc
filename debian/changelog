@@ -25,7 +25,6 @@ kvirc (4:4.0.0~svn3239-1) UNRELEASED; urgency=low
   * Moved desktop file from kvirc-data to kvirc package.
   * Disabled coexistence with kvirc3.
   * Moving manpage from kvirc-data to kvirc package. kvirc replaces kvirc-data
-  * Add lintian override exception for kvirc menu icon and kvirc library.
   * Fix "kvirc has circular Depends on kvirc-data". Now kvirc-data suggests 
     kvirc (Closes: #525037)
   * Pointing upstream license path to Debian copyright file.
