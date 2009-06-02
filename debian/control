@@ -5,7 +5,8 @@ Build-Depends: cdbs (>= 0.4.51), debhelper (>= 6), quilt, cmake (>= 2.6.0),
 Section: net
 Priority: optional
 Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
-Uploaders: Raúl Sánchez Siles <rasasi78@gmail.com>
+Uploaders: Raúl Sánchez Siles <rasasi78@gmail.com>,
+ Kai Wasserbäch <debian@carbon-project.org>
 Standards-Version: 3.8.1
 Vcs-Svn: svn://svn.debian.org/svn/pkg-kde/kde-extras/kvirc/trunk
 Vcs-Browser: http://svn.debian.org/wsvn/pkg-kde/kde-extras/kvirc/trunk
