@@ -1,5 +1,6 @@
 kvirc (4:4.0.0~svn3228-1) UNRELEASED; urgency=low
 
+  [ Raúl Sánchez Siles ]
   * Fix "kvirc website, upstream 3.4.2" New upstream release. (Closes: #526886)
   * rules:
     - Using Debian pkg-kde-tools kde4.mk
@@ -28,11 +29,13 @@ kvirc (4:4.0.0~svn3228-1) UNRELEASED; urgency=low
   * Fix "kvirc has circular Depends on kvirc-data". Now kvirc-data suggests 
     kvirc (Closes: #525037)
   * Removing upstream license. Already provided by package.
-  * Adding zlib1g-dev, libx11-dev and libxrender-dev to Build-Depends.
-    Thanks to Kai Wasserbäch.
   * Using shared-mime-info to add filetypes to system mime database.
 
- -- Raúl Sánchez Siles <rasasi78@gmail.com>  Wed, 25 Mar 2009 01:39:37 +0100
+  [ Kai Wasserbäch ]
+  * Adding zlib1g-dev, libssl-dev, libx11-dev and libxrender-dev to
+    Build-Depends.
+
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 02 Jun 2009 14:01:39 +0200
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 
