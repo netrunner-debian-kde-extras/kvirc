@@ -45,10 +45,10 @@ kvirc (4:4.0.0~svn3239-1) UNRELEASED; urgency=low
     - Added zlib1g-dev, libssl-dev, libx11-dev and libxrender-dev to
       Build-Depends. Three fix a FTBS, libssl-dev adds SSL support.
     - Added myself to Uploaders on Raúl's invitation. Thanks!
-  * debian/rules: Added »-DWITHOUT_PYTHON«, module wasn't built anyway so far,
-    so we can safe the buildds the test. 
+  * debian/rules: Added »-DWITHOUT_PYTHON=YES«, module wasn't built anyway so
+    far, so we can safe the buildds the tests. 
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 02 Jun 2009 19:54:52 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 02 Jun 2009 20:28:02 +0200
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 
