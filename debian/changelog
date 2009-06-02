@@ -1,4 +1,4 @@
-kvirc (4:4.0.0~svn3228-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3236-1) UNRELEASED; urgency=low
 
   [ Raúl Sánchez Siles ]
   * Fix "kvirc website, upstream 3.4.2" New upstream release. (Closes: #526886)
@@ -34,8 +34,10 @@ kvirc (4:4.0.0~svn3228-1) UNRELEASED; urgency=low
   [ Kai Wasserbäch ]
   * Adding zlib1g-dev, libssl-dev, libx11-dev and libxrender-dev to
     Build-Depends.
+  * Synced to upstream's SVN r3236:
+    - Including patch from Debian to fix the xterm issue. (Closes: #530311)
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 02 Jun 2009 14:01:39 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 02 Jun 2009 14:04:05 +0200
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 
