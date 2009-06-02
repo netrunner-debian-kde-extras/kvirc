@@ -1,4 +1,4 @@
-kvirc (4:4.0.0~svn3236-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3239-1) UNRELEASED; urgency=low
 
   [ Raúl Sánchez Siles ]
   * Fix "kvirc website, upstream 3.4.2" New upstream release. (Closes: #526886)
@@ -44,7 +44,7 @@ kvirc (4:4.0.0~svn3236-1) UNRELEASED; urgency=low
     - Includes OFTC/irc.debian.org in the standard server list.
   * Added myself to Uploaders on Raúl's invitation. Thanks!
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 02 Jun 2009 19:27:38 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 02 Jun 2009 19:30:10 +0200
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 
