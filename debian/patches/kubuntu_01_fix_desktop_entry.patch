@@ -1,6 +1,12 @@
---- kvirc-4.0.0~svn3039/cmake/kvirc4.desktop.cmake.orig	2009-01-28 11:40:33.000000000 -0330
-+++ kvirc-4.0.0~svn3039/cmake/kvirc4.desktop.cmake	2009-01-28 11:41:10.000000000 -0330
-@@ -6,4 +6,4 @@
+---
+ cmake/kvirc4.desktop.cmake |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: b/cmake/kvirc4.desktop.cmake
+===================================================================
+--- a/cmake/kvirc4.desktop.cmake
++++ b/cmake/kvirc4.desktop.cmake
+@@ -8,4 +8,4 @@ Exec=${KVIRC_BINARYNAME} -m %u
  Icon=kvirc
  Type=Application
  MimeType=application/x-kva;application/x-kvt;
