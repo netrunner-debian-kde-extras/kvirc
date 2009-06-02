@@ -32,8 +32,6 @@ kvirc (4:4.0.0~svn3239-1) UNRELEASED; urgency=low
   * Using shared-mime-info to add filetypes to system mime database.
 
   [ Kai Wasserbäch ]
-  * Added zlib1g-dev, libssl-dev, libx11-dev and libxrender-dev to
-    Build-Depends. Three fix a FTBS, libssl-dev adds SSL support.
   * Synced to upstream's SVN r3239:
     - Including patch from Debian to fix the xterm issue. (Closes: #530311)
     - Fixes »kvirc doesn't obey LC_MESSAGES environment variable«.
@@ -42,11 +40,14 @@ kvirc (4:4.0.0~svn3239-1) UNRELEASED; urgency=low
       changeset <https://svn.kvirc.de/kvirc/changeset/3023>). (Closes: #495064)
       See README.Debian for a quick note on this.
     - Includes OFTC/irc.debian.org in the standard server list.
-  * Added myself to Uploaders on Raúl's invitation. Thanks!
+  * debian/control:
+    - Added zlib1g-dev, libssl-dev, libx11-dev and libxrender-dev to
+      Build-Depends. Three fix a FTBS, libssl-dev adds SSL support.
+    - Added myself to Uploaders on Raúl's invitation. Thanks!
   * debian/rules: Added »-DWITHOUT_PYTHON«, module wasn't built anyway so far,
     so we can safe the buildds the test. 
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 02 Jun 2009 19:33:21 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 02 Jun 2009 19:35:36 +0200
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 
