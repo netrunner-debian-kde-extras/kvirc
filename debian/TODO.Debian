@@ -9,5 +9,16 @@ What the maintainers should attend to (in their opinion):
 * Split some of the modules out of the main package, to allow a minimal
   installation. Maybe create an »kvirc-extras« package, which contains those
   modules and some more themes or something like that.
-* Make the kvirc-dev package working/meaningful again.
+* Make the kvirc-dev package working/meaningful again. It doesn't include 
+  any .h files, and it's probably arch:all
 * Write a German manpage (assigned to Kai Wasserbäch).
+* Clean doesn't totally clean. filelist.txt files are still present, CDBS bug
+  http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=521711
+* Added irc and ircs protocol system handlers.
+* Study the possibility and add, if convenient, Build-Depends-Indep
+* Look into dpkg-shlibdeps warnings for plugins (*.so) called from kvirc binary.
+* Upstream: kvirc4-config even with coexistence disabled.
+* Check this point for policy 3.8.1 update:
+  - The maintainer name and email address used in the changelog should be the 
+    details of the person uploading this version.
+
