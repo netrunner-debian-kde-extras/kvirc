@@ -8,8 +8,8 @@ Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
 Uploaders: Raúl Sánchez Siles <rasasi78@gmail.com>,
  Kai Wasserbäch <debian@carbon-project.org>
 Standards-Version: 3.8.1
-Vcs-Svn: svn://svn.debian.org/svn/pkg-kde/kde-extras/kvirc/trunk
-Vcs-Browser: http://svn.debian.org/wsvn/pkg-kde/kde-extras/kvirc/trunk
+Vcs-Hg: http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/
+Vcs-Browser: http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/
 Homepage: http://www.kvirc.de/
 
 Package: kvirc
