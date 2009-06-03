@@ -1,0 +1,13 @@
+What the maintainers should attend to (in their opinion):
+=========================================================
+* Check the debian/copyright file. It seems like a little cleanup and extending
+  might be in order (name all upstream authors).
+* KVIrc uses code from other projects; check if there are newer versions or if
+  it's possible to use a -dev package and rather use a central copy in the
+  Debian Archive.
+  Example: src/modules/my/idle* from Psi.
+* Split some of the modules out of the main package, to allow a minimal
+  installation. Maybe create an »kvirc-extras« package, which contains those
+  modules and some more themes or something like that.
+* Make the kvirc-dev package working/meaningful again.
+* Write a German manpage (assigned to Kai Wasserbäch).

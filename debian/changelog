@@ -49,8 +49,9 @@ kvirc (4:4.0.0~svn3239-1) UNRELEASED; urgency=low
       package development takes place today.
   * debian/rules: Added »-DWITHOUT_PYTHON=YES«, module wasn't built anyway so
     far, so we can safe the buildds the tests. 
+  * debian/TODO.Debian: Added.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 03 Jun 2009 13:41:59 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 03 Jun 2009 13:54:19 +0200
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 
