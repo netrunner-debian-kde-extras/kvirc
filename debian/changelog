@@ -1,4 +1,4 @@
-kvirc (4:4.0.0~svn3241-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
   [ Raúl Sánchez Siles ]
   * Fix "kvirc website, upstream 3.4.2" New upstream release. (Closes: #526886)
@@ -31,12 +31,13 @@ kvirc (4:4.0.0~svn3241-1) UNRELEASED; urgency=low
   * Using shared-mime-info to add filetypes to system mime database.
 
   [ Kai Wasserbäch ]
-  * Synced to upstream's SVN r3241:
+  * Synced to upstream's SVN r3240:
     - Including patch from Debian to fix the xterm issue. (Closes: #530311)
     - Fixes »kvirc doesn't obey LC_MESSAGES environment variable«.
       (Closes: #426838)
     - Fixes »kvirc: embedding perl needs PERL_SYS_INIT3()« for real (upstream
-      changeset <https://svn.kvirc.de/kvirc/changeset/3023>). (Closes: #495064)
+      changeset <https://svn.kvirc.de/kvirc/changeset/3023>). (Was bug:
+      #495064)
       See README.Debian for a quick note on this.
     - Includes OFTC/irc.debian.org in the standard server list.
     - Refreshed patches.
@@ -57,7 +58,7 @@ kvirc (4:4.0.0~svn3241-1) UNRELEASED; urgency=low
     because the primary is down atm). (Issue found by lintian.)
   * debian/patches: Added short explanations to the patches (thanks lintian).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 04 Jun 2009 14:28:22 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 04 Jun 2009 14:30:18 +0200
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 
