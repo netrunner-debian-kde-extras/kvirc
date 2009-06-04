@@ -54,9 +54,10 @@ kvirc (4:4.0.0~svn3241-1) UNRELEASED; urgency=low
     - »kvirc source: debhelper-but-no-misc-depends« added for
       kvirc-{dev,data}.
   * debian/watch: Added (using ftp.kvirc.de instead of primary FTP server,
-    because the primary is down atm).
+    because the primary is down atm). (Issue found by lintian.)
+  * debian/patches: Added short explanations to the patches (thanks lintian).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 04 Jun 2009 14:20:39 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 04 Jun 2009 14:28:22 +0200
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 

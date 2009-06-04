@@ -1,7 +1,14 @@
-diff --git a/data/icons/32x32/CMakeLists.txt b/data/icons/32x32/CMakeLists.txt
+This patch adds an XPM icon to the KVIrc package.
+---
+ data/icons/32x32/CMakeLists.txt |    3 
+ data/icons/32x32/kvirc32x32.xpm |  295 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 298 insertions(+)
+
+Index: b/data/icons/32x32/CMakeLists.txt
+===================================================================
 --- a/data/icons/32x32/CMakeLists.txt
 +++ b/data/icons/32x32/CMakeLists.txt
-@@ -19,6 +19,9 @@
+@@ -19,6 +19,9 @@ IF(UNIX)
  		# Assume linux
  		INSTALL(FILES ${iconapps} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps/)
  		INSTALL(FILES ${iconmime} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/mimetypes/)
@@ -11,8 +18,8 @@ diff --git a/data/icons/32x32/CMakeLists.txt b/data/icons/32x32/CMakeLists.txt
  	ENDIF()
  ELSEIF(WIN32)
  	INSTALL(FILES ${iconapps} DESTINATION ${CMAKE_INSTALL_PREFIX}/icons/32x32/apps/)
-diff --git a/data/icons/32x32/kvirc32x32.xpm b/data/icons/32x32/kvirc32x32.xpm
-new file mode 100644
+Index: b/data/icons/32x32/kvirc32x32.xpm
+===================================================================
 --- /dev/null
 +++ b/data/icons/32x32/kvirc32x32.xpm
 @@ -0,0 +1,295 @@

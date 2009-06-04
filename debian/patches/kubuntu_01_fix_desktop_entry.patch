@@ -1,3 +1,4 @@
+Corrected the place to show up for the desktop entry.
 ---
  cmake/kvirc4.desktop.cmake |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
