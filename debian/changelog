@@ -46,11 +46,15 @@ kvirc (4:4.0.0~svn3241-1) UNRELEASED; urgency=low
     - Added myself to Uploaders on Raúl's invitation. Thanks!
     - Changed Vcs-* fields to point to the hg repository, which is where the
       package development takes place today.
+    - Added ${misc:Depends} to kvirc.
   * debian/rules: Added »-DWITHOUT_PYTHON=YES«, module wasn't built anyway so
     far, so we can safe the buildds the tests. 
   * debian/TODO.Debian: Added.
+  * debian/source.lintian-overrides: Added.
+    - »kvirc source: debhelper-but-no-misc-depends« added for
+      kvirc-{dev,data}.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 03 Jun 2009 13:54:19 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 04 Jun 2009 14:04:56 +0200
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 
