@@ -53,9 +53,10 @@ kvirc (4:4.0.0~svn3241-1) UNRELEASED; urgency=low
   * debian/source.lintian-overrides: Added.
     - »kvirc source: debhelper-but-no-misc-depends« added for
       kvirc-{dev,data}.
-  * debian/watch: Added.
+  * debian/watch: Added (using ftp.kvirc.de instead of primary FTP server,
+    because the primary is down atm).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 04 Jun 2009 14:16:09 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 04 Jun 2009 14:20:39 +0200
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 
