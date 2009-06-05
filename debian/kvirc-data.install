@@ -4,7 +4,6 @@ debian/tmp/usr/share/kvirc/*/config/
 debian/tmp/usr/share/kvirc/*/defscript/
 debian/tmp/usr/share/kvirc/*/doc/
 debian/tmp/usr/share/kvirc/*/help/
-debian/tmp/usr/share/kvirc/*/license/
 debian/tmp/usr/share/kvirc/*/locale/
 debian/tmp/usr/share/kvirc/*/modules/caps/
 debian/tmp/usr/share/kvirc/*/msgcolors/

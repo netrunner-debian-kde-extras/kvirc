@@ -1,5 +1,7 @@
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
+  The »Dream Team« release.
+
   [ Raúl Sánchez Siles ]
   * Fix "kvirc website, upstream 3.4.2" New upstream release. (Closes: #526886)
   * rules:
@@ -57,8 +59,12 @@ kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
   * debian/watch: Added (using ftp.kvirc.de instead of primary FTP server,
     because the primary is down atm). (Issue found by lintian.)
   * debian/patches: Added short explanations to the patches (thanks lintian).
+  * debian/kvirc-data.links: Raúl noticed, that 
+    <file:///usr/share/kvirc/4.0/license/COPYING> didn't end up in the kvirc
+    package and the intended link to <file:///usr/share/doc/kvirc/copyright>
+    wasn't set. Added an entry to address that.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 04 Jun 2009 14:30:18 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 05 Jun 2009 01:01:01 +0200
 
 kvirc (4:4.0.0~svn3039-0ubuntu2) jaunty; urgency=low
 

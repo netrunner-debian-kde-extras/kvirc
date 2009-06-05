@@ -1,6 +1,7 @@
 #! /usr/bin/make -f
 #
 DEB_DH_ALWAYS_EXCLUDE:=CVS:.svn:.svnignore:.hg:.hgignore
+DEB_DH_INSTALL_ARGS:=-XCOPYING
 DEB_KDE_LINK_WITH_AS_NEEDED:=yes
 
 include /usr/share/pkg-kde-tools/makefiles/1/cdbs/kde.mk
@@ -9,13 +10,3 @@ include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 
 DEB_CMAKE_EXTRA_FLAGS += -DWANT_COEXISTENCE=OFF -DWITHOUT_PYTHON=YES
 # -DWITH_ix86_ASM COMPILE_MMX_ASM -DCOEXISTENCE
-
-#Point upstream provided license file path to debian copyright
-common-install-indep::
-	ln -s /usr/share/doc/kvirc-data/copyright $(CURDIR)/debian/tmp/$(DEB_CMAKE_INSTALL_PREFIX)/share/kvirc/4.0/license/
-
-#	#
-#	#	Move KDE service files to a better position
-#	#
-#	mv $(CURDIR)/debian/tmp/$(DEB_CONFIGURE_PREFIX)/share/services \
-#	   $(CURDIR)/debian/tmp/$(DEB_CONFIGURE_PREFIX)/share/kvirc/3.4/
