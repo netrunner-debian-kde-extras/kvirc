@@ -1,3 +1,13 @@
+kvirc (4:4.0.0~svn3240-2) UNRELEASED; urgency=low
+
+  The »Creatures of the Night« release.
+
+  * debian/control:
+    - Removed versioned dependencies on cmake and cdbs as the minimally
+      required version is already in stable (Lenny).
+
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 18 Jun 2009 01:51:09 +0200
+
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
   The »Dream Team« release.
