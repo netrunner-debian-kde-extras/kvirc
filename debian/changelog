@@ -5,8 +5,9 @@ kvirc (4:4.0.0~svn3240-2) UNRELEASED; urgency=low
   * debian/control:
     - Removed versioned dependencies on cmake and cdbs as the minimally
       required version is already in stable (Lenny).
+    - Standards-Version is now 3.8.2, no changes needed.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 18 Jun 2009 01:51:09 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 22 Jun 2009 17:43:53 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
