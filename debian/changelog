@@ -6,8 +6,12 @@ kvirc (4:4.0.0~svn3240-2) UNRELEASED; urgency=low
     - Removed versioned dependencies on cmake and cdbs as the minimally
       required version is already in stable (Lenny).
     - Standards-Version is now 3.8.2, no changes needed.
+  * debian/TODO.Debian:
+    - Removed item about adding a German manpage, as this was addressed by
+      r3268 <https://svn.kvirc.de/kvirc/changeset/3268> in upstream's VCS (by
+      myself).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 22 Jun 2009 17:43:53 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 23 Jun 2009 01:39:29 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
