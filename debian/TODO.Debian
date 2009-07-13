@@ -9,10 +9,6 @@ What the maintainers should attend to (in their opinion):
 * Split some of the modules out of the main package, to allow a minimal
   installation. Maybe create an »kvirc-extras« package, which contains those
   modules and some more themes or something like that.
-* Make the kvirc-dev package working/meaningful again. It doesn't include 
-  any .h files, and it's probably arch:all
-* Clean doesn't totally clean. filelist.txt files are still present, CDBS bug
-  http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=521711
 * Study the possibility and add, if convenient, Build-Depends-Indep
 * Look into dpkg-shlibdeps warnings for plugins (*.so) called from kvirc binary.
 * Upstream: kvirc4-config even with coexistence disabled.

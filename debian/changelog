@@ -14,13 +14,18 @@ kvirc (4:4.0.0~svn3309-1) UNRELEASED; urgency=low
       r3268 <https://svn.kvirc.de/kvirc/changeset/3268> in upstream's VCS (by
       myself).
     - Removed item about installing protocol handlers.
+    - Removed item about not cleaned out filelist.txt files, wasn't a CDBS bug,
+      but one in the CMakeLists.txt file, see
+      <https://svn.kvirc.de/kvirc/changeset/3265> for further information.
   * debian/kvirc-data.preinst:
     - Added.
     - Handle some cruft left over from 3.4 releases. (Closes: #534291) 
   * debian/kvirc-data.install: Install protocol handlers again, now directly
     into <file:///usr/share/services>.
+  * Don't build kvirc-dev anylonger. Unused so far and would need a great
+    deal of work to be Policy compliant again.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 13 Jul 2009 23:49:46 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 14 Jul 2009 00:23:09 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
