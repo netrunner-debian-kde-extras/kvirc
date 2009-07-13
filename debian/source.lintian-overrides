@@ -1,3 +1,2 @@
 # no misc:Depends needed
 kvirc source: debhelper-but-no-misc-depends kvirc-data
-kvirc source: debhelper-but-no-misc-depends kvirc-dev
