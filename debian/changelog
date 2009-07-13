@@ -10,8 +10,11 @@ kvirc (4:4.0.0~svn3240-2) UNRELEASED; urgency=low
     - Removed item about adding a German manpage, as this was addressed by
       r3268 <https://svn.kvirc.de/kvirc/changeset/3268> in upstream's VCS (by
       myself).
+  * debian/kvirc-data.preinst:
+    - Added.
+    - Handle some cruft left over from 3.4 releases. (Closes: #534291) 
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 23 Jun 2009 01:39:29 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 13 Jul 2009 20:33:09 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
@@ -55,7 +58,7 @@ kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
     - Fixes »kvirc: embedding perl needs PERL_SYS_INIT3()« for real (upstream
       changeset <https://svn.kvirc.de/kvirc/changeset/3023>). (Was bug:
       #495064)
-      See README.Debian for a quick note on this.
+      See README.Debian for a short note on this.
     - Includes OFTC/irc.debian.org in the standard server list.
     - Refreshed patches.
   * debian/control:

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+# Remove some cruft, we don't need anymore. As we didn't remove it with the
+# first 4.x release, we use le "4:4.0.0~svn3240-1" for comparison.
+case "$1" in
+    install|upgrade)
+    if dpkg --compare-versions "$2" le "4:4.0.0~svn3240-1"; then
+        update-alternatives --remove irc.protocol /usr/share/kvirc/3.4.0/services/irc.protocol
+        update-alternatives --remove irc6.protocol /usr/share/kvirc/3.4.0/services/irc6.protocol
+    fi
+    ;;
+esac
+
+exit 0
