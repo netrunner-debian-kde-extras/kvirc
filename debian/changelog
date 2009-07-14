@@ -4,7 +4,8 @@ kvirc (4:4.0.0~svn3309-1) UNRELEASED; urgency=low
 
   * Synced to upstream's SVN revision 3309:
     - Including a patch from Debian to remove bashisms. (Closes: #535873)
-    - Including a German manpage originating from Debian.
+    - Including a German manpage originating from Debian and an Italian manual
+      page.
   * debian/control:
     - Removed versioned dependencies on cmake and cdbs as the minimally
       required version is already in stable (Lenny).
@@ -30,7 +31,7 @@ kvirc (4:4.0.0~svn3309-1) UNRELEASED; urgency=low
   * debian/rules: Manually set the SVN revision number
     (»-DMANUAL_REVISION=3309«).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 14 Jul 2009 13:58:41 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 14 Jul 2009 14:03:43 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
