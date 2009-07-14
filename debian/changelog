@@ -29,10 +29,11 @@ kvirc (4:4.0.0~svn3337-1) UNRELEASED; urgency=low
   * debian/kvirc.lintian-overrides: Added »kvirc: no-symbols-control-file
     usr/lib/libkvilib.so.4.0.0« as the library is only used in KVIrc modules
     and we don't ship kvirc-dev anymore.
-  * debian/rules: Manually set the SVN revision number
-    (»-DMANUAL_REVISION=3337«).
+  * debian/rules:
+    - Manually set the SVN revision number (»-DMANUAL_REVISION=3337«).
+    - Reduce dependencies, one audio backend is enough.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 14 Jul 2009 17:21:49 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 14 Jul 2009 19:23:22 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 

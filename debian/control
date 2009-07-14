@@ -1,7 +1,6 @@
 Source: kvirc
-Build-Depends: cdbs, debhelper (>= 6), quilt, cmake, kdelibs5-dev,
- libesd0-dev, libperl-dev, pkg-kde-tools, zlib1g-dev, libx11-dev,
- libxrender-dev, libssl-dev
+Build-Depends: cdbs, debhelper (>= 6), quilt, cmake, kdelibs5-dev, libperl-dev,
+ pkg-kde-tools, zlib1g-dev, libx11-dev, libxrender-dev, libssl-dev
 Section: net
 Priority: optional
 Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
