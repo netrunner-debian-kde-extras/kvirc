@@ -25,8 +25,6 @@ Description:  KDE based next generation IRC client with module support
 Package: kvirc-data
 Architecture: all
 Suggests: kvirc (>= ${source:Version})
-Conflicts: kvirc-doc, kvirc (<< 2:3.0.0)
-Replaces: kvirc-doc
 Description: Data files for KVIrc
  This package contains the architecture-independent data needed by KVIrc in
  order to run, such as icons and images, language files, and shell scripts.

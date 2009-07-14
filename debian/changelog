@@ -11,6 +11,9 @@ kvirc (4:4.0.0~svn3337-1) UNRELEASED; urgency=low
     - Removed versioned dependencies on cmake and cdbs as the minimally
       required version is already in stable (Lenny).
     - Standards-Version is now 3.8.2, no changes needed.
+    - Remove obsolete Conflicts and Replaces from kvirc-data's definition.
+      kvirc-doc isn't even in oldstable (Etch), same applies for versions less
+      then 2:3.0.0.
   * debian/TODO.Debian:
     - Removed item about adding a German manpage, as this was addressed by
       r3268 <https://svn.kvirc.de/kvirc/changeset/3268> in upstream's VCS (by
@@ -33,7 +36,7 @@ kvirc (4:4.0.0~svn3337-1) UNRELEASED; urgency=low
     - Manually set the SVN revision number (»-DMANUAL_REVISION=3337«).
     - Reduce dependencies, one audio backend is enough.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 14 Jul 2009 19:23:22 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 14 Jul 2009 19:31:06 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
