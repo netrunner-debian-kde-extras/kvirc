@@ -22,6 +22,9 @@ kvirc (4:4.0.0~svn3337-1) UNRELEASED; urgency=low
     - Removed item about not cleaned out filelist.txt files, wasn't a CDBS bug,
       but one in the CMakeLists.txt file, see
       <https://svn.kvirc.de/kvirc/changeset/3265> for further information.
+    - Removed item about kvirc-config4, we don't ship that anymore.
+    - Added an SVN URL to the item about removing embedded code where the
+      progress can be tracked.
   * debian/kvirc-data.preinst:
     - Added.
     - Handle some cruft left over from 3.4 releases. (Closes: #534291) 
@@ -36,7 +39,7 @@ kvirc (4:4.0.0~svn3337-1) UNRELEASED; urgency=low
     - Manually set the SVN revision number (»-DMANUAL_REVISION=3337«).
     - Reduce dependencies, one audio backend is enough.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 14 Jul 2009 19:31:06 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Sat, 18 Jul 2009 03:26:43 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
