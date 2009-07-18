@@ -3,7 +3,7 @@ kvirc for Debian
 
     A word on upgrading from KVIrc 3.x to KVIrc 4.x
     ***********************************************
-    The deault configuration directory of KVIrc 3.x is <file://$HOME/.kvirc>.
+    The default configuration directory of KVIrc 3.x is <file://$HOME/.kvirc>.
     It might happen on the first startup of KVIrc 4, that you're asked where to
     store your configuration. In this case you can safely select the old
     configurtion directory to use your old settings. Any warnings, that this is
