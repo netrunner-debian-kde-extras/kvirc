@@ -1,12 +1,14 @@
-kvirc (4:4.0.0~svn3337-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3356-1) UNRELEASED; urgency=low
 
   The »Creatures of the Night« release.
 
-  * Synced to upstream's SVN revision 3337:
+  * Synced to upstream's SVN revision 3356:
     - Including a patch from Debian to remove bashisms. (Closes: #535873)
     - Including a German manpage originating from Debian and an Italian manual
       page.
     - Coming with the rewritten notifier.
+    - With a new $str.digest implementation, originating from the »no
+      embedded« branch (see TODO.Debian for further information).
   * debian/control:
     - Removed versioned dependencies on cmake and cdbs as the minimally
       required version is already in stable (Lenny).
@@ -14,6 +16,8 @@ kvirc (4:4.0.0~svn3337-1) UNRELEASED; urgency=low
     - Remove obsolete Conflicts and Replaces from kvirc-data's definition.
       kvirc-doc isn't even in oldstable (Etch), same applies for versions less
       then 2:3.0.0.
+    - Added libcrypto++-dev and pkg-config to Build-Depends, to enable new
+      $str.digest code.
   * debian/TODO.Debian:
     - Removed item about adding a German manpage, as this was addressed by
       r3268 <https://svn.kvirc.de/kvirc/changeset/3268> in upstream's VCS (by
@@ -38,8 +42,9 @@ kvirc (4:4.0.0~svn3337-1) UNRELEASED; urgency=low
   * debian/rules:
     - Manually set the SVN revision number (»-DMANUAL_REVISION=3337«).
     - Reduce dependencies, one audio backend is enough.
+    - Added »-DWANT_NO_EMBEDDED_CODE=YES« to CMake invocation.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Sat, 18 Jul 2009 03:26:43 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Sun, 19 Jul 2009 23:51:31 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
