@@ -21,6 +21,7 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
       $str.digest code.
     - Ensure Qt 4.5.0 or higher is present (not the case on S390).
     - Added ${misc:Depends} to kvirc-data entry.
+    - Improved package descriptions (thanks to Raphael Geissert).
   * debian/TODO.Debian:
     - Removed item about adding a German manpage, as this was addressed by
       r3268 <https://svn.kvirc.de/kvirc/changeset/3268> in upstream's VCS (by
@@ -51,7 +52,7 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
   * debian/copyright: Corrected path for BSD license text (Thanks to Raphael
     Geissert). 
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 05 Aug 2009 07:00:05 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 05 Aug 2009 07:05:30 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
