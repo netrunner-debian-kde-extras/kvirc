@@ -33,6 +33,7 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     - Removed item about kvirc-config4, we don't ship that anymore.
     - Added an SVN URL to the item about removing embedded code where the
       progress can be tracked.
+    - Added reminder about Python module.
   * debian/kvirc-data.preinst:
     - Added (thanks to Raphael Geissert for pointing the not needed
       parentheses out to me).
@@ -52,7 +53,7 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
   * debian/copyright: Corrected path for BSD license text (Thanks to Raphael
     Geissert). 
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 05 Aug 2009 07:05:30 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 05 Aug 2009 07:12:15 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
