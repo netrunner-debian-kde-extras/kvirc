@@ -20,6 +20,7 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     - Added libcrypto++-dev and pkg-config to Build-Depends, to enable new
       $str.digest code.
     - Ensure Qt 4.5.0 or higher is present (not the case on S390).
+    - Added ${misc:Depends} to kvirc-data entry.
   * debian/TODO.Debian:
     - Removed item about adding a German manpage, as this was addressed by
       r3268 <https://svn.kvirc.de/kvirc/changeset/3268> in upstream's VCS (by
@@ -46,8 +47,9 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     - Manually set the SVN revision number (»-DMANUAL_REVISION=3337«).
     - Reduce dependencies, one audio backend is enough.
     - Added »-DWANT_NO_EMBEDDED_CODE=YES« to CMake invocation.
+  * debian/source.lintian-overrides: Removed (Thanks to Raphael Geissert).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 05 Aug 2009 06:30:06 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 05 Aug 2009 06:51:44 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
