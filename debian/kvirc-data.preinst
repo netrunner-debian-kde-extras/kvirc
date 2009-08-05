@@ -7,13 +7,13 @@ set -e
 case "$1" in
     install|upgrade)
     if dpkg --compare-versions "$2" le "4:4.0.0~svn3240-1"; then
-        if ( update-alternatives --quiet --query irc.protocol >/dev/null 2>&1 )
+        if update-alternatives --quiet --query irc.protocol >/dev/null 2>&1
         then
             update-alternatives --quiet --remove irc.protocol \
                 /usr/share/kvirc/3.4.0/services/irc.protocol
         fi
 
-        if ( update-alternatives --quiet --query irc6.protocol >/dev/null 2>&1 )
+        if update-alternatives --quiet --query irc6.protocol >/dev/null 2>&1
         then
             update-alternatives --quiet --remove irc6.protocol \
                 /usr/share/kvirc/3.4.0/services/irc6.protocol

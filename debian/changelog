@@ -32,7 +32,8 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     - Added an SVN URL to the item about removing embedded code where the
       progress can be tracked.
   * debian/kvirc-data.preinst:
-    - Added.
+    - Added (thanks to Raphael Geissert for pointing the not needed
+      parentheses out to me).
     - Handle some cruft left over from 3.4 releases. (Closes: #534291) 
   * debian/kvirc-data.install: Install protocol handlers again, now directly
     into <file:///usr/share/services>.
@@ -46,7 +47,7 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     - Reduce dependencies, one audio backend is enough.
     - Added »-DWANT_NO_EMBEDDED_CODE=YES« to CMake invocation.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 21 Jul 2009 16:54:02 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 05 Aug 2009 06:30:06 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
