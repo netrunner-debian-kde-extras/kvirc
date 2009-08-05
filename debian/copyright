@@ -149,5 +149,5 @@ modules/FindSubversion.cmake:
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 On Debian systems, the complete text of the BSD-like License version BY-LC-NE 
-can be found in /usr/share/common-licenses/BSD-BY-LC-NE
+can be found in `/usr/share/common-licenses/BSD'.
 
