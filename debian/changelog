@@ -26,6 +26,7 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     - Ensure Qt 4.5.0 or higher is present (not the case on S390).
     - Added ${misc:Depends} to kvirc-data entry.
     - Improved package descriptions (thanks to Raphael Geissert).
+    - Added a Conflicts: for kvirc-dev, so the old package gets removed.
   * debian/TODO.Debian:
     - Removed item about adding a German manpage, as this was addressed by
       r3268 <https://svn.kvirc.de/kvirc/changeset/3268> in upstream's VCS (by
@@ -58,7 +59,7 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     Geissert).
   * debian/README.source: Added.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 26 Aug 2009 15:42:19 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 26 Aug 2009 15:48:41 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
