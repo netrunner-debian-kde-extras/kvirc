@@ -7,7 +7,7 @@ Priority: optional
 Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
 Uploaders: Raúl Sánchez Siles <rasasi78@gmail.com>,
  Kai Wasserbäch <debian@carbon-project.org>
-Standards-Version: 3.8.2
+Standards-Version: 3.8.3
 Vcs-Hg: http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/
 Vcs-Browser: http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/
 Homepage: http://www.kvirc.de/

@@ -1,0 +1,3 @@
+KVIrc uses quilt to manage its patches, please refer to
+<file:///usr/share/doc/quilt/README.source> for instructions on how to work
+with quilt for a Debian package.

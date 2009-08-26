@@ -16,7 +16,8 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
   * debian/control:
     - Removed versioned dependencies on cmake and cdbs as the minimally
       required version is already in stable (Lenny).
-    - Standards-Version is now 3.8.2, no changes needed.
+    - Standards-Version is now 3.8.3:
+      + Added a README.source as required by Debian Policy Manual section 4.14
     - Remove obsolete Conflicts and Replaces from kvirc-data's definition.
       kvirc-doc isn't even in oldstable (Etch), same applies for versions less
       then 2:3.0.0.
@@ -54,9 +55,10 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     - Added »-DWANT_NO_EMBEDDED_CODE=YES« to CMake invocation.
   * debian/source.lintian-overrides: Removed (Thanks to Raphael Geissert).
   * debian/copyright: Corrected path for BSD license text (Thanks to Raphael
-    Geissert). 
+    Geissert).
+  * debian/README.source: Added.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 18 Aug 2009 13:40:34 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 26 Aug 2009 15:42:19 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
