@@ -14,8 +14,8 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
       SVN revision 3249 <https://svn.kvirc.de/kvirc/changeset/3249>.
       (Closes: #539874)
   * debian/control:
-    - Removed versioned dependencies on cmake and cdbs as the minimally
-      required version is already in stable (Lenny).
+    - Removed versioned dependencies on cmake as the minimally required version
+      is already in stable (Lenny).
     - Standards-Version is now 3.8.3:
       + Added a README.source as required by Debian Policy Manual section 4.14
     - Remove obsolete Conflicts and Replaces from kvirc-data's definition.
@@ -27,6 +27,9 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     - Added ${misc:Depends} to kvirc-data entry.
     - Improved package descriptions (thanks to Raphael Geissert).
     - Added a Conflicts: for kvirc-dev, so the old package gets removed.
+    - Removed CDBS from Build-Depends.
+    - Added versioned Build-Depends for debhelper and pkg-kde-tools, which
+      allows us to switch to dh only.
   * debian/TODO.Debian:
     - Removed item about adding a German manpage, as this was addressed by
       r3268 <https://svn.kvirc.de/kvirc/changeset/3268> in upstream's VCS (by
@@ -54,12 +57,14 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     - Manually set the SVN revision number (»-DMANUAL_REVISION=3337«).
     - Reduce dependencies, one audio backend is enough.
     - Added »-DWANT_NO_EMBEDDED_CODE=YES« to CMake invocation.
+    - Rewrote the rules for dh7 only (without CDBS).
   * debian/source.lintian-overrides: Removed (Thanks to Raphael Geissert).
   * debian/copyright: Corrected path for BSD license text (Thanks to Raphael
     Geissert).
   * debian/README.source: Added.
+  * debian/compat: bumped to 7.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 26 Aug 2009 15:48:41 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 07 Sep 2009 13:50:30 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 

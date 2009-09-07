@@ -1,14 +1,15 @@
 #! /usr/bin/make -f
 #
-DEB_DH_ALWAYS_EXCLUDE:=CVS:.svn:.svnignore:.hg:.hgignore
-DEB_DH_INSTALL_ARGS:=-XCOPYING
+DH_ALWAYS_EXCLUDE:=CVS:.svn:.svnignore:.hg:.hgignore
 DEB_KDE_LINK_WITH_AS_NEEDED:=yes
 
-include /usr/share/pkg-kde-tools/makefiles/1/cdbs/kde.mk
-include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/rules/patchsys-quilt.mk
+override_dh_auto_configure:
+	dh_auto_configure -Skde -- -DWANT_COEXISTENCE=OFF -DWITHOUT_PYTHON=YES \
+			-DMANUAL_REVISION=3368 -DWITHOUT_ESD=YES -DWITHOUT_OSS=YES \
+			-DWANT_NO_EMBEDDED_CODE=YES
 
-DEB_CMAKE_EXTRA_FLAGS += -DWANT_COEXISTENCE=OFF -DWITHOUT_PYTHON=YES \
-	-DMANUAL_REVISION=3368 -DWITHOUT_ESD=YES -DWITHOUT_OSS=YES \
-	-DWANT_NO_EMBEDDED_CODE=YES
-# -DWITH_ix86_ASM COMPILE_MMX_ASM -DCOEXISTENCE
+override_dh_install:
+	dh_install -XCOPYING
+
+%:
+	dh --with kde,quilt $@
