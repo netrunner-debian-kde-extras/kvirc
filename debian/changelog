@@ -61,6 +61,7 @@ kvirc (4:4.0.0~svn3462+rc1-1) UNRELEASED; urgency=low
 
   [ Raúl Sánchez Siles ]
   * Manually set the rc1 revision number (»-DMANUAL_REVISION=3462+rc1«).
+  * Addind debug package so debug information can be provided.
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 26 Aug 2009 15:48:41 +0200
 

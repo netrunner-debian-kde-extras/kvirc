@@ -17,6 +17,7 @@ Architecture: any
 Depends: kvirc-data (= ${source:Version}), ${shlibs:Depends}, ${misc:Depends}
 Replaces: kvirc-data (<< ${source:Version})
 Conflicts: kvirc-dev
+Suggests: kvirc-dbg (= ${source:Version})
 Description:  KDE based next generation IRC client with module support
  A highly configurable graphical IRC client with an MDI interface,
  built-in scripting language, support for IRC DCC, drag & drop file
@@ -37,3 +38,20 @@ Description: Data files for KVIrc
  order to run, such as icons and images, language files, and shell scripts.
  It also contains complete reference guides on scripting and functions
  within KVIrc in its internal help format.
+
+Package: kvirc-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: kvirc (= ${source:Version}), ${shlibs:Depends}, ${misc:Depends}
+Replaces: kvirc-data (<< ${source:Version})
+Description:  KDE based next generation IRC client with module support
+ A highly configurable graphical IRC client with an MDI interface,
+ built-in scripting language, support for IRC DCC, drag & drop file
+ browsing, and much more. KVIrc uses the KDE widget set, can be extended
+ using its own scripting language, integrates with KDE, and supports
+ custom plugins.
+ .
+ This package is intended to help debugging possible problems with KVIrc.
+
+
