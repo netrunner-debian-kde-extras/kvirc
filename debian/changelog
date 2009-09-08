@@ -63,8 +63,9 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     Geissert).
   * debian/README.source: Added.
   * debian/compat: bumped to 7.
+  * debian/kvirc.docs: Added.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 07 Sep 2009 13:50:30 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 08 Sep 2009 17:31:38 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
