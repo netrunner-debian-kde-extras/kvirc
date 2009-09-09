@@ -68,7 +68,7 @@ kvirc (4:4.0.0~svn3462+rc1-1) UNRELEASED; urgency=low
   * Addind debug package so debug information can be provided.
   * Providing README and README.Debian.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 09 Sep 2009 21:54:28 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 09 Sep 2009 21:58:24 +0200
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
@@ -122,8 +122,6 @@ kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
     - Changed Vcs-* fields to point to the hg repository, which is where the
       package development takes place today.
     - Added ${misc:Depends} to kvirc.
-  * debian/rules: Added »-DWITHOUT_PYTHON=YES«, module wasn't built anyway so
-    far, so we can safe the buildds the tests. 
   * debian/TODO.Debian: Added.
   * debian/source.lintian-overrides: Added.
     - »kvirc source: debhelper-but-no-misc-depends« added for
