@@ -1,2 +1,3 @@
 05_xpmicon.patch
 kubuntu_01_fix_desktop_entry.patch
+rm_python_stub.patch
