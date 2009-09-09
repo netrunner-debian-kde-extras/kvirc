@@ -58,10 +58,8 @@ kvirc (4:4.0.0~svn3462+rc1-1) UNRELEASED; urgency=low
   * debian/copyright: Corrected path for BSD license text (Thanks to Raphael
     Geissert).
   * debian/README.source: Added.
-  * debian/patches/rm_python_stub.patch:
-    - Added.
-    - This patch removes the always build Python module stub, because we don't
-      build the Python module.
+  * Added debian/patches/rm_python_stub.patch which removes the always build
+    Python module stub, because we don't build the Python module.
 
   [ Raúl Sánchez Siles ]
   * Manually set the rc1 revision number (»-DMANUAL_REVISION=3462+rc1«).
