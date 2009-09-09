@@ -43,7 +43,7 @@ Package: kvirc-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: kvirc (= ${source:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: kvirc (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Replaces: kvirc-data (<< ${source:Version})
 Description:  KDE based next generation IRC client with module support
  A highly configurable graphical IRC client with an MDI interface,
