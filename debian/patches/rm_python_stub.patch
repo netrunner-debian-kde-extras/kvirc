@@ -5,7 +5,8 @@ This patch removes that stub.
  src/kvirc/kvs/kvi_kvs_parser.h                   |    3 ---
  src/kvirc/kvs/kvi_kvs_parser_command.cpp         |   12 +++---------
  src/kvirc/kvs/kvi_kvs_parser_specialcommands.cpp |    3 ---
- 3 files changed, 3 insertions(+), 15 deletions(-)
+ src/modules/pythoncore/CMakeLists.txt            |    3 ++-
+ 4 files changed, 5 insertions(+), 16 deletions(-)
 
 Index: b/src/kvirc/kvs/kvi_kvs_parser_command.cpp
 ===================================================================
@@ -83,3 +84,19 @@ Index: b/src/kvirc/kvs/kvi_kvs_parser_specialcommands.cpp
  
  KviKvsTreeNodeCommand * KviKvsParser::parseSpecialCommandBreak()
  {
+Index: b/src/modules/pythoncore/CMakeLists.txt
+===================================================================
+--- a/src/modules/pythoncore/CMakeLists.txt
++++ b/src/modules/pythoncore/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ # CMakeLists for src/modules/pythoncore
+-
++IF(COMPILE_PYTHON_SUPPORT)
+ SET(kvipythoncore_MOC_HDRS
+ 	pythoncoreinterface.h
+ )
+@@ -15,3 +15,4 @@ QT4_WRAP_CPP(kvipythoncore_MOC_SRCS ${kv
+ SET(kvi_module_name kvipythoncore)
+ 
+ INCLUDE(${CMAKE_SOURCE_DIR}/cmake/module.rules.txt)
++ENDIF(COMPILE_PYTHON_SUPPORT)
