@@ -39,7 +39,6 @@ kvirc (4:4.0.0~svn3462+rc1-1) UNRELEASED; urgency=low
     - Removed item about kvirc-config4, we don't ship that anymore.
     - Added an SVN URL to the item about removing embedded code where the
       progress can be tracked.
-    - Added reminder about Python module.
   * debian/kvirc-data.preinst:
     - Added (thanks to Raphael Geissert for pointing the not needed
       parentheses out to me).

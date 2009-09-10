@@ -16,7 +16,3 @@ What the maintainers should attend to (in their opinion):
 * Check this point for policy 3.8.1 update:
   - The maintainer name and email address used in the changelog should be the 
     details of the person uploading this version.
-* Remember to patch the entire Python module out of the code as it is
-  experimental, we don't want to ship it and I couldn't reach consensu with its
-  programmer, that it should stay out of default builds until it is
-  stable/working. Not needed before upstream's r3391.
