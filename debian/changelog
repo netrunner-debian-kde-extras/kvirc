@@ -57,7 +57,7 @@ kvirc (4:4.0.0~svn3462+rc1-1) UNRELEASED; urgency=low
   * debian/copyright: Corrected path for BSD license text (Thanks to Raphael
     Geissert).
   * debian/README.source: Added.
-  * Added debian/patches/rm_python_stub.patch which removes the always build
+  * Added debian/patches/20_rm_python_stub.patch which removes the always build
     Python module stub, because we don't build the Python module.
 
   [ Raúl Sánchez Siles ]
@@ -65,6 +65,8 @@ kvirc (4:4.0.0~svn3462+rc1-1) UNRELEASED; urgency=low
   * Addind debug package so debug information can be provided.
   * Do not provide upstream TODO.
   * Adding packaging copyright to Kai Wasserbäch.
+  * Provide a more consistent name to kubuntu_01_fix_desktop_entry.patch
+    patch to 10_fix_desktop_entry.patch. Suggested by Eugene V. Lyubimkin
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 09 Sep 2009 21:58:24 +0200
 
