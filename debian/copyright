@@ -2,9 +2,10 @@ This package was debianized by Andrea Briganti <kbytesys@tin.it>  on
 Wed,  8 Sep 2004 18:49:44 +0100 and reworked by Raúl Sánchez Siles 
 <rasasi78@gmail.com> on Thu, 17 Apr 2008 09:49:21 +0200
 
-The Debian packaging is Copyright 2008, Raul Sánchez Siles <rasasi78@gmail.com>
-and is licensed under the GPLv2, which can be found at
-'/usr/share/common-licenses/GPL-2' on Debian GNU/Linux systems
+The Debian packaging is Copyright 2009, Raul Sánchez Siles <rasasi78@gmail.com> 
+Kai Wasserbäch <debian@carbon-project.org> and is licensed under the GPLv2, 
+which can be found at '/usr/share/common-licenses/GPL-2' on Debian GNU/Linux 
+systems.
 
 It was updated to 4.0.0 pre-release (svn 20090126) by Roderick B. Greening <roderick.greening@gmail.com>
 on Mon, 26 Jan 2009 12:15:00 -330
