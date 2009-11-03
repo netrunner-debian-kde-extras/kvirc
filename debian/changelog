@@ -58,6 +58,8 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     - Reduce dependencies, one audio backend is enough.
     - Added »-DWANT_NO_EMBEDDED_CODE=YES« to CMake invocation.
     - Rewrote the rules for dh7 only (without CDBS).
+    - Removed quilt from dh invocation, now handled by dpkg-source (source
+      format »3.0 (quilt)«).
   * debian/source.lintian-overrides: Removed (Thanks to Raphael Geissert).
   * debian/copyright: Corrected path for BSD license text (Thanks to Raphael
     Geissert).
@@ -66,8 +68,9 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
   * debian/kvirc.docs: Added.
   * debian/kvirc.manpages: Added.
   * debian/kvirc.install: Removed man pages.
+  * debian/source/format: Added with »3.0 (quilt)« as its content.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 09 Sep 2009 23:04:37 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 03 Nov 2009 18:47:16 +0100
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 

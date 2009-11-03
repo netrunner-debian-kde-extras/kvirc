@@ -12,4 +12,4 @@ override_dh_install:
 	dh_install -XCOPYING
 
 %:
-	dh --with kde,quilt $@
+	dh --with kde $@

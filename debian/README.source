@@ -1,3 +1,6 @@
-KVIrc uses quilt to manage its patches, please refer to
-<file:///usr/share/doc/quilt/README.source> for instructions on how to work
-with quilt for a Debian package.
+KVIrc is using source format »3.0 (quilt)«. Please refer to
+<http://wiki.debian.org/Projects/DebSrc3.0> or dpkg-source(1) for further
+information on this.
+
+For information on how to maintain patches with quilt, please read
+<file:///usr/share/doc/quilt/README.source> and/or quilt(1).
