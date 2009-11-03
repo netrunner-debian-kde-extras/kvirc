@@ -30,6 +30,8 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
     - Removed CDBS from Build-Depends.
     - Added versioned Build-Depends for debhelper and pkg-kde-tools, which
       allows us to switch to dh only.
+    - Removed quilt, isn't needed according to
+      <http://wiki.debian.org/Projects/DebSrc3.0>.
   * debian/TODO.Debian:
     - Removed item about adding a German manpage, as this was addressed by
       r3268 <https://svn.kvirc.de/kvirc/changeset/3268> in upstream's VCS (by
@@ -70,7 +72,7 @@ kvirc (4:4.0.0~svn3368-1) UNRELEASED; urgency=low
   * debian/kvirc.install: Removed man pages.
   * debian/source/format: Added with »3.0 (quilt)« as its content.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 03 Nov 2009 18:47:16 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 03 Nov 2009 21:10:41 +0100
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
