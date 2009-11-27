@@ -5,8 +5,8 @@ This patch removes that stub.
  src/kvirc/kvs/kvi_kvs_parser.h                   |    3 ---
  src/kvirc/kvs/kvi_kvs_parser_command.cpp         |   12 +++---------
  src/kvirc/kvs/kvi_kvs_parser_specialcommands.cpp |    3 ---
- src/modules/pythoncore/CMakeLists.txt            |    1 +
- 4 files changed, 4 insertions(+), 15 deletions(-)
+ src/modules/pythoncore/CMakeLists.txt            |    2 ++
+ 4 files changed, 5 insertions(+), 15 deletions(-)
 
 Index: b/src/kvirc/kvs/kvi_kvs_parser_command.cpp
 ===================================================================
@@ -88,7 +88,13 @@ Index: b/src/modules/pythoncore/CMakeLists.txt
 ===================================================================
 --- a/src/modules/pythoncore/CMakeLists.txt
 +++ b/src/modules/pythoncore/CMakeLists.txt
-@@ -18,3 +18,4 @@ SET(KVI_DEFAULT_FRAME_CAPTION "") 
+@@ -1,4 +1,5 @@
+ # CMakeLists for src/modules/pythoncore
++IF(COMPILE_PYTHON_SUPPORT)
+ 
+ #SET(kvipythoncore_MOC_HDRS
+ #	pythoncoreinterface.h
+@@ -18,3 +19,4 @@ SET(KVI_DEFAULT_FRAME_CAPTION "") 
  SET(kvi_module_name kvipythoncore)
  
  INCLUDE(${CMAKE_SOURCE_DIR}/cmake/module.rules.txt)
