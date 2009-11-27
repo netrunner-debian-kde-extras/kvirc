@@ -81,6 +81,7 @@ kvirc (4:4.0.0~svn3596-1) UNRELEASED; urgency=low
   * Adding packaging copyright to Kai Wasserbäch.
   * Provide a more consistent name to kubuntu_01_fix_desktop_entry.patch
     patch to 10_fix_desktop_entry.patch. Suggested by Eugene V. Lyubimkin
+  * Updated copyright file. 
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 09 Sep 2009 21:58:24 +0200
 
