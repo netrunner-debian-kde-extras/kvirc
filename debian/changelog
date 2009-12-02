@@ -59,7 +59,7 @@ kvirc (4:4.0.0~svn3596-1) UNRELEASED; urgency=low
   * debian/rules:
     - Manually set the SVN revision number.
     - Reduce dependencies, one audio backend is enough.
-    - Added »-DWANT_NO_EMBEDDED_CODE=YES« to CMake invocation.
+    - Added »-DWITH_NO_EMBEDDED_CODE=YES« to CMake invocation.
     - Rewrote the rules for dh7 only (without CDBS).
     - Removed quilt from dh invocation, now handled by dpkg-source (source
       format »3.0 (quilt)«).
@@ -82,7 +82,7 @@ kvirc (4:4.0.0~svn3596-1) UNRELEASED; urgency=low
   * Provide a more consistent name to kubuntu_01_fix_desktop_entry.patch
     patch to 10_fix_desktop_entry.patch. Suggested by Eugene V. Lyubimkin
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 09 Sep 2009 21:58:24 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 02 Dec 2009 16:36:39 +0100
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
