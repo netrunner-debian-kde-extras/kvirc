@@ -4,7 +4,7 @@ DH_ALWAYS_EXCLUDE:=CVS:.svn:.svnignore:.hg:.hgignore
 
 override_dh_auto_configure:
 	dh_auto_configure -Skde -- -DWANT_COEXISTANCE=OFF -DWITHOUT_PYTHON=YES \
-			-DMANUAL_REVISION=3368 -DWITHOUT_ESD=YES -DWITHOUT_OSS=YES \
+			-DMANUAL_REVISION=3703 -DWITHOUT_ESD=YES -DWITHOUT_OSS=YES \
 			-DWITH_NO_EMBEDDED_CODE=YES \
 			-DCMAKE_SHARED_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
 			-DCMAKE_MODULE_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
