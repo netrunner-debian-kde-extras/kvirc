@@ -15,54 +15,59 @@ It was downloaded from www.kvirc.net
 Upstream Author: Szymon Stefanek <kvirc@tin.it>
 
 License:
+This is the KVIrc Irc Client license.
 
-This is the KVIrc Irc Client license. It is based on the GNU General Public License.
-It contains all the GPL terms and conditions and adds a special exception
-(see Terms and Conditions , clause 13 and 14) to its distribution limitations.
+It is based on the GNU General Public License either version 2, or
+(at your option) any later version. The full text of versions 2 and 3 of 
+the GPL can be found respectively in the files LICENSE-GPLV2 and LICENSE-GPLV3.
+KVIrc License contains all the GPL terms and conditions and adds a special
+exception (see "OpenSSL Exception" below) to the distribution limitations.
 
-Note that the GPL below is copyrighted by the Free Software
-Foundation, but the instance of code that it refers to is copyrighted by
+Note that the GPL is copyrighted by the Free Software Foundation,
+but the instance of code that it refers to is copyrighted by
 Szymon Stefanek and other members of the KVIrc Development Team.
 
-The source code for all versions of KVIrc is freely
-available at http://www.kvirc.net
+The source code for all versions of KVIrc is available at http://www.kvirc.net
 
 Have fun!
 Szymon Stefanek :)
 
-   This package is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; version 2 dated June, 1991.
-
-   This package is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this package; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-   02110-1301, USA.
-
 On Debian GNU/Linux systems, the complete text of the GNU General Public 
-License version 2 can be found in `/usr/share/common-licenses/GPL-2'.
+License version 2 and version 3 can be found in
+`/usr/share/common-licenses/GPL-2' and `/usr/share/common-licenses/GPL-3',
+respectively.
 
-clause 13 and 14)
+                       _OpenSSL Exception_
 
-  13. As a special exception, Szymon Stefanek gives permission to link this
-program with Qt non-commercial edition for Windows, and distribute the resulting executable,
-without including the source code for the Qt non-commercial edition in the source
-distribution. The Qt non-commercial edition library is covered by the
-Qt Non-Commercial license. See http://www.trolltech.com for informations.
+0. Definitions
 
-  14. As a special exception, Szymon Stefanek gives permission to link this
-program with the OpenSSL project's "OpenSSL" library (or with modified
-versions of it that use the same license as the "OpenSSL" library), and
-distribute the linked executables.  You must obey the GNU General Public
-License in all respects for all of the code used other than "OpenSSL".
-If you modify file(s), you may extend this exception to your version
-of the file(s), but you are not obligated to do so. If you do not wish to do
-so, delete this exception statement from your version.
+"KVIrc" means KVIrc software licensed under version 2 or any later
+version of the GNU General Public License (collectively, "GPL"), or a
+work based on such software and licensed under the GPL.
+
+"OpenSSL" means OpenSSL toolkit software distributed by the OpenSSL
+Project and licensed under the OpenSSL Licenses, or a work based on such
+software and licensed under the OpenSSL Licenses.
+
+"OpenSSL Licenses" means the OpenSSL License and Original SSLeay License
+under which the OpenSSL Project distributes the OpenSSL toolkit software,
+as those licenses appear in the file LICENSE-OPENSSL.
+
+1. Exception
+
+You have permission to copy, modify, propagate, and distribute a work
+formed by combining OpenSSL with KVIrc, or a work derivative of such a
+combination, even if such copying, modification, propagation, or
+distribution would otherwise violate the terms of the GPL. You must
+comply with the GPL in all respects for all of the code used other than
+OpenSSL.
+
+You may include this OpenSSL Exception and its grant of permissions when
+you distribute KVIrc.  Inclusion of this notice with such a
+distribution constitutes a grant of such permission.  If you do not wish
+to grant these permissions, remove this section entitled "OpenSSL
+Exception" from your distribution.
+
 
 Copyright
 
