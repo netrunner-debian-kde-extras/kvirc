@@ -1,6 +1,0 @@
-KVIrc is using source format »3.0 (quilt)«. Please refer to
-<http://wiki.debian.org/Projects/DebSrc3.0> or dpkg-source(1) for further
-information on this.
-
-For information on how to maintain patches with quilt, please read
-<file:///usr/share/doc/quilt/README.source> and/or quilt(1).

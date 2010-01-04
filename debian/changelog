@@ -20,7 +20,6 @@ kvirc (4:4.0.0~svn3760-1) UNRELEASED; urgency=low
   [ Kai Wasserbäch ]
   * debian/control:
     - Standards-Version is now 3.8.3:
-      + Added a README.source as required by Debian Policy Manual section 4.14
     - Remove obsolete Conflicts and Replaces from kvirc-data's definition.
       kvirc-doc isn't even in oldstable (Etch), same applies for versions less
       then 2:3.0.0.
@@ -86,7 +85,7 @@ kvirc (4:4.0.0~svn3760-1) UNRELEASED; urgency=low
   * Updated copyright file. 
   * Using english as default manpage.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 04 Jan 2010 13:27:23 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 04 Jan 2010 13:33:53 +0100
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
