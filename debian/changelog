@@ -2,7 +2,6 @@ kvirc (4:4.0.0~svn3760-1) UNRELEASED; urgency=low
 
   The »Creatures of the Night« release.
 
-  [ Kai Wasserbäch ]
   * Synced to upstream's SVN revision 3760:
     - Updated and improved licensing based on GPLv2+
     - Including a patch from Debian to remove bashisms. (Closes: #535873)
@@ -17,6 +16,8 @@ kvirc (4:4.0.0~svn3760-1) UNRELEASED; urgency=low
       (Closes: #539874)
     - Fixes an FTBFS with binutils-gold (upstream SVN revision 3596
       <https://svn.kvirc.de/kvirc/changeset/3596>). (Closes: #555068)
+
+  [ Kai Wasserbäch ]
   * debian/control:
     - Standards-Version is now 3.8.3:
       + Added a README.source as required by Debian Policy Manual section 4.14
@@ -85,7 +86,7 @@ kvirc (4:4.0.0~svn3760-1) UNRELEASED; urgency=low
   * Updated copyright file. 
   * Using english as default manpage.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 02 Dec 2009 16:36:39 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 04 Jan 2010 13:27:23 +0100
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
