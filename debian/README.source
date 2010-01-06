@@ -1,0 +1,6 @@
+If you want to build latest development versions, both kvirc upstream and debian
+packaging, follow this instructions:
+1- svn export https://svn.kvirc.de/svn/trunk/kvirc kvirc-4.0~svn$(svn info https://svn.kvirc.de/svn/trunk/kvirc |grep Rev -m 1 -i Rev |cut -d" " -f2)
+2- cd kvirc-4.0~svn$(svn info https://svn.kvirc.de/svn/trunk/kvirc |grep Rev -m 1 -i Rev |cut -d" " -f2)
+2- wget http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/archive/tip.tar.gz -O -|tar xvz --strip 1
+3- dpkg-buildpackage
