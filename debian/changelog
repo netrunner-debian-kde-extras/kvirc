@@ -1,4 +1,4 @@
-kvirc (4:4.0.0~svn3763-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3763-1) unstable; urgency=low
 
   The »Creatures of the Night« release.
 
@@ -87,7 +87,7 @@ kvirc (4:4.0.0~svn3763-1) UNRELEASED; urgency=low
   * Using english as default manpage.
   * Addind README.source documenting how to build package from latest sources.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 07 Jan 2010 23:30:21 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 07 Jan 2010 23:52:38 +0100
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
