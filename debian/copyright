@@ -128,3 +128,11 @@ On Debian GNU/Linux systems, the complete text of the GNU Lesser General Public
 License can be found in `/usr/share/common-licenses/LGPL'.
 -- 
 
+cmake/modules/FindLibV4L2.cmake     Copyright ©      2009 Jaroslav Reznik <jreznik@redhat.com>
+cmake/modules/FindPhonon.cmake      Copyright ©      2008 Matthias Kretz <kretz@kde.org>
+cmake/modules/FindTheora.cmake      Copyright © 2006-2007 Laurent Montel <montel@kde.org>
+
+    These files are licensed under the 3-clause BSD license.
+    The License can be found in `/usr/share/common-licenses/BSD' on Debian
+    systems.
+--

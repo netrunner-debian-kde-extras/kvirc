@@ -1,4 +1,16 @@
-kvirc (4:4.0.0~svn3760-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3763-1) unstable; urgency=low
+
+  The »Time Sieve« release.
+
+  * Resync to SVN revision 3763 which was intended.
+  * debian/rules: Fixed manual SVN revision.
+  * debian/copyright: Added BSD license for some CMake snippets we don't use
+    but are shipped by upstream (we use the ones provided by kdelibs5-dev or
+    don't build the relevant part).
+
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 07 Jan 2010 20:55:42 +0100
+
+kvirc (4:4.0.0~svn3760-1) unstable; urgency=low
 
   The »Creatures of the Night« release.
 
