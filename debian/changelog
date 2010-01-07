@@ -1,4 +1,12 @@
-kvirc (4:4.0.0~svn3760-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3760-2) UNRELEASED; urgency=low
+
+  The »Time Sieve« release.
+
+  * debian/rules: Fixed manual SVN revision.
+
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 07 Jan 2010 15:04:43 +0100
+
+kvirc (4:4.0.0~svn3760-1) unstable; urgency=low
 
   The »Creatures of the Night« release.
 
