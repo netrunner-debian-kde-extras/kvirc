@@ -1,20 +1,8 @@
-kvirc (4:4.0.0~svn3763-1) unstable; urgency=low
-
-  The »Time Sieve« release.
-
-  * Resync to SVN revision 3763 which was intended.
-  * debian/rules: Fixed manual SVN revision.
-  * debian/copyright: Added BSD license for some CMake snippets we don't use
-    but are shipped by upstream (we use the ones provided by kdelibs5-dev or
-    don't build the relevant part).
-
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 07 Jan 2010 20:55:42 +0100
-
-kvirc (4:4.0.0~svn3760-1) unstable; urgency=low
+kvirc (4:4.0.0~svn3763-1) UNRELEASED; urgency=low
 
   The »Creatures of the Night« release.
 
-  * Synced to upstream's SVN revision 3760:
+  * Synced to upstream's SVN revision 3763:
     - Updated and improved licensing based on GPLv2+
     - Including a patch from Debian to remove bashisms. (Closes: #535873)
     - Including a German manpage originating from Debian and an Italian manual
@@ -77,8 +65,11 @@ kvirc (4:4.0.0~svn3760-1) unstable; urgency=low
     - Removed quilt from dh invocation, now handled by dpkg-source (source
       format »3.0 (quilt)«).
   * debian/source.lintian-overrides: Removed (Thanks to Raphael Geissert).
-  * debian/copyright: Corrected path for BSD license text (Thanks to Raphael
-    Geissert).
+  * debian/copyright:
+    - Corrected path for BSD license text (Thanks to Raphael Geissert).
+    - Added BSD license for some CMake snippets we don't use but are shipped by
+      upstream (we use the ones provided by kdelibs5-dev or don't build the 
+      relevant part).
   * debian/README.source: Added.
   * debian/compat: bumped to 7.
   * debian/kvirc.docs: Added.
