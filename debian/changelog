@@ -70,7 +70,6 @@ kvirc (4:4.0.0~svn3763-1) UNRELEASED; urgency=low
     - Added BSD license for some CMake snippets we don't use but are shipped by
       upstream (we use the ones provided by kdelibs5-dev or don't build the 
       relevant part).
-  * debian/README.source: Added.
   * debian/compat: bumped to 7.
   * debian/kvirc.docs: Added.
   * debian/kvirc.manpages: Added.
@@ -87,6 +86,7 @@ kvirc (4:4.0.0~svn3763-1) UNRELEASED; urgency=low
     patch to 10_fix_desktop_entry.patch. Suggested by Eugene V. Lyubimkin
   * Updated copyright file. 
   * Using english as default manpage.
+  * Addind README.source documenting how to build package from latest sources.
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 04 Jan 2010 13:33:53 +0100
 
