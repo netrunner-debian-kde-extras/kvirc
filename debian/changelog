@@ -66,10 +66,9 @@ kvirc (4:4.0.0~svn3763-1) UNRELEASED; urgency=low
       format »3.0 (quilt)«).
   * debian/source.lintian-overrides: Removed (Thanks to Raphael Geissert).
   * debian/copyright:
-    - Corrected path for BSD license text (Thanks to Raphael Geissert).
     - Added BSD license for some CMake snippets we don't use but are shipped by
       upstream (we use the ones provided by kdelibs5-dev or don't build the 
-      relevant part).
+      relevant part). (Thanks to Barry deFreese and Raphael Geissert.)
   * debian/compat: bumped to 7.
   * debian/kvirc.docs: Added.
   * debian/kvirc.manpages: Added.
@@ -79,7 +78,7 @@ kvirc (4:4.0.0~svn3763-1) UNRELEASED; urgency=low
     Python module stub, because we don't build the Python module.
 
   [ Raúl Sánchez Siles ]
-  * Addind debug package so debug information can be provided.
+  * Adding a debug package so debug information can be provided.
   * Do not provide upstream TODO.
   * Adding packaging copyright to Kai Wasserbäch.
   * Provide a more consistent name to kubuntu_01_fix_desktop_entry.patch
@@ -88,7 +87,7 @@ kvirc (4:4.0.0~svn3763-1) UNRELEASED; urgency=low
   * Using english as default manpage.
   * Addind README.source documenting how to build package from latest sources.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 04 Jan 2010 13:33:53 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 07 Jan 2010 23:30:21 +0100
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
