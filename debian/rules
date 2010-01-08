@@ -2,6 +2,10 @@
 #
 DH_ALWAYS_EXCLUDE:=CVS:.svn:.svnignore:.hg:.hgignore
 
+DEBVERSION = $(shell head -n 1 debian/changelog | sed -e 's/^[^(]*(\([^)]*\)).*/\1/')
+UPVERSION = $(shell echo $(DEBVERSION) | sed -r -e 's/^.*://' -e 's/-[0-9.]*(\+b[0-9])?$$//' -e 's/.dfsg[0-9]*$$//')
+REV = $(shell echo $(UPVERSION) | sed -e 's/^.*svn//')
+
 override_dh_auto_configure:
 	dh_auto_configure -Skde -- -DWANT_COEXISTANCE=OFF -DWITHOUT_PYTHON=YES \
 			-DMANUAL_REVISION=3763 -DWITHOUT_ESD=YES -DWITHOUT_OSS=YES \
@@ -18,3 +22,17 @@ override_dh_strip:
 
 %:
 	dh --with kde $@
+
+
+get-orig-source:
+	@@dh_testdir
+	@@[ -d ../tarballs/. ]||mkdir -p ../tarballs
+	@@echo 'Checking out for repacking (might take 15 min) ... REV: ' $(REV)
+	@@svn export https://svn.kvirc.de/svn/trunk/kvirc@$(REV) ../tarballs/kvirc-$(REV).tmp
+	@@echo 'Getting the changelog (might take 15 min) ...'
+	@@cd ../tarballs/kvirc-$(REV).tmp; svn2cl -o changelog https://svn.kvirc.de/svn/trunk/kvirc@$(REV)
+	@@echo Creating the tarball ...
+	@@cd ../tarballs/kvirc-$(REV).tmp; tar zcf ../kvirc_$(DEB_UPSTREAM_VERSION).orig.tar.gz *
+	@@rm -rf ../tarballs/kvirc-$(REV).tmp
+	@@echo Ready for packaging.
+

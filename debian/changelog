@@ -87,7 +87,11 @@ kvirc (4:4.0.0~svn3763-1) unstable; urgency=low
   * Using english as default manpage.
   * Addind README.source documenting how to build package from latest sources.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 07 Jan 2010 23:52:38 +0100
+  [ Mark Purcell ]
+  * Add get-orig-source to pull exact version from upstream svn
+  * Add myself to uploaders
+
+ -- Mark Purcell <msp@debian.org>  Fri, 08 Jan 2010 18:28:54 +1100
 
 kvirc (4:4.0.0~svn3240-1) unstable; urgency=low
 
