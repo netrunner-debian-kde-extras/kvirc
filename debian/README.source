@@ -1,6 +1,22 @@
+Please note, that there is a get-orig-source target in debian/rules which you
+should use, if you want to recreate the package which is indicated by the SVN
+revision as given by debian/changelog (the version string).
+
+--
+
 If you want to build latest development versions, both kvirc upstream and debian
 packaging, follow this instructions:
-1- svn export https://svn.kvirc.de/svn/trunk/kvirc kvirc-4.0~svn$(svn info https://svn.kvirc.de/svn/trunk/kvirc |grep Rev -m 1 -i Rev |cut -d" " -f2)
-2- cd kvirc-4.0~svn$(svn info https://svn.kvirc.de/svn/trunk/kvirc |grep Rev -m 1 -i Rev |cut -d" " -f2)
+1- svn export https://svn.kvirc.de/svn/trunk/kvirc kvirc-4.0~svn$(svn info https://svn.kvirc.de/svn/trunk/kvirc 2>/dev/null | grep -m 1 Rev | cut -d" " -f2)
+2- cd kvirc-4.0~svn$(svn info https://svn.kvirc.de/svn/trunk/kvirc 2>/dev/null | grep -m 1 Rev | cut -d" " -f2)
 2- wget http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/archive/tip.tar.gz -O -|tar xvz --strip 1
-3- dpkg-buildpackage
+3- Edit debian/rules and debian/changelog (create a new changelog entry for the
+   latest SVN revision and adjust the manually set SVN revision in
+   debian/rules).
+4- dpkg-buildpackage
+
+Please note, that it is unlikely, but possible, that between your first and
+second command a new revision is commited to KVIrc's SVN. Therefore you should
+check the output.
+
+If you want to build a certain upstream revision, please add the -r parameter
+to the svn invocation. See `svn help export' for further details.
