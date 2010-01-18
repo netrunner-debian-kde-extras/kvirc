@@ -1,6 +1,14 @@
-The Debian package is build without Python support but KVIrc adds a stub for
-Python scriping even if Python support is disabled at build time.
-This patch removes that stub.
+Description: Remove the Python stub from the source, to decrease dependencies.
+  The Debian package is build without Python support but KVIrc adds a stub for
+  Python scriping even if Python support is disabled at build time.
+  .
+  This patch removes that stub.
+  .
+  This patch won't be forwarded, as it would be rejected upstream.
+Author: Kai Wasserbäch <debian@carbon-project.org>
+Last-Update: 2010-01-08
+Origin: vendor, http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/debian/patches/20_rm_python_stub.patch
+Forwarded: no
 ---
  src/kvirc/kvs/kvi_kvs_parser.h                   |    3 ---
  src/kvirc/kvs/kvi_kvs_parser_command.cpp         |   12 +++---------
