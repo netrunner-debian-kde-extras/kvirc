@@ -6,8 +6,10 @@ kvirc (4:4.0.0~svn3763-2) UNRELEASED; urgency=low
     - Corrected some minor mistakes.
     - Expanded the file (mention get-orig-source).
   * debian/patches/20_rm_python_stub.patch: Added DEP3-compliant header.
+  * debian/control: Added libxss-dev to Build-Depends for XScreensaver support
+    in src/modules/my/idle_x11.cpp.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 18 Jan 2010 17:22:04 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 19 Jan 2010 00:15:59 +0100
 
 kvirc (4:4.0.0~svn3763-1) unstable; urgency=low
 
