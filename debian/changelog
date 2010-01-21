@@ -1,7 +1,11 @@
-kvirc (4:4.0.0~svn3763-2) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3858-1) UNRELEASED; urgency=low
 
   The »Vampire Nighthawk« release.
 
+  * Synced to upstream's SVN revision 3858:
+    - A lot of bug fixes (including crashes).
+    - Some (minor) translation improvements.
+    - Corrected spelling for mistakes found by Lintian.
   * debian/README.source:
     - Corrected some minor mistakes.
     - Expanded the file (mention get-orig-source).
@@ -9,7 +13,7 @@ kvirc (4:4.0.0~svn3763-2) UNRELEASED; urgency=low
   * debian/control: Added libxss-dev to Build-Depends for XScreensaver support
     in src/modules/my/idle_x11.cpp.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 19 Jan 2010 00:15:59 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 21 Jan 2010 15:37:50 +0100
 
 kvirc (4:4.0.0~svn3763-1) unstable; urgency=low
 
