@@ -7,7 +7,7 @@ Description: Remove the Python stub from the source, to decrease dependencies.
   This patch won't be forwarded, as it would be rejected upstream.
 Author: Kai Wasserbäch <debian@carbon-project.org>
 Last-Update: 2010-01-08
-Origin: vendor, http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/debian/patches/20_rm_python_stub.patch
+Origin: vendor, http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/raw-file/tip/debian/patches/20_rm_python_stub.patch
 Forwarded: no
 ---
  src/kvirc/kvs/kvi_kvs_parser.h                   |    3 ---
