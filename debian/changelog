@@ -16,6 +16,7 @@ kvirc (4:4.0.0~rc2+svn3858-1) UNRELEASED; urgency=low
 
   [ Raúl Sánchez Siles ]
   * Improved debian/README.source.  
+  * debian/patches/10_fix_desktop_entry.patch: Added DEP3-compliant header.
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 21 Jan 2010 15:37:50 +0100
 

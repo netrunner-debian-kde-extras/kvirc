@@ -1,4 +1,13 @@
-Corrected the place to show up for the desktop entry.
+Description: Corrected the place to show up for the desktop entry.
+  Add KDE category. KVIrc is not proposed upstream to be a KDE application
+  but rather a Qt one. In Debian we build it with KDE dependencies and hence
+  we tag application as KDE in for the menu entry.
+  .
+  This patch can be studied to be forwarded upstream.
+Author: Roderick B. Greening <roderick.greening@gmail.com>
+Last-Update: Thu Jun 04 14:29:43 2009 +0200
+Origin: vendor, http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/raw-file/tip/debian/patches/10_fix_desktop_entry.patch
+Forwarded: no
 ---
  cmake/kvirc4.desktop.cmake |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
