@@ -1,4 +1,12 @@
-This patch adds an XPM icon to the KVIrc package.
+Description: This patch adds an XPM icon to the KVIrc package.
+  Debian menu files support icons but just in XPM format. This patch creates
+  the XPM icon file.
+  .
+  This patch is Debian specific.
+Author: Robin Verduijn <robin@debian.org>
+Last-Update: 2009-04-03 16:14:48 +0000
+Origin: vendor, http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/raw-file/tip/debian/patches/05_xpmicon.patch
+Forwarded: no
 ---
  data/icons/32x32/CMakeLists.txt |    3 
  data/icons/32x32/kvirc32x32.xpm |  295 ++++++++++++++++++++++++++++++++++++++++
