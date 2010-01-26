@@ -10,14 +10,12 @@ kvirc (4:4.0.0~rc2+svn3858-1) UNRELEASED; urgency=low
   * debian/README.source:
     - Corrected some minor mistakes.
     - Expanded the file (mention get-orig-source).
-  * debian/patches/20_rm_python_stub.patch: Added DEP3-compliant header.
   * debian/control: Added libxss-dev to Build-Depends for XScreensaver support
     in src/modules/my/idle_x11.cpp.
 
   [ Raúl Sánchez Siles ]
-  * Improved debian/README.source.  
-  * debian/patches/10_fix_desktop_entry.patch: Added DEP3-compliant header.
-  * debian/patches/05_xpmicon.patch: Added DEP3-compliant header.
+  * Improved debian/README.source.
+  * Added DEP3-compliant header to patches.
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 21 Jan 2010 15:37:50 +0100
 
