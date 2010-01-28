@@ -15,7 +15,7 @@ kvirc (4:4.0.0~svn3900+rc2-1) unstable; urgency=low
       src/modules/my/idle_x11.cpp.
     - Bumped Standards-Version to 3.8.4, no further changes needed.
   * debian/patches:
-    - update_modt.patch: Added (taken from 3902).
+    - 30_r3902_update_motd.patch: Added (taken from r3902).
     - 20_rm_python_stub.patch: DEP-3 header added.
 
   [ Raúl Sánchez Siles ]

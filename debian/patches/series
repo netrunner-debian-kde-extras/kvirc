@@ -1,4 +1,4 @@
 05_xpmicon.patch
 10_fix_desktop_entry.patch
 20_rm_python_stub.patch
-update_modt.patch
+30_r3902_update_motd.patch
