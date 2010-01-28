@@ -8,7 +8,7 @@ REV = $(shell echo $(UPVERSION) | sed -e 's/^.*svn//')
 
 override_dh_auto_configure:
 	dh_auto_configure -Skde -- -DWANT_COEXISTANCE=OFF -DWITHOUT_PYTHON=YES \
-			-DMANUAL_REVISION=3858 -DWITHOUT_ESD=YES -DWITHOUT_OSS=YES \
+			-DMANUAL_REVISION=3900 -DWITHOUT_ESD=YES -DWITHOUT_OSS=YES \
 			-DWITH_NO_EMBEDDED_CODE=YES -DWITHOUT_STRIP=ON \
 			-DCMAKE_SHARED_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
 			-DCMAKE_MODULE_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
