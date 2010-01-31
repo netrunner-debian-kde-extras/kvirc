@@ -6,8 +6,9 @@ kvirc (4:4.0.0~svn3900+rc2-2) UNRELEASED; urgency=low
     „./usr/lib/kvirc/4.0/modules/libkvilanguage.so“ which is a false positive.
   * debian/copyright: Reproduce GPLv1 in full text, as it's not in
     common-licenses.
+  * debian/README.Debian: Added a note about Python support.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 28 Jan 2010 20:51:59 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Sun, 31 Jan 2010 19:53:17 +0100
 
 kvirc (4:4.0.0~svn3900+rc2-1) unstable; urgency=low
 
