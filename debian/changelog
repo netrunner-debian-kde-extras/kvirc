@@ -12,9 +12,11 @@ kvirc (4:4.0.0~svn3957+rc2-1) UNRELEASED; urgency=low
   * debian/README.Debian: Added a note about Python support.
   * debian/patches/30_r3902_update_motd.patch: Dropped, was taken from
     upstream.
-  * debian/rules: Fixed get-orig-source target.
+  * debian/rules:
+    - Fixed get-orig-source target.
+    - Set MANUAL_REVISION dynamically (we determine the revision anyway).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Sat, 13 Feb 2010 02:46:31 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 15 Feb 2010 17:15:25 +0100
 
 kvirc (4:4.0.0~svn3900+rc2-1) unstable; urgency=low
 
