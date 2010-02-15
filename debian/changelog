@@ -1,8 +1,8 @@
-kvirc (4:4.0.0~svn3957+rc2-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3969+rc2-1) UNRELEASED; urgency=low
 
   The „Worldwake“ release.
 
-  * Synced to upstream's SVN revision 3957:
+  * Synced to upstream's SVN revision 3969:
     - A lot of bug fixes (including crashes/segmentation faults).
     - Russian transaltion update.
   * debian/kvirc.lintian-overrides: Added „spelling-error-in-binary“ for
