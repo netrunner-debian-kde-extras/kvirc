@@ -1,4 +1,4 @@
-kvirc (4:4.0.0~svn3989+rc2-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn3989+rc2-1) unstable; urgency=low
 
   The "Worldwake" release.
 
@@ -17,7 +17,7 @@ kvirc (4:4.0.0~svn3989+rc2-1) UNRELEASED; urgency=low
     - Fixed get-orig-source target.
     - Set MANUAL_REVISION dynamically (we determine the revision anyway).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 19 Feb 2010 14:04:45 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Sat, 20 Feb 2010 13:54:09 +1100
 
 kvirc (4:4.0.0~svn3900+rc2-1) unstable; urgency=low
 
