@@ -15,6 +15,3 @@ What the maintainers should attend to (in their opinion):
 * Check this point for policy 3.8.1 update:
   - The maintainer name and email address used in the changelog should be the 
     details of the person uploading this version.
-* Watch out for <https://svn.kvirc.de/kvirc/ticket/733>. Fedora got already hit
-  by it, we'll be in the same spot with the next kde4libs upload, unless we can
-  convince upstream to do it the right way™.
