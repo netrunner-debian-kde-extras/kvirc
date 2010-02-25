@@ -1,3 +1,12 @@
+kvirc (4:4.0.0~svn3989+rc2-2) UNRELEASED; urgency=low
+
+  The "Underworld Dreams" release.
+
+  * debian/TODO.Debian: Updated (especially because of
+    <https://svn.kvirc.de/kvirc/ticket/733>).
+
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 25 Feb 2010 16:43:20 +0100
+
 kvirc (4:4.0.0~svn3989+rc2-1) unstable; urgency=low
 
   The "Worldwake" release.
