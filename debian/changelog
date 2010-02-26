@@ -1,10 +1,14 @@
 kvirc (4:4.0.0~svn3989+rc2-2) UNRELEASED; urgency=low
 
+  [ Kai Wasserbäch ]
   The "Underworld Dreams" release.
 
   * debian/TODO.Debian: Updated, removed resolved points and added information
     on how to fix the linking to libraries from which no symbols are used.
   * debian/control: DM-Upload-Allowed set to yes.
+
+  [ Raúl Sánchez Siles ]
+  * Fixed parallel building.
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 25 Feb 2010 22:52:10 +0100
 
