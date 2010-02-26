@@ -1,5 +1,6 @@
 kvirc (4:4.0.0~svn4031+rc2-1) UNRELEASED; urgency=low
 
+  [ Kai Wasserbäch ]
   The "Underworld Dreams" release.
 
   * NOT RELEASED YET
@@ -10,6 +11,10 @@ kvirc (4:4.0.0~svn4031+rc2-1) UNRELEASED; urgency=low
   * debian/TODO.Debian: Updated, removed resolved points and added information
     on how to fix the linking to libraries from which no symbols are used.
   * debian/control: DM-Upload-Allowed set to yes.
+
+  [ Raúl Sánchez Siles ]
+  * Fixed parallel building.
+  * Added check to list potential missing files on the package.
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 26 Feb 2010 18:34:50 +0100
 
