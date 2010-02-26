@@ -9,6 +9,7 @@ kvirc (4:4.0.0~svn3989+rc2-2) UNRELEASED; urgency=low
 
   [ Raúl Sánchez Siles ]
   * Fixed parallel building.
+  * Added check to list potential missing files on the package.
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 25 Feb 2010 22:52:10 +0100
 
