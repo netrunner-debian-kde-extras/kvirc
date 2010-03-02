@@ -1,14 +1,13 @@
-kvirc (4:4.0.0~svn4031+rc2-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn4083+rc2-1) UNRELEASED; urgency=low
 
   The "Underworld Dreams" release.
 
-  * NOT RELEASED YET
-
-  [ Kai Wasserbäch ]
-  * Synced to upstream's SVN revision 4031:
+  * Synced to upstream's SVN revision 4083:
     - A lot of bug fixes, including a fix for a infinite loop.
     - Portuguese translation update, thanks to Américo Monteiro for answering
       the call to debian-{i18n,l10n-portuguese}.
+
+  [ Kai Wasserbäch ]
   * debian/TODO.Debian: Updated, removed resolved points and added information
     on how to fix the linking to libraries from which no symbols are used.
   * debian/control: DM-Upload-Allowed set to yes.
