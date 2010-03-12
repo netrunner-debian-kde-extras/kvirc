@@ -1,9 +1,10 @@
-kvirc (4:4.0.0~svn4083+rc2-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn4130+rc2-1) UNRELEASED; urgency=low
 
   The "Underworld Dreams" release.
 
-  * Synced to upstream's SVN revision 4083:
-    - A lot of bug fixes, including a fix for a infinite loop.
+  * NOT RELEASED YET
+  * Synced to upstream's SVN revision 4130:
+    - A lot of bug fixes, including a fix for an infinite loop.
     - Portuguese translation update, thanks to Américo Monteiro for answering
       the call to debian-{i18n,l10n-portuguese}.
 
@@ -16,7 +17,7 @@ kvirc (4:4.0.0~svn4083+rc2-1) UNRELEASED; urgency=low
   * Fixed parallel building.
   * Added check to list potential missing files on the package.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 26 Feb 2010 21:15:27 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 12 Mar 2010 15:59:03 +0100
 
 kvirc (4:4.0.0~svn3989+rc2-1) unstable; urgency=low
 
