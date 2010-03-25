@@ -14,8 +14,10 @@ kvirc (4:4.0.0~svn4214+rc2-1) UNRELEASED; urgency=low
       + a fix for a SEGV in the IRC log viewer,
       + a fix for the URL module, which had bug leading to disconnects, and
       + a fix for an infinite loop in the syntax highlighter.
+  * debian/kvirc.install: Adjust rule for installing shared objects to catch
+    all objects and their symlinks.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 25 Mar 2010 16:45:06 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 25 Mar 2010 20:46:37 +0100
 
 kvirc (4:4.0.0~svn4170+rc2-1) unstable; urgency=low
 
