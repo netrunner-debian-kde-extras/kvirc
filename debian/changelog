@@ -1,15 +1,21 @@
-kvirc (4:4.0.0~svn4212+rc2-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn4214+rc2-1) UNRELEASED; urgency=low
+
+  The "Winter Blast" release.
 
   * NOT RELEASED YET.
-  * Synced to upstream's SVN revision 4212:
-    - German translation update due to a review by debian-l10n-german (thanks
-      to Holger Wansing for the review, thanks to Markus Rennings for
-      incorporating the suggestions).
-    - Italian translation update.
-    - A lot of bug fixes, including a fix for a crash in KVS objects and a fix
-      for the URL module, which could lead to disconnects.
+  * Synced to upstream's SVN revision 4214:
+    - Trasnlation updates:
+      + German; update due to a review by debian-l10n-german (thanks to Holger
+        Wansing for the review, thanks to Markus Rennings for incorporating the
+        suggestions).
+      + Italian
+    - A lot of bug fixes, including:
+      + a fix for a crash in KVS objects,
+      + a fix for a SEGV in the IRC log viewer,
+      + a fix for the URL module, which had bug leading to disconnects, and
+      + a fix for an infinite loop in the syntax highlighter.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 24 Mar 2010 16:48:51 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 25 Mar 2010 16:45:06 +0100
 
 kvirc (4:4.0.0~svn4170+rc2-1) unstable; urgency=low
 
