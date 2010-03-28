@@ -2,13 +2,14 @@ This package was debianized by Andrea Briganti <kbytesys@tin.it>  on
 Wed,  8 Sep 2004 18:49:44 +0100 and reworked by Raúl Sánchez Siles 
 <rasasi78@gmail.com> on Thu, 17 Apr 2008 09:49:21 +0200
 
-The Debian packaging is Copyright 2009, Raul Sánchez Siles <rasasi78@gmail.com> 
-Kai Wasserbäch <debian@carbon-project.org> and is licensed under the GPLv2, 
-which can be found at '/usr/share/common-licenses/GPL-2' on Debian GNU/Linux 
-systems.
-
 It was updated to 4.0.0 pre-release (svn 20090126) by Roderick B. Greening <roderick.greening@gmail.com>
 on Mon, 26 Jan 2009 12:15:00 -330
+
+The Debian packaging is
+Copyright (C) 2009-2010 Raul Sánchez Siles <rasasi78@gmail.com>
+Copyright (C) 2009-2010 Kai Wasserbäch <debian@carbon-project.org>
+and is licensed under the GPLv2, which can be found at
+'/usr/share/common-licenses/GPL-2' on Debian GNU/Linux systems.
 
 It was downloaded from www.kvirc.net
 
@@ -310,3 +311,56 @@ cmake/modules/FindTheora.cmake      Copyright © 2006-2007 Laurent Montel <monte
     The License can be found in `/usr/share/common-licenses/BSD' on Debian
     systems.
 --
+
+For the following files, the license and copyright holders are different:
+   * src/kvilib/ext/avdevice/bayer.cpp
+   * src/kvilib/ext/avdevice/bayer.h
+   * src/kvilib/ext/avdevice/sonix_compress.h
+   * src/kvilib/ext/avdevice/sonix_compress.cpp
+
+  Upstream Authors:
+    Copyright (C) 2004 Takafumi Mizuno <taka-qce@ls-a.jp>
+    Copyright (C) 2009 Szymon Stefanek <pragma@kvirc.net>
+
+  License:
+    The license for the four files named above is the 2-clause BSD license,
+    which can be found in `/usr/share/common-licenses/BSD' on Debian systems.
+--
+
+For the following files, the license and copyright holders are different:
+   * src/kvilib/ext/avdevice/dummyvideodevice.cpp
+   * src/kvilib/ext/avdevice/dummyvideodevice.h
+   * src/kvilib/ext/avdevice/videodevice.cpp
+   * src/kvilib/ext/avdevice/videodevice.h
+   * src/kvilib/ext/avdevice/videodevicepool.cpp
+   * src/kvilib/ext/avdevice/videodevicepool.h
+   * src/kvilib/ext/avdevice/videoinput.cpp
+   * src/kvilib/ext/avdevice/videoinput.h
+
+  Upstream Authors:
+    Copyright (C) 2002-2009 Kopete developers <kopete-devel@kde.org>
+    Copyright (C)      2009 Alan Jones <skyphyr@gmail.com>
+    Copyright (C)      2009 Szymon Stefanek <pragma@kvirc.net>
+    Copyright (C)      2010 Frank Schaefer <fschaefer.oss@googlemail.com>
+    Copyright (C) 2005-2006 Cláudio da Silveira Pinheiro <taupter@gmail.com>
+
+  License:
+    The license for the eight files named above is either GPLv2 (or later),
+    which can be found in `/usr/share/common-licenses/GPL-2' on Debian systems,
+    or LGPLv2 (or later), which can be found in 
+    `/usr/share/common-licenses/LGPL-2' on Debian systems.
+--
+
+For the following files, the license and copyright holders are different:
+    * src/kvilib/ext/avdevice/videodevicevector.cpp
+    * src/kvilib/ext/avdevice/videodevicevector.h
+
+  Upstream Authors:
+    Copyright (C) 2002-2009 Kopete developers <kopete-devel@kde.org>
+    Copyright (C)      2009 Alan Jones <skyphyr@gmail.com>
+    Copyright (C)      2009 Szymon Stefanek <pragma@kvirc.net>
+
+  License:
+    The license for the two files named above is GPLv3 or (at your option) any
+    later version. The GPLv3 can be found in `/usr/share/common-licenses/GPL-3'
+    on Debian systems.
