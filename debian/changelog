@@ -1,9 +1,9 @@
-kvirc (4:4.0.0~svn4227+rc2-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn4228+rc2-1) UNRELEASED; urgency=low
 
   The "Winter Blast" release.
 
   * NOT RELEASED YET.
-  * Synced to upstream's SVN revision 4227:
+  * Synced to upstream's SVN revision 4228:
     - Translation updates:
       + German; update due to a review by debian-l10n-german (thanks to Holger
         Wansing for the review, thanks to Markus Rennings for incorporating the
@@ -12,12 +12,13 @@ kvirc (4:4.0.0~svn4227+rc2-1) UNRELEASED; urgency=low
     - A lot of bug fixes, including:
       + a fix for a crash in KVS objects,
       + a fix for a SEGV in the IRC log viewer,
-      + a fix for the URL module, which had bug leading to disconnects, and
-      + a fix for an infinite loop in the syntax highlighter.
+      + a fix for the URL module, which had bug leading to disconnects,
+      + a fix for an infinite loop in the syntax highlighter, and
+      + a fix for a SEGV in the reguser module.
   * debian/copyright: Fixed license information for files in
     »src/kvilib/ext/avdevice« (taken from Kopete).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Sun, 28 Mar 2010 15:12:48 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Sun, 28 Mar 2010 17:13:34 +0200
 
 kvirc (4:4.0.0~svn4170+rc2-1) unstable; urgency=low
 
