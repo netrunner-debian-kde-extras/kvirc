@@ -1,8 +1,7 @@
-kvirc (4:4.0.0~svn4239+rc2-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn4239+rc2-1) unstable; urgency=low
 
   The "Winter Blast" release.
 
-  * NOT RELEASED YET.
   * Synced to upstream's SVN revision 4239:
     - Translation updates:
       + German; update due to a review by debian-l10n-german (thanks to Holger
@@ -18,7 +17,7 @@ kvirc (4:4.0.0~svn4239+rc2-1) UNRELEASED; urgency=low
   * debian/copyright: Fixed license information for files in
     »src/kvilib/ext/avdevice« (taken from Kopete).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 05 Apr 2010 16:05:03 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 05 Apr 2010 16:06:11 +0200
 
 kvirc (4:4.0.0~svn4170+rc2-1) unstable; urgency=low
 
