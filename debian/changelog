@@ -1,12 +1,17 @@
-kvirc (4:4.0.0~svn4253+rc2-2) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn4316+rc3-1) UNRELEASED; urgency=low
 
   The "Grave Consequences" release.
 
   * NOT RELEASED YET.
+  * Synced to upstream's SVN revision 4316:
+    - Now RC3.
+    - A lot of bug fixes.
+    - And some translation updates including the remainder of Holger Wansing's
+      suggestions.
   * debian/control: Build-Depend on shared-mime-info, it's no longer pulled in
     through KDE. (Closes: #581321)
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 12 May 2010 16:56:37 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 13 May 2010 16:54:57 +0200
 
 kvirc (4:4.0.0~svn4253+rc2-1) unstable; urgency=low
 
