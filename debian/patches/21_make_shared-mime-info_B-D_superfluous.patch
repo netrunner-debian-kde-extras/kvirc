@@ -6,19 +6,19 @@ Description: Don't call update-mime-database during install.
  during package installation, we can remove this snippet and thus the
  B-D on shared-mime-database.
 Author: Kai Wasserbäch <debian@carbon-project.org>
-Last-Update: 2010-05-13
+Last-Update: 2010-05-17
 Origin: vendor, http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/raw-file/tip/debian/patches/21_make_shared-mime-info_B-D_superfluous.patch
 Forwarded: not-needed
 ---
- data/mimetypes/CMakeLists.txt |   17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
+ data/mimetypes/CMakeLists.txt |   19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
 Index: b/data/mimetypes/CMakeLists.txt
 ===================================================================
 --- a/data/mimetypes/CMakeLists.txt
 +++ b/data/mimetypes/CMakeLists.txt
-@@ -1,18 +1,5 @@
- IF(KDE4_FOUND)
+@@ -1,18 +1 @@
+-IF(KDE4_FOUND)
 -    include(MacroEnsureVersion)
 -
 -    macro_ensure_version("4.2.0" ${KDE_VERSION} KDE_4_2_FOUND)
@@ -32,9 +32,8 @@ Index: b/data/mimetypes/CMakeLists.txt
 -    find_package(SharedMimeInfo)
 -
 -    IF(SHARED_MIME_INFO_FOUND AND IS_DIRECTORY ${XDG_MIME_INSTALL_DIR})
-+    IF(IS_DIRECTORY ${XDG_MIME_INSTALL_DIR})
-         install(FILES kvirc.xml DESTINATION ${XDG_MIME_INSTALL_DIR})
+-        install(FILES kvirc.xml DESTINATION ${XDG_MIME_INSTALL_DIR})
 -        update_xdg_mimetypes(${XDG_MIME_INSTALL_DIR})
 -    ENDIF(SHARED_MIME_INFO_FOUND AND IS_DIRECTORY ${XDG_MIME_INSTALL_DIR})
-+    ENDIF(IS_DIRECTORY ${XDG_MIME_INSTALL_DIR})
- ENDIF(KDE4_FOUND)
+-ENDIF(KDE4_FOUND)
++install(FILES kvirc.xml DESTINATION ${XDG_MIME_INSTALL_DIR})
