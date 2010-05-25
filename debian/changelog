@@ -1,11 +1,12 @@
-kvirc (4:4.0.0~svn4370+rc3-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0~svn4374+rc3-1) UNRELEASED; urgency=low
 
   The "Child of Night" release.
 
   * NOT RELEASED YET.
-  * Synced to upstream's SVN revision 4370.
+  * Synced to upstream's SVN revision 4374:
+    - A lot of bug fixes, including a fix for an infinite loop.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 24 May 2010 00:31:00 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 25 May 2010 13:41:33 +0200
 
 kvirc (4:4.0.0~svn4340+rc3-1) unstable; urgency=medium
 
