@@ -1,5 +1,4 @@
 debian/tmp/usr/bin/kvirc
 debian/tmp/usr/lib/*.so.*
-debian/tmp/usr/lib/libkvilib.so
 debian/tmp/usr/lib/kvirc/*/modules/*.so
 debian/tmp/usr/share/applications/kvirc.desktop
