@@ -10,8 +10,9 @@ kvirc (4:4.0.0~svn4428+rc3-1) UNRELEASED; urgency=low
     the install script.
   * debian/kvirc-data.install: Added "usr/share/kvirc/*/audio/" to the list of
     installed directories.
+  * debian/kvirc.install: Install the "usr/lib/libkvilib.so" symlink too.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 09 Jun 2010 14:16:44 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 09 Jun 2010 14:19:44 +0200
 
 kvirc (4:4.0.0~svn4340+rc3-1) unstable; urgency=medium
 
