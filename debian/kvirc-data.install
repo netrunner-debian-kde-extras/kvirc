@@ -10,4 +10,5 @@ debian/tmp/usr/share/kvirc/*/msgcolors/
 debian/tmp/usr/share/kvirc/*/pics/
 debian/tmp/usr/share/kvirc/*/themes/
 debian/tmp/usr/share/mime/packages/kvirc.xml
+debian/tmp/usr/share/kvirc/*/audio/
 data/protocols/*.protocol usr/share/services
