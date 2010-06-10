@@ -6,10 +6,8 @@ kvirc (4:4.0.0~svn4428+rc3-1) UNRELEASED; urgency=low
   * Synced to upstream's SVN revision 4428:
     - A lot of bug fixes, including a fix for an infinite loop, and
     - some translation updates.
-  * debian/kvirc.manpages: Adjusted some paths, which are now correctly set by
-    the install script.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 09 Jun 2010 14:14:21 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 09 Jun 2010 12:10:13 +0200
 
 kvirc (4:4.0.0~svn4340+rc3-1) unstable; urgency=medium
 
