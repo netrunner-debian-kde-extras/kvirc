@@ -6,12 +6,14 @@ kvirc (4:4.0.0~svn4428+rc3-1) UNRELEASED; urgency=low
   * Synced to upstream's SVN revision 4428:
     - A lot of bug fixes, including a fix for an infinite loop, and
     - some translation updates.
-  * debian/kvirc-data.install: Added "usr/share/kvirc/*/audio/" to the list of
-    installed directories.
+  * debian/kvirc-data.install:
+    - Added "usr/share/kvirc/*/audio/" to the list of installed directories.
+    - Removed "debian/tmp/" prefix.
+  * debian/kvirc.install: Removed "debian/tmp/" prefix.
   * debian/control: Bumped Build-Depends for pkg-kde-tools to >= 0.9 for
     ensured source package 3.0 (quilt) support.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 15 Jun 2010 10:45:29 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 25 Jun 2010 20:29:49 +0200
 
 kvirc (4:4.0.0~svn4340+rc3-1) unstable; urgency=medium
 
