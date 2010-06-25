@@ -12,8 +12,11 @@ kvirc (4:4.0.0~svn4428+rc3-1) UNRELEASED; urgency=low
   * debian/kvirc.install: Removed "debian/tmp/" prefix.
   * debian/control: Bumped Build-Depends for pkg-kde-tools to >= 0.9 for
     ensured source package 3.0 (quilt) support.
+  * debian/kvirc.docs: Install the correct upstream README file and remove the
+    upstream TODO file for real (as claimed in the entry for
+    4:4.0.0~svn3763-1).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 25 Jun 2010 20:29:49 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 25 Jun 2010 21:18:13 +0200
 
 kvirc (4:4.0.0~svn4340+rc3-1) unstable; urgency=medium
 
