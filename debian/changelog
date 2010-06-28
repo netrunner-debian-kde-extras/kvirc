@@ -9,8 +9,13 @@ kvirc (4:4.0.0-1) unstable; urgency=low
     - Added "usr/share/kvirc/*/audio/" to the list of installed directories.
     - Removed "debian/tmp/" prefix.
   * debian/kvirc.install: Removed "debian/tmp/" prefix.
-  * debian/control: Bumped Build-Depends for pkg-kde-tools to >= 0.9 for
-    ensured source package 3.0 (quilt) support.
+  * debian/control:
+    - Bumped Build-Depends for pkg-kde-tools to >= 0.9 for ensured source
+      package 3.0 (quilt) support.
+    - Bumped Standards-Version to 3.9.0:
+      + Added Breaks to kvirc stanza (7.3, 7.6.1).
+      + Moved Conflicts to Breaks (7.4).
+      + debian/copyright: Updated (12.5).
   * debian/kvirc.docs: Install the correct upstream README file and remove the
     upstream TODO file for real (as claimed in the entry for
     4:4.0.0~svn3763-1).
@@ -18,7 +23,7 @@ kvirc (4:4.0.0-1) unstable; urgency=low
   * debian/patches/01_correct_sources_date.patch: Added, taken from upstream's
     4.0 branch (commit:4552).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 28 Jun 2010 17:24:14 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 28 Jun 2010 20:43:44 +0200
 
 kvirc (4:4.0.0~svn4340+rc3-1) unstable; urgency=medium
 

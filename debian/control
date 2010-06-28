@@ -9,7 +9,7 @@ Uploaders: Raúl Sánchez Siles <rasasi78@gmail.com>,
  Kai Wasserbäch <debian@carbon-project.org>,
  Mark Purcell <msp@debian.org>
 DM-Upload-Allowed: yes
-Standards-Version: 3.8.4
+Standards-Version: 3.9.0
 Vcs-Hg: http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/
 Vcs-Browser: http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/
 Homepage: http://www.kvirc.de/
@@ -18,7 +18,7 @@ Package: kvirc
 Architecture: any
 Depends: kvirc-data (= ${source:Version}), ${shlibs:Depends}, ${misc:Depends}
 Replaces: kvirc-data (<< ${source:Version})
-Conflicts: kvirc-dev
+Breaks: kvirc-data (<< ${source:Version}), kvirc-dev
 Suggests: kvirc-dbg (= ${source:Version})
 Description: KDE-based next generation IRC client with module support
  A highly configurable graphical IRC client with an MDI interface,
