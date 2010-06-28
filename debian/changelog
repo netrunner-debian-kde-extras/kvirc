@@ -16,8 +16,10 @@ kvirc (4:4.0.0-1) UNRELEASED; urgency=low
     upstream TODO file for real (as claimed in the entry for
     4:4.0.0~svn3763-1).
   * debian/rules: No longer set MANUAL_REVISION.
+  * debian/patches/01_correct_sources_date.patch: Added, taken from upstream's
+    4.0 branch (commit:4552).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 28 Jun 2010 17:00:25 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 28 Jun 2010 17:20:36 +0200
 
 kvirc (4:4.0.0~svn4340+rc3-1) unstable; urgency=medium
 
