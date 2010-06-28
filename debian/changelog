@@ -1,8 +1,7 @@
-kvirc (4:4.0.0-1) UNRELEASED; urgency=low
+kvirc (4:4.0.0-1) unstable; urgency=low
 
   The "Child of Night" release.
 
-  * NOT RELEASED YET.
   * New upstream release:
     - A lot of bug fixes, including a fix for an infinite loop, and
     - some translation updates.
@@ -19,7 +18,7 @@ kvirc (4:4.0.0-1) UNRELEASED; urgency=low
   * debian/patches/01_correct_sources_date.patch: Added, taken from upstream's
     4.0 branch (commit:4552).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 28 Jun 2010 17:20:36 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 28 Jun 2010 17:24:14 +0200
 
 kvirc (4:4.0.0~svn4340+rc3-1) unstable; urgency=medium
 
