@@ -18,7 +18,8 @@ Package: kvirc
 Architecture: any
 Depends: kvirc-data (= ${source:Version}), ${shlibs:Depends}, ${misc:Depends}
 Replaces: kvirc-data (<< ${source:Version})
-Breaks: kvirc-data (<< ${source:Version}), kvirc-dev
+Breaks: kvirc-data (<< ${source:Version})
+Conflicts: kvirc-dev
 Suggests: kvirc-dbg (= ${source:Version})
 Description: KDE-based next generation IRC client with module support
  A highly configurable graphical IRC client with an MDI interface,

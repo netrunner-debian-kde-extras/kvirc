@@ -2,8 +2,10 @@ kvirc (4:4.0.0-2) unstable; urgency=low
 
   * debian/copyright: Don't reference BSD license (Debian policy 12.5), one
     occurrence was missed.
+  * debian/control: Make kvirc conflict again with kvirc-dev, I actually
+    missed a bullet point in section 7.4 of the policy.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 01 Jul 2010 14:44:02 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 01 Jul 2010 14:47:11 +0200
 
 kvirc (4:4.0.0-1) unstable; urgency=low
 
