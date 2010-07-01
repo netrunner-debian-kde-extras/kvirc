@@ -1,0 +1,195 @@
+Subject: Fix upstream bug #824.
+Origin: upstream, https://svn.kvirc.de/kvirc/changeset/4565
+Last-Update: 2010-07-01
+---
+ data/defscript/aliases.kvs                      |    2 -
+ data/defscript/popups.kvs                       |    4 +-
+ src/kvirc/kernel/kvi_userinput.cpp              |   23 +++++++++-------
+ src/kvirc/kernel/kvi_userinput.h                |    7 ++++
+ src/kvirc/kvs/kvi_kvs_corefunctions.cpp         |    1 
+ src/kvirc/kvs/kvi_kvs_corefunctions.h           |    1 
+ src/kvirc/kvs/kvi_kvs_corefunctions_af.cpp      |   34 ++++++++++++++++++++++++
+ src/kvirc/kvs/kvi_kvs_coresimplecommands_af.cpp |    2 +
+ 8 files changed, 62 insertions(+), 12 deletions(-)
+
+Index: b/data/defscript/aliases.kvs
+===================================================================
+--- a/data/defscript/aliases.kvs
++++ b/data/defscript/aliases.kvs
+@@ -521,7 +521,7 @@ alias(hop)
+ 
+ 	// Exit channel
+ 	if($window.type($channel(%chan))=="channel")
+-		eval "part --keep %chan $option(stringPartMessage)"
++		eval "part --keep $escape(%chan) $option(stringPartMessage)"
+ 	// Rejoin channel
+ 	if(!%key) join %chan
+ 	else join %chan %key
+Index: b/data/defscript/popups.kvs
+===================================================================
+--- a/data/defscript/popups.kvs
++++ b/data/defscript/popups.kvs
+@@ -665,7 +665,7 @@ defpopup(channelpopup)
+ 
+ 	item($tr("&Part","defscript") $0,40)
+ 	{
+-		if($channel($0)) eval "part $0 $option(stringPartMessage)";
++		if($channel($0)) eval "part $escape($0) $option(stringPartMessage)";
+ 	}
+ 
+ 	separator
+@@ -724,7 +724,7 @@ defpopup(channeltextview)
+ 
+ 	item($tr("&Part","defscript") $0,40)
+ 	{
+-		if($channel($0)) eval "part $0 $option(stringPartMessage)";
++		if($channel($0)) eval "part $escape($0) $option(stringPartMessage)";
+ 	}
+ 
+ 	separator
+Index: b/src/kvirc/kernel/kvi_userinput.cpp
+===================================================================
+--- a/src/kvirc/kernel/kvi_userinput.cpp
++++ b/src/kvirc/kernel/kvi_userinput.cpp
+@@ -83,15 +83,7 @@ namespace KviUserInput
+ 			static QString szUserFriendlyCommandlineContext(__tr2qs("commandline::userfriendly"));
+ 
+ 			QString szCmd = szData;
+-			// escape any -$;\%(
+-			szCmd.replace("\\","\\\\");
+-			szCmd.replace("\"","\\\"");
+-			szCmd.replace("$","\\$");
+-			szCmd.replace("%","\\%");
+-			szCmd.replace("(","\\(");
+-			szCmd.replace(";","\\;");
+-			szCmd.replace("-","\\-");
+-			szCmd.replace("+","\\+");
++			escapeString(szCmd);
+ 
+ 			KviKvsScript kvs(szContext.isEmpty() ? szUserFriendlyCommandlineContext : szContext,szCmd);
+ 			return (kvs.run(pWindow,0,0) != KviKvsScript::Error);
+@@ -161,4 +153,17 @@ namespace KviUserInput
+ 			}
+ 		}
+ 	}
++
++	void escapeString(QString & szData)
++	{
++		// escape any -$;\%(
++		szData.replace("\\","\\\\");
++		szData.replace("\"","\\\"");
++		szData.replace("$","\\$");
++		szData.replace("%","\\%");
++		szData.replace("(","\\(");
++		szData.replace(";","\\;");
++		szData.replace("-","\\-");
++		szData.replace("+","\\+");
++	}
+ };
+Index: b/src/kvirc/kernel/kvi_userinput.h
+===================================================================
+--- a/src/kvirc/kernel/kvi_userinput.h
++++ b/src/kvirc/kernel/kvi_userinput.h
+@@ -69,6 +69,13 @@ namespace KviUserInput
+ 	*/
+ 	KVIRC_API void parseNonCommand(QString & szData, KviWindow * pWindow);
+ 
++	/**
++	* \brief Escapes any kvs special character from a string
++	* \param szData The string to escape
++	* \return void
++	*/
++	KVIRC_API void escapeString(QString & szData);
++
+ 	//bool parseCommandWithSingleArgument(const QString & szData, KviWindow * pWindow, const QString & szContext = KviQString::Empty);
+ }
+ 
+Index: b/src/kvirc/kvs/kvi_kvs_corefunctions.cpp
+===================================================================
+--- a/src/kvirc/kvs/kvi_kvs_corefunctions.cpp
++++ b/src/kvirc/kvs/kvi_kvs_corefunctions.cpp
+@@ -61,6 +61,7 @@ namespace KviKvsCoreFunctions
+ 		_REGFNC("countStatusBarItems",countStatusBarItems)
+ 		_REGFNC("cr",cr)
+ 		_REGFNC("date",date)
++		_REGFNC("escape",escape)
+ 		_REGFNC("false",falseCKEYWORDWORKAROUND)
+ 		_REGFNC("features",features)
+ 		_REGFNC("firstConnectedConsole",firstConnectedConsole)
+Index: b/src/kvirc/kvs/kvi_kvs_corefunctions.h
+===================================================================
+--- a/src/kvirc/kvs/kvi_kvs_corefunctions.h
++++ b/src/kvirc/kvs/kvi_kvs_corefunctions.h
+@@ -67,6 +67,7 @@ namespace KviKvsCoreFunctions
+ 	KVSCF(countStatusBarItems);
+ 	KVSCF(cr);
+ 	KVSCF(date);
++	KVSCF(escape);
+ 	KVSCF(falseCKEYWORDWORKAROUND);
+ 	KVSCF(features);
+ 	KVSCF(firstConnectedConsole);
+Index: b/src/kvirc/kvs/kvi_kvs_corefunctions_af.cpp
+===================================================================
+--- a/src/kvirc/kvs/kvi_kvs_corefunctions_af.cpp
++++ b/src/kvirc/kvs/kvi_kvs_corefunctions_af.cpp
+@@ -39,6 +39,7 @@
+ #include "kvi_ircuserdb.h"
+ #include "kvi_frame.h"
+ #include "kvi_statusbar.h"
++#include "kvi_userinput.h"
+ 
+ // date includes
+ #include <QDateTime>
+@@ -996,6 +997,39 @@ namespace KviKvsCoreFunctions
+ 		return true;
+ 	}
+ 
++	/////////////////////////////////////////////////////////////////////////////////////////////
++
++	/*
++		@doc: escape
++		@type:
++			function
++		@title:
++			$escape
++		@short:
++			Returns a kvs-escaped version of the string
++		@syntax:
++			<string> $escape(<text:string>)
++		@description:
++			In KVS some characters in a string have special meanings: % marks the start of a variable name, $ the start of a function name, etc..[br]
++			Sometimes you could need to escape them using a \ character to avoid kvirc from interpreting the special meaning of these characters:
++			this function will to the dirty job for you, returning a correctly kvs-escaped version of the string passed as a parameter.[br]
++		@seealso:
++			[cmd]eval[/cmd]
++	*/
++
++	KVSCF(escape)
++	{
++		QString szData;
++		KVSCF_PARAMETERS_BEGIN
++			KVSCF_PARAMETER("text",KVS_PT_NONEMPTYSTRING,0,szData)
++		KVSCF_PARAMETERS_END
++
++		KviUserInput::escapeString(szData);
++
++		KVSCF_pRetBuffer->setString(szData);
++		return true;
++	}
++
+ 	/////////////////////////////////////////////////////////////////////////////////////////////
+ 
+ 	/*
+Index: b/src/kvirc/kvs/kvi_kvs_coresimplecommands_af.cpp
+===================================================================
+--- a/src/kvirc/kvs/kvi_kvs_coresimplecommands_af.cpp
++++ b/src/kvirc/kvs/kvi_kvs_coresimplecommands_af.cpp
+@@ -1390,6 +1390,8 @@ namespace KviKvsCoreSimpleCommands
+ 				[comment]# Evaluate a command block[/comment]
+ 				eval "{ echo First command!; echo Second command!; }"
+ 			[/example]
++		@seealso:
++			[fnc]$escape[/fnc]
+ 	*/
+ 
+ 	KVSCSC(eval)
