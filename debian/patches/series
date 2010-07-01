@@ -1,4 +1,5 @@
 01_correct_sources_date.patch
+02_upstream_fix_sound_selector_layout.patch
 05_xpmicon.patch
 10_fix_desktop_entry.patch
 20_rm_python_stub.patch

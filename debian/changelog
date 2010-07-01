@@ -6,8 +6,10 @@ kvirc (4:4.0.0-2) unstable; urgency=low
     occurrence was missed.
   * debian/control: Make kvirc conflict again with kvirc-dev, I actually
     missed a bullet point in section 7.4 of the policy.
+  * debian/patches/02_upstream_fix_sound_selector_layout.patch: Added, taken
+    from upstream's 4.0 branch (commit:4561).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 01 Jul 2010 14:48:39 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 01 Jul 2010 15:39:42 +0200
 
 kvirc (4:4.0.0-1) unstable; urgency=low
 
