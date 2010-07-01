@@ -13,8 +13,10 @@ kvirc (4:4.0.0-2) unstable; urgency=low
       upstream's 4.0 branch (commit:4561).
     - 03_upstream_fix-upstream-issue-#824.patch: Added, taken from upstream's
       4.0 branch (commit:4565).
+    - 04_upstream_fix-upstream-issue-#817.patch: Added, taken from upstream's
+      4.0 branch (commit:4569).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 01 Jul 2010 15:57:12 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 01 Jul 2010 16:04:01 +0200
 
 kvirc (4:4.0.0-1) unstable; urgency=low
 
