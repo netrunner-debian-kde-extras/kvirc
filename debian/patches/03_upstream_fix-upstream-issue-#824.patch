@@ -4,13 +4,13 @@ Last-Update: 2010-07-01
 ---
  data/defscript/aliases.kvs                      |    2 -
  data/defscript/popups.kvs                       |    4 +-
- src/kvirc/kernel/kvi_userinput.cpp              |   23 +++++++++-------
+ src/kvirc/kernel/kvi_userinput.cpp              |   24 ++++++++++------
  src/kvirc/kernel/kvi_userinput.h                |    7 ++++
  src/kvirc/kvs/kvi_kvs_corefunctions.cpp         |    1 
  src/kvirc/kvs/kvi_kvs_corefunctions.h           |    1 
  src/kvirc/kvs/kvi_kvs_corefunctions_af.cpp      |   34 ++++++++++++++++++++++++
  src/kvirc/kvs/kvi_kvs_coresimplecommands_af.cpp |    2 +
- 8 files changed, 62 insertions(+), 12 deletions(-)
+ 8 files changed, 63 insertions(+), 12 deletions(-)
 
 Index: b/data/defscript/aliases.kvs
 ===================================================================
@@ -68,7 +68,7 @@ Index: b/src/kvirc/kernel/kvi_userinput.cpp
  
  			KviKvsScript kvs(szContext.isEmpty() ? szUserFriendlyCommandlineContext : szContext,szCmd);
  			return (kvs.run(pWindow,0,0) != KviKvsScript::Error);
-@@ -161,4 +153,17 @@ namespace KviUserInput
+@@ -161,4 +153,18 @@ namespace KviUserInput
  			}
  		}
  	}
@@ -81,6 +81,7 @@ Index: b/src/kvirc/kernel/kvi_userinput.cpp
 +		szData.replace("$","\\$");
 +		szData.replace("%","\\%");
 +		szData.replace("(","\\(");
++        szData.replace(")","\\)");
 +		szData.replace(";","\\;");
 +		szData.replace("-","\\-");
 +		szData.replace("+","\\+");
