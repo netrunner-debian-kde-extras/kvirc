@@ -1,9 +1,9 @@
 kvirc (4:4.0.0-2) unstable; urgency=low
 
   * debian/copyright: Don't reference BSD license (Debian policy 12.5), one
-    occurence was missed.
+    occurrence was missed.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 01 Jul 2010 14:41:32 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 01 Jul 2010 14:44:02 +0200
 
 kvirc (4:4.0.0-1) unstable; urgency=low
 
