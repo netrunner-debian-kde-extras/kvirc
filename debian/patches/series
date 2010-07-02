@@ -1,3 +1,4 @@
+00_upstream_fix-object-module.patch
 01_upstream_correct_sources_date.patch
 02_upstream_fix_sound_selector_layout.patch
 03_upstream_fix-upstream-issue-#824.patch

@@ -1,0 +1,85 @@
+Subject: Fix the object module.
+Origin: upstream, https://svn.kvirc.de/kvirc/changeset/4575
+Last-Update: 2010-07-02
+---
+ src/modules/objects/class_tablewidget.cpp |   18 +-----------------
+ src/modules/objects/class_treewidget.cpp  |    6 +++---
+ src/modules/objects/class_treewidget.h    |    1 +
+ 3 files changed, 5 insertions(+), 20 deletions(-)
+
+Index: b/src/modules/objects/class_tablewidget.cpp
+===================================================================
+--- a/src/modules/objects/class_tablewidget.cpp
++++ b/src/modules/objects/class_tablewidget.cpp
+@@ -675,22 +675,6 @@ KVSO_CLASS_FUNCTION(tablewidget,cellDoub
+ 	emitSignal("cellDoubleClicked",c,c->params());
+ 	return true;
+ }
+-
+-KVSO_CLASS_FUNCTION(tablewidget,customContextMenuRequestedEvent)
+-{
+-	emitSignal("rightButtonClicked",c,c->params());
+-	emitSignal("customContextMenuRequested",c,c->params());
+-	return true;
+-}
+-
+-void KviKvsObject_tablewidget::slotCustomContextMenuRequested(const QPoint & pnt)
+-{
+-	KviKvsVariant *xpos=new KviKvsVariant((kvs_int_t)pnt.x());
+-	KviKvsVariant *ypos=new KviKvsVariant((kvs_int_t)pnt.y());
+-	KviKvsVariantList params(xpos,ypos);
+-	callFunction(this,"customContextMenuRequestedEvent",0,&params);
+-}
+-
+ bool KviKvsObject_tablewidget::paint(QPainter * p, const QStyleOptionViewItem & option, const QModelIndex & index)
+ {
+ 	p->save();
+@@ -731,7 +715,7 @@ void KviCellItemDelegate::paint(QPainter
+ QSize KviCellItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex & index) const
+ {
+ 	KviKvsVariant *sizeret=new KviKvsVariant();
+-	debug("sizehint cell");
++	//debug("sizehint cell");
+ 	KviKvsVariantList parameters(new KviKvsVariant((kvs_int_t) index.row()),new KviKvsVariant((kvs_int_t) index.column()));
+ 	m_pParentScript->callFunction(m_pParentScript,"sizeHintCellRequestEvent",sizeret,&parameters);
+ 	if (sizeret->isArray())
+Index: b/src/modules/objects/class_treewidget.cpp
+===================================================================
+--- a/src/modules/objects/class_treewidget.cpp
++++ b/src/modules/objects/class_treewidget.cpp
+@@ -65,7 +65,7 @@
+                 that items can be selected by the mouse actions: experiment with the two modes :).
+                 The NoSelection mode has obviously no selection at all.
+         @functions:
+-                !fn: $addColumn(<text_label:string> <width:unsigned integer>)
++		!fn: $addColumn(<text_label:string>,[<width:integer>])
+                 Adds a width pixels wide column with the column header label to the list view.
+ 
+                 !fn: $setSorting(<column:integer>,<sort_order:string>)
+@@ -318,12 +318,12 @@ KVSO_CLASS_FUNCTION(treewidget,addColumn
+ 	kvs_int_t iW;
+ 	KVSO_PARAMETERS_BEGIN(c)
+ 		KVSO_PARAMETER("label",KVS_PT_STRING,0,szLabel)
+-		KVSO_PARAMETER("width",KVS_PT_INT,0,iW)
++		KVSO_PARAMETER("width",KVS_PT_INT,KVS_PF_OPTIONAL,iW)
+ 	KVSO_PARAMETERS_END(c)
+ 	int col=((QTreeWidget *)widget())->columnCount();
+ 	QTreeWidgetItem *header=((QTreeWidget *)widget())->headerItem();
+ 	header->setText(col,szLabel);
+-	((QTreeWidget *)widget())->setColumnWidth(col,iW);
++	if(iW) ((QTreeWidget *)widget())->setColumnWidth(col,iW);
+ 	col++;
+ 	((QTreeWidget *)widget())->setColumnCount(col);
+ 	//col++;
+Index: b/src/modules/objects/class_treewidget.h
+===================================================================
+--- a/src/modules/objects/class_treewidget.h
++++ b/src/modules/objects/class_treewidget.h
+@@ -72,6 +72,7 @@ protected:
+         bool topLevelItem(KviKvsObjectFunctionCall *c);
+         bool topLevelItemCount(KviKvsObjectFunctionCall *c);
+ 	bool itemAt(KviKvsObjectFunctionCall *c);
++	// debug
+ protected slots:
+ 	void slotClicked(QTreeWidgetItem *,int);
+ 	void slotSelectionChanged();
