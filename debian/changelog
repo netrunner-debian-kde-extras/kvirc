@@ -2,10 +2,12 @@ kvirc (4:4.0.0-3) UNRELEASED; urgency=low
 
   The "Sliver Queen" release.
 
-  * debian/rules: Removed override_dh_strip and added --dbg-package to the
-    general dh invocation.
+  * debian/rules:
+    - Removed override_dh_strip and added --dbg-package to the general dh
+      invocation.
+    - Made dh_install run parallel aware.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 12 Jul 2010 18:08:36 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 12 Jul 2010 18:42:20 +0200
 
 kvirc (4:4.0.0-2) unstable; urgency=low
 
