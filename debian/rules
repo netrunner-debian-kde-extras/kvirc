@@ -17,11 +17,8 @@ override_dh_auto_configure:
 override_dh_install:
 	dh_install --list-missing -XCOPYING
 
-override_dh_strip:
-	dh_strip --dbg-package=kvirc-dbg
-
 %:
-	dh --parallel --with kde $@
+	dh --parallel --dbg-package=kvirc-dbg --with kde $@
 
 
 get-orig-source:
