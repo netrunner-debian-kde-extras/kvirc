@@ -1,4 +1,4 @@
-kvirc (4:4.0.0-3) UNRELEASED; urgency=low
+kvirc (4:4.0.0-3) UNRELEASED; urgency=high
 
   The "Sliver Queen" release.
 
@@ -6,8 +6,15 @@ kvirc (4:4.0.0-3) UNRELEASED; urgency=low
     - Removed override_dh_strip and added --dbg-package to the general dh
       invocation.
     - Made dh_install run parallel aware.
+  * debian/patches:
+    - Removed patches 00 through 04 and replaced them by a single patch
+      containing all upstream bug fixes to the 4.0 branch.
+    - Set urgency to high as one part of the new
+      00_upstream_patches_for_4.0.patch fixes a serious security flaw in the
+      DCC module (other, rather minor in comparison, security fixes are also
+      included).
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 12 Jul 2010 18:42:20 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 27 Jul 2010 15:13:28 +0200
 
 kvirc (4:4.0.0-2) unstable; urgency=low
 
