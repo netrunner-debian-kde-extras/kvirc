@@ -9,7 +9,7 @@ Uploaders: Raúl Sánchez Siles <rasasi78@gmail.com>,
  Kai Wasserbäch <debian@carbon-project.org>,
  Mark Purcell <msp@debian.org>
 DM-Upload-Allowed: yes
-Standards-Version: 3.9.0
+Standards-Version: 3.9.1
 Vcs-Hg: http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/
 Vcs-Browser: http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/
 Homepage: http://www.kvirc.de/

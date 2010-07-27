@@ -13,8 +13,10 @@ kvirc (4:4.0.0-3) UNRELEASED; urgency=high
       00_upstream_patches_for_4.0.patch fixes a serious security flaw in the
       DCC module (other, rather minor in comparison, security fixes are also
       included).
+  * debian/control: Bumped Standards-Version to 3.9.1, no further changes
+    needed.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 27 Jul 2010 15:13:28 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 27 Jul 2010 15:23:28 +0200
 
 kvirc (4:4.0.0-2) unstable; urgency=low
 
