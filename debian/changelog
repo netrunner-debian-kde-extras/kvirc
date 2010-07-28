@@ -1,12 +1,3 @@
-kvirc (4:4.0.0-4) UNRELEASED; urgency=low
-
-  * debian/kvirc.lintian-overrides: change kvirc: no-symbols-control-file to
-    the correct library file name.
-  * debian/copyright: Remove the overlooked complete GPLv1 and point to
-    common-licenses.
-
- -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 28 Jul 2010 13:57:14 +0200
-
 kvirc (4:4.0.0-3) unstable; urgency=high
 
   The "Sliver Queen" release.
@@ -22,10 +13,13 @@ kvirc (4:4.0.0-3) unstable; urgency=high
       00_upstream_patches_for_4.0.patch fixes a serious security flaw in the
       DCC module (other, rather minor in comparison, security fixes are also
       included).
-  * debian/control: Bumped Standards-Version to 3.9.1, no further changes
-    needed.
+  * debian/kvirc.lintian-overrides: change kvirc: no-symbols-control-file to
+    the correct library file name.
+  * debian/control: Bumped Standards-Version to 3.9.1, required change:
+    - debian/copyright: Remove the complete GPLv1 and point to
+      common-licenses.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Tue, 27 Jul 2010 15:40:25 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Wed, 28 Jul 2010 13:57:14 +0200
 
 kvirc (4:4.0.0-2) unstable; urgency=low
 
