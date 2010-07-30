@@ -2,6 +2,10 @@ kvirc (4:4.0.0-3) unstable; urgency=high
 
   The "Sliver Queen" release.
 
+  * Urgency high as 00_upstream_patches_for_4.0.patch fixes a serious security
+      flaw in the DCC module (other, rather minor in comparison, security
+      fixes are also included).  (Closes: #590745)
+      Upstream-Bug: <https://svn.kvirc.de/kvirc/ticket/858>
   * debian/rules:
     - Removed override_dh_strip and added --dbg-package to the general dh
       invocation.
@@ -9,10 +13,6 @@ kvirc (4:4.0.0-3) unstable; urgency=high
   * debian/patches:
     - Removed patches 00 through 04 and replaced them by a single patch
       containing all upstream bug fixes to the 4.0 branch.
-    - Set urgency to high as one part of the new
-      00_upstream_patches_for_4.0.patch fixes a serious security flaw in the
-      DCC module (other, rather minor in comparison, security fixes are also
-      included).
   * debian/kvirc.lintian-overrides: change kvirc: no-symbols-control-file to
     the correct library file name.
   * debian/control: Bumped Standards-Version to 3.9.1, required change:
