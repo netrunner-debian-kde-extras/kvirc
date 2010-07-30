@@ -1,3 +1,9 @@
+kvirc (4:4.0.0-4) UNRELEASED; urgency=low
+
+  * debian/source/options: Added to ensure BZip2 compression.
+
+ -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 30 Jul 2010 12:59:06 +0200
+
 kvirc (4:4.0.0-3) unstable; urgency=high
 
   The "Sliver Queen" release.
