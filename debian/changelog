@@ -1,5 +1,7 @@
 kvirc (4:4.0.0-4) UNRELEASED; urgency=low
 
+  The "Leyline of the Void" release
+
   * debian/source/options: Added to ensure BZip2 compression.
   * debian/watch: Use "latest" directory on FTP server.
 
