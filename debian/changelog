@@ -4,6 +4,11 @@ kvirc (4:4.0.0-4) UNRELEASED; urgency=low
 
   * debian/source/options: Added to ensure BZip2 compression.
   * debian/watch: Use "latest" directory on FTP server.
+  * debian/patches/00_upstream_patches_for_4.0.patch: Updated (up to
+    commit:4721). (Closes: #590932)
+  * debian/kvirc.lintian-overrides: Revert the change from -3 for now, as the
+    patch "00_upstream_patches_for_4.0.patch" was edited to keep in line with
+    Debian versioning.
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 30 Jul 2010 12:59:06 +0200
 

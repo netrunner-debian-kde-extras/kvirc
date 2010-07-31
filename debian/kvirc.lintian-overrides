@@ -2,6 +2,6 @@
 kvirc: menu-icon-missing /usr/share/pixmaps/kvirc32x32.xpm
 #Library just used for kvirc.
 kvirc: package-name-doesnt-match-sonames libkvilib4
-kvirc: no-symbols-control-file usr/lib/libkvilib.so.4.0.1
+kvirc: no-symbols-control-file usr/lib/libkvilib.so.4.0.0
 # false positive
 kvirc: spelling-error-in-binary ./usr/lib/kvirc/4.0/modules/libkvilanguage.so ment meant
