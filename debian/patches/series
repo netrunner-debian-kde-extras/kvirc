@@ -1,4 +1,3 @@
-00_upstream_patches_for_4.0.patch
 05_xpmicon.patch
 10_fix_desktop_entry.patch
 20_rm_python_stub.patch
