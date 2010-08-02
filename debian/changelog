@@ -8,8 +8,12 @@ kvirc (4:4.0.2-1) UNRELEASED; urgency=low
   * debian/source/options: Added to ensure BZip2 compression.
   * debian/watch: Use "latest" directory on FTP server.
   * debian/kvirc.lintian-overrides: Updated.
+  * Enable Python scripting support:
+    - debian/patches/20_rm_python_stub.patch: Deleted.
+    - debian/rules: Removed WITHOUT_PYTHON flag.
+    - debian/control: Added python-dev to Build-Depends.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 02 Aug 2010 15:35:12 +0200
+ -- Kai Wasserbäch <debian@carbon-project.org>  Fri, 02 Aug 2010 15:49:18 +0200
 
 kvirc (4:4.0.0-3) unstable; urgency=high
 
