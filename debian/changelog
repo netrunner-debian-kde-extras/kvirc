@@ -8,6 +8,12 @@ kvirc (4:4.1.1~svn5170-1) experimental; urgency=low
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 25 Nov 2010 13:13:42 +0100
 
+kvirc (4:4.0.2-2) unstable; urgency=low
+
+  * Stating the right version where kvirc-data break and replace should happen.
+
+ -- Raúl Sánchez Siles <rasasi78@gmail.com>  Sat, 07 Aug 2010 01:50:47 +0200
+
 kvirc (4:4.0.2-1) unstable; urgency=low
 
   The "Leyline of the Void" release
