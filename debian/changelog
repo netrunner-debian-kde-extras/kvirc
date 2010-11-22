@@ -1,3 +1,9 @@
+kvirc (4:4.1.1~svn5167-1) UNRELEASED; urgency=low
+
+  * Synced to upstream's SVN revision 5167.
+
+ -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 22 Nov 2010 21:08:45 +0100
+
 kvirc (4:4.0.2-1) unstable; urgency=low
 
   The "Leyline of the Void" release
