@@ -3,6 +3,7 @@ kvirc (4:4.1.1~svn5167-1) UNRELEASED; urgency=low
   The "Twisted Experiment" release.
 
   * Synced to upstream's SVN revision 5167.
+  * debian/source/local-options: Added with "unapply-patches".
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 22 Nov 2010 21:08:45 +0100
 
