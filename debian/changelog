@@ -4,6 +4,7 @@ kvirc (4:4.1.1~svn5168-1) UNRELEASED; urgency=low
 
   * Synced to upstream's SVN revision 5168.
   * debian/source/local-options: Added with "unapply-patches".
+  * debian/kvirc.lintian-overrides: Updated to work for 4.1.1.
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 22 Nov 2010 21:08:45 +0100
 
