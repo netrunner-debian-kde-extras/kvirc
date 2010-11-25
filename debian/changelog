@@ -1,4 +1,4 @@
-kvirc (4:4.1.1~svn5170-1) UNRELEASED; urgency=low
+kvirc (4:4.1.1~svn5170-1) experimental; urgency=low
 
   The "Twisted Experiment" release.
 
@@ -6,7 +6,7 @@ kvirc (4:4.1.1~svn5170-1) UNRELEASED; urgency=low
   * debian/source/local-options: Added with "unapply-patches".
   * debian/kvirc.lintian-overrides: Updated to work for 4.1.1.
 
- -- Kai Wasserbäch <debian@carbon-project.org>  Mon, 22 Nov 2010 21:08:45 +0100
+ -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 25 Nov 2010 13:13:42 +0100
 
 kvirc (4:4.0.2-1) unstable; urgency=low
 
