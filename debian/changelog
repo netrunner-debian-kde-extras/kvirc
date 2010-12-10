@@ -1,4 +1,4 @@
-kvirc (4:4.1.1~svn5170-1) experimental; urgency=low
+kvirc (4:4.1.1~svn5184-1) experimental; urgency=low
 
   [ Kai Wasserbäch ]
   The "Twisted Experiment" release.
@@ -10,7 +10,7 @@ kvirc (4:4.1.1~svn5170-1) experimental; urgency=low
   [ Raúl Sánchez Siles ]
   * Stating the right version where kvirc-data break and replace should happen.
 
- -- Raúl Sánchez Siles <rasasi78@gmail.com>  Fri, 10 Dec 2010 20:55:11 +0100
+ -- Raúl Sánchez Siles <rasasi78@gmail.com>  Fri, 10 Dec 2010 22:02:27 +0100
 
 kvirc (4:4.0.2-1) unstable; urgency=low
 
