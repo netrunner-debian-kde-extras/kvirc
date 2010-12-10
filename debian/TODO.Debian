@@ -15,3 +15,4 @@ What the maintainers should attend to (in their opinion):
 * Check this point for policy 3.8.1 update:
   - The maintainer name and email address used in the changelog should be the 
     details of the person uploading this version.
+* Remove 05_xpmicon patch. Place the xpm in the debian dir and install it somehow.
