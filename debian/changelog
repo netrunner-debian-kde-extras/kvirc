@@ -3,7 +3,7 @@ kvirc (4:4.1.1~svn5184-1) experimental; urgency=low
   [ Kai Wasserbäch ]
   The "Twisted Experiment" release.
 
-  * Synced to upstream's SVN revision 5170.
+  * Synced to upstream's SVN revision 5184.
   * debian/source/local-options: Added with "unapply-patches".
   * debian/kvirc.lintian-overrides: Updated to work for 4.1.1.
 
@@ -11,7 +11,7 @@ kvirc (4:4.1.1~svn5184-1) experimental; urgency=low
   * Stating the right version where kvirc-data break and replace should happen.
   * Fixing link to license file.
 
- -- Raúl Sánchez Siles <rasasi78@gmail.com>  Sun, 12 Dec 2010 19:54:54 +0100
+ -- Raúl Sánchez Siles <rasasi78@gmail.com>  Sun, 12 Dec 2010 20:12:55 +0100
 
 kvirc (4:4.0.2-1) unstable; urgency=low
 
