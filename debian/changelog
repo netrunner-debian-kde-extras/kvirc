@@ -1,7 +1,8 @@
 kvirc (4:4.1.1~svn5184-1) experimental; urgency=low
 
-  [ Kai Wasserbäch ]
   The "Twisted Experiment" release.
+
+  [ Kai Wasserbäch ]
 
   * Synced to upstream's SVN revision 5184.
   * debian/source/local-options: Added with "unapply-patches".
@@ -12,7 +13,7 @@ kvirc (4:4.1.1~svn5184-1) experimental; urgency=low
   * Fixing link to license file.
   * Added French and Portuguese man pages.
 
- -- Raúl Sánchez Siles <rasasi78@gmail.com>  Mon, 13 Dec 2010 08:10:09 +0100
+ -- Raúl Sánchez Siles <rasasi78@gmail.com>  Mon, 13 Dec 2010 08:11:16 +0100
 
 kvirc (4:4.0.2-1) unstable; urgency=low
 
