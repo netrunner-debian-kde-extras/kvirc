@@ -10,8 +10,9 @@ kvirc (4:4.1.1~svn5184-1) experimental; urgency=low
   [ Raúl Sánchez Siles ]
   * Stating the right version where kvirc-data break and replace should happen.
   * Fixing link to license file.
+  * Added French and Portuguese man pages.
 
- -- Raúl Sánchez Siles <rasasi78@gmail.com>  Sun, 12 Dec 2010 20:12:55 +0100
+ -- Raúl Sánchez Siles <rasasi78@gmail.com>  Mon, 13 Dec 2010 08:10:09 +0100
 
 kvirc (4:4.0.2-1) unstable; urgency=low
 
