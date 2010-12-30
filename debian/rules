@@ -33,3 +33,4 @@ get-orig-source:
 	@@rm -rf ../tarballs/kvirc-$(REV).tmp
 	@@echo Ready for packaging.
 
+.PHONY: override_dh_auto_configure override_dh_install get-orig-source
