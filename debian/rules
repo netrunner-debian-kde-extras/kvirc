@@ -12,7 +12,8 @@ override_dh_auto_configure:
 			-DWITH_NO_EMBEDDED_CODE=YES -DWITHOUT_STRIP=ON \
 			-DCMAKE_SHARED_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
 			-DCMAKE_MODULE_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
-			-DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed"
+			-DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
+			-DMANUAL_REVISION=5184
 
 override_dh_install:
 	dh_install --parallel --list-missing -XCOPYING
