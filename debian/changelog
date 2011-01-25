@@ -6,7 +6,9 @@ kvirc (4:4.1.1~svn5184-2) UNRELEASED; urgency=low
     - Added .PHONY line.
     - Resurrect -DMANUAL_REVISION, got lost somewhere and we build SVN
       revisions again.
-  * debian/control: Removed DMUA, I'm a DD now.
+  * debian/control:
+    - Removed DMUA, I'm a DD now.
+    - Changed my e-mail address.
 
  -- Kai Wasserbäch <debian@carbon-project.org>  Thu, 30 Dec 2010 15:46:59 +0100
 
