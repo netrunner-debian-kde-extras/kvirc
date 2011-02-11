@@ -8,6 +8,7 @@ kvirc (4:4.1.1~svn5463-1) UNRELEASED; urgency=low
     - Added .PHONY line.
     - Resurrect -DMANUAL_REVISION, got lost somewhere and we build SVN
       revisions again.
+    - Replace "-DWITH_NO_EMBEDDED_CODE=YES" with "-DWANT_CRYPTOPP=YES".
   * debian/control:
     - Removed DMUA, I'm a DD now.
     - Changed my e-mail address.
