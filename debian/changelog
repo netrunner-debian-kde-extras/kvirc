@@ -18,6 +18,7 @@ kvirc (4:4.1.1~svn5463-1) UNRELEASED; urgency=low
       sense to install the -data package without the program.
   * debian/source/local-options: Added with "unapply-patches".
   * debian/kvirc.lintian-overrides: Updated to work for 4.1.1.
+  * debian/patches/21_make_shared-mime-info_B-D_superfluous.patch: Updated.
 
   [ Raúl Sánchez Siles ]
   * Stating the right version where kvirc-data break and replace should happen.
