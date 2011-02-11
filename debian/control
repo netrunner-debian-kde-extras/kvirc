@@ -16,9 +16,6 @@ Homepage: http://www.kvirc.de/
 Package: kvirc
 Architecture: any
 Depends: kvirc-data (= ${source:Version}), ${shlibs:Depends}, ${misc:Depends}
-Replaces: kvirc-data (<< 4:4.0.0-1)
-Breaks: kvirc-data (<< 4:4.0.0-1)
-Conflicts: kvirc-dev
 Suggests: kvirc-dbg (= ${source:Version})
 Description: KDE-based next generation IRC client with module support
  A highly configurable graphical IRC client with an MDI interface,
@@ -54,5 +51,3 @@ Description: KVIrc (IRC client) debugging symbols
  custom plugins.
  .
  This package is intended to help debugging possible problems with KVIrc.
-
-
