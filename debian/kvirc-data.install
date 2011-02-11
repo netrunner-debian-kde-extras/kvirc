@@ -10,5 +10,6 @@ usr/share/kvirc/*/msgcolors/
 usr/share/kvirc/*/pics/
 usr/share/kvirc/*/themes/
 usr/share/mime/packages/kvirc.xml
+usr/share/kde4/apps/kvirc/kvirc.notifyrc
 usr/share/kvirc/*/audio/
 data/protocols/*.protocol usr/share/services
