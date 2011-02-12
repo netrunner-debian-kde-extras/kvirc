@@ -1,9 +1,9 @@
-kvirc (4:4.1.1~svn5463-1) UNRELEASED; urgency=low
+kvirc (4:4.1.1~svn5467-1) unstable; urgency=low
 
   The combined "Twisted Experiment" and "Nocturnal Raid" release.
 
   [ Kai Wasserbäch ]
-  * Synced to upstream's SVN revision 5463.
+  * Synced to upstream's SVN revision 5467.
   * debian/rules:
     - Added .PHONY line.
     - Resurrect -DMANUAL_REVISION, got lost somewhere and we build SVN
@@ -28,7 +28,7 @@ kvirc (4:4.1.1~svn5463-1) UNRELEASED; urgency=low
   * Fixing link to license file.
   * Added French and Portuguese man pages.
 
- -- Raúl Sánchez Siles <rasasi78@gmail.com>  Mon, 13 Dec 2010 08:11:16 +0100
+ -- Kai Wasserbäch <curan@debian.org>  Sat, 12 Feb 2011 10:40:21 +0100
 
 kvirc (4:4.0.2-1) unstable; urgency=low
 
