@@ -1,12 +1,6 @@
 kvirc for Debian
 ================
 
-    Python support
-    **************
-    Python support is disabled in the Debian builds due to the experimental
-    state of the implementation.
- -- Kai Wasserbäch <debian@carbon-project.org>  Sun, 31 Jan 2010 19:52:56 +0100
-
     A word on upgrading from KVIrc 3.x to KVIrc 4.x
     ***********************************************
     The default configuration directory of KVIrc 3.x is <file://$HOME/.kvirc>.
