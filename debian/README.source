@@ -5,11 +5,11 @@ revision as given by debian/changelog (the version string).
 --
 
 If you want to build latest development versions, both kvirc upstream and debian
-packaging, follow this instructions:
+packaging, follow these instructions:
 0- export KVIRC_REV=$(svn info https://svn.kvirc.de/svn/trunk/kvirc 2>/dev/null | grep -m 1 Rev | cut -d" " -f2)
-1- svn export https://svn.kvirc.de/svn/trunk/kvirc kvirc-4.0~svn$KVIRC_REV
-2- tar cvfj kvirc_4.0~svn$KVIRC_REV.orig.tar.bz2 kvirc-4.0~svn$KVIRC_REV/ --exclude '*.svnignore'
-3- cd kvirc-4.0~svn$KVIRC_REV
+1- svn export https://svn.kvirc.de/svn/trunk/kvirc kvirc-4.1.1~svn$KVIRC_REV
+2- tar cvfj kvirc_4.1.1~svn$KVIRC_REV.orig.tar.bz2 kvirc-4.1.1~svn$KVIRC_REV/ --exclude '*.svnignore'
+3- cd kvirc-4.1.1~svn$KVIRC_REV
 4- wget http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/archive/tip.tar.gz -O -|tar xvz --strip 1
 5- Edit debian/rules and debian/changelog (create a new changelog entry for the
    latest SVN revision and adjust the manually set SVN revision in
