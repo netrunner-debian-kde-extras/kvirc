@@ -1,16 +1,6 @@
 kvirc for Debian
 ================
 
-    A word on upgrading from KVIrc 3.x to KVIrc 4.x
-    ***********************************************
-    The default configuration directory of KVIrc 3.x is <file://$HOME/.kvirc>.
-    It might happen on the first startup of KVIrc 4, that you're asked where to
-    store your configuration. In this case you can safely select the old
-    configurtion directory to use your old settings. Any warnings, that this is
-    not a KVIrc dirctory can be ignored. No dataloss has been reported so far.
-    If you want to be on the safe side: make a backup.
-
-
     Embedded Perl
     *************
     The embedded Perl interpreter works again and uses PERL_SYS_INIT3(). It was
@@ -20,6 +10,7 @@ kvirc for Debian
             KVIrc::echo("Hello world\n");
         perl.end
  -- Kai Wasserbäch <curan@debian.org>  Tue, 02 Jun 2009 18:35:25 +0200
+
 
     Default Script Issues
     *********************
