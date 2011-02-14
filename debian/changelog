@@ -5,7 +5,9 @@ kvirc (4:4.1.1~svn5467-2) UNRELEASED; urgency=low
   * debian/kvirc-data.preinst: Removed. Upgrades from stable won't need it.
   * debian/watch: Replace the "latest" part with "([\d\.]+)" to make us
     independent of the upstream symlink.
-  * debian/README.Debian: Removed obsolete part about Python.
+  * debian/README.Debian:
+    - Removed obsolete part about Python.
+    - Added notice about handling default script issues.
 
  -- Kai Wasserbäch <curan@debian.org>  Sun, 13 Feb 2011 20:18:34 +0100
 
