@@ -9,6 +9,7 @@ kvirc (4:4.1.1~svn5467-2) UNRELEASED; urgency=low
     - Removed obsolete parts about Python and upgrades from 3.4.
     - Added notice about handling default script issues.
   * debian/README.source: Updated for 4.1.1.
+  * debian/{compat,control,rules}: Updates for debhelper 8.
 
  -- Kai Wasserbäch <curan@debian.org>  Sun, 13 Feb 2011 20:18:34 +0100
 

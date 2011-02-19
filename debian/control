@@ -1,5 +1,5 @@
 Source: kvirc
-Build-Depends: debhelper (>= 7.3.16), cmake, kdelibs5-dev, libperl-dev,
+Build-Depends: debhelper (>= 8), cmake, kdelibs5-dev, libperl-dev,
  pkg-kde-tools (>= 0.9), zlib1g-dev, libx11-dev, libxrender-dev, libssl-dev,
  libqt4-dev (>= 4.5.0), libcrypto++-dev, pkg-config, libxss-dev, python-dev
 Section: net
