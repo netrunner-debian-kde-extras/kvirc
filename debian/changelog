@@ -2,6 +2,9 @@ kvirc (4:4.1.1~svn5507-2) UNRELEASED; urgency=low
 
   The "Sigil of Sleep" release.
 
+  * debian/control: Remove version constraint on pkg-kde-tools B-D (oldest
+    version in the archives is >=0.9).
+
  -- Kai Wasserbäch <curan@debian.org>  Wed, 23 Feb 2011 21:21:29 +0100
 
 kvirc (4:4.1.1~svn5507-1) unstable; urgency=low
