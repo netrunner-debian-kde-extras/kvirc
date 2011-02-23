@@ -4,6 +4,8 @@ kvirc (4:4.1.1~svn5507-2) UNRELEASED; urgency=low
 
   * debian/control: Remove version constraint on pkg-kde-tools B-D (oldest
     version in the archives is >=0.9).
+  * debian/kvirc-data.links: Added symlink for usr/share/pixmaps/kvirc.png, as
+    it is the same as the 48x48 hicolor icon.
 
  -- Kai Wasserbäch <curan@debian.org>  Wed, 23 Feb 2011 21:21:29 +0100
 
