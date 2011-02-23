@@ -6,6 +6,17 @@ DEBVERSION = $(shell head -n 1 debian/changelog | sed -e 's/^[^(]*(\([^)]*\)).*/
 UPVERSION = $(shell echo $(DEBVERSION) | sed -r -e 's/^.*://' -e 's/-[0-9.]*(\+b[0-9])?$$//' -e 's/.dfsg[0-9]*$$//')
 REV = $(shell echo $(UPVERSION) | sed -e 's/^.*svn//' -e 's/\+rc[0-9]$$//')
 
+# We don't install all files upstream wants to. Those files get added to
+# the following variable which gives us a cleaner buildd output (idea taken
+# from the mesa package).
+NOT_INSTALLED := \
+				usr/lib/libkvilib.so \
+				usr/bin/kvirc-config \
+				usr/share/kvirc/4.1/license/LICENSE-GPLV2 \
+				usr/share/kvirc/4.1/license/LICENSE-GPLV3 \
+				usr/share/kvirc/4.1/license/LICENSE-OPENSSL \
+				usr/share/pixmaps/kvirc.png # this one is installed by a symlink
+
 override_dh_auto_configure:
 	dh_auto_configure -Skde -- -DWANT_COEXISTANCE=OFF \
 			-DWANT_ESD=OFF -DWANT_OSS=OFF \
@@ -16,7 +27,8 @@ override_dh_auto_configure:
 			-DMANUAL_REVISION=$(REV)
 
 override_dh_install:
-	dh_install --list-missing -XCOPYING
+	set -e; for file in $(NOT_INSTALLED); do rm debian/tmp/$$file; done
+	dh_install --fail-missing -XCOPYING
 
 %:
 	dh $@ --parallel --dbg-package=kvirc-dbg --with kde
