@@ -1,7 +1,8 @@
-kvirc (4:4.1.1~svn5467-2) UNRELEASED; urgency=low
+kvirc (4:4.1.1~svn5507-1) UNRELEASED; urgency=low
 
   The "Cunning Advisor" release.
 
+  * Synced to upstream's SVN revision 5507.
   * debian/kvirc-data.preinst: Removed. Upgrades from stable won't need it.
   * debian/watch: Replace the "latest" part with "([\d\.]+)" to make us
     independent of the upstream symlink.
