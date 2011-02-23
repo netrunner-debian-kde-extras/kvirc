@@ -6,6 +6,9 @@ kvirc (4:4.1.1~svn5507-2) UNRELEASED; urgency=low
     version in the archives is >=0.9).
   * debian/kvirc-data.links: Added symlink for usr/share/pixmaps/kvirc.png, as
     it is the same as the 48x48 hicolor icon.
+  * debian/kvirc.install: Added the man pages, as upstream installs them in
+    the correct places now, our dh_installman hack isn't needed anymore.
+  * debian/kvirc.manpages: Deleted (see above).
 
  -- Kai Wasserbäch <curan@debian.org>  Wed, 23 Feb 2011 21:21:29 +0100
 
