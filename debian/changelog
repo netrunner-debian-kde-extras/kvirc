@@ -1,3 +1,9 @@
+kvirc (4:4.0.2-2) stable-proposed-updates; urgency=low
+
+  * debian/control: Switched Vcs-* links to our new Git.
+
+ -- Kai Wasserbäch <curan@debian.org>  Thu, 24 Feb 2011 18:45:28 +0100
+
 kvirc (4:4.0.2-1) unstable; urgency=low
 
   The "Leyline of the Void" release

@@ -10,8 +10,8 @@ Uploaders: Raúl Sánchez Siles <rasasi78@gmail.com>,
  Mark Purcell <msp@debian.org>
 DM-Upload-Allowed: yes
 Standards-Version: 3.9.1
-Vcs-Hg: http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/
-Vcs-Browser: http://hg.debian.org/hg/pkg-kde/kde-extras/kvirc/
+Vcs-Git: git://git.debian.org/pkg-kde/kde-extras/kvirc.git
+Vcs-Browser: http://git.debian.org/?p=pkg-kde/kde-extras/kvirc.git
 Homepage: http://www.kvirc.de/
 
 Package: kvirc
