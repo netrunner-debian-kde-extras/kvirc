@@ -5,9 +5,9 @@
 //   File : libkvispaste.h
 //   Creation date : Thu Dec 27 2002 17:13:12 GMT by Juanjo Álvarez
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2002 Juanjo Álvarez (juanjux@yahoo.es)
-//   Copyright (C) 2002-2008 Szymon Stefanek (kvirc@tin.it)
+//   Copyright (C) 2002-2010 Szymon Stefanek (kvirc@tin.it)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 //
 //=============================================================================
 
-#include "kvi_window.h"
+#include "KviWindow.h"
 
 typedef struct _SPasteThreadData {
 	QString   * strData;

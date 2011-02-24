@@ -2,7 +2,7 @@
 
 #################################################################################
 #
-# Generator for instances.h and instances.cpp
+# Generator for OptionsInstanceManager.h and OptionsInstanceManager.cpp
 #
 # This file is part of the KVirc irc client distribution
 # Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
@@ -10,17 +10,17 @@
 #################################################################################
 
 
-echo "" > instances.h
+echo "" > OptionsInstanceManager.h
 
 #################################################################################
-cat >> instances.h <<EOF
+cat >> OptionsInstanceManager.h <<EOF
 
 #ifndef __OPTIONS_INSTANCES_H__
 #define __OPTIONS_INSTANCES_H__
 
 //=============================================================================
 //
-//   File : instances.h
+//   File : OptionsInstanceManager.h
 //
 //   This file is part of the KVirc irc client distribution
 //   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
@@ -48,50 +48,51 @@ cat >> instances.h <<EOF
 // so any change should go in that script
 //
 
-#include "kvi_optionswidget.h"
-#include "kvi_module.h"
-#include "kvi_pointerlist.h"
-#include "kvi_qstring.h"
+#include "KviOptionsWidget.h"
+#include "KviModule.h"
+#include "KviPointerList.h"
+#include "KviQString.h"
+#include "KviIconManager.h"
 
-typedef struct _KviOptionsWidgetInstanceEntry KviOptionsWidgetInstanceEntry;
+typedef struct _OptionsWidgetInstanceEntry OptionsWidgetInstanceEntry;
 
 
-typedef struct _KviOptionsWidgetInstanceEntry
+typedef struct _OptionsWidgetInstanceEntry
 {
-	KviOptionsWidget                          * (*createProc)(QWidget *);
-	KviOptionsWidget                          * pWidget;   // singleton
-	int                                         iIcon;
-	QString                                     szName;
-	QString                                     szNameNoLocale;
-	const char                                * szClassName;
-	int                                         iPriority;
-	QString                                     szKeywords;
-	QString                                     szKeywordsNoLocale;
-	QString                                     szGroup;
-	bool                                        bIsContainer;
-	bool                                        bIsNotContained;
-	KviPointerList<KviOptionsWidgetInstanceEntry> * pChildList;
-	bool                                        bDoInsert; // a helper for KviOptionsDialog::fillListView()
-} KviOptionsWidgetInstanceEntry;
+	KviOptionsWidget                           * (*createProc)(QWidget *);
+	KviOptionsWidget                           * pWidget;   // singleton
+	KviIconManager::SmallIcon                    eIcon;
+	QString                                      szName;
+	QString                                      szNameNoLocale;
+	const char                                 * szClassName;
+	int                                          iPriority;
+	QString                                      szKeywords;
+	QString                                      szKeywordsNoLocale;
+	QString                                      szGroup;
+	bool                                         bIsContainer;
+	bool                                         bIsNotContained;
+	KviPointerList<OptionsWidgetInstanceEntry> * pChildList;
+	bool                                         bDoInsert; // a helper for OptionsDialog::fillListView()
+} OptionsWidgetInstanceEntry;
 
 
-class KviOptionsInstanceManager : public QObject
+class OptionsInstanceManager : public QObject
 {
 	Q_OBJECT
 public:
-	KviOptionsInstanceManager();
-	virtual ~KviOptionsInstanceManager();
+	OptionsInstanceManager();
+	virtual ~OptionsInstanceManager();
 protected:
-	KviPointerList<KviOptionsWidgetInstanceEntry> *  m_pInstanceTree;
+	KviPointerList<OptionsWidgetInstanceEntry> * m_pInstanceTree;
 public:
-	KviPointerList<KviOptionsWidgetInstanceEntry> * instanceEntryTree(){ return m_pInstanceTree; };
-	KviOptionsWidget * getInstance(KviOptionsWidgetInstanceEntry * e,QWidget * par);
-	KviOptionsWidgetInstanceEntry * findInstanceEntry(const char * clName);
-	void cleanup(KviModule * m);
+	KviPointerList<OptionsWidgetInstanceEntry> * instanceEntryTree(){ return m_pInstanceTree; };
+	KviOptionsWidget * getInstance(OptionsWidgetInstanceEntry * pEntry, QWidget * pPar);
+	OptionsWidgetInstanceEntry * findInstanceEntry(const char * pcName);
+	void cleanup(KviModule *);
 protected:
-	KviOptionsWidgetInstanceEntry * findInstanceEntry(const char * clName,KviPointerList<KviOptionsWidgetInstanceEntry> * l);
-	KviOptionsWidgetInstanceEntry * findInstanceEntry(const QObject * ptr,KviPointerList<KviOptionsWidgetInstanceEntry> * l);
-	void deleteInstanceTree(KviPointerList<KviOptionsWidgetInstanceEntry> * l);
+	OptionsWidgetInstanceEntry * findInstanceEntry(const char * pcName, KviPointerList<OptionsWidgetInstanceEntry> * pList);
+	OptionsWidgetInstanceEntry * findInstanceEntry(const QObject * pObj, KviPointerList<OptionsWidgetInstanceEntry> * pList);
+	void deleteInstanceTree(KviPointerList<OptionsWidgetInstanceEntry> * pList);
 protected slots:
 	void widgetDestroyed();
 };
@@ -101,19 +102,19 @@ protected slots:
 EOF
 ######################################################################################################
 
-CLASS_LIST=`grep -h "[ ]*\:[ ]*public[ ]*KviOptionsWidget" optw_*.h | sed -e 's/[ ]*\:[ ]*public[ ]*KviOptionsWidget'//g | sed -e 's/[ 	]*class[ ]*//g'`
+CLASS_LIST=`grep -h "[ ]*\:[ ]*public[ ]*KviOptionsWidget" OptionsWidget_*.h | sed -e 's/[ ]*\:[ ]*public[ ]*KviOptionsWidget'//g | sed -e 's/[ 	]*class[ ]*//g'`
 
 
-TARGET="instances.cpp"
+TARGET="OptionsInstanceManager.cpp"
 
 echo "" > $TARGET
 
 #################################################################################
-cat >> instances.cpp <<EOF
+cat >> OptionsInstanceManager.cpp <<EOF
 
 //=============================================================================
 //
-//   File : instances.cpp
+//   File : OptionsInstanceManager.cpp
 //
 //   This file is part of the KVirc irc client distribution
 //   Copyright (C) 2001-2008 Szymon Stefanek (stefanek@tin.it)
@@ -145,16 +146,15 @@ EOF
 #################################################################################
 
 
-for afile in optw_*.h; do
+for afile in OptionsWidget_*.h; do
 	echo "#include \"$afile\"" >> $TARGET
 done
 
 #################################################################################
-cat >> instances.cpp <<EOF
+cat >> OptionsInstanceManager.cpp <<EOF
 
-#include "kvi_locale.h"
-#include "kvi_iconmanager.h"
-#include "instances.h"
+#include "KviLocale.h"
+#include "OptionsInstanceManager.h"
 
 int g_iOptionWidgetInstances = 0;
 
@@ -172,7 +172,7 @@ for aclass in $CLASS_LIST; do
 done
 
 #################################################################################
-cat >> instances.cpp <<EOF
+cat >> OptionsInstanceManager.cpp <<EOF
 
 
 EOF
@@ -184,15 +184,15 @@ for aclass in $CLASS_LIST; do
 done
 
 #################################################################################
-cat >> instances.cpp <<EOF
+cat >> OptionsInstanceManager.cpp <<EOF
 
-KviOptionsInstanceManager::KviOptionsInstanceManager()
+OptionsInstanceManager::OptionsInstanceManager()
 : QObject(0)
 {
 
-	//debug("Instantiating");
-	// Create the global widget dict : case sensitive , do not copy keys
-	m_pInstanceTree = new KviPointerList<KviOptionsWidgetInstanceEntry>;
+	//qDebug("Instantiating");
+	// Create the global widget dict : case sensitive, do not copy keys
+	m_pInstanceTree = new KviPointerList<OptionsWidgetInstanceEntry>;
 	m_pInstanceTree->setAutoDelete(true);
 
 EOF
@@ -205,7 +205,7 @@ mkdir -p $CLASSDIR
 rm -f $CLASSDIR/*
 
 for aclass in $CLASS_LIST; do
-	PARENT=`grep -h "KVI_OPTIONS_WIDGET_PARENT_$aclass" optw_*.h | sed -e 's/#define//g' | sed -e s/KVI_OPTIONS_WIDGET_PARENT_$aclass//g | sed -e 's/[ ]*//g'`
+	PARENT=`grep -h "KVI_OPTIONS_WIDGET_PARENT_$aclass " OptionsWidget_*.h | sed -e 's/#define//g' | sed -e s/KVI_OPTIONS_WIDGET_PARENT_$aclass//g | sed -e 's/[ ]*//g'`
 	if [ -z "$PARENT" ]; then
 		PARENT="NOPARENT"
 	fi
@@ -225,15 +225,15 @@ printclass()
 		fi
 	done
 	if [ -z "$found" ]; then
-		echo "$3	KviOptionsWidgetInstanceEntry * e$1;" >> $TARGET
+		echo "$3	OptionsWidgetInstanceEntry * e$1;" >> $TARGET
 		DECLARED="$DECLARED $1"
 	fi
-	echo "$3	e$1 = new KviOptionsWidgetInstanceEntry;"  >> $TARGET
+	echo "$3	e$1 = new OptionsWidgetInstanceEntry;"  >> $TARGET
 	echo -n "$3	e$1->createProc = &class$2"  >> $TARGET
 		echo "_createInstanceProc;"  >> $TARGET
 	echo "$3	e$1->pWidget = 0;" >> $TARGET
 	echo "$3	e$1->szClassName = g_szClassName_$2;" >> $TARGET
-	echo "$3	e$1->iIcon = KVI_OPTIONS_WIDGET_ICON_$2;" >> $TARGET
+	echo "$3	e$1->eIcon = KVI_OPTIONS_WIDGET_ICON_$2;" >> $TARGET
 
 	echo "$3	#ifdef KVI_OPTIONS_WIDGET_PRIORITY_$2" >> $TARGET
 	echo "$3	e$1->iPriority = KVI_OPTIONS_WIDGET_PRIORITY_$2;" >> $TARGET
@@ -242,9 +242,11 @@ printclass()
 	echo "$3	#endif" >> $TARGET
 
 	echo "$3	#ifdef KVI_OPTIONS_WIDGET_KEYWORDS_$2" >> $TARGET
-	echo "$3	e$1->szKeywordsNoLocale = KVI_OPTIONS_WIDGET_KEYWORDS_$2;" >> $TARGET
-	echo "$3	e$1->szKeywords = __tr2qs_ctx_no_xgettext(e$1->szKeywordsNoLocale.toUtf8().data(),\"options\");;" >> $TARGET
+	echo "$3	e$1->szKeywordsNoLocale = KVI_OPTIONS_WIDGET_NAME_$2\",\"KVI_OPTIONS_WIDGET_KEYWORDS_$2;" >> $TARGET
+	echo "$3	#else" >> $TARGET
+	echo "$3	e$1->szKeywordsNoLocale = KVI_OPTIONS_WIDGET_NAME_$2;" >> $TARGET
 	echo "$3	#endif" >> $TARGET
+	echo "$3	e$1->szKeywords = __tr2qs_ctx_no_xgettext(e$1->szKeywordsNoLocale.toUtf8().data(),\"options\");;" >> $TARGET
 
 	echo "$3	#ifdef KVI_OPTIONS_WIDGET_GROUP_$2" >> $TARGET
 	echo "$3	e$1->szGroup = KVI_OPTIONS_WIDGET_GROUP_$2;" >> $TARGET
@@ -283,7 +285,7 @@ addchildren()
 			printclass $1 $achild "$3"
 			if [ -f "$CLASSDIR/$achild" ]; then
 				echo "" >> $TARGET
-				echo "$3	e$1->pChildList = new KviPointerList<KviOptionsWidgetInstanceEntry>;" >> $TARGET
+				echo "$3	e$1->pChildList = new KviPointerList<OptionsWidgetInstanceEntry>;" >> $TARGET
 				echo "$3	e$1->pChildList->setAutoDelete(true);" >> $TARGET
 				NEXTLEVEL=`expr $1 + 1`
 				addchildren $NEXTLEVEL $achild "$3	"
@@ -304,141 +306,168 @@ cat >> $TARGET <<EOF
 
 }
 
-void KviOptionsInstanceManager::deleteInstanceTree(KviPointerList<KviOptionsWidgetInstanceEntry> * l)
+void OptionsInstanceManager::deleteInstanceTree(KviPointerList<OptionsWidgetInstanceEntry> * pList)
 {
-	if(l)
+	if(pList)
 	{
-		for(KviOptionsWidgetInstanceEntry * e = l->first();e;e = l->next())
+		for(OptionsWidgetInstanceEntry * pEntry = pList->first(); pEntry; pEntry = pList->next())
 		{
-			if(e->pWidget)
+			if(pEntry->pWidget)
 			{
-				if(e->pWidget->parent()->inherits("KviOptionsWidgetContainer"))
+				if(pEntry->pWidget->parent()->inherits("OptionsWidgetContainer"))
 				{
-					disconnect(e->pWidget,SIGNAL(destroyed()),this,SLOT(widgetDestroyed()));
-					delete e->pWidget->parent();
-					e->pWidget =  0;
+					disconnect(pEntry->pWidget,SIGNAL(destroyed()),this,SLOT(widgetDestroyed()));
+					delete pEntry->pWidget->parent();
+					pEntry->pWidget =  0;
 				} else {
-					debug("Ops...i have deleted the options dialog ?");
+					qDebug("Ops...i have deleted the options dialog ?");
 				}
-			} //else debug("Clas %s has no widget",e->szName);
-			if(e->pChildList)deleteInstanceTree(e->pChildList);
+			} //else qDebug("Clas %s has no widget",e->szName);
+			if(pEntry->pChildList)
+				deleteInstanceTree(pEntry->pChildList);
 		}
-		delete l;
+		delete pList;
 	}
 }
 
-
-KviOptionsInstanceManager::~KviOptionsInstanceManager()
+OptionsInstanceManager::~OptionsInstanceManager()
 {
-	if(m_pInstanceTree)debug("Ops...KviOptionsInstanceManager::cleanup() not called ?");
+	if(m_pInstanceTree)
+		qDebug("Ops...OptionsInstanceManager::cleanup() not called ?");
 }
 
-void KviOptionsInstanceManager::cleanup(KviModule *)
+void OptionsInstanceManager::cleanup(KviModule *)
 {
 	deleteInstanceTree(m_pInstanceTree);
 	m_pInstanceTree = 0;
 }
 
-void KviOptionsInstanceManager::widgetDestroyed()
+void OptionsInstanceManager::widgetDestroyed()
 {
-	KviOptionsWidgetInstanceEntry * e = findInstanceEntry(sender(),m_pInstanceTree);
-	if(e)e->pWidget = 0;
-	if(g_iOptionWidgetInstances > 0)g_iOptionWidgetInstances--;
+	OptionsWidgetInstanceEntry * pEntry = findInstanceEntry(sender(),m_pInstanceTree);
+	if(pEntry)
+		pEntry->pWidget = 0;
+	if(g_iOptionWidgetInstances > 0)
+		g_iOptionWidgetInstances--;
 
 }
 
-KviOptionsWidget * KviOptionsInstanceManager::getInstance(KviOptionsWidgetInstanceEntry * e,QWidget * par)
+KviOptionsWidget * OptionsInstanceManager::getInstance(OptionsWidgetInstanceEntry * pEntry, QWidget * pPar)
 {
-	if(!e)return 0;
-	if(!(e->pWidget))
+	if(!pEntry)
+		return NULL;
+
+#if 0
+	if(pEntry->pWidget)
 	{
-		e->pWidget = e->createProc(par);
+		if(pEntry->pWidget->parent() != pPar)
+		{
+			QWidget * pOldPar = (QWidget *)pEntry->pWidget->parent();
+			pEntry->pWidget->setParent(pPar);
+			pOldPar->deleteLater();
+			pEntry->pWidget = 0;
+		}
+	}
+#endif
+
+	if(!(pEntry->pWidget))
+	{
+		pEntry->pWidget = pEntry->createProc(pPar);
 		g_iOptionWidgetInstances++;
-		connect(e->pWidget,SIGNAL(destroyed()),this,SLOT(widgetDestroyed()));
+		connect(pEntry->pWidget,SIGNAL(destroyed()),this,SLOT(widgetDestroyed()));
 	}
-	if(e->pWidget->parent() != par)
+
+	if(pEntry->pWidget->parent() != pPar)
 	{
-		QWidget * oldPar = (QWidget *)e->pWidget->parent();
-		e->pWidget->setParent(par); //reparent(par,QPoint(0,0));
-		delete oldPar;
+		QWidget * pOldPar = (QWidget *)pEntry->pWidget->parent();
+		pEntry->pWidget->setParent(pPar); //reparent(pPar,QPoint(0,0));
+		if(pOldPar->inherits("OptionsWidgetContainer"))
+			delete pOldPar;
+		// else it's very likely a QStackedWidget, child of a KviOptionsWidget: don't delete
 	}
-	if(e->bIsContainer)
+
+	if(pEntry->bIsContainer)
 	{
 		// need to create the container structure!
-		e->pWidget->createTabbedPage();
-		if(e->pChildList)
+		pEntry->pWidget->createTabbedPage();
+		if(pEntry->pChildList)
 		{
-			KviPointerList<KviOptionsWidgetInstanceEntry> tmp;
-			tmp.setAutoDelete(false);
+			KviPointerList<OptionsWidgetInstanceEntry> tmpList;
+			tmpList.setAutoDelete(false);
 
-			for(KviOptionsWidgetInstanceEntry * e2 = e->pChildList->first();e2;e2 = e->pChildList->next())
+			for(OptionsWidgetInstanceEntry * pEntry2 = pEntry->pChildList->first(); pEntry2; pEntry2 = pEntry->pChildList->next())
 			{
 				// add only non containers and widgets not explicitly marked as noncontained
-				if((!e2->bIsContainer) && (!e2->bIsNotContained))
+				if((!pEntry2->bIsContainer) && (!pEntry2->bIsNotContained))
 				{
-					KviOptionsWidgetInstanceEntry * ee = tmp.first();
-					int idx = 0;
-					while(ee)
+					OptionsWidgetInstanceEntry * pEntry3 = tmpList.first();
+					int iIdx = 0;
+					while(pEntry3)
 					{
-						if(ee->iPriority >= e2->iPriority)break;
-						idx++;
-						ee = tmp.next();
+						if(pEntry3->iPriority >= pEntry2->iPriority)
+							break;
+						iIdx++;
+						pEntry3 = tmpList.next();
 					}
-					tmp.insert(idx,e2);
+					tmpList.insert(iIdx,pEntry2);
 				}
 			}
 
-			for(KviOptionsWidgetInstanceEntry * e3 = tmp.last();e3;e3 = tmp.prev())
+			for(OptionsWidgetInstanceEntry * pEntry4 = tmpList.last(); pEntry4; pEntry4 = tmpList.prev())
 			{
-				KviOptionsWidget * ow = getInstance(e3,e->pWidget->tabWidget());
-				e->pWidget->addOptionsWidget(e3->szName,*(g_pIconManager->getSmallIcon(e3->iIcon)),ow);
+				KviOptionsWidget * pOpt = getInstance(pEntry4,pEntry->pWidget->tabWidget());
+				pEntry->pWidget->addOptionsWidget(pEntry4->szName,*(g_pIconManager->getSmallIcon(pEntry4->eIcon)),pOpt);
 			}
 		}
 	}
-	return e->pWidget;
+	return pEntry->pWidget;
 }
 
-KviOptionsWidgetInstanceEntry * KviOptionsInstanceManager::findInstanceEntry(const QObject * ptr,KviPointerList<KviOptionsWidgetInstanceEntry> * l)
+OptionsWidgetInstanceEntry * OptionsInstanceManager::findInstanceEntry(const QObject * pObj, KviPointerList<OptionsWidgetInstanceEntry> * pList)
 {
-	if(l)
+	if(pList)
 	{
-		for(KviOptionsWidgetInstanceEntry * e = l->first();e;e = l->next())
+		for(OptionsWidgetInstanceEntry * pEntry = pList->first(); pEntry; pEntry = pList->next())
 		{
-			if(ptr == e->pWidget)return e;
-			if(e->pChildList)
+			if(pObj == pEntry->pWidget)
+				return pEntry;
+			if(pEntry->pChildList)
 			{
-				KviOptionsWidgetInstanceEntry * e2 = findInstanceEntry(ptr,e->pChildList);
-				if(e2)return e2;
+				OptionsWidgetInstanceEntry * pEntry2 = findInstanceEntry(pObj,pEntry->pChildList);
+				if(pEntry2)
+					return pEntry2;
 			}
 		}
 	}
 	return 0;
 }
 
-KviOptionsWidgetInstanceEntry * KviOptionsInstanceManager::findInstanceEntry(const char * clName,KviPointerList<KviOptionsWidgetInstanceEntry> * l)
+OptionsWidgetInstanceEntry * OptionsInstanceManager::findInstanceEntry(const char * pcName, KviPointerList<OptionsWidgetInstanceEntry> * pList)
 {
-	if(l)
+	if(pList)
 	{
-		for(KviOptionsWidgetInstanceEntry * e = l->first();e;e = l->next())
+		for(OptionsWidgetInstanceEntry * pEntry = pList->first(); pEntry; pEntry = pList->next())
 		{
-			if(kvi_strEqualCI(e->szClassName,clName))return e;
-			if(e->pChildList)
+			if(kvi_strEqualCI(pEntry->szClassName,pcName))
+				return pEntry;
+			if(pEntry->pChildList)
 			{
-				KviOptionsWidgetInstanceEntry * e2 = findInstanceEntry(clName,e->pChildList);
-				if(e2)return e2;
+				OptionsWidgetInstanceEntry * pEntry2 = findInstanceEntry(pcName,pEntry->pChildList);
+				if(pEntry2)
+					return pEntry2;
 			}
 		}
 	}
 	return 0;
 }
 
-KviOptionsWidgetInstanceEntry * KviOptionsInstanceManager::findInstanceEntry(const char * clName)
+OptionsWidgetInstanceEntry * OptionsInstanceManager::findInstanceEntry(const char * pcName)
 {
-	return findInstanceEntry(clName,m_pInstanceTree);
+	return findInstanceEntry(pcName,m_pInstanceTree);
 }
 
 #ifndef COMPILE_USE_STANDALONE_MOC_SOURCES
-	#include "m_instances.moc"
+	#include "m_OptionsInstanceManager.moc"
 #endif
 
 EOF

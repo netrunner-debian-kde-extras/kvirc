@@ -3,8 +3,8 @@
 //   File : requests.cpp
 //   Creation date : Tue Jul 23 02:44:38 2002 GMT by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -24,48 +24,48 @@
 
 #define _KVI_DEBUG_CHECK_RANGE_
 
-#include "gsmcodec.h"
-#include "broker.h"
+#include "DccVoiceGsmCodec.h"
+#include "DccBroker.h"
 
 #ifndef COMPILE_DISABLE_DCC_VIDEO
-	#include "video.h"
+	#include "DccVideoWindow.h"
 #endif
 
-#include "voice.h"
-#include "utils.h"
-#include "send.h"
+#include "DccVoiceWindow.h"
+#include "DccUtils.h"
+#include "DccFileTransfer.h"
 
 #include "kvi_debug.h"
 #include "kvi_settings.h"
-#include "kvi_string.h"
-#include "kvi_module.h"
-#include "kvi_sparser.h"
-#include "kvi_locale.h"
+#include "KviCString.h"
+#include "KviModule.h"
+#include "KviIrcServerParser.h"
+#include "KviLocale.h"
 #include "kvi_out.h"
-#include "kvi_console.h"
-#include "kvi_netutils.h"
-#include "kvi_frame.h"
-#include "kvi_console.h"
-#include "kvi_error.h"
-#include "kvi_options.h"
+#include "KviConsoleWindow.h"
+#include "KviNetUtils.h"
+#include "KviMainWindow.h"
+#include "KviConsoleWindow.h"
+#include "KviError.h"
+#include "KviOptions.h"
 #include "kvi_defaults.h"
-#include "kvi_sharedfiles.h"
-#include "kvi_mirccntrl.h"
-#include "kvi_app.h"
-#include "kvi_ircconnection.h"
-#include "kvi_ircconnectionuserinfo.h"
+#include "KviSharedFilesManager.h"
+#include "KviControlCodes.h"
+#include "KviApplication.h"
+#include "KviIrcConnection.h"
+#include "KviIrcConnectionUserInfo.h"
 
 #include <QFileInfo>
 
 #ifdef COMPILE_ON_WINDOWS
 	// Ugly Windoze compiler...
-	#include "dialogs.h"
+	#include "DccDialog.h"
 #endif
 
 //#warning "KviOption_boolIgnoreDccChat and other types too"
 
 extern KVIRC_API KviSharedFilesManager * g_pSharedFilesManager;
-extern KviDccBroker * g_pDccBroker;
+extern DccBroker * g_pDccBroker;
 
 static void dcc_module_reply_errmsg(KviDccRequest * dcc,const QString& errText)
 {
@@ -95,12 +95,10 @@ static bool dcc_module_check_concurrent_transfers_limit(KviDccRequest * dcc)
 {
 	if(KVI_OPTION_UINT(KviOption_uintMaxDccSendTransfers) > 0)
 	{
-		unsigned int uTransfers = KviDccFileTransfer::runningTransfersCount();
+		unsigned int uTransfers = DccFileTransfer::runningTransfersCount();
 		if(uTransfers >= KVI_OPTION_UINT(KviOption_uintMaxDccSendTransfers))
 		{
-			QString szError;
-			KviQString::sprintf(szError,__tr2qs_ctx("Concurrent transfer limit reached (%u of %u transfers running)","dcc"),
-				uTransfers,KVI_OPTION_UINT(KviOption_uintMaxDccSendTransfers));
+			QString szError = QString(__tr2qs_ctx("Concurrent transfer limit reached (%1 of %2 transfers running)","dcc")).arg(uTransfers).arg(KVI_OPTION_UINT(KviOption_uintMaxDccSendTransfers));
 			dcc_module_request_error(dcc,szError);
 			return false;
 		}
@@ -115,9 +113,7 @@ static bool dcc_module_check_limits(KviDccRequest * dcc)
 		unsigned int uWindows = g_pDccBroker->dccWindowsCount();
 		if(uWindows >= KVI_OPTION_UINT(KviOption_uintMaxDccSlots))
 		{
-			QString szError;
-			KviQString::sprintf(szError,__tr2qs_ctx("Slot limit reached (%u slots of %u)","dcc"),
-				uWindows,KVI_OPTION_UINT(KviOption_uintMaxDccSlots));
+			QString szError = QString(__tr2qs_ctx("Slot limit reached (%1 slots of %2)","dcc")).arg(uWindows).arg(KVI_OPTION_UINT(KviOption_uintMaxDccSlots));
 			dcc_module_request_error(dcc,szError);
 			return false;
 		}
@@ -131,7 +127,7 @@ static bool dcc_module_check_limits(KviDccRequest * dcc)
 	return true;
 }
 
-static void dcc_fill_local_nick_user_host(KviDccDescriptor * d,KviDccRequest * dcc)
+static void dcc_fill_local_nick_user_host(DccDescriptor * d,KviDccRequest * dcc)
 {
 	if(dcc->pConsole->connection())
 	{
@@ -145,7 +141,7 @@ static void dcc_fill_local_nick_user_host(KviDccDescriptor * d,KviDccRequest * d
 	}
 }
 
-static void dcc_module_set_dcc_type(KviDccDescriptor * d,const char * szBaseType)
+static void dcc_module_set_dcc_type(DccDescriptor * d,const char * szBaseType)
 {
 	d->szType = szBaseType;
 #ifdef COMPILE_SSL_SUPPORT
@@ -154,14 +150,13 @@ static void dcc_module_set_dcc_type(KviDccDescriptor * d,const char * szBaseType
 	if(d->bIsTdcc)d->szType.prepend('T');
 }
 
-static bool dcc_module_normalize_target_data(KviDccRequest * dcc,KviStr &ipaddr,KviStr &port)
+static bool dcc_module_normalize_target_data(KviDccRequest * dcc,KviCString &ipaddr,KviCString &port)
 {
 	if(!port.isUnsignedNum())
 	{
 		if(!dcc->ctcpMsg->msg->haltOutput())
 		{
-			QString szError;
-			KviQString::sprintf(szError,__tr2qs_ctx("Invalid port number %s","dcc"),port.ptr());
+			QString szError = QString(__tr2qs_ctx("Invalid port number %1","dcc")).arg(port.ptr());
 			dcc_module_request_error(dcc,szError);
 		}
 		return false;
@@ -177,15 +172,14 @@ static bool dcc_module_normalize_target_data(KviDccRequest * dcc,KviStr &ipaddr,
 		{
 			if(!dcc->ctcpMsg->msg->haltOutput())
 			{
-				QString szError;
-				KviQString::sprintf(szError,__tr2qs_ctx("Invalid IP address in old format %s","dcc"),ipaddr.ptr());
+				QString szError = QString(__tr2qs_ctx("Invalid IP address in old format %1","dcc")).arg(ipaddr.ptr());
 				dcc_module_request_error(dcc,szError);
 			}
 			return false;
 		}
 		ipaddr = tmp;
 	} else {
-		//FIXME: KviStr -> QString
+		//FIXME: KviCString -> QString
 		if(!KviNetUtils::stringIpToBinaryIp(QString(ipaddr),&addr))
 		{
 #ifdef COMPILE_IPV6_SUPPORT
@@ -198,8 +192,7 @@ static bool dcc_module_normalize_target_data(KviDccRequest * dcc,KviStr &ipaddr,
 #endif
 			if(!dcc->ctcpMsg->msg->haltOutput())
 			{
-				QString szError;
-				KviQString::sprintf(szError,__tr2qs_ctx("Invalid IP address %s","dcc"),ipaddr.ptr());
+				QString szError = QString(__tr2qs_ctx("Invalid IP address %1","dcc")).arg(ipaddr.ptr());
 				dcc_module_request_error(dcc,szError);
 			}
 			return false;
@@ -270,7 +263,7 @@ static void dccModuleParseDccChat(KviDccRequest *dcc)
 		}
 	}
 
-	KviStr szExtensions = dcc->szType;
+	KviCString szExtensions = dcc->szType;
 	szExtensions.cutRight(4); // cut off CHAT
 
 #ifdef COMPILE_SSL_SUPPORT
@@ -283,7 +276,7 @@ static void dccModuleParseDccChat(KviDccRequest *dcc)
 	}
 #endif //!COMPILE_SSL_SUPPORT
 
-	KviDccDescriptor * d = new KviDccDescriptor(dcc->pConsole);
+	DccDescriptor * d = new DccDescriptor(dcc->pConsole);
 
 	d->szNick            = dcc->ctcpMsg->pSource->nick();
 	d->szUser            = dcc->ctcpMsg->pSource->user();
@@ -475,7 +468,7 @@ static void dccModuleParseDccSend(KviDccRequest *dcc)
 		dcc->szParam1.cutToLast("%2F");
 	}
 
-	KviStr szExtensions = dcc->szType;
+	KviCString szExtensions = dcc->szType;
 	szExtensions.cutRight(4); // cut off SEND
 
 	bool bTurboExtension = szExtensions.contains('T',false);
@@ -489,7 +482,7 @@ static void dccModuleParseDccSend(KviDccRequest *dcc)
 	}
 #endif //!COMPILE_SSL_SUPPORT
 
-	KviDccDescriptor * d = new KviDccDescriptor(dcc->pConsole);
+	DccDescriptor * d = new DccDescriptor(dcc->pConsole);
 	d->szNick            = dcc->ctcpMsg->pSource->nick();
 	d->szUser            = dcc->ctcpMsg->pSource->user();
 	d->szHost            = dcc->ctcpMsg->pSource->host();
@@ -546,8 +539,7 @@ static void dccModuleParseDccAccept(KviDccRequest *dcc)
 		//#warning "IF KviOption_boolReplyCtcpErrmsgOnInvalidAccept..."
 		if(!dcc->ctcpMsg->msg->haltOutput())
 		{
-			QString szError;
-			KviQString::sprintf(szError,__tr2qs_ctx("Can't proceed with DCC RECV: Transfer not initiated for file %s on port %s","dcc"),dcc->szParam1.ptr(),dcc->szParam2.ptr());
+			QString szError = QString(__tr2qs_ctx("Can't proceed with DCC RECV: Transfer not initiated for file %1 on port %2","dcc")).arg(dcc->szParam1.ptr()).arg(dcc->szParam2.ptr());
 			dcc_module_request_error(dcc,szError);
 		}
 	}
@@ -572,8 +564,7 @@ static void dccModuleParseDccResume(KviDccRequest *dcc)
 	{
 		if(!dcc->ctcpMsg->msg->haltOutput())
 		{
-			QString szError;
-			KviQString::sprintf(szError,__tr2qs_ctx("Invalid resume position argument '%s'","dcc"),dcc->szParam3.ptr());
+			QString szError = QString(__tr2qs_ctx("Invalid resume position argument '%1'","dcc")).arg(dcc->szParam3.ptr());
 			dcc_module_request_error(dcc,szError);
 		}
 		return;
@@ -584,10 +575,7 @@ static void dccModuleParseDccResume(KviDccRequest *dcc)
 		//#warning "IF KviOption_boolReplyCtcpErrmsgOnInvalidResume..."
 		if(!dcc->ctcpMsg->msg->haltOutput())
 		{
-			QString szError;
-			KviQString::sprintf(szError,
-					__tr2qs_ctx("Can't proceed with DCC SEND: Transfer not initiated for file %s on port %s, or invalid resume size","dcc"),
-					dcc->szParam1.ptr(),dcc->szParam2.ptr());
+			QString szError = QString(__tr2qs_ctx("Can't proceed with DCC SEND: Transfer not initiated for file %1 on port %2, or invalid resume size","dcc")).arg(dcc->szParam1.ptr()).arg(dcc->szParam2.ptr());
 			dcc_module_request_error(dcc,szError);
 		}
 	}
@@ -626,7 +614,7 @@ static void dccModuleParseDccRecv(KviDccRequest * dcc)
 		dcc->szParam1.cutToLast('/');
 	}
 
-	KviStr szExtensions = dcc->szType;
+	KviCString szExtensions = dcc->szType;
 	szExtensions.cutRight(4); // cut off RECV
 
 	bool bTurboExtension = szExtensions.contains('T',false);
@@ -649,16 +637,14 @@ static void dccModuleParseDccRecv(KviDccRequest * dcc)
 		if(uResumeSize >= o->fileSize())
 		{
 			// senseless request
-			QString szError;
-			KviQString::sprintf(szError,
-					__tr2qs_ctx("Invalid RECV request: Position %u is is larger than file size","dcc"),uResumeSize);
+			QString szError = QString(__tr2qs_ctx("Invalid RECV request: Position %1 is larger than file size","dcc")).arg(uResumeSize);
 			dcc_module_request_error(dcc,szError);
 			return;
 		}
 
 		// ok...we have requested this send
 //		#warning "Maybe remove this file offer now ?"
-		KviDccDescriptor * d = new KviDccDescriptor(dcc->pConsole);
+		DccDescriptor * d = new DccDescriptor(dcc->pConsole);
 
 		d->szNick            = dcc->ctcpMsg->pSource->nick();
 		d->szUser            = dcc->ctcpMsg->pSource->user();
@@ -712,19 +698,19 @@ static void dccModuleParseDccRecv(KviDccRequest * dcc)
 			dcc->szParam1.ptr());
 		dcc->ctcpMsg->msg->console()->output(KVI_OUT_DCCMSG,
 			__tr2qs_ctx("The remote client is listening on interface %s and port %s","dcc"),dcc->szParam2.ptr(),dcc->szParam3.ptr());
-		KviStr szSwitches = "-c";
+		KviCString szSwitches = "-c";
 		if(bTurboExtension)szSwitches.prepend("-t ");
 #ifdef COMPILE_SSL_SUPPORT
 		if(bSSLExtension)szSwitches.prepend("-s ");
 #endif
 		dcc->ctcpMsg->msg->console()->output(KVI_OUT_DCCMSG,
 			__tr2qs_ctx("Use %c\r![!dbl]dcc.send %s -i=%s -p=%s %Q\r/dcc.send %s -i=%s -p=%s %Q\r%c to send the file (or double-click on the socket)","dcc"),
-			KVI_TEXT_BOLD,
+			KviControlCodes::Bold,
 			szSwitches.ptr(),
 			dcc->szParam2.ptr(),dcc->szParam3.ptr(),&(dcc->ctcpMsg->pSource->nick()),
 			szSwitches.ptr(),
 			dcc->szParam2.ptr(),dcc->szParam3.ptr(),&(dcc->ctcpMsg->pSource->nick()),
-			KVI_TEXT_BOLD);
+			KviControlCodes::Bold);
 	}
 }
 
@@ -765,7 +751,7 @@ static void dccModuleParseDccRSend(KviDccRequest *dcc)
 		dcc->szParam1.cutToLast('/');
 	}
 
-	KviStr szExtensions = dcc->szType;
+	KviCString szExtensions = dcc->szType;
 	szExtensions.cutRight(4); // cut off SEND
 
 	bool bTurboExtension = szExtensions.contains('T',false);
@@ -781,7 +767,7 @@ static void dccModuleParseDccRSend(KviDccRequest *dcc)
 
 	//#warning "When behind a firewall, we should reply an error message and avoid setting up the listening connection"
 
-	KviDccDescriptor * d = new KviDccDescriptor(dcc->pConsole);
+	DccDescriptor * d = new DccDescriptor(dcc->pConsole);
 	d->szNick            = dcc->ctcpMsg->pSource->nick();
 	d->szUser            = dcc->ctcpMsg->pSource->user();
 	d->szHost            = dcc->ctcpMsg->pSource->host();
@@ -848,7 +834,7 @@ static void dccModuleParseDccGet(KviDccRequest *dcc)
 	if(!dcc_module_check_limits(dcc))return;
 	if(!dcc_module_check_concurrent_transfers_limit(dcc))return;
 
-	KviStr szExtensions = dcc->szType;
+	KviCString szExtensions = dcc->szType;
 	szExtensions.cutRight(3); // cut off GET
 
 	bool bTurboExtension = szExtensions.contains('T',false);
@@ -867,13 +853,7 @@ static void dccModuleParseDccGet(KviDccRequest *dcc)
 	{
 		if(!dcc->ctcpMsg->msg->haltOutput())
 		{
-			QString szError;
-			KviQString::sprintf(szError,
-					__tr2qs_ctx("No file offer named '%s' (with size %s) available for %Q [%Q@%Q]","dcc"),
-					dcc->szParam1.ptr(),uSize > 0 ? dcc->szParam2.ptr() : __tr_ctx("\"any\"","dcc"),
-					&(dcc->ctcpMsg->pSource->nick()),
-					&(dcc->ctcpMsg->pSource->user()),
-					&(dcc->ctcpMsg->pSource->host()));
+			QString szError = QString(__tr2qs_ctx("No file offer named '%1' (with size %2) available for %3 [%4@%5]","dcc")).arg(dcc->szParam1.ptr()).arg(uSize > 0 ? dcc->szParam2.ptr() : __tr_ctx("\"any\"","dcc")).arg(dcc->ctcpMsg->pSource->nick(),dcc->ctcpMsg->pSource->user(),dcc->ctcpMsg->pSource->host());
 			dcc_module_request_error(dcc,szError);
 		}
 		return;
@@ -887,8 +867,8 @@ static void dccModuleParseDccGet(KviDccRequest *dcc)
 
 	if(KVI_OPTION_BOOL(KviOption_boolCantAcceptIncomingDccConnections))
 	{
-		// we have to use DCC RSEND , otherwise it will not work
-		KviStr szSubproto("RSEND");
+		// we have to use DCC RSEND, otherwise it will not work
+		KviCString szSubproto("RSEND");
 		szSubproto.prepend(szExtensions);
 
 
@@ -901,7 +881,7 @@ static void dccModuleParseDccGet(KviDccRequest *dcc)
 			//   able to recognize the file.
 			//   Here we add another temporary offer with the right filename.
 
-			// now add a file offer , so he we will accept it automatically
+			// now add a file offer, so he we will accept it automatically
 			// 120 secs is a reasonable timeout
 			QString szMask;
 			dcc->ctcpMsg->pSource->mask(szMask,KviIrcMask::NickUserHost);
@@ -929,7 +909,7 @@ static void dccModuleParseDccGet(KviDccRequest *dcc)
 	}
 
 
-	KviDccDescriptor * d = new KviDccDescriptor(dcc->pConsole);
+	DccDescriptor * d = new DccDescriptor(dcc->pConsole);
 	d->szNick            = dcc->ctcpMsg->pSource->nick();
 	d->szLocalFileName   = o->absFilePath();
 	d->szUser            = dcc->ctcpMsg->pSource->user();
@@ -1034,7 +1014,7 @@ static void dccModuleParseDccVoice(KviDccRequest *dcc)
 	}
 
 
-	KviDccDescriptor * d = new KviDccDescriptor(dcc->pConsole);
+	DccDescriptor * d = new DccDescriptor(dcc->pConsole);
 	d->szNick            = dcc->ctcpMsg->pSource->nick();
 	d->szUser            = dcc->ctcpMsg->pSource->user();
 	d->szHost            = dcc->ctcpMsg->pSource->host();
@@ -1082,8 +1062,7 @@ static void dccModuleParseDccVideo(KviDccRequest *dcc)
 			__tr2qs_ctx("The above request cannot be accepted: DCC VIDEO support not enabled at compilation time ","dcc"));
 		return;
 	}
-#endif
-#ifndef COMPILE_DISABLE_DCC_VIDEO
+#else
 	//  Actually unused parameter
 	if(!kvi_dcc_video_is_valid_codec(dcc->szParam1.ptr()))
 	{
@@ -1109,7 +1088,7 @@ static void dccModuleParseDccVideo(KviDccRequest *dcc)
 // 	}
 
 
-	KviDccDescriptor * d = new KviDccDescriptor(dcc->pConsole);
+	DccDescriptor * d = new DccDescriptor(dcc->pConsole);
 	d->szNick            = dcc->ctcpMsg->pSource->nick();
 	d->szUser            = dcc->ctcpMsg->pSource->user();
 	d->szHost            = dcc->ctcpMsg->pSource->host();
@@ -1159,7 +1138,7 @@ static void dccModuleParseDccCanvas(KviDccRequest *dcc)
 //		}
 //	}
 #ifdef COMPILE_DCC_CANVAS
-	KviDccDescriptor * d = new KviDccDescriptor(dcc->pConsole);
+	DccDescriptor * d = new DccDescriptor(dcc->pConsole);
 	d->szNick            = dcc->ctcpMsg->pSource->nick();
 	d->szUser            = dcc->ctcpMsg->pSource->username();
 	d->szHost            = dcc->ctcpMsg->pSource->host();
@@ -1246,9 +1225,7 @@ KVIMODULEEXPORTFUNC void dccModuleCtcpDccParseRoutine(KviDccRequest *dcc)
 	// ops...we don't know this dcc type
 	if(!dcc->ctcpMsg->msg->haltOutput())
 	{
-		QString szError;
-		KviQString::sprintf(szError,
-				__tr2qs_ctx("Unknown DCC type '%s'","dcc"),dcc->szType.ptr());
+		QString szError = QString(__tr2qs_ctx("Unknown DCC type '%1'","dcc")).arg(dcc->szType.ptr());
 		dcc_module_request_error(dcc,szError);
 	}
 }

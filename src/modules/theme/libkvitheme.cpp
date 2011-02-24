@@ -3,8 +3,8 @@
 //   File : libkvitheme.cpp
 //   Creation date : Sat 30 Dec 2006 14:54:56 by Szymon Stefanek
 //
-//   This toolbar is part of the KVirc irc client distribution
-//   Copyright (C) 2006-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This toolbar is part of the KVIrc irc client distribution
+//   Copyright (C) 2006-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -23,23 +23,21 @@
 //=============================================================================
 
 #include "managementdialog.h"
-#include "themefunctions.h"
+#include "ThemeFunctions.h"
 
-#include "kvi_msgbox.h"
-#include "kvi_module.h"
-#include "kvi_locale.h"
-#include "kvi_qstring.h"
-#include "kvi_parameterlist.h"
-#include "kvi_cmdformatter.h"
-#include "kvi_error.h"
+#include "KviMessageBox.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+#include "KviParameterList.h"
+#include "KviCommandFormatter.h"
+#include "KviError.h"
 #include "kvi_out.h"
-#include "kvi_iconmanager.h"
-#include "kvi_mirccntrl.h"
-#include "kvi_config.h"
+#include "KviIconManager.h"
+#include "KviConfigurationFile.h"
 #include "kvi_sourcesdate.h"
-#include "kvi_fileutils.h"
-#include "kvi_filedialog.h"
-#include "kvi_theme.h"
+#include "KviFileUtils.h"
+#include "KviFileDialog.h"
+#include "KviTheme.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -70,7 +68,7 @@ static bool theme_kvs_cmd_install(KviKvsModuleCommandCall * c)
 	KVSM_PARAMETERS_END(c)
 
 	QString szError;
-	if(!KviThemeFunctions::installThemePackage(szThemePackFile,szError))
+	if(!ThemeFunctions::installThemePackage(szThemePackFile,szError))
 	{
 		c->error(__tr2qs_ctx("Error installing theme package: %Q","theme"),&szError);
 		return false;
@@ -99,7 +97,7 @@ static bool theme_kvs_cmd_apply(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("package_name",KVS_PT_STRING,0,szThemePackFile)
 	KVSM_PARAMETERS_END(c)
 	QString szDir;
-	g_pApp->getLocalKvircDirectory(szDir,KviApp::Themes);
+	g_pApp->getLocalKvircDirectory(szDir,KviApplication::Themes);
 	szDir += KVI_PATH_SEPARATOR_CHAR;
 	szDir += szThemePackFile;
 	KviThemeInfo * themeInfo = new KviThemeInfo();
@@ -118,14 +116,13 @@ static bool theme_kvs_cmd_apply(KviKvsModuleCommandCall * c)
 			if(!KviTheme::load(szPath,out))
 			{
 				QString szErr = out.lastError();
-				QString szMsg;
-				KviQString::sprintf(szMsg,__tr2qs_ctx("Failed to apply the specified theme: %Q","theme"),&szErr);
+				QString szMsg = QString(__tr2qs_ctx("Failed to apply the specified theme: %1","theme")).arg(szErr);
 				QMessageBox::critical(0,__tr2qs_ctx("Apply theme - KVIrc","theme"),szMsg,
 				QMessageBox::Ok,QMessageBox::NoButton,QMessageBox::NoButton);
 			}
 		}
 	}
-	c->warning(__tr2qs_ctx("The theme package '%Q' does not exists","theme"),&szThemePackFile);
+	c->warning(__tr2qs_ctx("The theme package '%Q' does not exist","theme"),&szThemePackFile);
 	return true;
 }
 /*
@@ -150,7 +147,7 @@ static bool theme_kvs_fnc_info(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("package_name",KVS_PT_STRING,0,szThemePackFile)
 	KVSM_PARAMETERS_END(c)
 	QString szDir;
-	g_pApp->getLocalKvircDirectory(szDir,KviApp::Themes);
+	g_pApp->getLocalKvircDirectory(szDir,KviApplication::Themes);
 	szDir += KVI_PATH_SEPARATOR_CHAR;
 	szDir += szThemePackFile;
 	KviThemeInfo * themeInfo = new KviThemeInfo();
@@ -168,7 +165,7 @@ static bool theme_kvs_fnc_info(KviKvsModuleFunctionCall * c)
 		c->returnValue()->setHash(pHash);
 		return true;
 	}
-	c->warning(__tr2qs_ctx("The theme package '%Q' does not exists","theme"),&szThemePackFile);
+	c->warning(__tr2qs_ctx("The theme package '%Q' does not exist","theme"),&szThemePackFile);
 	return true;
 }
 
@@ -188,7 +185,7 @@ static bool theme_kvs_fnc_info(KviKvsModuleFunctionCall * c)
 static bool theme_kvs_fnc_list(KviKvsModuleFunctionCall * c)
 {
 	QString szDir;
-	g_pApp->getLocalKvircDirectory(szDir,KviApp::Themes);
+	g_pApp->getLocalKvircDirectory(szDir,KviApplication::Themes);
 	QDir d(szDir);
 	QStringList sl = d.entryList(QDir::Dirs);
 	QStringList szThemes;
@@ -245,7 +242,7 @@ static bool theme_kvs_cmd_screenshot(KviKvsModuleCommandCall * c)
 		szFileName+=".png";
 
 	QString szError;
-	if(!KviThemeFunctions::makeKVIrcScreenshot(szFileName))
+	if(!ThemeFunctions::makeKVIrcScreenshot(szFileName))
 	{
 		c->error(__tr2qs_ctx("Error making screenshot","theme")); // FIXME: a nicer error ?
 		return false;
@@ -263,14 +260,17 @@ static bool theme_kvs_cmd_screenshot(KviKvsModuleCommandCall * c)
 	@short:
 		Shows the theme theme management editor
 	@syntax:
-		theme.dialog
+		theme.dialog [-t]
 	@description:
-		Shows the theme theme management editor
+		Shows the theme theme management editor[br]
+		If the [-t] switch is used, the dialog is opened as toplevel window,
+		otherwise it is opened as part of the current frame window.[br]
 */
 
-static bool theme_kvs_cmd_dialog(KviKvsModuleCommandCall *)
+static bool theme_kvs_cmd_dialog(KviKvsModuleCommandCall *c)
 {
-	KviThemeManagementDialog::display();
+
+	ThemeManagementDialog::display(c->hasSwitch('t',"toplevel"));
 	return true;
 }
 
@@ -286,7 +286,7 @@ static bool theme_module_init(KviModule *m)
 
 	QString szBuf;
 	m->getDefaultConfigFileName(szBuf);
-	KviConfig cfg(szBuf,KviConfig::Read);
+	KviConfigurationFile cfg(szBuf,KviConfigurationFile::Read);
 	g_rectManagementDialogGeometry = cfg.readRectEntry("EditorGeometry",QRect(10,10,390,440));
 
 	return true;
@@ -294,11 +294,11 @@ static bool theme_module_init(KviModule *m)
 
 static bool theme_module_cleanup(KviModule *m)
 {
-	KviThemeManagementDialog::cleanup();
+	ThemeManagementDialog::cleanup();
 
 	QString szBuf;
 	m->getDefaultConfigFileName(szBuf);
-	KviConfig cfg(szBuf,KviConfig::Write);
+	KviConfigurationFile cfg(szBuf,KviConfigurationFile::Write);
 	cfg.writeEntry("EditorGeometry",g_rectManagementDialogGeometry);
 
 	return true;
@@ -306,7 +306,7 @@ static bool theme_module_cleanup(KviModule *m)
 
 static bool theme_module_can_unload(KviModule *)
 {
-	return (!KviThemeManagementDialog::instance());
+	return (!ThemeManagementDialog::instance());
 }
 
 

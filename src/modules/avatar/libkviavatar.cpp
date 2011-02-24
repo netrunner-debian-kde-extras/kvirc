@@ -3,8 +3,8 @@
 //   File : libkviavatar.cpp
 //   Creation date : Thu Nov 12 02:32:59 2004 GMT by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2004-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2004-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -24,27 +24,27 @@
 
 #include "libkviavatar.h"
 
-#include "kvi_module.h"
-#include "kvi_fileutils.h"
-#include "kvi_locale.h"
-#include "kvi_malloc.h"
-#include "kvi_app.h"
-#include "kvi_options.h"
-#include "kvi_http.h"
-#include "kvi_iconmanager.h"
-#include "kvi_avatar.h"
-#include "kvi_ircuserdb.h"
-#include "kvi_ircconnection.h"
-#include "kvi_ircconnectionuserinfo.h"
-#include "kvi_console.h"
-#include "kvi_filedialog.h"
-#include "kvi_pointerlist.h"
-#include "kvi_frame.h"
-#include "kvi_sharedfiles.h"
-#include "kvi_sparser.h"
+#include "KviModule.h"
+#include "KviFileUtils.h"
+#include "KviLocale.h"
+#include "KviMemory.h"
+#include "KviApplication.h"
+#include "KviOptions.h"
+#include "KviHttpRequest.h"
+#include "KviIconManager.h"
+#include "KviAvatar.h"
+#include "KviIrcUserDataBase.h"
+#include "KviIrcConnection.h"
+#include "KviIrcConnectionUserInfo.h"
+#include "KviConsoleWindow.h"
+#include "KviFileDialog.h"
+#include "KviPointerList.h"
+#include "KviMainWindow.h"
+#include "KviSharedFilesManager.h"
+#include "KviIrcServerParser.h"
 #include "kvi_out.h"
-#include "kvi_ircmask.h"
-#include "kvi_tal_hbox.h"
+#include "KviIrcMask.h"
+#include "KviTalHBox.h"
 
 #include <QLineEdit>
 #include <QPushButton>
@@ -128,8 +128,8 @@ void KviAsyncAvatarSelectionDialog::okClicked()
 	if(!m_szAvatarName.isEmpty())
 	{
 		QString tmp = m_szAvatarName;
-		tmp.replace("\\","\\\\",Qt::CaseInsensitive);
-		QString szBuffer=QString("avatar.set \"%1\"").arg(tmp);
+		KviQString::escapeKvs(&tmp, KviQString::EscapeSpace);
+		QString szBuffer=QString("avatar.set %1").arg(tmp);
 		KviKvsScript::run(szBuffer,m_pConnection->console());
 	}
 
@@ -202,7 +202,7 @@ static bool avatar_kvs_cmd_set(KviKvsModuleCommandCall * c)
 
 	if(szAvatar.isEmpty())
 	{
-		KviAsyncAvatarSelectionDialog * d = new KviAsyncAvatarSelectionDialog(g_pFrame,QString(),c->window()->connection());
+		KviAsyncAvatarSelectionDialog * d = new KviAsyncAvatarSelectionDialog(g_pMainWindow,QString(),c->window()->connection());
 		d->show();
 		return true;
 	}
@@ -235,10 +235,10 @@ static bool avatar_kvs_cmd_set(KviKvsModuleCommandCall * c)
 			QString szLocalFilePath;
 			QString szLocalFile = szAvatar;
 			g_pIconManager->urlToCachedFileName(szLocalFile);
-			g_pApp->getLocalKvircDirectory(szLocalFilePath,KviApp::Avatars,szLocalFile);
+			g_pApp->getLocalKvircDirectory(szLocalFilePath,KviApplication::Avatars,szLocalFile);
 
-			szLocalFilePath.replace("\\","\\\\",Qt::CaseInsensitive);
-
+			KviQString::escapeKvs(&szAvatar);
+			KviQString::escapeKvs(&szLocalFilePath);
 			QString szCommand = "http.get -w=nm ";
 				szCommand += szAvatar;
 				szCommand += " ";
@@ -380,7 +380,7 @@ static bool avatar_kvs_cmd_notify(KviKvsModuleCommandCall * c)
 			szTmp.replace(" ","_");
 
 		// escape the spaces with the right octal code
-		KviServerParser::encodeCtcpParameter(szTmp.toUtf8().data(),avatar);
+		KviIrcServerParser::encodeCtcpParameter(szTmp.toUtf8().data(),avatar);
 	}
 
 	KviSharedFile * o = 0;

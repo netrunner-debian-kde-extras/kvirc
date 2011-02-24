@@ -3,7 +3,7 @@
 //   File : libkvitrayicon.cpp
 //   Creation date : Tue Jan 02 2001 14:34:12 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2001 Szymon Stefanek (pragma at kvirc dot net)
 //   Copyright (C) 2007 Alexey Uzhva (wizard at opendoor dot ru)
 //   Copyright (C) 2008 Elvio Basello (hellvis69 at netsons dot org)
@@ -27,21 +27,21 @@
 #include "libkvitrayicon.h"
 
 #include "kvi_settings.h"
-#include "kvi_app.h"
-#include "kvi_module.h"
-#include "kvi_locale.h"
-#include "kvi_memmove.h"
-#include "kvi_windowlist.h"
-#include "kvi_window.h"
-#include "kvi_dynamictooltip.h"
-#include "kvi_iconmanager.h"
-#include "kvi_internalcmd.h"
-#include "kvi_console.h"
-#include "kvi_ircconnection.h"
-#include "kvi_ircconnectionuserinfo.h"
-#include "kvi_options.h"
-#include "kvi_ircview.h"
-#include "kvi_tal_popupmenu.h"
+#include "KviApplication.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+#include "KviMemory.h"
+#include "KviWindowListBase.h"
+#include "KviWindow.h"
+#include "KviDynamicToolTip.h"
+#include "KviIconManager.h"
+#include "KviInternalCommand.h"
+#include "KviConsoleWindow.h"
+#include "KviIrcConnection.h"
+#include "KviIrcConnectionUserInfo.h"
+#include "KviOptions.h"
+#include "KviIrcView.h"
+#include "KviTalPopupMenu.h"
 
 #include <QPixmap>
 #include <QPainter>
@@ -59,13 +59,13 @@
 #endif
 
 extern KVIRC_API KviPointerHashTable<QString,KviWindow> * g_pGlobalWindowDict;
-static KviPointerList<KviTrayIcon> * g_pTrayIconList = 0;
+static KviPointerList<TrayIcon> * g_pTrayIconList = 0;
 
 static QPixmap * g_pDock1 = 0;
 static QPixmap * g_pDock2 = 0;
 static QPixmap * g_pDock3 = 0;
 
-KviTrayIcon::KviTrayIcon(KviFrame * frm)
+TrayIcon::TrayIcon(KviMainWindow * frm)
 : QSystemTrayIcon(frm), m_CurrentPixmap(ICON_SIZE,ICON_SIZE)
 {
 	m_pContextPopup = new KviTalPopupMenu(0);
@@ -93,24 +93,24 @@ KviTrayIcon::KviTrayIcon(KviFrame * frm)
 	m_pContextPopup->insertItem(m_pTitleLabel);
 	m_pContextPopup->setWindowTitle(__tr2qs("Context"));
 	m_pAwayMenuId = m_pContextPopup->addMenu(m_pAwayPopup);
-	m_pAwayMenuId->setIcon(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_AWAY)));
+	m_pAwayMenuId->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::Away)));
 	m_pAwayMenuId->setText(__tr2qs("Away"));
 
-	QAction* id = m_pContextPopup->addAction(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_OPTIONS)),__tr2qs("&Configure KVIrc..."),this,SLOT(executeInternalCommand(bool)));
+	QAction* id = m_pContextPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Options)),__tr2qs("&Configure KVIrc..."),this,SLOT(executeInternalCommand(bool)));
 	id->setData(KVI_INTERNALCOMMAND_OPTIONS_DIALOG);
 
-	id = m_pContextPopup->addAction(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_KVIRC)),__tr2qs("&About KVIrc"),this,SLOT(executeInternalCommand(bool)));
+	id = m_pContextPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::KVIrc)),__tr2qs("&About KVIrc"),this,SLOT(executeInternalCommand(bool)));
 	id->setData(KVI_INTERNALCOMMAND_ABOUT_ABOUTKVIRC);
 
 	m_pContextPopup->insertSeparator();
-	m_pToggleFrame = m_pContextPopup->addAction(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_RAW)),__tr2qs("Hide/Show"),this,SLOT(toggleParentFrame()));
+	m_pToggleFrame = m_pContextPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Raw)),__tr2qs("Hide/Show"),this,SLOT(toggleParentFrame()));
 
 	m_pContextPopup->insertSeparator();
 
-	id = m_pContextPopup->addAction(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_TRAYICON)),__tr2qs("Un&dock"),this,SLOT(executeInternalCommand(bool)));
+	id = m_pContextPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::TrayIcon)),__tr2qs("Un&dock"),this,SLOT(executeInternalCommand(bool)));
 	id->setData(KVI_INTERNALCOMMAND_TRAYICON_HIDE);
 
-	id = m_pContextPopup->addAction(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_QUITAPP)),__tr2qs("&Quit"),g_pFrame,SLOT(close()),QKeySequence(Qt::CTRL + Qt::Key_Q));
+	id = m_pContextPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::QuitApp)),__tr2qs("&Quit"),g_pMainWindow,SLOT(close()),QKeySequence(Qt::CTRL + Qt::Key_Q));
 
 	connect(m_pContextPopup,SIGNAL(aboutToShow()),this,SLOT(fillContextPopup()));
 
@@ -120,7 +120,7 @@ KviTrayIcon::KviTrayIcon(KviFrame * frm)
 }
 
 
-KviTrayIcon::~KviTrayIcon()
+TrayIcon::~TrayIcon()
 {
 	m_pFrm->setDockExtension(0);
 	g_pTrayIconList->removeRef(this);
@@ -132,7 +132,7 @@ KviTrayIcon::~KviTrayIcon()
 }
 
 
-void KviTrayIcon::executeInternalCommand(bool)
+void TrayIcon::executeInternalCommand(bool)
 {
 	int iCmd;
 	bool bOk;
@@ -140,12 +140,12 @@ void KviTrayIcon::executeInternalCommand(bool)
 	if(m_pFrm && bOk)
 		m_pFrm->executeInternalCommand(iCmd);
 }
-void KviTrayIcon::die()
+void TrayIcon::die()
 {
 	delete this;
 }
 
-void KviTrayIcon::flashingTimerShot()
+void TrayIcon::flashingTimerShot()
 {
 	m_bFlashed=!m_bFlashed;
 	refresh();
@@ -155,27 +155,27 @@ void KviTrayIcon::flashingTimerShot()
 
 static const char * idlemsgs[NIDLEMSGS]=
 {
-	__tr("Nothing is happening...") ,
-	__tr("Just idling...") ,
-	__tr("Dum de dum de dum...") ,
-	__tr("Hey man... do something!") ,
-	__tr("Umpf!") ,
-	__tr("Silence speaking") ,
-	__tr("Are ya here?") ,
-	__tr("The world has stopped?") ,
-	__tr("Everything is all right") ,
-	__tr("idle()") ,
-	__tr("It's so cold here...") ,
-	__tr("Do not disturb... watching TV") ,
-	__tr("Just vegetating") ,
-	__tr("Hey... are ya sure that your network is up?") ,
-	__tr("Seems like the world has stopped spinning") ,
-	__tr("This silence is freaking me out!") ,
-	__tr("Mieeeeeowww!") ,
+	__tr("Nothing is happening..."),
+	__tr("Just idling..."),
+	__tr("Dum de dum de dum..."),
+	__tr("Hey man... do something!"),
+	__tr("Umpf!"),
+	__tr("Silence speaking"),
+	__tr("Are ya here?"),
+	__tr("The world has stopped?"),
+	__tr("Everything is all right"),
+	__tr("idle()"),
+	__tr("It's so cold here..."),
+	__tr("Do not disturb... watching TV"),
+	__tr("Just vegetating"),
+	__tr("Hey... are ya sure that your network is up?"),
+	__tr("Seems like the world has stopped spinning"),
+	__tr("This silence is freaking me out!"),
+	__tr("Mieeeeeowww!"),
 	__tr("idle idle idle idle!")
 };
 
-bool KviTrayIcon::event(QEvent *e)
+bool TrayIcon::event(QEvent *e)
 {
 	if(e->type()==QEvent::ToolTip)
 	{
@@ -222,14 +222,14 @@ bool KviTrayIcon::event(QEvent *e)
 	return false;
 }
 
-//int KviTrayIcon::message(int,void *)
+//int TrayIcon::message(int,void *)
 //{
-//	debug("Message");
+//	qDebug("Message");
 //	update();
 //	return 0;
 //}
 
-void KviTrayIcon::doAway(bool)
+void TrayIcon::doAway(bool)
 {
 	int id;
 	bool ok;
@@ -249,9 +249,9 @@ void KviTrayIcon::doAway(bool)
 		KviPointerHashTableIterator<QString,KviWindow> it(*g_pGlobalWindowDict);
 		while(KviWindow * wnd = it.current())
 		{
-			if(wnd->type()==KVI_WINDOW_TYPE_CONSOLE)
+			if(wnd->type()==KviWindow::Console)
 			{
-				KviConsole* pConsole=(KviConsole*)wnd;
+				KviConsoleWindow* pConsole=(KviConsoleWindow*)wnd;
 				if(pConsole->isConnected())
 				{
 					if(id==-2)
@@ -267,7 +267,7 @@ void KviTrayIcon::doAway(bool)
  			++it;
 		}
 	} else {
-		KviConsole* pConsole=g_pApp->findConsole((unsigned int)id);
+		KviConsoleWindow* pConsole=g_pApp->findConsole((unsigned int)id);
 		if(pConsole)
 		{
 			if(pConsole->isConnected())
@@ -285,7 +285,7 @@ void KviTrayIcon::doAway(bool)
 	}
 }
 
-void KviTrayIcon::fillContextPopup()
+void TrayIcon::fillContextPopup()
 {
 	m_pToggleFrame->setText(m_pFrm->isVisible() ? __tr2qs("Hide Window") : __tr2qs("Show Window"));
 	if(g_pApp->topmostConnectedConsole())
@@ -293,10 +293,10 @@ void KviTrayIcon::fillContextPopup()
 		m_pAwayMenuId->setVisible(true);
 		m_pAwayPopup->clear();
 
-		QAction* pAllAway=m_pAwayPopup->addAction(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_CONSOLE)),__tr2qs("Away on all"),this,SLOT(doAway(bool)));
+		QAction * pAllAway = m_pAwayPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Console)),__tr2qs("Away on all"),this,SLOT(doAway(bool)));
 		pAllAway->setData(-1);
 
-		QAction* pAllUnaway=m_pAwayPopup->addAction(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_CONSOLE)),__tr2qs("Back on all"),this,SLOT(doAway(bool)));
+		QAction * pAllUnaway = m_pAwayPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Console)),__tr2qs("Back on all"),this,SLOT(doAway(bool)));
 		pAllUnaway->setData(-2);
 
 		QAction* pSeparator=m_pAwayPopup->addSeparator();
@@ -307,19 +307,19 @@ void KviTrayIcon::fillContextPopup()
 		int iNetCount=0;
 		while(KviWindow * wnd = it.current())
 		{
-			if(wnd->type()==KVI_WINDOW_TYPE_CONSOLE)
+			if(wnd->type()==KviWindow::Console)
 			{
-				KviConsole* pConsole=(KviConsole*)wnd;
+				KviConsoleWindow* pConsole=(KviConsoleWindow*)wnd;
 				if(pConsole->isConnected())
 				{
 					QAction* id;
 					if(pConsole->connection()->userInfo()->isAway())
 					{
-						id=m_pAwayPopup->addAction(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_CONSOLE)),__tr2qs("Back on %1").arg(pConsole->currentNetworkName()),this,SLOT(doAway(bool)));
+						id=m_pAwayPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Console)),__tr2qs("Back on %1").arg(pConsole->currentNetworkName()),this,SLOT(doAway(bool)));
 						id->setData(pConsole->context()->id());
 						bAllUnaway=0;
 					} else {
-						id=m_pAwayPopup->addAction(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_CONSOLE)),__tr2qs("Away on %1").arg(pConsole->currentNetworkName()),this,SLOT(doAway(bool)));
+						id=m_pAwayPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Console)),__tr2qs("Away on %1").arg(pConsole->currentNetworkName()),this,SLOT(doAway(bool)));
 						id->setData(pConsole->context()->id());
 						bAllAway=0;
 					}
@@ -343,28 +343,42 @@ void KviTrayIcon::fillContextPopup()
 	}
 }
 
-void KviTrayIcon::toggleParentFrame()
+void TrayIcon::toggleParentFrame()
 {
+	qDebug("TrayIcon::toggleParentFrame()");
 	if(m_pFrm->isMinimized())
 	{
+		qDebug("- frame is minimized");
 		m_pFrm->setWindowState(m_pFrm->windowState() & (~Qt::WindowMinimized | Qt::WindowActive));
 
 		if(KVI_OPTION_BOOL(KviOption_boolFrameIsMaximized))
+		{
+			qDebug("- window was maximized so calling showMaximized()");
 			m_pFrm->showMaximized();
-		else m_pFrm->show();
+		} else {
+			qDebug("- window wasn't maximized so calling plain show()");
+			m_pFrm->show();
+		}
 	} else if(!m_pFrm->isVisible())
 	{
+		qDebug("- frame is not visible");
 		//restore mainwindow
 		if(KVI_OPTION_BOOL(KviOption_boolFrameIsMaximized))
+		{
+			qDebug("- window was maximized so calling showMaximized()");
 			m_pFrm->showMaximized();
-		else m_pFrm->show();
+		} else {
+			qDebug("- window wasn't maximized so calling plain show()");
+			m_pFrm->show();
+		}
 	} else {
+		qDebug("- frame is visible: maximized state=%d, hiding",m_pFrm->isMaximized());
 		KVI_OPTION_BOOL(KviOption_boolFrameIsMaximized) = m_pFrm->isMaximized();
 		m_pFrm->hide();
 	}
 }
 
-void KviTrayIcon::refresh()
+void TrayIcon::refresh()
 {
 	grabActivityInfo();
 
@@ -383,7 +397,7 @@ void KviTrayIcon::refresh()
 
 	if(m_bFlashed)
 	{
-		thisRestrictionOfQt4IsNotNice.drawPixmap((ICON_SIZE-16)/2,(ICON_SIZE-16)/2,16,16,*(g_pIconManager->getSmallIcon(KVI_SMALLICON_MESSAGE)),0,0,16,16);
+		thisRestrictionOfQt4IsNotNice.drawPixmap((ICON_SIZE-16)/2,(ICON_SIZE-16)/2,16,16,*(g_pIconManager->getSmallIcon(KviIconManager::Message)),0,0,16,16);
 	} else {
 		thisRestrictionOfQt4IsNotNice.drawPixmap(0,0,ICON_SIZE/2,ICON_SIZE/2,
 			m_iOther ?
@@ -411,15 +425,31 @@ void KviTrayIcon::refresh()
 	updateIcon();
 }
 
-void KviTrayIcon::activatedSlot( QSystemTrayIcon::ActivationReason reason )
+void TrayIcon::activatedSlot( QSystemTrayIcon::ActivationReason reason )
 {
-	if(reason==QSystemTrayIcon::Trigger && (KVI_OPTION_BOOL(KviOption_boolCloseInTray) || !m_pFrm->isVisible()))
+	switch(reason)
 	{
-		toggleParentFrame();
+		case QSystemTrayIcon::Trigger:
+			// This is single click
+#ifdef COMPILE_ON_MAC
+			// On MacOSX one can only single-left-click the icon.
+			// This activates the context menu and is quite confusing if it *also* hides the kvirc window.
+			// So on mac we only _show_ the main window if it's hidden and the CloseInTray option is enabled.
+			if((KVI_OPTION_BOOL(KviOption_boolCloseInTray) || KVI_OPTION_BOOL(KviOption_boolMinimizeInTray))
+				&& ((!m_pFrm->isVisible()) || m_pFrm->isMinimized()))
+				toggleParentFrame();
+#else //!COMPILE_ON_MAC
+			// on other platforms we always toggle the window
+			toggleParentFrame();
+#endif //!COMPILE_ON_MAC
+		break;
+		default:
+			// we do nothing at this time
+		break;
 	}
 }
 
-void KviTrayIcon::grabActivityInfo()
+void TrayIcon::grabActivityInfo()
 {
 	KviWindowListBase * t = m_pFrm->windowListWidget();
 
@@ -447,13 +477,13 @@ void KviTrayIcon::grabActivityInfo()
 			unsigned int iLevel = b->highlightLevel();
 			switch(b->kviWindow()->type())
 			{
-				case KVI_WINDOW_TYPE_CONSOLE:
+				case KviWindow::Console:
 					if(m_iConsoles < iLevel) m_iConsoles = iLevel;
 				break;
-				case KVI_WINDOW_TYPE_CHANNEL:
+				case KviWindow::Channel:
 					if(m_iChannels < iLevel) m_iChannels = iLevel;
 				break;
-				case KVI_WINDOW_TYPE_QUERY:
+				case KviWindow::Query:
 					if(m_iQueries < iLevel) m_iQueries = iLevel;
 				break;
 				default:
@@ -474,13 +504,13 @@ void KviTrayIcon::grabActivityInfo()
 				if(iLevel>0)
 				switch(b->kviWindow()->type())
 				{
-					case KVI_WINDOW_TYPE_CONSOLE:
+					case KviWindow::Console:
 						if(m_iConsoles < iLevel) m_iConsoles = iLevel;
 					break;
-					case KVI_WINDOW_TYPE_CHANNEL:
+					case KviWindow::Channel:
 						if(m_iChannels < iLevel) m_iChannels = iLevel;
 					break;
-					case KVI_WINDOW_TYPE_QUERY:
+					case KviWindow::Query:
 						if(m_iQueries < iLevel) m_iQueries = iLevel;
 					break;
 					default:
@@ -511,15 +541,15 @@ void KviTrayIcon::grabActivityInfo()
 	}
 }
 
-void KviTrayIcon::updateIcon()
+void TrayIcon::updateIcon()
 {
 	setIcon(QIcon(m_CurrentPixmap));
 }
 
-static KviTrayIcon * trayicon_find(KviFrame *f)
+static TrayIcon * trayicon_find(KviMainWindow *f)
 {
 	if(!g_pTrayIconList)return 0;
-	for(KviTrayIcon * w = g_pTrayIconList->first();w;w = g_pTrayIconList->next())
+	for(TrayIcon * w = g_pTrayIconList->first();w;w = g_pTrayIconList->next())
 	{
 		if(w->frame() == f)return w;
 	}
@@ -535,7 +565,7 @@ static KviTrayIcon * trayicon_find(KviFrame *f)
 	@short:
 		Shows the dock widget for the current frame window
 	@keyterms:
-		dock widget , system tray
+		dock widget, system tray
 	@syntax:
 		trayicon.show
 	@description:
@@ -546,12 +576,12 @@ static KviTrayIcon * trayicon_find(KviFrame *f)
 		text in any console window, the square becomes red if the text is highlighted.[br]
 		The bottom right square appears when there is some new text in any channel window,
 		and it becomes red when the text is highlighted.[br] The upper right square refers to
-		query windows and the upper left one to any other kind of window (dcc , links...).[br]
+		query windows and the upper left one to any other kind of window (dcc, links...).[br]
 		If you move the mouse over the dock widget a tooltip will show you the last lines
 		of the "new" text in all these windows.[br]
 		This is useful when you keep the main KVIrc window minimized and you're working on something else:
-		if the dock widget shows nothing but the earth icon , nothing is happening in the main KVIrc window.
-		If the dock widget shows one or more white (or red) squares , you can move the mouse over
+		if the dock widget shows nothing but the earth icon, nothing is happening in the main KVIrc window.
+		If the dock widget shows one or more white (or red) squares, you can move the mouse over
 		and check what's happened exactly and eventually bring up the main KVIrc window by clicking on the widget.[br]
 		[big]tecnical details[/big]
 		The dock widget is currently working in KDE compilation mode only:
@@ -564,7 +594,7 @@ static bool trayicon_kvs_cmd_show(KviKvsModuleCommandCall * c)
 {
 	if(!(trayicon_find(c->window()->frame())))
 	{
-		KviTrayIcon * w = new KviTrayIcon(c->window()->frame());
+		TrayIcon * w = new TrayIcon(c->window()->frame());
 		w->show();
 	}
 	return true;
@@ -588,7 +618,7 @@ static bool trayicon_kvs_cmd_show(KviKvsModuleCommandCall * c)
 
 static bool trayicon_kvs_cmd_hide(KviKvsModuleCommandCall * c)
 {
-	KviTrayIcon * w= trayicon_find(c->window()->frame());
+	TrayIcon * w= trayicon_find(c->window()->frame());
 	if(w)delete w;
 	// show the parent frame.. otherwise there will be no way to get it back
 	if(!c->window()->frame()->isVisible())
@@ -616,7 +646,7 @@ static bool trayicon_kvs_cmd_hide(KviKvsModuleCommandCall * c)
 
 static bool trayicon_kvs_cmd_hidewindow(KviKvsModuleCommandCall * c)
 {
-	KviTrayIcon * w= trayicon_find(c->window()->frame());
+	TrayIcon * w= trayicon_find(c->window()->frame());
 	if(w)
 	{
 		c->window()->frame()->hide();
@@ -635,7 +665,7 @@ static bool trayicon_kvs_cmd_hidewindow(KviKvsModuleCommandCall * c)
 	@syntax:
 		$reguser.isVisible()
 	@description:
-		Returns 1 if the dock widget is actually visible , 0 otherwise.
+		Returns 1 if the dock widget is actually visible, 0 otherwise.
 	@seealso:
 		[cmd]trayicon.show[/cmd]
 */
@@ -673,7 +703,7 @@ static bool trayicon_module_init(KviModule * m)
 #endif
 	g_pDock3 = new QPixmap(buffer);
 
-	g_pTrayIconList = new KviPointerList<KviTrayIcon>;
+	g_pTrayIconList = new KviPointerList<TrayIcon>;
 	g_pTrayIconList->setAutoDelete(false);
 
 
@@ -718,7 +748,7 @@ KVIRC_MODULE(
 	"Copyright (C) 2007 Alexey Uzhva <alexey at kvirc dot ru>" \
 	"Copyright (C) 2008 Elvio Basello <hellvis69 at netsons dot org>",
 	"Exports the /trayicon.* interface\n",
-	trayicon_module_init ,
+	trayicon_module_init,
 	trayicon_module_can_unload,
 	0,
 	trayicon_module_cleanup,

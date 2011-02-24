@@ -5,7 +5,7 @@
 //   File : libkvilamerizer.h
 //   Creation date : Sat Now 4 2000 15:41:41 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2000 Szymon Stefanek (pragma at kvirc dot net)
 //   Copyright (C) 2000-2008 Till Bush (buti@geocities.com)
 //
@@ -29,7 +29,7 @@
 
 #ifdef COMPILE_CRYPT_SUPPORT
 
-	#include "kvi_crypt.h"
+	#include "KviCryptEngine.h"
 
 	class KviLamerizerEngine : public KviCryptEngine
 	{
@@ -41,8 +41,8 @@
 		bool m_bLight;
 	public:
 		virtual bool init(const char *encKey,int encKeyLen,const char *decKey,int decKeyLen);
-		virtual KviCryptEngine::EncryptResult encrypt(const char * plainText,KviStr &outBuffer);
-		virtual KviCryptEngine::DecryptResult decrypt(const char * inBuffer,KviStr &plainText);
+		virtual KviCryptEngine::EncryptResult encrypt(const char * plainText,KviCString &outBuffer);
+		virtual KviCryptEngine::DecryptResult decrypt(const char * inBuffer,KviCString &plainText);
 	};
 
 #endif // COMPILE_CRYPT_SUPPORT

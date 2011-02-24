@@ -3,8 +3,8 @@
 //   File : libkvilogview.cpp
 //   Creation date : Sun Feb 10 2000 23:25:10 CEST by Juanjo �varez
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,18 +22,18 @@
 //
 //=============================================================================
 
-#include "logviewwidget.h"
-#include "logviewmdiwindow.h"
+#include "LogViewWidget.h"
+#include "LogViewWindow.h"
 
-#include "kvi_config.h"
-#include "kvi_module.h"
-#include "kvi_frame.h"
-#include "kvi_iconmanager.h"
-#include "kvi_locale.h"
-#include "kvi_app.h"
+#include "KviConfigurationFile.h"
+#include "KviModule.h"
+#include "KviMainWindow.h"
+#include "KviIconManager.h"
+#include "KviLocale.h"
+#include "KviApplication.h"
 
 static QRect                 g_rectLogViewGeometry;
-KviLogViewMDIWindow        * g_pLogViewWindow = 0;
+LogViewWindow        * g_pLogViewWindow = 0;
 
 #define LOGVIEW_MODULE_EXTENSION_NAME "Log viewer extension"
 
@@ -100,8 +100,8 @@ static KviModuleExtension * logview_extension_alloc(KviModuleExtensionAllocStruc
 			}
 		}
 
-		g_pLogViewWindow = new KviLogViewMDIWindow(s->pDescriptor,g_pFrame);
-		g_pFrame->addWindow(g_pLogViewWindow,!bCreateMinimized);
+		g_pLogViewWindow = new LogViewWindow(s->pDescriptor,g_pMainWindow);
+		g_pMainWindow->addWindow(g_pLogViewWindow,!bCreateMinimized);
 		if(bCreateMinimized)g_pLogViewWindow->minimize();
 		return g_pLogViewWindow;
 	}
@@ -135,15 +135,15 @@ static bool logview_module_init(KviModule * m)
 							__tr2qs_ctx("Browse &Log Files","logview"),
 							logview_extension_alloc);
 
-	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_LOG)));
+	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::Log)));
 
 	return true;
 }
 
 static bool logview_module_cleanup(KviModule *)
 {
-	if(g_pLogViewWindow && g_pFrame)
-		g_pFrame->closeWindow(g_pLogViewWindow);
+	if(g_pLogViewWindow && g_pMainWindow)
+		g_pMainWindow->closeWindow(g_pLogViewWindow);
 	g_pLogViewWindow = 0;
 	return true;
 }

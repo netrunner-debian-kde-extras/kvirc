@@ -3,7 +3,7 @@
 //   File : kvircmodule.cpp
 //   Creation date : Wed Nov 19 19:11:29 2008 GMT by Elvio Basello
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2008 Elvio Basello (hellvis69 at netsons dot org)
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -18,7 +18,7 @@
 //
 //   You should have received a copy of the GNU General Public License
 //   along with this program. If not, write to the Free Software Foundation,
-//   Inc. ,59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+//   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 //=============================================================================
 
@@ -31,17 +31,17 @@
 #define KVIRC_MODULE
 
 #include "kvircmodule.h"
-#include "kvi_app.h"
-#include "kvi_window.h"
-#include "kvi_userinput.h"
-#include "kvi_kvs_runtimecontext.h"
-#include "kvi_kvs_script.h"
+#include "KviApplication.h"
+#include "KviWindow.h"
+#include "KviUserInput.h"
+#include "KviKvsRunTimeContext.h"
+#include "KviKvsScript.h"
 
 #include <QThread>
 
 extern KviKvsRunTimeContext * g_pCurrentKvsContext;
 extern bool g_bExecuteQuiet;
-extern KviStr g_szLastReturnValue;
+extern KviCString g_szLastReturnValue;
 extern QStringList g_lWarningList;
 extern QString g_lError;
 

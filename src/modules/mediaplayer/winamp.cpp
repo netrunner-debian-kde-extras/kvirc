@@ -3,8 +3,8 @@
 //   File : winamp.cpp
 //   Creation date : Tue Nov  6 23:01:12 2001 GMT by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@
 // This is a winamp-kvirc interface plugin
 //
 
-// This stuff is compiled only on windows , as a separate dll module
+// This stuff is compiled only on windows, as a separate dll module
 
 
 typedef struct
@@ -126,8 +126,8 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam)
 
 int init()
 {
-	lpWndProcOld = (void *) GetWindowLong(plugin.hwndParent,GWL_WNDPROC);
-	SetWindowLong(plugin.hwndParent,GWL_WNDPROC,(long)WndProc);
+	lpWndProcOld = (void *) GetWindowLong(plugin.hwndParent,GWLP_WNDPROC);
+	SetWindowLongPtr(plugin.hwndParent,GWLP_WNDPROC,(long)WndProc);
 	return 0;
 }
 

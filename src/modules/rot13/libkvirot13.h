@@ -5,7 +5,7 @@
 //   File : libkvirot13.h
 //   Creation date : Sat Now 4 2000 15:41:41 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2009 Aeriana (aeriana at quasarnet dot org)
 //   Copyright (C) 2000 Szymon Stefanek (pragma at kvirc dot net)
 //
@@ -29,7 +29,7 @@
 
 #ifdef COMPILE_CRYPT_SUPPORT
 
-	#include "kvi_crypt.h"
+	#include "KviCryptEngine.h"
 
 	class KviRot13Engine : public KviCryptEngine
 	{
@@ -39,8 +39,8 @@
 		~KviRot13Engine();
 	public:
 		virtual bool init(const char *encKey,int encKeyLen,const char *decKey,int decKeyLen);
-		virtual KviCryptEngine::EncryptResult encrypt(const char * plainText,KviStr &outBuffer);
-		virtual KviCryptEngine::DecryptResult decrypt(const char * inBuffer,KviStr &plainText);
+		virtual KviCryptEngine::EncryptResult encrypt(const char * plainText,KviCString &outBuffer);
+		virtual KviCryptEngine::DecryptResult decrypt(const char * inBuffer,KviCString &plainText);
 	};
 
 #endif // COMPILE_CRYPT_SUPPORT

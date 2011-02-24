@@ -4,7 +4,7 @@
 //   Creation date : Sat Nov  3 19:28:25 2001 GMT by Szymon Stefanek
 //   Renamed to file : libkvimediaplayer.cpp on Fri Mar 25 2005
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2001 Szymon Stefanek (pragma at kvirc dot net)
 //   Copyright (C) 2008 Tomasz Moń (desowin at gmail dot com)
 //
@@ -24,31 +24,31 @@
 //
 //=============================================================================
 
-#include "mp_interface.h"
-#include "mp_amipinterface.h"
-#include "mp_mprisinterface.h"
-#include "mp_winampinterface.h"
-#include "mp_xmmsinterface.h"
+#include "MpInterface.h"
+#include "MpAmipInterface.h"
+#include "MpMprisInterface.h"
+#include "MpWinampInterface.h"
+#include "MpXmmsInterface.h"
 
-#include "kvi_module.h"
-#include "kvi_options.h"
-#include "kvi_locale.h"
+#include "KviModule.h"
+#include "KviOptions.h"
+#include "KviLocale.h"
 #include "kvi_out.h"
 #include <QUrl>
 
-static KviPointerList<KviMediaPlayerInterfaceDescriptor> * g_pDescriptorList = 0;
+static KviPointerList<MpInterfaceDescriptor> * g_pDescriptorList = 0;
 
-static KviMediaPlayerInterface * g_pMPInterface = 0;
+static MpInterface * g_pMPInterface = 0;
 
-static KviMediaPlayerInterface * auto_detect_player(KviWindow * pOut = 0)
+static MpInterface * auto_detect_player(KviWindow * pOut = 0)
 {
 	int iBest = 0;
-	KviMediaPlayerInterface * pBest = 0;
-	KviMediaPlayerInterfaceDescriptor * d;
-	KviMediaPlayerInterfaceDescriptor * pDBest = 0;
+	MpInterface * pBest = 0;
+	MpInterfaceDescriptor * d;
+	MpInterfaceDescriptor * pDBest = 0;
 	for(d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
 	{
-		KviMediaPlayerInterface * i = d->instance();
+		MpInterface * i = d->instance();
 		if(i)
 		{
 			int iScore = i->detect(false);
@@ -62,7 +62,7 @@ static KviMediaPlayerInterface * auto_detect_player(KviWindow * pOut = 0)
 			{
 				QString szOut;
 				QString szNam = d->name();
-				KviQString::sprintf(szOut,__tr2qs_ctx("Trying media player interface \"%Q\": score %d","mediaplayer"),&(szNam),iScore);
+				szOut = QString(__tr2qs_ctx("Trying media player interface \"%1\": score %2","mediaplayer")).arg(szNam).arg(iScore);
 				pOut->output(KVI_OUT_MULTIMEDIA,szOut);
 			}
 		}
@@ -74,7 +74,7 @@ static KviMediaPlayerInterface * auto_detect_player(KviWindow * pOut = 0)
 		// no sure player found... try again with a destructive test
 		for(d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
 		{
-			KviMediaPlayerInterface * i = d->instance();
+			MpInterface * i = d->instance();
 			if(i)
 			{
 				int iScore = i->detect(true);
@@ -88,7 +88,7 @@ static KviMediaPlayerInterface * auto_detect_player(KviWindow * pOut = 0)
 				{
 					QString szOut;
 					QString szNam = d->name();
-					KviQString::sprintf(szOut,__tr2qs_ctx("Trying media player interface \"%Q\": score %d","mediaplayer"),&(szNam),iScore);
+					szOut = QString(__tr2qs_ctx("Trying media player interface \"%1\": score %2","mediaplayer")).arg(szNam).arg(iScore);
 					pOut->output(KVI_OUT_MULTIMEDIA,szOut);
 				}
 			}
@@ -460,7 +460,7 @@ MP_KVS_COMMAND(setPlayer)
 		KVSM_PARAMETER("player",KVS_PT_STRING,0,szPlayer)
 	KVSM_PARAMETERS_END(c)
 
-	for(KviMediaPlayerInterfaceDescriptor * d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
+	for(MpInterfaceDescriptor * d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
 	{
 		if(d->name() == szPlayer)
 		{
@@ -523,7 +523,7 @@ MP_KVS_FUNCTION(playerList)
 	KviKvsArray* pArray = new KviKvsArray();
 	int id=0;
 
-	for(KviMediaPlayerInterfaceDescriptor * d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
+	for(MpInterfaceDescriptor * d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
 	{
 		pArray->set(id++,new KviKvsVariant(d->name()));
 	}
@@ -543,7 +543,7 @@ MP_KVS_FUNCTION(playerList)
 	@description:
 		Plays the media specified by the <mrl> on the currently
 		selected media player interface. <mrl> is a standard Media Resource
-		Locator. Examples of such locators are: 'file:///home/myfile.mp3' ,
+		Locator. Examples of such locators are: 'file:///home/myfile.mp3',
 		'http://streaming.server.top:123', 'dvd:// or dvb://channelname'.
 		Take a look at the [module:mediaplayer]mediaplayer module documentation[/module]
 		for more details about how it works.[br]
@@ -741,7 +741,7 @@ MP_KVS_SIMPLE_COMMAND(mute,mute)
 	@description:
 		Returns the mrl of the media currently played by the selected media player interface.
 		The mrl is a standard Media Resource Locator.
-		Examples of such locators are: 'file:///home/myfile.mp3' ,
+		Examples of such locators are: 'file:///home/myfile.mp3',
 		'http://streaming.server.top:123', 'dvd:// or dvb://channelname'.
 		This means that the returned string may NOT refer to a local file:
 		it refers to the local file only if the 'file://' prefix is found ([fnc]$mediaplayer.localFile()[/fnc]
@@ -1402,9 +1402,12 @@ MP_KVS_FUNCTION(localFile)
 	if(szRet.isEmpty())return true;
 	if(szRet.startsWith("file://",Qt::CaseInsensitive))
 	{
+#if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
+		c->returnValue()->setString(szRet.mid(7));
+#else
 		QUrl url(szRet);
-		qDebug("local file %s", url.toLocalFile().toUtf8().data());
 		c->returnValue()->setString(url.toLocalFile());
+#endif
 	}
 	return true;
 }
@@ -1453,16 +1456,16 @@ MP_KVS_FUNCTION(status)
 // 	KVSM_PARAMETERS_END(c)
 
 	MP_KVS_FAIL_ON_NO_INTERFACE
-	KviMediaPlayerInterface::PlayerStatus eStat = g_pMPInterface->status();
+	MpInterface::PlayerStatus eStat = g_pMPInterface->status();
 	switch(eStat)
 	{
-		case KviMediaPlayerInterface::Stopped:
+		case MpInterface::Stopped:
 			c->returnValue()->setString("stopped");
 		break;
-		case KviMediaPlayerInterface::Playing:
+		case MpInterface::Playing:
 			c->returnValue()->setString("playing");
 		break;
-		case KviMediaPlayerInterface::Paused:
+		case MpInterface::Paused:
 			c->returnValue()->setString("paused");
 		break;
 		default:
@@ -1603,21 +1606,25 @@ MP_KVS_COMMAND(setShuffle)
 
 static bool mediaplayer_module_init( KviModule * m )
 {
-	g_pDescriptorList = new KviPointerList<KviMediaPlayerInterfaceDescriptor>;
+	g_pDescriptorList = new KviPointerList<MpInterfaceDescriptor>;
 	g_pDescriptorList->setAutoDelete(true);
 
-#if (!defined(COMPILE_ON_WINDOWS) && !defined(COMPILE_ON_MAC) && !defined(COMPILE_ON_MINGW))
-	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(KviAudaciousInterface));
+#if (defined(COMPILE_DBUS_SUPPORT) && !defined(COMPILE_ON_WINDOWS) && !defined(COMPILE_ON_MAC) && !defined(COMPILE_ON_MINGW))
+	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(MpAudaciousInterface));
 	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(KviAudaciousClassicInterface));
 	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(KviXmmsInterface));
-	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(KviXmms2Interface));
-	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(KviBmpxInterface));
-	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(KviAmarok2Interface));
-	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(KviQmmpInterface));
+	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(MpXmms2Interface));
+	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(MpBmpxInterface));
+	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(MpAmarok2Interface));
+	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(MpQmmpInterface));
+	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(MpSongbirdInterface));
+	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(MpTotemInterface));
+	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(MpVlcInterface));
+	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(MpClementineInterface));
 #endif
 
 #if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
-	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(KviAmipInterface));
+	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(MpAmipInterface));
 	g_pDescriptorList->append(MP_CREATE_DESCRIPTOR(KviWinampInterface));
 #endif
 	g_pMPInterface = 0;
@@ -1626,7 +1633,7 @@ static bool mediaplayer_module_init( KviModule * m )
 	{
 		g_pMPInterface = auto_detect_player();
 	} else {
-		for(KviMediaPlayerInterfaceDescriptor * d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
+		for(MpInterfaceDescriptor * d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
 		{
 			if(d->name() == KVI_OPTION_STRING(KviOption_stringPreferredMediaPlayer))
 			{
@@ -1718,7 +1725,7 @@ static bool mediaplayer_module_ctrl(KviModule *,const char * operation,void * pa
 	{
 		// we expect param to be a pointer to QStringList
 		QStringList * l = (QStringList *)param;
-		for(KviMediaPlayerInterfaceDescriptor * d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
+		for(MpInterfaceDescriptor * d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
 		{
 			l->append(d->name());
 		}
@@ -1735,7 +1742,7 @@ static bool mediaplayer_module_ctrl(KviModule *,const char * operation,void * pa
 KVIRC_MODULE(
 	"mediaplayer",
 	"4.0.0",
-	"Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)," \
+	"Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)," \
 		"Christoph Thielecke (crissi99 at gmx dot de)," \
 		"Tonino Imbesi (grifisx at barmes dot org)," \
 		"Alessandro Carbone (elfonol at gmail dot com)," \

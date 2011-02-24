@@ -3,8 +3,8 @@
 //   File : libkvicodetester.cpp
 //   Creation date : Mon 23 Dec 2002 20:23:59 2002 GMT by Szymon Stefanek
 //
-//   This toolbar is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This toolbar is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,15 +22,15 @@
 //
 //===============================================================================
 
-#include "codetester.h"
+#include "CodeTesterWindow.h"
 
-#include "kvi_module.h"
-#include "kvi_locale.h"
-#include "kvi_frame.h"
-#include "kvi_pointerlist.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+#include "KviMainWindow.h"
+#include "KviPointerList.h"
 
 
-KviPointerList<KviCodeTesterWindow> * g_pCodeTesterWindowList = 0;
+KviPointerList<CodeTesterWindow> * g_pCodeTesterWindowList = 0;
 
 
 /*
@@ -49,7 +49,7 @@ KviPointerList<KviCodeTesterWindow> * g_pCodeTesterWindowList = 0;
 
 static bool codetester_kvs_cmd_open(KviKvsModuleCommandCall * c)
 {
-	KviCodeTesterWindow * w = new KviCodeTesterWindow(c->window()->frame());
+	CodeTesterWindow * w = new CodeTesterWindow(c->window()->frame());
 	c->window()->frame()->addWindow(w);
 	w->setFocus();
 	return true;
@@ -59,7 +59,7 @@ static bool codetester_module_init(KviModule * m)
 {
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"open",codetester_kvs_cmd_open);
 
-	g_pCodeTesterWindowList = new KviPointerList<KviCodeTesterWindow>();
+	g_pCodeTesterWindowList = new KviPointerList<CodeTesterWindow>();
 	g_pCodeTesterWindowList->setAutoDelete(false);
 	return true;
 }
@@ -71,7 +71,7 @@ static bool codetester_module_can_unload(KviModule *)
 
 static bool codetester_module_cleanup(KviModule *)
 {
-	while(KviCodeTesterWindow * w = g_pCodeTesterWindowList->first())
+	while(CodeTesterWindow * w = g_pCodeTesterWindowList->first())
 	{
 		w->close(); // deleted path!
 	}

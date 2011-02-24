@@ -3,8 +3,8 @@
 //   File : libkviobjects.cpp
 //   Creation date : Wed Sep 09 2000 20:59:01 by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2009 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,66 +22,67 @@
 //
 //=============================================================================
 
-#include "class_button.h"
-#include "class_checkbox.h"
-#include "class_combobox.h"
-#include "class_dialog.h"
-#include "class_dockwindow.h"
-#include "class_file.h"
-#include "class_ftp.h"
-#include "class_groupbox.h"
-#include "class_buttongroup.h"
-#include "class_hbox.h"
-#include "class_http.h"
-#include "class_label.h"
-#include "class_layout.h"
-#include "class_lcd.h"
-#include "class_lineedit.h"
-#include "class_list.h"
-#include "class_listwidget.h"
-#include "class_mainwindow.h"
-#include "class_memorybuffer.h"
-#include "class_menubar.h"
-#include "class_multilineedit.h"
-#include "class_painter.h"
-#include "class_pixmap.h"
-#include "class_popupmenu.h"
-#include "class_process.h"
-#include "class_progressbar.h"
-#include "class_radiobutton.h"
-#include "class_slider.h"
-#include "class_socket.h"
-#include "class_spinbox.h"
-#include "class_tabwidget.h"
-#include "class_tablewidget.h"
-#include "class_tbrowser.h"
-#include "class_toolbar.h"
-#include "class_toolbutton.h"
-#include "class_treewidget.h"
-#include "class_treewidgetitem.h"
-#include "class_vbox.h"
-#include "class_widget.h"
-#include "class_window.h"
-#include "class_wizard.h"
-#include "class_workspace.h"
-#include "class_wrapper.h"
-#include "class_xmlreader.h"
-#include "class_sql.h"
-#include "class_datetimeedit.h"
+#include "KvsObject_button.h"
+#include "KvsObject_checkBox.h"
+#include "KvsObject_comboBox.h"
+#include "KvsObject_dialog.h"
+#include "KvsObject_dockWindow.h"
+#include "KvsObject_file.h"
+#include "KvsObject_ftp.h"
+#include "KvsObject_groupBox.h"
+#include "KvsObject_buttonGroup.h"
+#include "KvsObject_hBox.h"
+#include "KvsObject_http.h"
+#include "KvsObject_label.h"
+#include "KvsObject_layout.h"
+#include "KvsObject_lcd.h"
+#include "KvsObject_lineEdit.h"
+#include "KvsObject_list.h"
+#include "KvsObject_listWidget.h"
+#include "KvsObject_mainWindow.h"
+#include "KvsObject_memoryBuffer.h"
+#include "KvsObject_menuBar.h"
+#include "KvsObject_multiLineEdit.h"
+#include "KvsObject_painter.h"
+#include "KvsObject_pixmap.h"
+#include "KvsObject_popupMenu.h"
+#include "KvsObject_process.h"
+#include "KvsObject_progressBar.h"
+#include "KvsObject_radioButton.h"
+#include "KvsObject_slider.h"
+#include "KvsObject_socket.h"
+#include "KvsObject_spinBox.h"
+#include "KvsObject_tabWidget.h"
+#include "KvsObject_tableWidget.h"
+#include "KvsObject_textBrowser.h"
+#include "KvsObject_toolBar.h"
+#include "KvsObject_toolButton.h"
+#include "KvsObject_trayIcon.h"
+#include "KvsObject_treeWidget.h"
+#include "KvsObject_treeWidgeteItem.h"
+#include "KvsObject_vBox.h"
+#include "KvsObject_widget.h"
+#include "KvsObject_window.h"
+#include "KvsObject_wizard.h"
+#include "KvsObject_workspace.h"
+#include "KvsObject_wrapper.h"
+#include "KvsObject_xmlreader.h"
+#include "KvsObject_sql.h"
+#include "KvsObject_dateTimeEdit.h"
 
 
-#include "kvi_iconmanager.h"
-#include "kvi_window.h"
+#include "KviIconManager.h"
+#include "KviWindow.h"
 #include "kvi_out.h"
-#include "kvi_mirccntrl.h"
-#include "kvi_app.h"
-#include "kvi_module.h"
-#include "kvi_locale.h"
-#include "kvi_error.h"
-#include "kvi_cmdformatter.h"
+#include "KviControlCodes.h"
+#include "KviApplication.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+#include "KviError.h"
+#include "KviCommandFormatter.h"
 #include "kvi_out.h"
-#include "kvi_app.h"
-#include "kvi_fileutils.h"
+#include "KviApplication.h"
+#include "KviFileUtils.h"
 
 #include <QDir>
 #include <QImage>
@@ -94,52 +95,53 @@ static bool objects_module_cleanup(KviModule *)
 	// Don't attempt to change the order of these calls.
 	// Derived classes must be unregistered before the base ones.
 
-        KviKvsObject_memorybuffer::unregisterSelf();
-	KviKvsObject_process::unregisterSelf();
-	KviKvsObject_ftp::unregisterSelf();
-	KviKvsObject_http::unregisterSelf();
-	KviKvsObject_socket::unregisterSelf();
-	KviKvsObject_xmlreader::unregisterSelf();
-	KviKvsObject_wrapper::unregisterSelf();
-	KviKvsObject_file::unregisterSelf();
-	KviKvsObject_progressbar::unregisterSelf();
-	KviKvsObject_dockwindow::unregisterSelf();
-	KviKvsObject_wizard::unregisterSelf();
-	KviKvsObject_window::unregisterSelf();
-	KviKvsObject_toolbutton::unregisterSelf();
-	KviKvsObject_toolbar::unregisterSelf();
-	KviKvsObject_tabwidget::unregisterSelf();
-	KviKvsObject_spinbox::unregisterSelf();
-	KviKvsObject_slider::unregisterSelf();
-	KviKvsObject_radiobutton::unregisterSelf();
-	KviKvsObject_popupmenu::unregisterSelf();
-	KviKvsObject_pixmap::unregisterSelf();
-	KviKvsObject_painter::unregisterSelf();
-	KviKvsObject_mainwindow::unregisterSelf();
-	KviKvsObject_treewidgetitem::unregisterSelf();
-	KviKvsObject_treewidget::unregisterSelf();
-	KviKvsObject_listwidget::unregisterSelf();
-	KviKvsObject_combobox::unregisterSelf();
-	KviKvsObject_workspace::unregisterSelf();
-	KviKvsObject_menubar::unregisterSelf();
-	KviKvsObject_lineedit::unregisterSelf();
-	KviKvsObject_lcd::unregisterSelf();
-	KviKvsObject_layout::unregisterSelf();
-	KviKvsObject_hbox::unregisterSelf();
-	KviKvsObject_vbox::unregisterSelf();
-	KviKvsObject_label::unregisterSelf();
-	KviKvsObject_groupbox::unregisterSelf();
-	KviKvsObject_dialog::unregisterSelf();
-	KviKvsObject_checkbox::unregisterSelf();
-	KviKvsObject_textbrowser::unregisterSelf();
-	KviKvsObject_textedit::unregisterSelf();
-	KviKvsObject_button::unregisterSelf();
-        KviKvsObject_datetimeedit::unregisterSelf();
-        KviKvsObject_tablewidget::unregisterSelf();
-        KviKvsObject_widget::unregisterSelf();
-	KviKvsObject_list::unregisterSelf();
-        KviKvsObject_sql::unregisterSelf();
-	KviKvsObject_buttongroup::unregisterSelf();
+        KvsObject_memoryBuffer::unregisterSelf();
+	KvsObject_process::unregisterSelf();
+        KvsObject_trayIcon::unregisterSelf();
+	KvsObject_ftp::unregisterSelf();
+	KvsObject_http::unregisterSelf();
+	KvsObject_socket::unregisterSelf();
+	KvsObject_xmlReader::unregisterSelf();
+	KvsObject_wrapper::unregisterSelf();
+	KvsObject_file::unregisterSelf();
+	KvsObject_progressBar::unregisterSelf();
+	KvsObject_dockWindow::unregisterSelf();
+	KvsObject_wizard::unregisterSelf();
+	KvsObject_window::unregisterSelf();
+	KvsObject_toolButton::unregisterSelf();
+	KvsObject_toolBar::unregisterSelf();
+	KvsObject_tabWidget::unregisterSelf();
+	KvsObject_spinBox::unregisterSelf();
+	KvsObject_slider::unregisterSelf();
+	KvsObject_radioButton::unregisterSelf();
+	KvsObject_popupMenu::unregisterSelf();
+	KvsObject_pixmap::unregisterSelf();
+	KvsObject_painter::unregisterSelf();
+	KvsObject_mainWindow::unregisterSelf();
+	KvsObject_treeWidgetItem::unregisterSelf();
+	KvsObject_treeWidget::unregisterSelf();
+	KvsObject_listWidget::unregisterSelf();
+	KvsObject_comboBox::unregisterSelf();
+	KvsObject_workspace::unregisterSelf();
+	KvsObject_menuBar::unregisterSelf();
+	KvsObject_lineEdit::unregisterSelf();
+	KvsObject_lcd::unregisterSelf();
+	KvsObject_layout::unregisterSelf();
+	KvsObject_hBox::unregisterSelf();
+	KvsObject_vBox::unregisterSelf();
+	KvsObject_label::unregisterSelf();
+	KvsObject_groupBox::unregisterSelf();
+	KvsObject_dialog::unregisterSelf();
+	KvsObject_checkBox::unregisterSelf();
+	KvsObject_textBrowser::unregisterSelf();
+	KvsObject_textedit::unregisterSelf();
+	KvsObject_button::unregisterSelf();
+        KvsObject_dateTimeEdit::unregisterSelf();
+        KvsObject_tableWidget::unregisterSelf();
+        KvsObject_widget::unregisterSelf();
+	KvsObject_list::unregisterSelf();
+        KvsObject_sql::unregisterSelf();
+	KvsObject_buttonGroup::unregisterSelf();
 
 	return true;
 }
@@ -260,17 +262,17 @@ static bool objects_kvs_cmd_connect(KviKvsModuleCommandCall * c)
 	obSrc=KviKvsKernel::instance()->objectController()->lookupObject(hSrc);
 	if(!obTrg)
 	{
-		c->warning(__tr2qs_ctx("Inexisting target object for objects.connect","objects"));
+		c->warning(__tr2qs_ctx("Inexistant target object for objects.connect","objects"));
 		return true;
 	}
 	if(!obSrc)
 	{
-		c->warning(__tr2qs_ctx("Inexisting source object for objects.connect","objects"));
+		c->warning(__tr2qs_ctx("Inexistant source object for objects.connect","objects"));
 		return true;
 	}
 	if(!obSrc->connectSignal(szSignal,obTrg,szSlot))
 	{
-		c->warning(__tr2qs_ctx("Inexisting target slot '%Q' for objects.connect","objects"),&szSlot);
+		c->warning(__tr2qs_ctx("Inexistant target slot '%Q' for objects.connect","objects"),&szSlot);
 		return true;
 	}
 	return true;
@@ -504,7 +506,7 @@ static bool objects_kvs_fnc_classes(KviKvsModuleFunctionCall * c)
 		++it;
 	}
 	QString szPath;
-	g_pApp->getLocalKvircDirectory(szPath,KviApp::Classes);
+	g_pApp->getLocalKvircDirectory(szPath,KviApplication::Classes);
 	QDir d(szPath);
 	QStringList sl;
 	sl = d.entryList(QDir::Files);
@@ -556,7 +558,7 @@ static bool objects_kvs_fnc_name(KviKvsModuleFunctionCall * c)
 	obSrcClass = KviKvsKernel::instance()->objectController()->lookupObject(hClass);
 	if(!obSrcClass)
 	{
-		c->warning(__tr2qs_ctx("Inexisting class object for objects.name","objects"));
+		c->warning(__tr2qs_ctx("Inexistant class object for objects.name","objects"));
 		return true;
 	}
 
@@ -599,12 +601,12 @@ static bool objects_kvs_cmd_disconnect(KviKvsModuleCommandCall * c)
 	obSrc=KviKvsKernel::instance()->objectController()->lookupObject(hSrc);
 	if(!obTrg)
 	{
-		c->warning(__tr2qs_ctx("Inexisting target object for objects.disconnect","objects"));
+		c->warning(__tr2qs_ctx("Inexistant target object for objects.disconnect","objects"));
 		return true;
 	}
 	if(!obSrc)
 	{
-		c->warning(__tr2qs_ctx("Inexisting source object for objects.disconnect","objects"));
+		c->warning(__tr2qs_ctx("Inexistant source object for objects.disconnect","objects"));
 		return true;
 	}
 	obSrc->disconnectSignal(szSignal,obTrg,szSlot);
@@ -654,7 +656,7 @@ static bool objects_kvs_fnc_listObjects(KviKvsModuleFunctionCall * cmd)
 	if (bFlag) cmd->window()->output(80, "Objects dump:");
 		QWidgetList list = g_pApp->topLevelWidgets();
 
-	KviStr spacing = ">";
+	KviCString spacing = ">";
 	QString  szTemp;
 	KviKvsArray * n = new KviKvsArray();
 	int idx=0;
@@ -666,7 +668,7 @@ static bool objects_kvs_fnc_listObjects(KviKvsModuleFunctionCall * cmd)
 			{
 				cmd->window()->output(80, "Ptr %u: top level object: %c%s%c, class %s, %s, rect = %d, %d, %d, %d",
 				list.at(i),
-				KVI_TEXT_BOLD, list.at(i)->objectName().data(), KVI_TEXT_BOLD,
+				KviControlCodes::Bold, list.at(i)->objectName().data(), KviControlCodes::Bold,
 				list.at(i)->metaObject()->className(),
 				list.at(i)->isVisible() ? "visible" : "hidden",
 				list.at(i)->x(), list.at(i)->y(), list.at(i)->width(), list.at(i)->height());
@@ -678,9 +680,9 @@ static bool objects_kvs_fnc_listObjects(KviKvsModuleFunctionCall * cmd)
 			KviKvsVariant v;
 			v.setString(szTemp);
 			n->set(idx,new KviKvsVariant(v));
-                /*	debug ("string %s",szTemp.toUtf8().data());
-			debug ("class %s",szClass.toUtf8().data());
-                        debug ("Obj %s",szObj.toUtf8().data());*/
+			/*qDebug("string %s",szTemp.toUtf8().data());
+			qDebug("class %s",szClass.toUtf8().data());
+                        qDebug("Obj %s",szObj.toUtf8().data());*/
 			idx++;
 
 			dumpChildObjects(cmd->window(), list.at(i), spacing.ptr(), bFlag,n,idx);
@@ -704,8 +706,8 @@ static void dumpChildObjects(KviWindow *pWnd, QObject *parent, const char *spaci
 			if (bFlag)
 			{
 				pWnd->output(80, "%sPtr %u: object: %c%s%c, class %s",
-					spacing, list.at(i), KVI_TEXT_BOLD,
-					list.at(i)->objectName().data(), KVI_TEXT_BOLD, list.at(i)->metaObject()->className()
+					spacing, list.at(i), KviControlCodes::Bold,
+					list.at(i)->objectName().data(), KviControlCodes::Bold, list.at(i)->metaObject()->className()
 				);
 			}
 			QString szClass=list.at(i)->metaObject()->className();
@@ -715,7 +717,7 @@ static void dumpChildObjects(KviWindow *pWnd, QObject *parent, const char *spaci
 			KviKvsVariant v;
 			v.setString(szTemp);
 			n->set(idx,new KviKvsVariant(v));
-                        //debug ("string %s",szTemp.toUtf8().data());
+                        //qDebug("string %s",szTemp.toUtf8().data());
 			idx++;
 			dumpChildObjects(pWnd, list.at(i), sp.toUtf8().data(), bFlag, n, idx );
 		}
@@ -750,54 +752,54 @@ static bool objects_module_init(KviModule * m)
 	// Don't attempt to change the order of these calls.
 	// Derived classes must be registered after the base ones.
 
-	KviKvsObject_buttongroup::registerSelf();
+	KvsObject_buttonGroup::registerSelf();
 
-	KviKvsObject_sql::registerSelf();
-	KviKvsObject_list::registerSelf();
-	KviKvsObject_widget::registerSelf();
-	KviKvsObject_tablewidget::registerSelf();
-	KviKvsObject_datetimeedit::registerSelf();
-	KviKvsObject_button::registerSelf();
-	KviKvsObject_textedit::registerSelf();
-	KviKvsObject_textbrowser::registerSelf();
-	KviKvsObject_checkbox::registerSelf();
-	KviKvsObject_dialog::registerSelf();
-	KviKvsObject_groupbox::registerSelf();
-	KviKvsObject_label::registerSelf();
-	KviKvsObject_vbox::registerSelf();
-	KviKvsObject_hbox::registerSelf();
-	KviKvsObject_layout::registerSelf();
-	KviKvsObject_lcd::registerSelf();
-	KviKvsObject_lineedit::registerSelf();
-	KviKvsObject_menubar::registerSelf();
-	KviKvsObject_workspace::registerSelf();
-	KviKvsObject_combobox::registerSelf();
-	KviKvsObject_listwidget::registerSelf();
-	KviKvsObject_treewidget::registerSelf();
-	KviKvsObject_treewidgetitem::registerSelf();
-	KviKvsObject_mainwindow::registerSelf();
-	KviKvsObject_painter::registerSelf();
-	KviKvsObject_pixmap::registerSelf();
-	KviKvsObject_popupmenu::registerSelf();
-	KviKvsObject_radiobutton::registerSelf();
-	KviKvsObject_slider::registerSelf();
-	KviKvsObject_spinbox::registerSelf();
-	KviKvsObject_tabwidget::registerSelf();
-	KviKvsObject_toolbar::registerSelf();
-	KviKvsObject_toolbutton::registerSelf();
-	KviKvsObject_window::registerSelf();
-	KviKvsObject_wizard::registerSelf();
-	KviKvsObject_dockwindow::registerSelf();
-	KviKvsObject_progressbar::registerSelf();
-	KviKvsObject_file::registerSelf();
-	KviKvsObject_wrapper::registerSelf();
-	KviKvsObject_xmlreader::registerSelf();
-	KviKvsObject_socket::registerSelf();
-	KviKvsObject_http::registerSelf();
-	KviKvsObject_ftp::registerSelf();
-
-	KviKvsObject_process::registerSelf();
-	KviKvsObject_memorybuffer::registerSelf();
+	KvsObject_sql::registerSelf();
+	KvsObject_list::registerSelf();
+	KvsObject_widget::registerSelf();
+	KvsObject_tableWidget::registerSelf();
+	KvsObject_dateTimeEdit::registerSelf();
+	KvsObject_button::registerSelf();
+	KvsObject_textedit::registerSelf();
+	KvsObject_textBrowser::registerSelf();
+	KvsObject_checkBox::registerSelf();
+	KvsObject_dialog::registerSelf();
+	KvsObject_groupBox::registerSelf();
+	KvsObject_label::registerSelf();
+	KvsObject_vBox::registerSelf();
+	KvsObject_hBox::registerSelf();
+	KvsObject_layout::registerSelf();
+	KvsObject_lcd::registerSelf();
+	KvsObject_lineEdit::registerSelf();
+	KvsObject_menuBar::registerSelf();
+	KvsObject_workspace::registerSelf();
+	KvsObject_comboBox::registerSelf();
+	KvsObject_listWidget::registerSelf();
+	KvsObject_treeWidget::registerSelf();
+	KvsObject_treeWidgetItem::registerSelf();
+	KvsObject_mainWindow::registerSelf();
+	KvsObject_painter::registerSelf();
+	KvsObject_pixmap::registerSelf();
+	KvsObject_popupMenu::registerSelf();
+	KvsObject_radioButton::registerSelf();
+	KvsObject_slider::registerSelf();
+	KvsObject_spinBox::registerSelf();
+	KvsObject_tabWidget::registerSelf();
+	KvsObject_toolBar::registerSelf();
+	KvsObject_toolButton::registerSelf();
+	KvsObject_window::registerSelf();
+	KvsObject_wizard::registerSelf();
+	KvsObject_dockWindow::registerSelf();
+	KvsObject_progressBar::registerSelf();
+	KvsObject_file::registerSelf();
+	KvsObject_wrapper::registerSelf();
+	KvsObject_xmlReader::registerSelf();
+	KvsObject_socket::registerSelf();
+	KvsObject_http::registerSelf();
+	KvsObject_ftp::registerSelf();
+        KvsObject_trayIcon::registerSelf();
+	KvsObject_process::registerSelf();
+	KvsObject_memoryBuffer::registerSelf();
 
 	return true;
 }

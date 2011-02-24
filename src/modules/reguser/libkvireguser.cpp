@@ -3,8 +3,8 @@
 //   File : libkvireguser.cpp
 //   Creation date : Fri Dec 01 2000 14:53:10 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,22 +22,22 @@
 //
 //=============================================================================
 
-#include "edituser.h"
-#include "wizard.h"
-#include "kvi_ircconnection.h"
+#include "RegisteredUserEntryDialog.h"
+#include "RegistrationWizard.h"
+#include "KviIrcConnection.h"
 #include "dialog.h"
 
-#include "kvi_module.h"
-#include "kvi_regusersdb.h"
-#include "kvi_ircuserdb.h"
+#include "KviModule.h"
+#include "KviRegisteredUserDataBase.h"
+#include "KviIrcUserDataBase.h"
 #include "kvi_out.h"
-#include "kvi_mirccntrl.h"
-#include "kvi_window.h"
-#include "kvi_locale.h"
-#include "kvi_app.h"
-#include "kvi_window.h"
-#include "kvi_frame.h"
-#include "kvi_pointerlist.h"
+#include "KviControlCodes.h"
+#include "KviWindow.h"
+#include "KviLocale.h"
+#include "KviApplication.h"
+#include "KviWindow.h"
+#include "KviMainWindow.h"
+#include "KviPointerList.h"
 
 #include <QSplitter> // FIXME: REmove this!
 
@@ -46,14 +46,14 @@
 
 //#warning "THIS MODULE HAS TO BE REVISED (notify list consistency!!!)"
 
-// kvi_app.cpp
+// KviApplication.cpp
 
 
 extern KVIRC_API KviRegisteredUserDataBase * g_pRegisteredUserDataBase;
 
-KviPointerList<KviRegistrationWizard> * g_pRegistrationWizardList = 0;
+KviPointerList<RegistrationWizard> * g_pRegistrationWizardList = 0;
 
-KviRegisteredUsersDialog * g_pRegisteredUsersDialog = 0;
+RegisteredUsersDialog * g_pRegisteredUsersDialog = 0;
 
 /*
 	@doc: reguser
@@ -127,9 +127,9 @@ static bool reguser_kvs_cmd_edit(KviKvsModuleCommandCall * c)
 	} else {
 		if(c->hasSwitch('t',"toplevel"))
 		{
-			g_pRegisteredUsersDialog = new KviRegisteredUsersDialog(0);
+			g_pRegisteredUsersDialog = new RegisteredUsersDialog(0);
 		} else {
-			g_pRegisteredUsersDialog = new KviRegisteredUsersDialog(c->window()->frame()->splitter());
+			g_pRegisteredUsersDialog = new RegisteredUsersDialog(c->window()->frame()->splitter());
 		}
 	}
 	g_pRegisteredUsersDialog->show();
@@ -159,8 +159,8 @@ static bool reguser_kvs_cmd_edit(KviKvsModuleCommandCall * c)
 		If [mask] is given, then it is added to the entry mask list.[br]
 		The <name> parameter may contain any character: even spaces are allowed (obviously you have to
 		use quotes in that case).[br]
-		If the '-r' switch is given , the new entry replaces any previous one with the same <name> (the old entry is removed).[br]
-		If the '-f' switch is given , and there is an existing entry with the same name , no warning is printed
+		If the '-r' switch is given, the new entry replaces any previous one with the same <name> (the old entry is removed).[br]
+		If the '-f' switch is given, and there is an existing entry with the same name, no warning is printed
 		and the old entry is treated just like it has been just added (thus the [mask] is eventually added to its mask list).[br]
 		The '-q' switch causes the command to run in "quiet" mode and print no warning.[br]
 	@examples:
@@ -241,7 +241,7 @@ static bool reguser_kvs_cmd_add(KviKvsModuleCommandCall * c)
 		Removes the regusers database entry with the specified <name>.[br]
 		If the -n switch is given, and there is a removed entry,
 		this command will restart all the running "notify lists".
-		If the -q switch is used , no warning is printed if the <name>
+		If the -q switch is used, no warning is printed if the <name>
 		does not identify an existing entry.
 	@examples:
 		[example]
@@ -296,7 +296,7 @@ static bool reguser_kvs_cmd_remove(KviKvsModuleCommandCall * c)
 		The only restriction on the <mask> is that it must be unique inside the
 		regusers database: you can't match two users with the same mask (it would
 		have rather undefined results).[br]
-		If -f is used , KVIrc ensures that the mask is unique in the database
+		If -f is used, KVIrc ensures that the mask is unique in the database
 		and associates is to THIS registered user (breaking the previous associations).<br>
 		Once at least one mask has been added, the user can be "matched"
 		by using the [fnc]$reguser.match[/fnc]() function.[br]
@@ -369,7 +369,7 @@ static bool reguser_kvs_cmd_addmask(KviKvsModuleCommandCall * c)
 		reguser.delmask <mask>
 	@description:
 		Removes a mask from the regusers database.[br]
-		Since masks are unique in the database , you don't need to pass
+		Since masks are unique in the database, you don't need to pass
 		an <user> parameter: if an <user> entry has the <mask>, removing that <mask>
 		will surely remove it from that <user> entry. (contorsions ?)[br]
 	@examples:
@@ -655,12 +655,12 @@ static bool reguser_kvs_fnc_isIgnoreEnabled(KviKvsModuleFunctionCall * c)
 		Adds a property to the registered users database entry with name <name>.[br]
 		The property <property> is set to the specified <value> or is unset if <value>
 		is not given (or is an empty string).[br]
-		If the '-n' switch is used , and the user entry has been found in the database,
+		If the '-n' switch is used, and the user entry has been found in the database,
 		all the [doc:notify_list]notify lists[/doc] are restarted.[br]
-		If the '-a' switch is used , and there are users on IRC currently matched
+		If the '-a' switch is used, and there are users on IRC currently matched
 		by this reguser entry then their avatar is reset.
 		This is useful when you're changing someone's notify property.[br]
-		If the -q switch is used , the command runs in "quiet" mode and prints no warnings.[br]
+		If the -q switch is used, the command runs in "quiet" mode and prints no warnings.[br]
 	@examples:
 		[example]
 			[cmd]reguser.add[/cmd] "Szymon Stefanek"
@@ -809,7 +809,7 @@ static bool reguser_kvs_cmd_showlist(KviKvsModuleCommandCall * c)
 		KviPointerList<KviIrcMask> * ml = u->maskList();
 		if(u->matches(mask) || (ml->count() == 0))
 		{
-			c->window()->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs_ctx(" User: %c%Q","register"),KVI_TEXT_BOLD,&(u->name()));
+			c->window()->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs_ctx(" User: %c%Q","register"),KviControlCodes::Bold,&(u->name()));
 
 			if(ml->count() == 0)
 			{
@@ -929,14 +929,14 @@ static bool reguser_kvs_fnc_exactMatch(KviKvsModuleFunctionCall * c)
 //		$reguser.matches(<user_mask>)
 //	@description:
 //		Returns a comma separated list of registered user masks that match <user_mask>.[br]
-//		User mask must be in the format <nick>!<user>@<host> , where <user> and
+//		User mask must be in the format <nick>!<user>@<host>, where <user> and
 //		<host> may contain '*' wildcards.[br]
 //		If no registered mask matches the <user_mask> an empty string is returned.[br]
 //	@seealso:
 //		[module:reguser]reguser module documentation[/module]
 //*/
 
-//static void search_reguser_list(KviRegisteredUserList * l,KviWindow * w,const char * mask,KviStr & buffer)
+//static void search_reguser_list(KviRegisteredUserList * l,KviWindow * w,const char * mask,KviCString & buffer)
 //{
 //	for(KviRegisteredUser * u = l->first();u;u = l->next())
 //	{
@@ -948,11 +948,11 @@ static bool reguser_kvs_fnc_exactMatch(KviKvsModuleFunctionCall * c)
 //	}
 //}
 
-//static bool reguser_module_fnc_matches(KviModule *m,KviCommand *c,KviParameterList * parms,KviStr &buffer)
+//static bool reguser_module_fnc_matches(KviModule *m,KviCommand *c,KviParameterList * parms,KviCString &buffer)
 //{
 //	ENTER_STACK_FRAME(c,"reguser.matches");
 //
-//	KviStr list;
+//	KviCString list;
 //
 //	const KviPointerHashTable<const char *,KviRegisteredUserList> * d = g_pRegisteredUserDataBase->nickDict();
 //	KviPointerHashTableIterator<const char *,KviRegisteredUserList> it(*d);
@@ -982,9 +982,9 @@ static bool reguser_kvs_fnc_exactMatch(KviKvsModuleFunctionCall * c)
 		$reguser.mask(<name>[,<N>])
 	@description:
 		Returns the <N>th registration mask for the registered user database record identified
-		by <name>. If <N> is not given , returns an array of registration masks for that entry.[br]
+		by <name>. If <N> is not given, returns an array of registration masks for that entry.[br]
 		If <name> does not identify a valid entry an empty string is returned;
-		if <N> is out of range (or there are no masks at all) , an empty string is returned.[br]
+		if <N> is out of range (or there are no masks at all), an empty string is returned.[br]
 		<N> is a ZERO BASED index.[br]
 	@examples:
 		[example]
@@ -1014,16 +1014,17 @@ static bool reguser_kvs_fnc_mask(KviKvsModuleFunctionCall * c)
 	KVSM_PARAMETERS_END(c)
 
 	KviKvsArray* pArray = new KviKvsArray();
-	int aid=0;
 	KviRegisteredUser * u = g_pRegisteredUserDataBase->findUserByName(szName);
 	if(u)
 	{
-		KviStr n = szName;
+		KviCString n = szName;
 		if(n.hasData() && n.isUnsignedNum())
 		{
 			KviIrcMask * m = u->maskList()->at(n.toInt());
 			if(m) c->returnValue()->setString(m->nick()+"!"+m->user()+"@"+m->host());
 		} else {
+			int aid=0;
+
 			for(KviIrcMask * m = u->maskList()->first();m;m = u->maskList()->next())
 			{
 				pArray->set(aid,new KviKvsVariant(QString(m->nick()+"!"+m->user()+"@"+m->host())));
@@ -1155,7 +1156,7 @@ static bool reguser_kvs_fnc_matchProperty(KviKvsModuleFunctionCall * c)
 		reguser.wizard [mask]
 	@description:
 		Allows registering an user with an intuitive and easy to use interface.
-		If [mask] is specified , it is used as inital mask in the dialog.
+		If [mask] is specified, it is used as inital mask in the dialog.
 	@seealso:
 		[module:reguser]Registered users database interface[/module],
 		[doc:registered_users]Registered users database[/doc],
@@ -1169,7 +1170,7 @@ static bool reguser_kvs_cmd_wizard(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("mask",KVS_PT_STRING,KVS_PF_OPTIONAL,szMask)
 	KVSM_PARAMETERS_END(c)
 
-	KviRegistrationWizard * w = new KviRegistrationWizard(szMask);
+	RegistrationWizard * w = new RegistrationWizard(szMask);
 	w->show();
 	return true;
 }
@@ -1177,7 +1178,7 @@ static bool reguser_kvs_cmd_wizard(KviKvsModuleCommandCall * c)
 static bool reguser_module_init(KviModule * m)
 {
 	g_pLocalRegisteredUserDataBase = 0;
-	g_pRegistrationWizardList = new KviPointerList<KviRegistrationWizard>;
+	g_pRegistrationWizardList = new KviPointerList<RegistrationWizard>;
 	g_pRegistrationWizardList->setAutoDelete(true);
 
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"add",reguser_kvs_cmd_add);
@@ -1208,7 +1209,7 @@ static bool reguser_module_cleanup(KviModule *)
 	if(g_pRegisteredUsersDialog)delete g_pRegisteredUsersDialog;
 	g_pRegisteredUsersDialog = 0;
 
-	while(KviRegistrationWizard * w = g_pRegistrationWizardList->first())delete w;
+	while(RegistrationWizard * w = g_pRegistrationWizardList->first())delete w;
 	delete g_pRegistrationWizardList;
 	g_pRegistrationWizardList = 0;
 

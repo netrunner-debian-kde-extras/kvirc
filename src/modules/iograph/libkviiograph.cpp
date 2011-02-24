@@ -3,8 +3,8 @@
 //   File : kvi_iograph.cpp
 //   Creation date : Tue Oct 31 2000 00:14:12 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -25,11 +25,12 @@
 #include <math.h>
 
 #include "libkviiograph.h"
-#include "kvi_frame.h"
-#include "kvi_iconmanager.h"
-#include "kvi_locale.h"
-#include "kvi_module.h"
-#include "kvi_options.h"
+#include "KviMainWindow.h"
+#include "KviIconManager.h"
+#include "KviLocale.h"
+#include "KviMdiManager.h"
+#include "KviModule.h"
+#include "KviOptions.h"
 #include "kvi_socket.h"
 
 #include <QPainter>
@@ -41,8 +42,8 @@
 
 KviIOGraphWindow* g_pIOGraphWindow = 0;
 
-KviIOGraphWindow::KviIOGraphWindow(KviModuleExtensionDescriptor * d,KviFrame * lpFrm,const char * name)
-: KviWindow(KVI_WINDOW_TYPE_IOGRAPH,lpFrm,name), KviModuleExtension(d)
+KviIOGraphWindow::KviIOGraphWindow(KviModuleExtensionDescriptor * d,KviMainWindow * lpFrm,const char * name)
+: KviWindow(KviWindow::IOGraph,lpFrm,name), KviModuleExtension(d)
 {
 	m_pIOGraph = new KviIOGraphWidget(this);
 	setAutoFillBackground(false);
@@ -59,7 +60,7 @@ KviIOGraphWindow::~KviIOGraphWindow()
 
 QPixmap * KviIOGraphWindow::myIconPtr()
 {
-	return g_pIconManager->getSmallIcon(KVI_SMALLICON_SAYICON);
+	return g_pIconManager->getSmallIcon(KviIconManager::SayIcon);
 }
 
 void KviIOGraphWindow::resizeEvent(QResizeEvent *)
@@ -107,7 +108,7 @@ void KviIOGraphWindow::paintEvent(QPaintEvent * e)
 		p.restore();
 	} else if(g_pShadedChildGlobalDesktopBackground)
 	{
-		QPoint pnt = mdiParent() ? mapTo(g_pFrame, rect.topLeft() + g_pFrame->mdiManager()->scrollBarsOffset()) : rect.topLeft();
+		QPoint pnt = mdiParent() ? mapTo(g_pMainWindow, rect.topLeft() + g_pMainWindow->mdiManager()->scrollBarsOffset()) : rect.topLeft();
 		p.drawTiledPixmap(rect,*(g_pShadedChildGlobalDesktopBackground), pnt);
 	} else {
 #endif
@@ -151,8 +152,8 @@ void KviIOGraphWidget::timerEvent(QTimerEvent *)
 	kvi_u64_t sB = g_uOutgoingTraffic;
 	kvi_u64_t rB = g_uIncomingTraffic;
 
-	unsigned int sDiff = sB - m_uLastSentBytes;
-	unsigned int rDiff = rB - m_uLastRecvBytes;
+	unsigned int sDiff = sB > m_uLastSentBytes ? (sB - m_uLastSentBytes) : 0;
+	unsigned int rDiff = rB > m_uLastRecvBytes ? (rB - m_uLastRecvBytes) : 0;
 
 	unsigned int iMax = qMax(sDiff, rDiff);
 
@@ -299,8 +300,8 @@ static KviModuleExtension * iograph_extension_alloc(KviModuleExtensionAllocStruc
 			}
 		}
 
-		g_pIOGraphWindow = new KviIOGraphWindow(s->pDescriptor,g_pFrame,"IOGraph Window");
-		g_pFrame->addWindow(g_pIOGraphWindow,!bCreateMinimized);
+		g_pIOGraphWindow = new KviIOGraphWindow(s->pDescriptor,g_pMainWindow,"IOGraph Window");
+		g_pMainWindow->addWindow(g_pIOGraphWindow,!bCreateMinimized);
 
 		if(bCreateMinimized)g_pIOGraphWindow->minimize();
 		return g_pIOGraphWindow;
@@ -334,15 +335,15 @@ static bool iograph_module_init(KviModule *m)
 							__tr2qs("Show I/O &Traffic graph"),
 							iograph_extension_alloc);
 
-	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_SAYICON)));
+	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::SayIcon)));
 
 	return true;
 }
 
 static bool iograph_module_cleanup(KviModule *)
 {
-	if(g_pIOGraphWindow && g_pFrame)
-		g_pFrame->closeWindow(g_pIOGraphWindow);
+	if(g_pIOGraphWindow && g_pMainWindow)
+		g_pMainWindow->closeWindow(g_pIOGraphWindow);
 	g_pIOGraphWindow = 0;
 	return true;
 }

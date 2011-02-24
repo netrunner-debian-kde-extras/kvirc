@@ -6,8 +6,8 @@
 //   File : kvi_confignames.h
 //   Creation date : Wed Oct 18 2000 14:16:22 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -57,6 +57,7 @@
 * \def KVI_CONFIGFILE_USERACTIONS Defines useractions.kvc
 * \def KVI_CONFIGFILE_SCRIPTADDONS Defines scriptaddons.kvc
 * \def KVI_CONFIGFILE_IDENTITIES Defines identities.kvc
+* \def KVI_CONFIGFILE_DEFAULTSCRIPT Defines default.kvc
 */
 
 #include "kvi_fileextensions.h"
@@ -85,5 +86,6 @@
 #define KVI_CONFIGFILE_USERACTIONS "useractions" KVI_FILEEXTENSION_CONFIG
 #define KVI_CONFIGFILE_SCRIPTADDONS "scriptaddons" KVI_FILEEXTENSION_CONFIG
 #define KVI_CONFIGFILE_IDENTITIES "identities" KVI_FILEEXTENSION_CONFIG
+#define KVI_CONFIGFILE_DEFAULTSCRIPT "default" KVI_FILEEXTENSION_CONFIG
 
 #endif //_KVI_CONFIGNAMES_H_

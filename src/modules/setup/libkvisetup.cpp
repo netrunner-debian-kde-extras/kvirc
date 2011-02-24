@@ -3,8 +3,8 @@
 //   File : libkvisetup.cpp
 //   Creation date : Sat Oct  6 02:08:24 2001 GMT by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,17 +22,17 @@
 //
 //=============================================================================
 
-#include "setupwizard.h"
+#include "SetupWizard.h"
 
-#include "kvi_module.h"
-#include "kvi_options.h"
+#include "KviModule.h"
+#include "KviOptions.h"
 #include "kvi_defaults.h"
-#include "kvi_app.h"
-#include "kvi_kvs_script.h"
-#include "kvi_kvs_variantlist.h"
-#include "kvi_window.h"
-#include "kvi_theme.h"
-#include "kvi_ircserverdb.h"
+#include "KviApplication.h"
+#include "KviKvsScript.h"
+#include "KviKvsVariantList.h"
+#include "KviWindow.h"
+#include "KviTheme.h"
+#include "KviIrcServerDataBase.h"
 
 #include <QString>
 #include <QFile>
@@ -51,14 +51,14 @@ QString szMircIni;
 
 
 
-// this is called by KviApp when no local kvirc directory has been found
+// this is called by KviApplication when no local kvirc directory has been found
 // we have nothing to rely on yet... (settings have not been loaded yet)
 KVIMODULEEXPORTFUNC bool setup_begin()
 {
 	// FIXME: try to guess the user's .kvirc directory
 	//        and the preferred nickname from a previous installation
 
-	KviSetupWizard * w = new KviSetupWizard();
+	SetupWizard * w = new SetupWizard();
 	int retcode = w->exec();
 	delete w;
 	return (retcode == QDialog::Accepted);
@@ -91,11 +91,11 @@ KVIMODULEEXPORTFUNC void setup_finish()
 		switch(g_iThemeToApply)
 		{
 			case THEME_APPLY_HIRES:
-				g_pApp->getGlobalKvircDirectory(szDir,KviApp::Themes,"YellowIRC-1.0.0");
+				g_pApp->getGlobalKvircDirectory(szDir,KviApplication::Themes,"YellowIRC-1.0.0");
 				KviTheme::load(szDir,out);
 			break;
 			case THEME_APPLY_LORES:
-				g_pApp->getGlobalKvircDirectory(szDir,KviApp::Themes,"MinimalDark-1.0.0");
+				g_pApp->getGlobalKvircDirectory(szDir,KviApplication::Themes,"MinimalDark-1.0.0");
 				KviTheme::load(szDir,out);
 			break;
 			// default: no theme
@@ -148,7 +148,7 @@ KVIRC_MODULE(
 	"4.0.0",
 	"Szymon Stefanek <pragma at kvirc dot net>",
 	"First-time-run setup wizard",
-	setup_module_init ,
+	setup_module_init,
 	setup_module_can_unload,
 	0,
 	setup_module_cleanup,

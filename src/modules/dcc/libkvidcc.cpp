@@ -3,8 +3,8 @@
 //   File : libkviobjects.cpp
 //   Creation date : Wed Sep 09 2000 20:59:01 by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,48 +22,47 @@
 //
 //=============================================================================
 
-#include "gsmcodec.h"
-#include "broker.h"
-#include "voice.h"
-#include "video.h"
-#include "utils.h"
-#include "send.h"
-#include "window.h"
+#include "DccVoiceGsmCodec.h"
+#include "DccBroker.h"
+#include "DccVoiceWindow.h"
+#include "DccVideoWindow.h"
+#include "DccUtils.h"
+#include "DccFileTransfer.h"
+#include "DccWindow.h"
 
 #include "kvi_debug.h"
 #include "kvi_settings.h"
-#include "kvi_string.h"
-#include "kvi_module.h"
-#include "kvi_sparser.h"
-#include "kvi_locale.h"
+#include "KviCString.h"
+#include "KviModule.h"
+#include "KviIrcServerParser.h"
+#include "KviLocale.h"
 #include "kvi_out.h"
-#include "kvi_console.h"
-#include "kvi_netutils.h"
-#include "kvi_frame.h"
-#include "kvi_console.h"
-#include "kvi_error.h"
-#include "kvi_options.h"
+#include "KviConsoleWindow.h"
+#include "KviNetUtils.h"
+#include "KviMainWindow.h"
+#include "KviConsoleWindow.h"
+#include "KviError.h"
+#include "KviOptions.h"
 #include "kvi_defaults.h"
-#include "kvi_mirccntrl.h"
-#include "kvi_app.h"
-#include "kvi_ircconnection.h"
-#include "kvi_ircconnectionuserinfo.h"
+#include "KviApplication.h"
+#include "KviIrcConnection.h"
+#include "KviIrcConnectionUserInfo.h"
 
 #include <QFileInfo>
 
 #ifdef COMPILE_ON_WINDOWS
 	// Ugly Windoze compiler...
-	#include "dialogs.h"
+	#include "DccDialog.h"
 #endif
 
 //#warning "KviOption_boolIgnoreDccChat and other types too"
 
 //extern KVIRC_API KviSharedFilesManager * g_pSharedFilesManager;
 
-KviDccBroker * g_pDccBroker = 0;
+DccBroker * g_pDccBroker = 0;
 
 
-static void dcc_module_set_dcc_type(KviDccDescriptor * d,const char * szBaseType)
+static void dcc_module_set_dcc_type(DccDescriptor * d,const char * szBaseType)
 {
 	d->szType = szBaseType;
 #ifdef COMPILE_SSL_SUPPORT
@@ -72,7 +71,7 @@ static void dcc_module_set_dcc_type(KviDccDescriptor * d,const char * szBaseType
 	if(d->bIsTdcc)d->szType.prepend('T');
 }
 
-static bool dcc_kvs_parse_default_parameters(KviDccDescriptor * d,KviKvsModuleCommandCall *c)
+static bool dcc_kvs_parse_default_parameters(DccDescriptor * d,KviKvsModuleCommandCall *c)
 {
 	d->bIsTdcc = c->switches()->find('t',"tdcc");
 
@@ -85,7 +84,7 @@ static bool dcc_kvs_parse_default_parameters(KviDccDescriptor * d,KviKvsModuleCo
 
 	if(!d->console())
 	{
-		// We don't need a console with -c and -n , otherwise we need it
+		// We don't need a console with -c and -n, otherwise we need it
 		if(!(c->switches()->find('c',"connect") || c->switches()->find('n',"no-ctcp")))
 		{
 			delete d;
@@ -94,18 +93,18 @@ static bool dcc_kvs_parse_default_parameters(KviDccDescriptor * d,KviKvsModuleCo
 		} else d->setConsole(c->window()->frame()->firstConsole());
 	}
 
-	__range_valid(d->console());
+	KVI_ASSERT(d->console());
 
 	if(!d->console()->isConnected())
 	{
-		// We don't need a connection with -c and -n , otherwise we need it
+		// We don't need a connection with -c and -n, otherwise we need it
 		if(!(c->switches()->find('c',"connect") || c->switches()->find('n',"no-ctcp")))
 		{
 			delete d;
 			c->error(__tr2qs_ctx("You're not connected to a server (an active connection is required unless -c or -n are passed)","dcc"));
 			return false;
 		} else {
-			// -c or -n , grab a local nick from somewhere
+			// -c or -n, grab a local nick from somewhere
 			d->szLocalNick  = KVI_OPTION_STRING(KviOption_stringNickname1).trimmed();
 			if(d->szLocalNick.isEmpty())d->szLocalNick = KVI_DEFAULT_NICKNAME1;
 			d->szLocalUser  = __tr2qs_ctx("unknown","dcc"); // we can live without it
@@ -270,8 +269,7 @@ static bool dcc_kvs_parse_default_parameters(KviDccDescriptor * d,KviKvsModuleCo
 		be sure to know how [doc:dcc_connection]DCC negotiation and connections[/doc] work.
 		If the 'i' switch is specified, the local listening socket
 		will be bound to the specified <interface> (which is an IP address, IPv4 or IPv6),
-		otherwise it will be bound to the interface of the
-		current IRC connection.[br]
+		otherwise it will be bound to the interface of the current IRC connection.[br]
 		You can also specify a local interface name to get the address from (this works only for IPv4 interfaces
 		since IPv6 ones seem to be unsupported by the system ioctl() calls at the moment (in Linux at least)).[br]
 		Here are some examples:[br]
@@ -402,7 +400,7 @@ static bool dcc_kvs_cmd_chat(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("target",KVS_PT_NONEMPTYSTRING,0,szTarget)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * d = new KviDccDescriptor(c->window()->console());
+	DccDescriptor * d = new DccDescriptor(c->window()->console());
 
 	d->szNick       = szTarget;    // we always specify the nickname
 	d->szUser       = __tr2qs_ctx("unknown","dcc"); // username is always unknown
@@ -611,7 +609,7 @@ static bool dcc_kvs_cmd_send(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("file name",KVS_PT_NONEMPTYSTRING,KVS_PF_OPTIONAL,szFileName)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * d = new KviDccDescriptor(c->window()->console());
+	DccDescriptor * d = new DccDescriptor(c->window()->console());
 
 	d->szNick            = szTarget;    // we always specify the nickname
 
@@ -798,7 +796,7 @@ static bool dcc_kvs_cmd_recv(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("size",KVS_PT_UINT,0,uSize)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * d = new KviDccDescriptor(c->window()->console());
+	DccDescriptor * d = new DccDescriptor(c->window()->console());
 	d->szNick            = szTarget;
 	d->szUser            = __tr2qs_ctx("unknown","dcc");
 	d->szHost            = d->szUser;
@@ -880,7 +878,7 @@ static bool dcc_kvs_cmd_rsend(KviKvsModuleCommandCall * c)
 
 	KVSM_REQUIRE_CONNECTION(c)
 
-	KviDccDescriptor * d = new KviDccDescriptor(c->window()->console());
+	DccDescriptor * d = new DccDescriptor(c->window()->console());
 	d->szNick            = szTarget;
 	d->szLocalFileName   = szFileName;
 	d->bIsTdcc           = c->switches()->find('t',"tdcc");
@@ -953,7 +951,7 @@ static bool dcc_kvs_cmd_get(KviKvsModuleCommandCall * c)
 		szFileName.append('"');
 	}
 
-	KviStr szDCC("GET");
+	KviCString szDCC("GET");
 #ifdef COMPILE_SSL_SUPPORT
 	if(c->switches()->find('s',"ssl"))szDCC.prepend('S');
 #else
@@ -1115,7 +1113,7 @@ static bool dcc_kvs_cmd_voice(KviKvsModuleCommandCall * c)
 	return true;
 #endif
 
-	KviDccDescriptor * d = new KviDccDescriptor(c->window()->console());
+	DccDescriptor * d = new DccDescriptor(c->window()->console());
 
 	d->szNick       = szTarget;              // we always specify the nickname
 	d->szUser       = __tr2qs_ctx("unknown","dcc"); // username is always unknown
@@ -1191,9 +1189,9 @@ static bool dcc_kvs_cmd_video(KviKvsModuleCommandCall * c)
 #ifdef COMPILE_DISABLE_DCC_VIDEO
 	c->warning(__tr2qs_ctx("DCC VIDEO support not enabled at compilation time","dcc"));
 	return true;
-#endif
+#else
 
-	KviDccDescriptor * d = new KviDccDescriptor(c->window()->console());
+	DccDescriptor * d = new DccDescriptor(c->window()->console());
 
 	d->szNick       = szTarget;              // we always specify the nickname
 	d->szUser       = __tr2qs_ctx("unknown","dcc"); // username is always unknown
@@ -1245,6 +1243,7 @@ static bool dcc_kvs_cmd_video(KviKvsModuleCommandCall * c)
 	}
 
 	return true;
+#endif
 }
 
 
@@ -1253,12 +1252,12 @@ static bool dcc_module_cmd_canvas(KviModule *m,KviCommand *c)
 {
 	ENTER_STACK_FRAME(c,"dcc_module_cmd_canvas");
 
-	KviStr target;
+	KviCString target;
 	if(!g_pUserParser->parseCmdFinalPart(c,target))return false;
 
 	if(target.isEmpty())return c->error(KviError_notEnoughParameters,"%s",__tr_ctx("Missing target nickname","dcc"));
 
-	KviDccDescriptor * d = new KviDccDescriptor(c->window()->console());
+	DccDescriptor * d = new DccDescriptor(c->window()->console());
 
 	d->szNick       = target.ptr();              // we always specify the nickname
 	d->szUser       = __tr2qs_ctx("unknown","dcc"); // username is always unknown
@@ -1271,7 +1270,7 @@ static bool dcc_module_cmd_canvas(KviModule *m,KviCommand *c)
 
 	if(d->bOverrideMinimize)
 	{
-		KviStr tmpVal;
+		KviCString tmpVal;
 		if(!(c->getSwitchValue('m',tmpVal)))d->bShowMinimized = false;
 		else d->bShowMinimized = kvi_strEqualCI(tmpVal.ptr(),"1");
 	}
@@ -1279,19 +1278,19 @@ static bool dcc_module_cmd_canvas(KviModule *m,KviCommand *c)
 
 	if(!d->console())
 	{
-		// We don't need a console with -c and -n , otherwise we need it
+		// We don't need a console with -c and -n, otherwise we need it
 		if(!(c->hasSwitch('c') || c->hasSwitch('n')))return c->noIrcContext();
 		else d->console() = c->window()->frame()->firstConsole();
 	}
 
-	__range_valid(d->console());
+	KVI_ASSERT(d->console());
 
 	if(!d->console()->isConnected())
 	{
-		// We don't need a connection with -c and -n , otherwise we need it
+		// We don't need a connection with -c and -n, otherwise we need it
 		if(!(c->hasSwitch('c') || c->hasSwitch('n')))return c->notConnectedToServer();
 		else {
-			// -c or -n , grab a local nick from somewhere
+			// -c or -n, grab a local nick from somewhere
 			d->szLocalNick  = KVI_OPTION_STRING(KviOption_stringNickname1).trimmed();
 			if(d->szLocalNick.isEmpty())d->szLocalNick = KVI_DEFAULT_NICKNAME1;
 			d->szLocalUser  = __tr("unknown"); // we can live without it
@@ -1628,20 +1627,20 @@ static bool dcc_module_cmd_canvas(KviModule *m,KviCommand *c)
 		"XDCC" has exactly the same meaning as "DCC" (at least in KVIrc).[br]
 */
 
-static KviDccDescriptor * dcc_kvs_find_dcc_descriptor(const kvs_uint_t &uId,KviKvsModuleRunTimeCall * c,bool bWarn = true)
+static DccDescriptor * dcc_kvs_find_dcc_descriptor(const kvs_uint_t &uId,KviKvsModuleRunTimeCall * c,bool bWarn = true)
 {
-	KviDccDescriptor * dcc = 0;
+	DccDescriptor * dcc = 0;
 	if(uId == 0)
 	{
-		if(c->window()->inherits("KviDccWindow"))
+		if(c->window()->inherits("DccWindow"))
 		{
-			dcc = ((KviDccWindow *)(c->window()))->descriptor();
+			dcc = ((DccWindow *)(c->window()))->descriptor();
 		}
 		if((!dcc) && bWarn)
 			c->warning(__tr2qs_ctx("The current window has no associated DCC session","dcc"));
 		return dcc;
 	}
-	dcc = KviDccDescriptor::find(uId);
+	dcc = DccDescriptor::find(uId);
 	if((!dcc) && bWarn)
 		c->warning(__tr2qs_ctx("The specified parameter is not a valid DCC identifier","dcc"));
 	return dcc;
@@ -1661,7 +1660,7 @@ static KviDccDescriptor * dcc_kvs_find_dcc_descriptor(const kvs_uint_t &uId,KviK
 	@description:
 		Terminates the Direct Client Connection specified by <dcc_id>.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function doesn't abort anything and prints a warning unless the -q switch is used.[br]
@@ -1679,7 +1678,7 @@ static bool dcc_kvs_cmd_abort(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c,!c->switches()->find('q',"quiet"));
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c,!c->switches()->find('q',"quiet"));
 
 	if(dcc)
 	{
@@ -1703,7 +1702,7 @@ static bool dcc_kvs_cmd_abort(KviKvsModuleCommandCall * c)
 	@description:
 		Terminates the Direct Client Connection specified by <dcc_id>.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function  prints a warning unless the -q switch is used.[br]
@@ -1719,7 +1718,7 @@ static bool dcc_kvs_cmd_setBandwidthLimit(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c,!c->switches()->find('q',"quiet"));
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c,!c->switches()->find('q',"quiet"));
 	if(dcc)
 	{
 		if (dcc->transfer())dcc->transfer()->setBandwidthLimit(uVal);
@@ -1743,7 +1742,7 @@ static bool dcc_kvs_cmd_setBandwidthLimit(KviKvsModuleCommandCall * c)
 		Returns the string describing the protocol of the
 		Direct Client Connection specified by <dcc_id>.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -1757,7 +1756,7 @@ static bool dcc_kvs_fnc_protocol(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->protocol());
 	return true;
@@ -1780,7 +1779,7 @@ static bool dcc_kvs_fnc_protocol(KviKvsModuleFunctionCall * c)
 		Returns the string "ACTIVE" for active DCC connections
 		and the string "PASSIVE" for passive DCC connections.
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -1794,7 +1793,7 @@ static bool dcc_kvs_fnc_connectionType(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->isActive() ? "ACTIVE" : "PASSIVE");
 	return true;
@@ -1816,7 +1815,7 @@ static bool dcc_kvs_fnc_connectionType(KviKvsModuleFunctionCall * c)
 		Returns 1 if the specified Direct Client Connection
 		is a file transfer and 0 otherwise.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this and returns 0.[br]
@@ -1830,7 +1829,7 @@ static bool dcc_kvs_fnc_isFileTransfer(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c,false);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c,false);
 
 	if(dcc)c->returnValue()->setBoolean(dcc->isFileTransfer());
 	return true;
@@ -1852,7 +1851,7 @@ static bool dcc_kvs_fnc_isFileTransfer(KviKvsModuleFunctionCall * c)
 		Returns 1 if the specified Direct Client Connection
 		is an upload file transfer and 0 otherwise.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns 0.[br]
@@ -1866,7 +1865,7 @@ static bool dcc_kvs_fnc_isFileUpload(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setBoolean(dcc->isFileUpload());
 	return true;
@@ -1888,7 +1887,7 @@ static bool dcc_kvs_fnc_isFileUpload(KviKvsModuleFunctionCall * c)
 		Returns 1 if the specified Direct Client Connection
 		is a download file transfer and 0 otherwise.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns 0.[br]
@@ -1902,7 +1901,7 @@ static bool dcc_kvs_fnc_isFileDownload(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setBoolean(dcc->isFileDownload());
 	return true;
@@ -1916,14 +1915,14 @@ static bool dcc_kvs_fnc_isFileDownload(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.localNick
 	@short:
-		Returns the local nickname associated to the specified DCC
+		Returns the local nickname associated with the specified DCC
 	@syntax:
 		<string> $dcc.localNick
 		<string> $dcc.localNick(<dcc_id:uint>)
 	@description:
-		Returns the local nickname associated to the specified DCC.[br]
+		Returns the local nickname associated with the specified DCC.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -1937,7 +1936,7 @@ static bool dcc_kvs_fnc_localNick(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->localNick());
 	return true;
@@ -1951,14 +1950,14 @@ static bool dcc_kvs_fnc_localNick(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.localUser
 	@short:
-		Returns the local username associated to the specified DCC
+		Returns the local username associated with the specified DCC
 	@syntax:
 		<string> $dcc.localUser
 		<string> $dcc.localUser(<dcc_id:uint>)
 	@description:
-		Returns the local username associated to the specified DCC.[br]
+		Returns the local username associated with the specified DCC.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -1972,7 +1971,7 @@ static bool dcc_kvs_fnc_localUser(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->localUser());
 	return true;
@@ -1985,14 +1984,14 @@ static bool dcc_kvs_fnc_localUser(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.localHost
 	@short:
-		Returns the local hostname associated to the specified DCC
+		Returns the local hostname associated with the specified DCC
 	@syntax:
 		<string> $dcc.localHost
 		<string> $dcc.localHost(<dcc_id:uint>)
 	@description:
-		Returns the local hostname associated to the specified DCC.[br]
+		Returns the local hostname associated with the specified DCC.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -2006,7 +2005,7 @@ static bool dcc_kvs_fnc_localHost(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->localHost());
 	return true;
@@ -2020,14 +2019,14 @@ static bool dcc_kvs_fnc_localHost(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.localIp
 	@short:
-		Returns the local ip address associated to the specified DCC
+		Returns the local ip address associated with the specified DCC
 	@syntax:
 		<string> $dcc.localIp
 		<string> $dcc.localIp(<dcc_id:uint>)
 	@description:
-		Returns the local ip address associated to the specified DCC.[br]
+		Returns the local ip address associated with the specified DCC.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -2041,7 +2040,7 @@ static bool dcc_kvs_fnc_localIp(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->localIp());
 	return true;
@@ -2055,14 +2054,14 @@ static bool dcc_kvs_fnc_localIp(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.localPort
 	@short:
-		Returns the local port associated to the specified DCC
+		Returns the local port associated with the specified DCC
 	@syntax:
 		<integer> $dcc.localPort
 		<integer> $dcc.localPort(<dcc_id:uint>)
 	@description:
-		Returns the local port associated to the specified DCC.[br]
+		Returns the local port associated with the specified DCC.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier then
 		this function prints a warning and returns an empty sting.[br]
 		See the [module:dcc]dcc module[/module] documentation for more information.[br]
@@ -2075,7 +2074,7 @@ static bool dcc_kvs_fnc_localPort(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->localPort());
 	return true;
@@ -2089,11 +2088,11 @@ static bool dcc_kvs_fnc_localPort(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.localFileName
 	@short:
-		Returns the local file name associated to the specified DCC
+		Returns the local file name associated with the specified DCC
 	@syntax:
 		<string> $dcc.localFileName(<dcc_id:uint>)
 	@description:
-		Returns the local file name associated to the specified DCC.[br]
+		Returns the local file name associated with the specified DCC.[br]
 		If <dcc_id> does not identify a file transfer DCC then this
 		function returns an empty string.
 		If <dcc_id> is not a valid Direct Client Connection identifier
@@ -2107,7 +2106,7 @@ static bool dcc_kvs_fnc_localFileName(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->localFileName());
 	return true;
@@ -2121,11 +2120,11 @@ static bool dcc_kvs_fnc_localFileName(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.localFileSize
 	@short:
-		Returns the local file size associated to the specified DCC
+		Returns the local file size associated with the specified DCC
 	@syntax:
 		<integer> $dcc.localFileSize(<dcc_id:uint>)
 	@description:
-		Returns the local file size associated to the specified DCC.[br]
+		Returns the local file size associated with the specified DCC.[br]
 		If <dcc_id> does not identify a file transfer DCC then this
 		function returns '0'[br]
 		If <dcc_id> is not a valid Direct Client Connection identifier
@@ -2144,7 +2143,7 @@ static bool dcc_kvs_fnc_localFileSize(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->localFileSize().isEmpty() ? QString("0") : dcc->localFileSize());
 	return true;
@@ -2158,14 +2157,14 @@ static bool dcc_kvs_fnc_localFileSize(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.remoteNick
 	@short:
-		Returns the remote nickname associated to the specified DCC
+		Returns the remote nickname associated with the specified DCC
 	@syntax:
 		<string> $dcc.remoteNick
 		<string> $dcc.remoteNick(<dcc_id:uint>)
 	@description:
-		Returns the remote nickname associated to the specified DCC.[br]
+		Returns the remote nickname associated with the specified DCC.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -2179,7 +2178,7 @@ static bool dcc_kvs_fnc_remoteNick(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->remoteNick());
 	return true;
@@ -2193,14 +2192,14 @@ static bool dcc_kvs_fnc_remoteNick(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.remoteUser
 	@short:
-		Returns the remote username associated to the specified DCC
+		Returns the remote username associated with the specified DCC
 	@syntax:
 		<string> $dcc.remoteUser
 		<string> $dcc.remoteUser(<dcc_id:uint>)
 	@description:
-		Returns the remote username associated to the specified DCC.[br]
+		Returns the remote username associated with the specified DCC.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -2214,7 +2213,7 @@ static bool dcc_kvs_fnc_remoteUser(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->remoteUser());
 	return true;
@@ -2227,14 +2226,14 @@ static bool dcc_kvs_fnc_remoteUser(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.remoteHost
 	@short:
-		Returns the remote hostname associated to the specified DCC
+		Returns the remote hostname associated with the specified DCC
 	@syntax:
 		<string> $dcc.remoteHost
 		<string> $dcc.remoteHost(<dcc_id:uint>)
 	@description:
-		Returns the remote hostname associated to the specified DCC.[br]
+		Returns the remote hostname associated with the specified DCC.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -2248,7 +2247,7 @@ static bool dcc_kvs_fnc_remoteHost(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->remoteHost());
 	return true;
@@ -2261,14 +2260,14 @@ static bool dcc_kvs_fnc_remoteHost(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.remoteIp
 	@short:
-		Returns the remote ip address associated to the specified DCC
+		Returns the remote ip address associated with the specified DCC
 	@syntax:
 		<string> $dcc.remoteIp
 		<string> $dcc.remoteIp(<dcc_id:uint>)
 	@description:
-		Returns the remote ip address associated to the specified DCC.[br]
+		Returns the remote ip address associated with the specified DCC.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -2282,7 +2281,7 @@ static bool dcc_kvs_fnc_remoteIp(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->remoteIp());
 	return true;
@@ -2296,14 +2295,14 @@ static bool dcc_kvs_fnc_remoteIp(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.remotePort
 	@short:
-		Returns the remote port associated to the specified DCC
+		Returns the remote port associated with the specified DCC
 	@syntax:
 		<integer> $dcc.remotePort
 		<integer> $dcc.remotePort(<dcc_id:uint>)
 	@description:
-		Returns the remote port associated to the specified DCC.[br]
+		Returns the remote port associated with the specified DCC.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -2317,7 +2316,7 @@ static bool dcc_kvs_fnc_remotePort(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->remotePort());
 	return true;
@@ -2331,11 +2330,11 @@ static bool dcc_kvs_fnc_remotePort(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.remoteFileName
 	@short:
-		Returns the remote file name associated to the specified DCC
+		Returns the remote file name associated with the specified DCC
 	@syntax:
 		<string> $dcc.remoteFileName(<dcc_id:uint>)
 	@description:
-		Returns the remote file name associated to the specified DCC.[br]
+		Returns the remote file name associated with the specified DCC.[br]
 		If <dcc_id> does not identify a file transfer DCC then this
 		function returns an empty string.
 		If <dcc_id> is not a valid Direct Client Connection identifier
@@ -2349,7 +2348,7 @@ static bool dcc_kvs_fnc_remoteFileName(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->remoteFileName());
 	return true;
@@ -2363,11 +2362,11 @@ static bool dcc_kvs_fnc_remoteFileName(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.remoteFileSize
 	@short:
-		Returns the remote file size associated to the specified DCC
+		Returns the remote file size associated with the specified DCC
 	@syntax:
 		<integer> $dcc.remoteFileSize(<dcc_id:uint>)
 	@description:
-		Returns the remote file size associated to the specified DCC.[br]
+		Returns the remote file size associated with the specified DCC.[br]
 		If <dcc_id> does not identify a file transfer DCC then this
 		function returns '0'[br]
 		If <dcc_id> is not a valid Direct Client Connection identifier
@@ -2386,7 +2385,7 @@ static bool dcc_kvs_fnc_remoteFileSize(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setString(dcc->remoteFileSize().isEmpty() ? QString("0") : dcc->remoteFileSize());
 	return true;
@@ -2410,7 +2409,7 @@ static bool dcc_kvs_fnc_remoteFileSize(KviKvsModuleFunctionCall * c)
 		When the DCC is not originated from an IRC context
 		then this function returns '0' : an invalid irc context id.
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns 0.[br]
@@ -2424,7 +2423,7 @@ static bool dcc_kvs_fnc_ircContext(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)c->returnValue()->setInteger(dcc->console()->context()->id());
 	return true;
@@ -2448,7 +2447,7 @@ static bool dcc_kvs_fnc_ircContext(KviKvsModuleFunctionCall * c)
 		The status is one of the strings "connecting", "transferring", "success" and "failure".
 		"success" and "failure" are reported when the transfer is terminated.
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -2464,7 +2463,7 @@ static bool dcc_kvs_fnc_transferStatus(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)
 	{
@@ -2493,7 +2492,7 @@ static bool dcc_kvs_fnc_transferStatus(KviKvsModuleFunctionCall * c)
 	@description:
 		Returns the number of transferred bytes in the specified DCC session.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -2509,7 +2508,7 @@ static bool dcc_kvs_fnc_transferredBytes(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)
 	{
@@ -2539,7 +2538,7 @@ static bool dcc_kvs_fnc_transferredBytes(KviKvsModuleFunctionCall * c)
 	@description:
 		Returns the average speed (in bytes/sec) of the specified DCC session.[br]
 		If <dcc_id> is omitted then the DCC Session associated
-		to the current window is assumed.[br]
+		with the current window is assumed.[br]
 		If <dcc_id> is not a valid DCC session identifier (or it is omitted
 		and the current window has no associated DCC session) then
 		this function prints a warning and returns an empty sting.[br]
@@ -2555,7 +2554,7 @@ static bool dcc_kvs_fnc_averageSpeed(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
 
 	if(dcc)
 	{
@@ -2578,14 +2577,14 @@ static bool dcc_kvs_fnc_averageSpeed(KviKvsModuleFunctionCall * c)
 	@title:
 		$dcc.session
 	@short:
-		Returns the DCC session identifier associated to a window
+		Returns the DCC session identifier associated with a window
 	@syntax:
 		<uint> $dcc.session
 		<uint> $dcc.session(<window_id>)
 	@description:
-		Returns the DCC session identifier associated to the DCC window specified
+		Returns the DCC session identifier associated with the DCC window specified
 		by <window_id>. If <window_id> is omitted then the DCC session identifier
-		associated to the current window is returned. If the specified window
+		associated with the current window is returned. If the specified window
 		has no associated DCC session then a warning is printed and 0 is returned.[br]
 */
 
@@ -2596,11 +2595,11 @@ static bool dcc_kvs_fnc_session(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("window_id",KVS_PT_STRING,KVS_PF_OPTIONAL,szWinId)
 	KVSM_PARAMETERS_END(c)
 
-	KviDccDescriptor * dcc = 0;
+	DccDescriptor * dcc = 0;
 	if(szWinId.isEmpty())
 	{
-		if(c->window()->inherits("KviDccWindow"))
-			dcc = ((KviDccWindow *)(c->window()))->descriptor();
+		if(c->window()->inherits("DccWindow"))
+			dcc = ((DccWindow *)(c->window()))->descriptor();
 		if(!dcc)
 		{
 			c->warning(__tr2qs_ctx("The current window has no associated DCC session","dcc"));
@@ -2619,8 +2618,8 @@ static bool dcc_kvs_fnc_session(KviKvsModuleFunctionCall * c)
 		return true;
 	}
 
-	if(pWnd->inherits("KviDccWindow"))
-		dcc = ((KviDccWindow *)pWnd)->descriptor();
+	if(pWnd->inherits("DccWindow"))
+		dcc = ((DccWindow *)pWnd)->descriptor();
 	if(!dcc)
 	{
 		c->warning(__tr2qs_ctx("The current window has no associated DCC session","dcc"));
@@ -2662,17 +2661,17 @@ static bool dcc_kvs_fnc_sessionList(KviKvsModuleFunctionCall * c)
 	KviKvsArray * a = new KviKvsArray();
 	c->returnValue()->setArray(a);
 
-	KviPointerHashTable<int,KviDccDescriptor> * dict = KviDccDescriptor::descriptorDict();
+	KviPointerHashTable<int,DccDescriptor> * dict = DccDescriptor::descriptorDict();
 	if(!dict)return true;
 
-	KviPointerHashTableIterator<int,KviDccDescriptor> it(*dict);
+	KviPointerHashTableIterator<int,DccDescriptor> it(*dict);
 
 	int idx = 0;
 
 	if(szFlags.isEmpty())
 	{
 		// all
-		while(KviDccDescriptor * dcc = it.current())
+		while(DccDescriptor * dcc = it.current())
 		{
 			a->set(idx++,new KviKvsVariant((kvs_int_t)(dcc->id())));
 			++it;
@@ -2682,7 +2681,7 @@ static bool dcc_kvs_fnc_sessionList(KviKvsModuleFunctionCall * c)
 		bool bWantFileDownloads = szFlags.contains('d',Qt::CaseInsensitive) != -1;
 		bool bWantChats = szFlags.contains('c',Qt::CaseInsensitive) != -1;
 
-		while(KviDccDescriptor * dcc = it.current())
+		while(DccDescriptor * dcc = it.current())
 		{
 			if((dcc->isFileUpload() && bWantFileUploads) ||
 				(dcc->isFileDownload() && bWantFileDownloads) ||
@@ -2695,6 +2694,148 @@ static bool dcc_kvs_fnc_sessionList(KviKvsModuleFunctionCall * c)
 	}
 
 	return true;
+}
+
+
+/*
+	@doc: dcc.getSSLCertInfo
+	@type:
+		function
+	@title:
+		$dcc.getSSLCertInfo
+	@short:
+		Returns the requested information about certificates used in an ssl-enabled dcc session
+	@syntax:
+		$dcc.getSSLCertInfo(<query:string>[,<type:string='remote'>[,<dcc_id:integer>[,<param1:string>]]])
+	@description:
+		Returns the requested information about certificates used in an ssl-enabled dcc session.[br]
+		The second <type> parameter can be "local" or "remote", and refers to the certificate you want
+		to query the information from; if omitted, it defaults to "remote".[br]
+		If <dcc_id> is omitted then the DCC Session associated with the current window is assumed.[br]
+		If <dcc_id> is not a valid DCC session identifier (or it is omitted and the current window
+		has no associated DCC session) then this function prints a warning and returns an empty sting.[br]
+		If the DCC session is not using ssl then this function returns an empty string.[br]
+		Some queries can accept an optional parameter <param1>[br]
+		Available query strings are:[br]
+		[ul]
+		[li]signatureType[/li]
+		[li]signatureContents[/li]
+		[li]subjectCountry[/li]
+		[li]subjectStateOrProvince[/li]
+		[li]subjectLocality[/li]
+		[li]subjectOrganization[/li]
+		[li]subjectOrganizationalUnit[/li]
+		[li]subjectCommonName[/li]
+		[li]issuerCountry[/li]
+		[li]issuerStateOrProvince[/li]
+		[li]issuerLocality[/li]
+		[li]issuerOrganization[/li]
+		[li]issuerOrganizationalUnit[/li]
+		[li]issuerCommonName[/li]
+		[li]publicKeyBits[/li]
+		[li]publicKeyType[/li]
+		[li]serialNumber[/li]
+		[li]pemBase64[/li]
+		[li]version[/li]
+		[li]fingerprintIsValid[/li]
+		[li]fingerprintDigestId[/li]
+		[li]fingerprintDigestStr[/li]
+		[li]fingerprintContents * accepts parameter interpreted as "digest name"[/li]
+		[/ul]
+		@examples:
+			[example]
+				# get a sha256 fingerprint of remote peer's certificate
+				$dcc.getSSLCertInfo(fingerprintContents,remote,$dcc.session,sha256)
+			[/example]
+		@seealso:
+			[fnc]$certificate[/fnc]
+			[fnc]$str.evpSign[/fnc]
+			[fnc]$str.evpVerify[/fnc]
+			[module:dcc]dcc module[/module]
+*/
+
+static bool dcc_kvs_fnc_getSSLCertInfo(KviKvsModuleFunctionCall * c)
+{
+	kvs_uint_t uDccId;
+	QString szQuery;
+	QString szType;
+	QString szParam1;
+	bool bRemote=true;
+
+	KVSM_PARAMETERS_BEGIN(c)
+		KVSM_PARAMETER("query",KVS_PT_STRING,0,szQuery)
+		KVSM_PARAMETER("type",KVS_PT_STRING,KVS_PF_OPTIONAL,szType)
+		KVSM_PARAMETER("dcc_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uDccId)
+		KVSM_PARAMETER("param1",KVS_PT_STRING,KVS_PF_OPTIONAL,szParam1)
+	KVSM_PARAMETERS_END(c)
+
+#ifndef COMPILE_SSL_SUPPORT
+	c->warning(__tr2qs_ctx("This executable was built without SSL support","dcc"));
+	return true;
+#else
+
+	if(szType.compare("local")==0)
+	{
+		bRemote=false;
+	} else {
+		// already defaults to true, we only catch the error condition
+		if(szType.compare("remote")!=0)
+		{
+			c->warning(__tr2qs_ctx("You specified a bad string for the parameter \"type\"","dcc"));
+			c->returnValue()->setString("");
+			return true;
+		}
+	}
+	DccDescriptor * dcc = dcc_kvs_find_dcc_descriptor(uDccId,c);
+
+	if(dcc)
+	{
+		if(!dcc->isSSL())
+		{
+			c->warning(__tr2qs_ctx("Unable to get SSL information: DCC session is not using SSL","dcc"));
+			c->returnValue()->setString("");
+			return true;
+		}
+
+		DccThread * pSlaveThread = 0;
+		if(dcc->window())
+			pSlaveThread = dcc->window()->getSlaveThread();
+		else if(dcc->transfer())
+			pSlaveThread = dcc->transfer()->getSlaveThread();
+
+		if(!pSlaveThread)
+		{
+			c->warning(__tr2qs_ctx("Unable to get SSL information: DCC session not initialized yet","dcc"));
+			c->returnValue()->setString("");
+			return true;
+		}
+
+		KviSSL * pSSL = pSlaveThread->getSSL();
+		if(!pSSL)
+		{
+			c->warning(__tr2qs_ctx("Unable to get SSL information: SSL non initialized yet in DCC session","dcc"));
+			c->returnValue()->setString("");
+			return true;
+		}
+
+		KviSSLCertificate * pCert = bRemote ? pSSL->getPeerCertificate() : pSSL->getLocalCertificate();
+
+		if(!pCert)
+		{
+			c->warning(__tr2qs_ctx("Unable to get SSL information: No peer certificate available","dcc"));
+			c->returnValue()->setString("");
+			return true;
+		}
+
+		if(KviSSLMaster::getSSLCertInfo(pCert, szQuery, szParam1, c->returnValue()))
+			return true;
+
+		c->warning(__tr2qs_ctx("Unable to get SSL information: query not recognized","dcc"));
+		c->returnValue()->setString("");
+		return true;
+	}
+	return true;
+#endif
 }
 
 
@@ -2753,12 +2894,13 @@ static bool dcc_kvs_fnc_sessionList(KviKvsModuleFunctionCall * c)
 		[fnc]$dcc.remoteFileSize[/fnc][br]
 		[fnc]$dcc.ircContext[/fnc][br]
 		[fnc]$dcc.session[/fnc][br]
+		[fnc]$dcc.getSSLCertInfo[/fnc][br]
 */
 
 
 static bool dcc_module_init(KviModule * m)
 {
-	g_pDccBroker = new KviDccBroker();
+	g_pDccBroker = new DccBroker();
 
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"send",dcc_kvs_cmd_send);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"chat",dcc_kvs_cmd_chat);
@@ -2798,6 +2940,7 @@ static bool dcc_module_init(KviModule * m)
 	KVSM_REGISTER_FUNCTION(m,"ircContext",dcc_kvs_fnc_ircContext);
 	KVSM_REGISTER_FUNCTION(m,"session",dcc_kvs_fnc_session);
 	KVSM_REGISTER_FUNCTION(m,"sessionList",dcc_kvs_fnc_sessionList);
+	KVSM_REGISTER_FUNCTION(m,"getSSLCertInfo",dcc_kvs_fnc_getSSLCertInfo);
 
 	return true;
 }

@@ -3,8 +3,8 @@
 //   File : libkviconfig.cpp
 //   Creation date : Thu Jan 31 2002 22:50:12 GMT by Szymon Stefanek
 //
-//   This config is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma@kvirc.net)
+//   This config is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma@kvirc.net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,15 +22,15 @@
 //
 //=============================================================================
 
-#include "kvi_module.h"
-#include "kvi_string.h"
-#include "kvi_config.h"
-#include "kvi_fileutils.h"
-#include "kvi_app.h"
-#include "kvi_locale.h"
-#include "kvi_pointerhashtable.h"
+#include "KviModule.h"
+#include "KviCString.h"
+#include "KviConfigurationFile.h"
+#include "KviFileUtils.h"
+#include "KviApplication.h"
+#include "KviLocale.h"
+#include "KviPointerHashTable.h"
 
-static KviPointerHashTable<QString,KviConfig> * g_pConfigDict = 0;
+static KviPointerHashTable<QString,KviConfigurationFile> * g_pConfigDict = 0;
 static int g_iNextConfigId = 0;
 
 /*
@@ -45,21 +45,21 @@ static int g_iNextConfigId = 0;
 		$config.open(<filename:string>[,<flags:string>])
 	@description:
 		Opens a config file.
-		If the file already exists , its contents
+		If the file already exists, its contents
 		are parsed and available for extracting by the [fnc]$config.read[/fnc]() function.[br]
 		<filename> may be an absolute path or a relative path: if a relative path is used,
 		KVIrc will complete it with a local kvirc directory suitable for writing script config files.[br]
-		If the config file doesn't exist , it is opened as empty config file.[br]
+		If the config file doesn't exist, it is opened as empty config file.[br]
 		Flags can contain a combination of letters 'r' and 'w'.[br]
-		If only 'r' is specified , the config file is opened in "read-only" mode: no changes will be written to disk.[br]
-		If only 'w' is specified , the config file is opened in "write-only" mode: the contents of the file on disk
+		If only 'r' is specified, the config file is opened in "read-only" mode: no changes will be written to disk.[br]
+		If only 'w' is specified, the config file is opened in "write-only" mode: the contents of the file on disk
 		are not readed.[br]
 		If <flags> are not specified then 'rw' is assumed.[br]
 		The function returns an identifier for the open config file. This identifier
 		is a mandatory parameter in all the other config.* functions and commands.[br]
 		The config section is set to the default section name: you can change it by using
 		[cmd]config.setsection[/cmd].[br]
-		After you have finished using the file , don't forget to call [cmd]config.close[/cmd]!
+		After you have finished using the file, don't forget to call [cmd]config.close[/cmd]!
 		KVIrc tries to not open a config file twice: if the file was already opened then
 		the identifier of the open file is returned.[br]
 		You can check if a config file is already open by using the
@@ -89,30 +89,30 @@ static bool config_kvs_fnc_open(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("mode",KVS_PT_STRING,KVS_PF_OPTIONAL,szMode)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig::FileMode fileMode;
+	KviConfigurationFile::FileMode fileMode;
 
 	if(szMode.contains('r'))
 	{
-		if(szMode.contains('w'))fileMode = KviConfig::ReadWrite;
-		else fileMode = KviConfig::Read;
+		if(szMode.contains('w'))fileMode = KviConfigurationFile::ReadWrite;
+		else fileMode = KviConfigurationFile::Read;
 	} else {
-		if(szMode.contains('w'))fileMode = KviConfig::Write;
-		else fileMode = KviConfig::ReadWrite;
+		if(szMode.contains('w'))fileMode = KviConfigurationFile::Write;
+		else fileMode = KviConfigurationFile::ReadWrite;
 	}
 
 	KviFileUtils::adjustFilePath(szFile);
 	QString szAbsFile;
 
 	if(KviFileUtils::isAbsolutePath(szFile))szAbsFile = szFile;
-	else g_pApp->getLocalKvircDirectory(szAbsFile,KviApp::ConfigScripts,szFile,true);
+	else g_pApp->getLocalKvircDirectory(szAbsFile,KviApplication::ConfigScripts,szFile,true);
 
-	KviPointerHashTableIterator<QString,KviConfig> it(*g_pConfigDict);
+	KviPointerHashTableIterator<QString,KviConfigurationFile> it(*g_pConfigDict);
 	while(it.current())
 	{
 		if(KviQString::equalCI(it.current()->fileName(),szAbsFile))
 		{
 			c->returnValue()->setString(it.currentKey());
-			if(it.current()->readOnly() && (fileMode & KviConfig::Write))
+			if(it.current()->readOnly() && (fileMode & KviConfigurationFile::Write))
 			{
 				it.current()->setReadOnly(false);
 			}
@@ -121,7 +121,7 @@ static bool config_kvs_fnc_open(KviKvsModuleFunctionCall * c)
 		++it;
 	}
 
-	KviConfig * cfg = new KviConfig(szAbsFile,fileMode);
+	KviConfigurationFile * cfg = new KviConfigurationFile(szAbsFile,fileMode);
 	g_iNextConfigId++;
 	QString tmp = QString("%1").arg(g_iNextConfigId);
 	g_pConfigDict->insert(tmp,cfg);
@@ -160,9 +160,9 @@ static bool config_kvs_fnc_id(KviKvsModuleFunctionCall * c)
 	QString szAbsFile;
 
 	if(KviFileUtils::isAbsolutePath(szFile))szAbsFile = szFile;
-	else g_pApp->getLocalKvircDirectory(szAbsFile,KviApp::ConfigScripts,szFile,true);
+	else g_pApp->getLocalKvircDirectory(szAbsFile,KviApplication::ConfigScripts,szFile,true);
 
-	KviPointerHashTableIterator<QString,KviConfig> it(*g_pConfigDict);
+	KviPointerHashTableIterator<QString,KviConfigurationFile> it(*g_pConfigDict);
 	while(it.current())
 	{
 		if(KviQString::equalCI(it.current()->fileName(),szAbsFile))
@@ -210,7 +210,7 @@ static bool config_kvs_fnc_read(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("default",KVS_PT_STRING,KVS_PF_OPTIONAL,szDefault)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
@@ -246,7 +246,7 @@ static bool config_kvs_fnc_section(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("id",KVS_PT_STRING,0,szId)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
@@ -284,7 +284,7 @@ static bool config_kvs_fnc_readonly(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("id",KVS_PT_STRING,0,szId)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
@@ -322,7 +322,7 @@ static bool config_kvs_fnc_filename(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("id",KVS_PT_STRING,0,szId)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
@@ -359,7 +359,7 @@ static bool config_kvs_fnc_hassection(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("id",KVS_PT_STRING,0,szSect)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
@@ -395,11 +395,11 @@ static bool config_kvs_fnc_sectionlist(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("id",KVS_PT_STRING,0,szId)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
-		KviConfigIterator it(*(cfg->dict()));
+		KviConfigurationFileIterator it(*(cfg->dict()));
 		KviKvsArray* pArray = new KviKvsArray();
 		int id=0;
 		while(it.current())
@@ -439,14 +439,14 @@ static bool config_kvs_fnc_keylist(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("id",KVS_PT_STRING,0,szId)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
-		KviConfigGroup * d = cfg->dict()->find(cfg->group());
+		KviConfigurationFileGroup * d = cfg->dict()->find(cfg->group());
 		if(!d)return true;
 
-		KviConfigGroupIterator it(*d);
+		KviConfigurationFileGroupIterator it(*d);
 
 		KviKvsArray* pArray = new KviKvsArray();
 		int id=0;
@@ -487,7 +487,7 @@ static bool config_kvs_fnc_filelist(KviKvsModuleFunctionCall * c)
 	KviKvsArray* pArray = new KviKvsArray();
 	int id=0;
 
-	KviPointerHashTableIterator<QString,KviConfig> it(*g_pConfigDict);
+	KviPointerHashTableIterator<QString,KviConfigurationFile> it(*g_pConfigDict);
 	while(it.current())
 	{
 		pArray->set(id++, new KviKvsVariant(it.currentKey()));
@@ -513,7 +513,7 @@ static bool config_kvs_fnc_filelist(KviKvsModuleFunctionCall * c)
 		Closes the config file identified by <id>.[br]
 		<id> must be a a valid config file identifier returned by [fnc]$config.open[/fnc].[br]
 		If the config file was opened as read-write (default), the changes will be stored
-		to disk. If the config was opened as read-only , changes will not be written.[br]
+		to disk. If the config was opened as read-only, changes will not be written.[br]
 		If the <id> does not match any open config file, a warning is printed unless
 		the -q switch is used.[br]
 	@seealso:
@@ -527,14 +527,22 @@ static bool config_kvs_cmd_close(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("id",KVS_PT_STRING,0,szId)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
-		if(cfg->dirty() && cfg->readOnly())
+		if(cfg->readOnly())
 		{
-			if(!c->hasSwitch('q',"quiet"))
-				c->warning(__tr2qs("The config file '%Q' has been changed but is opened as read-only: changes will be lost"),&cfg->fileName());
+			if(cfg->dirty())
+			{
+				if(!c->hasSwitch('q',"quiet"))
+					c->warning(__tr2qs("The config file '%Q' has been changed but is opened as read-only: changes will be lost"),&cfg->fileName());
+			}
+		} else {
+			// we force a save here
+			if(!cfg->sync())
+				if(!c->hasSwitch('q',"quiet"))
+					c->warning(__tr2qs("An error has occured while trying to save the config file with id '%Q'"),&szId);
 		}
 		g_pConfigDict->remove(szId);
 	} else {
@@ -561,7 +569,7 @@ static bool config_kvs_cmd_close(KviKvsModuleCommandCall * c)
 		Flushes the config file identified by <id>.[br]
 		<id> must be a a valid config file identifier returned by [fnc]$config.open[/fnc].[br]
 		If the config file was opened as read-write (default), the changes will be stored
-		to disk. If the config was opened as read-only ,an error is printed.[br]
+		to disk. If the config was opened as read-only, an error is printed.[br]
 		If the <id> does not match any open config file, a warning is printed.
 	@seealso:
 		[module:config]Config module documentation[/module]
@@ -574,14 +582,15 @@ static bool config_kvs_cmd_flush(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("id",KVS_PT_STRING,0,szId)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
 		if(cfg->readOnly())
 			c->warning(__tr2qs("The config file with id '%Q' is read only"),&szId);
 		else
-			cfg->sync();
+			if(!cfg->sync())
+				c->warning(__tr2qs("An error has occured while trying to save the config file with id '%Q'"),&szId);
 	} else {
 		c->warning(__tr2qs("The config file with id '%Q' is not open"),&szId);
 	}
@@ -618,7 +627,7 @@ static bool config_kvs_cmd_clear(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("id",KVS_PT_STRING,0,szId)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
@@ -647,8 +656,8 @@ static bool config_kvs_cmd_clear(KviKvsModuleCommandCall * c)
 		All the key=value pairs in the section are destroyed.[br]
 		<id> must be a a valid config file identifier returned by [fnc]$config.open[/fnc].[br]
 		If the <id> does not match any open config file, a warning is printed.
-		If <section_name> was also the current section, the current section is set to the default one.[br]
-		No warning is printed if the section wasn't existing.[br]
+		If <section_name> is also the current section, the default section is made current.[br]
+		No warning is printed if the section does not exist.[br]
 	@seealso:
 		[module:config]Config module documentation[/module]
 */
@@ -662,7 +671,7 @@ static bool config_kvs_cmd_clearsection(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("section",KVS_PT_STRING,0,szSect)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
@@ -691,7 +700,7 @@ static bool config_kvs_cmd_clearsection(KviKvsModuleCommandCall * c)
 		<id> must be a valid config file id returned by [fnc]$config.open[/fnc]().[br]
 		<key> and <value> can be any strings.[br]
 		The <key>=<value> pair is written in the current section of the config file.[br]
-		If <key> already exists in the current section of the config , the corresponding value is replaced with <value>.[br]
+		If <key> already exists in the current section of the config, the corresponding value is replaced with <value>.[br]
 		If <value> is an empty string, the <key> is simply removed from the current section.[br]
 		If a section remains empty (with no keys) at file write time, that section will be removed.[br]
 		The changes are NOT written to disk: you must call [cmd]config.flush[/cmd] or (better) [cmd]config.close[/cmd]
@@ -712,7 +721,7 @@ static bool config_kvs_cmd_write(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("value",KVS_PT_STRING,0,szVal)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
@@ -758,7 +767,7 @@ static bool config_kvs_cmd_setsection(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("section",KVS_PT_STRING,0,szSect)
 	KVSM_PARAMETERS_END(c)
 
-	KviConfig * cfg = g_pConfigDict->find(szId);
+	KviConfigurationFile * cfg = g_pConfigDict->find(szId);
 
 	if(cfg)
 	{
@@ -792,25 +801,24 @@ static bool config_kvs_cmd_setsection(KviKvsModuleCommandCall * c)
 		<key1>=<value1>[br]
 		....[br]
 		[br]
-		Keys and values are plain text strings. Eventual newlines in values are encoded using
+		Keys and values are plain text strings - newlines in values are encoded using
 		a simple hexadecimal notation.[br]
 		The config files can be also edited by using any text editor.[br]
 		The config module works on config files loaded in memory. For this reason,
-		you must first open a config file by the means of [fnc]$config.open[/fnc]().[br]
-		Once you open the file , if it exists on disk , its contents are loaded into memory
-		and you can access the data stored in it. If the file wasn't existing, and empty
-		memory config file is created.[br]
+		you must first open a config file by [fnc]$config.open[/fnc]() - if the file exists
+		on disk, its contents are loaded and you can access the data stored in it, otherwise
+		an empty config file is created in memory.[br]
 		The config file is opened in read-write mode by default. You can also choose
-		the "read-only" method: a read-only config file is never flushed to disk (but you can
-		set the values in memory!).[br]
-		It is not a good idea to keep a config file open forever: a good approach
-		is to keep settings in memory variables and write them all at once when it comes to
-		write settings: you open the config file , write all your values and close the file.[br]
+		the "read-only" method - a read-only config file is never flushed to disk (but you
+		can still set values in memory!).[br]
+		It is not a good idea to keep a config file open forever. A better approach is to
+		keep settings in memory variables - when you want to write to disk, open the config
+		file, write all your values and then close the file.[br]
 		You can obviously keep the config file open for some time but remember that
-		no change is written to the disk until [cmd]config.flush[/cmd] or [cmd]config.close[/cmd] is called.[br]
+		no changes are written to the disk until [cmd]config.flush[/cmd] or [cmd]config.close[/cmd] is called.[br]
 		You write entries by using [cmd]config.write[/cmd] and read them by using [fnc]$config.read[/fnc]().[br]
 		You can change the "current" config section by using [cmd]config.setsection[/cmd].[br]
-		Here comes a complete list of commands and functions exported by this module:[br]
+		The following lists all commands and functions exported by this module:[br]
 		[fnc]$config.open[/fnc][br]
 		[fnc]$config.read[/fnc][br]
 		[fnc]$config.section[/fnc][br]
@@ -831,7 +839,7 @@ static bool config_kvs_cmd_setsection(KviKvsModuleCommandCall * c)
 
 static bool config_module_init(KviModule * m)
 {
-	g_pConfigDict = new KviPointerHashTable<QString,KviConfig>;
+	g_pConfigDict = new KviPointerHashTable<QString,KviConfigurationFile>;
 	g_pConfigDict->setAutoDelete(true);
 
 	KVSM_REGISTER_FUNCTION(m,"open",config_kvs_fnc_open);

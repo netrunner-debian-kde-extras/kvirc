@@ -6,8 +6,8 @@
 !include "LogicLib.nsh"
 
 Name "KVIrc"
-!define VERSION '4.0.2'
-!define RELEASE_NAME 'Insomnia'
+!define VERSION '4.1.1'
+!define RELEASE_NAME 'Equilibrium (wip)'
 !define /date RELEASE_VERSION 'r@CMAKE_KVIRC_BUILD_REVISION@'
 !define URL_ABOUT 'http://www.kvirc.net/'
 !define URL_SUPPORT 'http://www.kvirc.net/'
@@ -15,9 +15,9 @@ Name "KVIrc"
 !define PUBLISHER 'Szymon Stefanek and The KVIrc Development Team'
 
 ; Svn release, eg: KVIrc-4.0.0-rc3-dev-r4300.exe
-;OutFile KVIrc-${VERSION}-${RELEASE_VERSION}-dev.exe
+OutFile KVIrc-${VERSION}-${RELEASE_VERSION}-dev.exe
 ; Stable version, eg: KVIrc-4.0.0-Insomnia.exe
-OutFile KVIrc-${VERSION}-${RELEASE_NAME}.exe
+;OutFile KVIrc-${VERSION}-${RELEASE_NAME}.exe
 
 SetCompressor /SOLID lzma
 XPStyle on
@@ -68,7 +68,7 @@ LangString StartMenuSection ${LANG_ENGLISH} "Start menu"
 LangString StartMenuSectionDescr ${LANG_ENGLISH} "Create start menu icon"
 LangString AutostartSection ${LANG_ENGLISH} "Autostart"
 LangString AutostartSectionDescr ${LANG_ENGLISH} "Start program when user login"
-LangString MsgUninstallOldInstaller ${LANG_ENGLISH} "Previous versions of KVIrc must to be uninstalled."
+LangString MsgUninstallOldInstaller ${LANG_ENGLISH} "Previous versions of KVIrc must be uninstalled."
 LangString KVIrcIsRunning ${LANG_ENGLISH} "An instance of KVIrc is currently running. Exit KVIrc and then try again."
 LangString WinampSection ${LANG_ENGLISH} "Winamp plugin"
 LangString WinampSectionDescr ${LANG_ENGLISH} "Install Winamp plugin"
@@ -120,7 +120,7 @@ Section !$(KVIrc) KVIrc_IDX
 
 	; Write the uninstall keys for Windows
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\KVIrc" "DisplayName" "KVIrc"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\KVIrc" "UninstallString" '"$INSTDIR\uninstall.exe" _?=$INSTDIR'
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\KVIrc" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\KVIrc" "URLInfoAbout" "${URL_ABOUT}"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\KVIrc" "HelpLink" "${URL_SUPPORT}"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\KVIrc" "URLUpdateInfo" "${URL_UPDATE}"
@@ -128,7 +128,8 @@ Section !$(KVIrc) KVIrc_IDX
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\KVIrc" "NoModify" 1
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\KVIrc" "NoRepair" 1
 
-	WriteUninstaller "uninstall.exe"
+
+	WriteUninstaller "$INSTDIR\uninstall.exe"
 
 	ExecWait "$INSTDIR\win32registrar.exe"
 
@@ -218,6 +219,8 @@ FunctionEnd
 ; Uninstaller
 
 Section !un.$(UnGeneralFiles)
+    Delete "$INSTDIR\uninstall.exe"
+
     SetShellVarContext all
 
     ; Remove registry keys
@@ -248,6 +251,8 @@ Section !un.$(UnGeneralFiles)
     RMDir /r "$INSTDIR\themes"
     Delete "$INSTDIR\*.dll"
     Delete "$INSTDIR\*.exe"
+    Delete "$INSTDIR\*.ini"
+    RMDir "$INSTDIR"
 
     ReadRegStr $R0 HKCU Software\Winamp ""
         IfFileExists "$R0\Plugins\gen_kvirc.dll" 0 +2

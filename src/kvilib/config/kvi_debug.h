@@ -6,8 +6,8 @@
 //   File : kvi_debug.h
 //   Creation date : Fri Mar 19 1999 03:10:39 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 1999-2009 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 1999-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -27,41 +27,121 @@
 
 #include <QtGlobal>
 
+#include "kvi_sysconfig.h"
+
 /**
 * \file kvi_debug.h
 * \author Szymon Stefanek
 * \brief This file contains the definition of the debug macros;
-*        You can enable ALL the debugging output by uncommenting the line that defines _KVI_DEBUG_CHECK_RANGE_
 */
 
-//=============================================================================
-//
-// You can enable ALL the debugging output by uncommenting the next line
-// #define _KVI_DEBUG_CHECK_RANGE_
-//
-//=============================================================================
+#include <stdlib.h> // abort
 
-/**
-* \brief Debug macros
-*
-* \def __range_valid Assert that ensures that its parameter is true
-* \def __range_invalid Assert that ensures that its parameter is false
-* \def __ASSERT Assert that ensures that its parameter is true; enabled only if _KVI_DEBUG_or __KVI_DEBUG__ is defined
-*/
+#ifdef __GNUC__
+
+	#define kvi_debug(fmt,arg...) qDebug(fmt,##arg)
+	#define kvi_warning(fmt,arg...) qWarning(fmt,##arg)
+	#define kvi_fatal(fmt,arg...) do { qFatal(fmt,##arg); abort(); } while(0) 
+	#define KVI_PRETTY_FUNCTION __PRETTY_FUNCTION__
+
+#else //!__GNUC__
+
+	// assume MSVC
+
+	#define kvi_debug(fmt,...) qDebug(fmt,__VA_ARGS__)
+	#define kvi_warning(fmt,...) qWarning(fmt,__VA_ARGS__)
+	#define kvi_fatal(fmt,...) do { qFatal(fmt,__VA_ARGS__); abort(); } while(0) 
+	#define KVI_PRETTY_FUNCTION __FUNCTION__
+
+#endif //!__GNUC__
+
+#ifdef COMPILE_DEBUG_MODE
+
+	#define KVI_ASSERT(__condition__) \
+			do { \
+				if(!(__condition__)) \
+					qFatal("[ASSERT FAILED] (" # __condition__ ") in %s at %s:%u",KVI_PRETTY_FUNCTION,__FILE__,__LINE__); \
+			} while(0)
+
+	#define KVI_ASSERT_MSG(__condition__,__message__) \
+			do { \
+				if(!(__condition__)) \
+				{ \
+					qFatal("[ASSERT FAILED] (" # __condition__ ") in %s at %s:%u",KVI_PRETTY_FUNCTION,__FILE__,__LINE__); \
+					qFatal("[ASSERT FAILED] " __message__); \
+				} \
+			} while(0)
+
+	#include "KviDebugContext.h"
+
+	// The following two macros are used to create unique variable names
+	// by the means of the __LINE__ builtin macro.
+	// The ## token paste operator must be called inside a macro and must
+	// preceede a macro parameter. This is why we can't use directly
+	//
+	// #define UNIQUEVARIABLE int name ## __LINE__
+	//
+	// We need something like
+	//
+	// #define PASTE(x,y) x ## y
+	// #define UNIQUEVARIABLE int PASTE(x,__LINE__)
+	//
+	// But this doesn't work since the specification of the token pasting operator is
+	//
+	// "If a formal parameter in a macro definition is preceded or followed by the token-pasting operator,
+	// the formal parameter is immediately replaced by the __unexpanded__ actual argument. Macro expansion 
+	// is __not performed__ on the argument prior to replacement."
+	//
+	// So to actually have __LINE__ expanded we need another level of indirection
+	//
+	// #define PASTE(x,y) x ## y
+	// #define EXPAND_Y_AND_THEN_PASTE(x,y) PASTE(x,y)
+	// #define UNIQUEVARIABLE int EXPAND_Y_AND_THEN_PASTE(x,__LINE__)
+
+	#define KVI_TRACE_HACK_TOKENPASTE_2(x,y) x ## y
+	#define KVI_TRACE_HACK_TOKENPASTE_1(x,y) KVI_TRACE_HACK_TOKENPASTE_2(x,y)
+
+	#ifdef __GNUC__
+		#define KVI_TRACE_FUNCTION \
+				KviDebugContext KVI_TRACE_HACK_TOKENPASTE_1(ctx,__LINE__)(__PRETTY_FUNCTION__)
+
+		#define KVI_TRACE_BLOCK(_szBlockDescription) \
+				KviDebugContext KVI_TRACE_HACK_TOKENPASTE_1(ctx,__LINE__)("%s - %s",__PRETTY_FUNCTION__,_szBlockDescription)
+		
+		#define KVI_TRACE(_szFmt,arg...) KviDebugContext::trace(_szFmt,##arg)
+
+	#else
+		#define KVI_TRACE_FUNCTION \
+				KviDebugContext KVI_TRACE_HACK_TOKENPASTE_1(ctx,__LINE__)(__FUNCTION__)
+
+		#define KVI_TRACE_BLOCK(_szBlockDescription) \
+				KviDebugContext KVI_TRACE_HACK_TOKENPASTE_1(ctx,__LINE__)("%s - %s",__FUNCTION__,_szBlockDescription)
+
+		#define KVI_TRACE(_szFmt,...) KviDebugContext::trace(_szFmt,__VA_ARGS__)
+
+	#endif
+
+#else //!COMPILE_DEBUG_MODE
+
+	#define KVI_ASSERT(__condition__) do { } while(0)
+	#define KVI_ASSERT_MSG(__condition__,__message__) do { } while(0)
+
+	#define KVI_TRACE_FUNCTION \
+			do { } while(0)
+
+	#define KVI_TRACE_BLOCK(_szBlockDescription) \
+			do { } while(0)
+
+	#ifdef __GNUC__
+		#define KVI_TRACE(_szFmt,arg...) do { } while(0)
+	#else
+		#define KVI_TRACE(_szFmt,...) do { } while(0)
+	#endif 
+	
+#endif //!COMPILE_DEBUG_MODE
 
 
-#ifdef _KVI_DEBUG_CHECK_RANGE_
-	#define __range_valid(_expr) if(!(_expr))debug("[kvirc]: ASSERT FAILED: \"%s\" is false in %s (%d)",#_expr,__FILE__,__LINE__)
-	#define __range_invalid(_expr) if(_expr)debug("[kvirc]: ASSERT FAILED: \"%s\" is true in %s (%d)",#_expr,__FILE__,__LINE__)
-#else
-	#define __range_valid(_expr)
-	#define __range_invalid(_expr)
-#endif
 
-#if defined(_KVI_DEBUG_) || defined(__KVI_DEBUG__)
-	#define __ASSERT(_expr) if(!(_expr))debug("[kvirc]: ASSERT FAILED: \"%s\" is false in %s (%d)",#_expr,__FILE__,__LINE__)
-#else
-	#define __ASSERT(_expr)
-#endif
+
 
 #endif //_KVI_DEBUG_H_

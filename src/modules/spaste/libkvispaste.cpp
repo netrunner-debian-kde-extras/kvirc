@@ -3,9 +3,9 @@
 //   File : libkvispaste.cpp
 //   Creation date : Thu Dec 27 2002 17:13:12 GMT by Juanjo �lvarez
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2002 Juanjo �lvarez (juanjux@yahoo.es)
-//   Copyright (C) 2002-2008 Szymon Stefanek (kvirc@tin.it)
+//   Copyright (C) 2002-2010 Szymon Stefanek (kvirc@tin.it)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -24,15 +24,15 @@
 //=============================================================================
 
 #include "libkvispaste.h"
-#include "controller.h"
+#include "SlowPasteController.h"
 
-#include "kvi_module.h"
-#include "kvi_fileutils.h"
-#include "kvi_qstring.h"
-#include "kvi_app.h"
-#include "kvi_locale.h"
-#include "kvi_console.h"
-#include "kvi_options.h"
+#include "KviModule.h"
+#include "KviFileUtils.h"
+#include "KviQString.h"
+#include "KviApplication.h"
+#include "KviLocale.h"
+#include "KviConsoleWindow.h"
+#include "KviOptions.h"
 #include "kvi_out.h"
 
 #include <QFile>
@@ -42,12 +42,12 @@
     #include <unistd.h>
 #endif
 
-KviPointerList<SPasteController> * g_pControllerList = 0;
+KviPointerList<SlowPasteController> * g_pControllerList = 0;
 int ctrlId = 0;
 
-static SPasteController * spaste_find_controller(KviWindow * w)
+static SlowPasteController * spaste_find_controller(KviWindow * w)
 {
-	for(SPasteController * spc = g_pControllerList->first();spc;spc = g_pControllerList->next())
+	for(SlowPasteController * spc = g_pControllerList->first();spc;spc = g_pControllerList->next())
 	{
 		if(spc->window() == w)return spc;
 	}
@@ -64,7 +64,7 @@ static KviWindow * spaste_kvs_find_window(QString &win, KviKvsModuleCommandCall 
 		c->warning(__tr("Window with ID '%Q' not found"),&win);
 		return 0;
 	}
-	if((w->type() == KVI_WINDOW_TYPE_CHANNEL) || (w->type() == KVI_WINDOW_TYPE_QUERY) || (w->type() == KVI_WINDOW_TYPE_DCCCHAT))return w;
+	if((w->type() == KviWindow::Channel) || (w->type() == KviWindow::Query) || (w->type() == KviWindow::DccChat))return w;
 	c->warning(__tr2qs("The specified window (%Q) is not a channel/query/DCC chat"),&win);
 	return 0;
 }
@@ -116,8 +116,8 @@ static bool spaste_kvs_cmd_file(KviKvsModuleCommandCall * c)
 	}
 	tmp.close();
 
-	SPasteController * controller = spaste_find_controller(window);
-	if(!controller)controller = new SPasteController(window,++ctrlId);
+	SlowPasteController * controller = spaste_find_controller(window);
+	if(!controller)controller = new SlowPasteController(window,++ctrlId);
 	if(!controller->pasteFileInit(szFile)) {
 		c->warning(__tr2qs("Could not paste file"));
 		return false;
@@ -159,8 +159,8 @@ static bool spaste_kvs_cmd_clipboard(KviKvsModuleCommandCall * c)
 	KviWindow * window = spaste_kvs_find_window(szWindow,c);
 	if(!window)return false;
 
-	SPasteController * controller = spaste_find_controller(window);
-	if(!controller)controller = new SPasteController(window,++ctrlId);
+	SlowPasteController * controller = spaste_find_controller(window);
+	if(!controller)controller = new SlowPasteController(window,++ctrlId);
 	controller->pasteClipboardInit();
 	return true;
 }
@@ -206,34 +206,35 @@ static bool spaste_kvs_cmd_stop(KviKvsModuleCommandCall * c)
 	{
 		while(g_pControllerList->first()) delete g_pControllerList->first();
 		return true;
-	} else {
-		KviPointerListIterator<SPasteController> it(*g_pControllerList);
-		SPasteController *item;
+	}
 
-		if(!iId) //Delete all spaste's from the current window
+	KviPointerListIterator<SlowPasteController> it(*g_pControllerList);
+	SlowPasteController *item;
+
+	if(!iId) //Delete all spaste's from the current window
+	{
+		if((c->window()->type() != KviWindow::Channel) && (c->window()->type() != KviWindow::Query) && (c->window()->type() != KviWindow::DccChat))
 		{
-			if((c->window()->type() != KVI_WINDOW_TYPE_CHANNEL) && (c->window()->type() != KVI_WINDOW_TYPE_QUERY) && (c->window()->type() != KVI_WINDOW_TYPE_DCCCHAT))
-			{
-				QString szWinId = c->window()->id();
-				c->warning(__tr2qs("The specified window (%Q) is not a channel/query/dcc"),&szWinId);
-				return false;
-			} else {
-				while( (item = it.current()) != 0)
-				{
-					++it;
-					if(KviQString::equalCS(item->window()->id(),c->window()->id()))delete item;
-				}
-			}
+			QString szWinId = c->window()->id();
+			c->warning(__tr2qs("The specified window (%Q) is not a channel/query/dcc"),&szWinId);
+			return false;
 		} else {
-			//Delete the spaste with the given id
 			while( (item = it.current()) != 0)
 			{
 				++it;
-				if(item->getId() == iId)delete item;
+				if(KviQString::equalCS(item->window()->id(),c->window()->id()))delete item;
 			}
 		}
-		return true;
+	} else {
+		//Delete the spaste with the given id
+		while( (item = it.current()) != 0)
+		{
+			++it;
+			if(item->getId() == (kvs_int_t)iId)
+				delete item;
+		}
 	}
+	return true;
 }
 
 /*
@@ -258,8 +259,8 @@ static bool spaste_kvs_cmd_stop(KviKvsModuleCommandCall * c)
 
 static bool spaste_kvs_cmd_list(KviKvsModuleCommandCall * c)
 {
-	KviPointerListIterator<SPasteController> it(*g_pControllerList);
-	SPasteController *item;
+	KviPointerListIterator<SlowPasteController> it(*g_pControllerList);
+	SlowPasteController *item;
 
 	while( (item = it.current()) != 0)
 	{
@@ -300,7 +301,7 @@ static bool spaste_kvs_cmd_setdelay(KviKvsModuleCommandCall * c)
 
 static bool spaste_module_init(KviModule * m)
 {
-	g_pControllerList = new KviPointerList<SPasteController>;
+	g_pControllerList = new KviPointerList<SlowPasteController>;
 	g_pControllerList->setAutoDelete(false);
 
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"file",spaste_kvs_cmd_file);

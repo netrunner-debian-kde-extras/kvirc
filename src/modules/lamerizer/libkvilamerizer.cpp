@@ -3,8 +3,8 @@
 //   File : libkvilamerizer.cpp
 //   Creation date : Sat Jan 20 2002 17:06:12 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -24,9 +24,9 @@
 
 #include "libkvilamerizer.h"
 
-#include "kvi_module.h"
+#include "KviModule.h"
 #include "kvi_debug.h"
-#include "kvi_locale.h"
+#include "KviLocale.h"
 
 
 
@@ -47,10 +47,9 @@
 
 #ifdef COMPILE_CRYPT_SUPPORT
 	
-	#include "kvi_memmove.h"
-	#include "kvi_malloc.h"
-
-	#include "kvi_pointerlist.h"
+	#include "KviMemory.h"
+	#include "KviPointerList.h"
+	#include "KviCryptEngineDescription.h"
 
 	static KviPointerList<KviCryptEngine> * g_pEngineList = 0;
 
@@ -144,7 +143,7 @@
 	};
 	
 	
-	KviCryptEngine::EncryptResult KviLamerizerEngine::encrypt(const char * plainText,KviStr &outBuffer)
+	KviCryptEngine::EncryptResult KviLamerizerEngine::encrypt(const char * plainText,KviCString &outBuffer)
 	{
 		outBuffer = plainText;
 		unsigned char * aux = (unsigned char *)outBuffer.ptr();
@@ -178,7 +177,7 @@
 		return KviCryptEngine::Encoded;
 	}
 
-	KviCryptEngine::DecryptResult KviLamerizerEngine::decrypt(const char * inBuffer,KviStr &plainText)
+	KviCryptEngine::DecryptResult KviLamerizerEngine::decrypt(const char * inBuffer,KviCString &plainText)
 	{
 		plainText = inBuffer;
 		return KviCryptEngine::DecryptOkWasPlainText;
@@ -214,22 +213,22 @@ static bool lamerizer_module_init(KviModule * m)
 	// FIXME: Maybe convert this repeated code to a function eh ?
 
 	KviCryptEngineDescription * d = new KviCryptEngineDescription;
-	d->szName = "Lamerizer";
-	d->szAuthor = "Szymon Stefanek and Jan Wagner";
-	d->szDescription = __tr2qs("A really lame text transformation engine :D");
-	d->iFlags = KVI_CRYPTENGINE_CAN_ENCRYPT;
-	d->allocFunc = allocLamerizerEngine;
-	d->deallocFunc = deallocLamerizerEngine;
+	d->m_szName = "Lamerizer";
+	d->m_szAuthor = "Szymon Stefanek and Jan Wagner";
+	d->m_szDescription = __tr2qs("A really lame text transformation engine :D");
+	d->m_iFlags = KviCryptEngine::CanEncrypt;
+	d->m_allocFunc = allocLamerizerEngine;
+	d->m_deallocFunc = deallocLamerizerEngine;
 	m->registerCryptEngine(d);
 
 
 	d = new KviCryptEngineDescription;
-	d->szName = "LamerizerLight";
-	d->szAuthor = "Szymon Stefanek and Jan Wagner";
-	d->szDescription = __tr2qs("A really lame text transformation engine: Light Version.");
-	d->iFlags = KVI_CRYPTENGINE_CAN_ENCRYPT;
-	d->allocFunc = allocLightLamerizerEngine;
-	d->deallocFunc = deallocLamerizerEngine;
+	d->m_szName = "LamerizerLight";
+	d->m_szAuthor = "Szymon Stefanek and Jan Wagner";
+	d->m_szDescription = __tr2qs("A really lame text transformation engine: Light Version.");
+	d->m_iFlags = KviCryptEngine::CanEncrypt;
+	d->m_allocFunc = allocLightLamerizerEngine;
+	d->m_deallocFunc = deallocLamerizerEngine;
 	m->registerCryptEngine(d);
 
 	return true;
@@ -266,9 +265,9 @@ static bool lamerizer_module_can_unload(KviModule *)
 KVIRC_MODULE(
 	"Lamerizer crypt engine",
 	"4.0.0",
-	"Szymon Stefanek <pragma at kvirc dot net> \n Jan Wagner <istari@kvirc.net>" ,
+	"Szymon Stefanek <pragma at kvirc dot net> \n Jan Wagner <istari@kvirc.net>",
 	"Exports the lamerizer text transformation engine",
-	lamerizer_module_init ,
+	lamerizer_module_init,
 	lamerizer_module_can_unload,
 	0,
 	lamerizer_module_cleanup,

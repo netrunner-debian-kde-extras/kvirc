@@ -5,7 +5,7 @@
 //   File : kvi_shortcuts.h
 //   Creation date : Fri Dec 11 2009 16:24:46 CEST by Elvio Basello
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2009 Elvio Basello (hell at hellvis69 dot netsons dot org)
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -43,7 +43,9 @@
 * \def KVI_SHORTCUTS_OPTIONS Open "Options" dialog
 * \def KVI_SHORTCUTS_SERVERS Open "Servers" dialog
 * \def KVI_SHORTCUTS_THEME Open "Theme Options" dialog
-* \def KVI_SHORTCUTS_USERS Open "Registered users" dialog
+* \def KVI_SHORTCUTS_USERS Open "Registered Users" dialog
+* \def KVI_SHORTCUTS_MANAGE_THEMES Open "Manage Theme" dialog
+* \def KVI_SHORTCUTS_MANAGE_ADDONS Open "Manage Theme" dialog
 *
 * \def KVI_SHORTCUTS_INPUT_ALT Alt key
 * \def KVI_SHORTCUTS_INPUT_ALT_2 Meta key
@@ -114,7 +116,10 @@
 * \def KVI_SHORTCUTS_WIN_PREV_HIGHLIGHT Previous highlighted window
 * \def KVI_SHORTCUTS_WIN_PREV_LINE Scroll the output window up one line
 * \def KVI_SHORTCUTS_WIN_PREV_PAGE Scroll the output window up one page
+* \def KVI_SHORTCUTS_WIN_SCROLL_TO_LAST_READ_LINE Scroll to the last read line
 * \def KVI_SHORTCUTS_WIN_SEARCH Open "Find Text" dialog
+* \def KVI_SHORTCUTS_WIN_ZOOM_IN Increase font size
+* \def KVI_SHORTCUTS_WIN_ZOOM_OUT Decrease font size
 */
 
 // Please keep this list ordered by shortcut key and not by name :)
@@ -126,6 +131,7 @@
 #define KVI_SHORTCUTS_INPUT_ICON "Ctrl+I"
 #define KVI_SHORTCUTS_JOIN "Ctrl+J"
 #define KVI_SHORTCUTS_INPUT_COLOR "Ctrl+K"
+#define KVI_SHORTCUTS_WIN_SCROLL_TO_LAST_READ_LINE "Ctrl+L"
 #define KVI_SHORTCUTS_CONTEXT "Ctrl+N"
 #define KVI_SHORTCUTS_INPUT_RESET "Ctrl+O"
 #define KVI_SHORTCUTS_INPUT_PLAINTEXT "Ctrl+P"
@@ -144,6 +150,8 @@
 #define KVI_SHORTCUTS_EDITORS_EVENT "Ctrl+Shift+E"
 #define KVI_SHORTCUTS_IDENTITY "Ctrl+Shift+I"
 #define KVI_SHORTCUTS_EDITORS_ALIAS "Ctrl+Shift+L"
+#define KVI_SHORTCUTS_MANAGE_THEMES "Ctrl+Shift+M"
+#define KVI_SHORTCUTS_MANAGE_ADDONS "Ctrl+Shift+N"
 #define KVI_SHORTCUTS_OPTIONS "Ctrl+Shift+O"
 #define KVI_SHORTCUTS_EDITORS_POPUP "Ctrl+Shift+P"
 #define KVI_SHORTCUTS_EDITORS_ACTION "Ctrl+Shift+Q"
@@ -196,11 +204,11 @@
 #define KVI_SHORTCUTS_INPUT_BACKSPACE_2 Qt::ShiftModifier + Qt::Key_Backspace
 #define KVI_SHORTCUTS_INPUT_DELETE Qt::Key_Delete
 #define KVI_SHORTCUTS_INPUT_ESCAPE Qt::Key_Escape
-#define KVI_SHORTCUTS_INPUT_ALT Qt::Key_Alt
-#define KVI_SHORTCUTS_INPUT_ALT_2 Qt::Key_Meta
 #define KVI_SHORTCUTS_INPUT_DUMMY Qt::ShiftModifier + Qt::Key_Escape
 #define KVI_SHORTCUTS_INPUT_DUMMY_2 Qt::ShiftModifier + Qt::Key_Delete
-
+#define KVI_SHORTCUTS_WIN_ZOOM_IN QKeySequence::ZoomIn
+#define KVI_SHORTCUTS_WIN_ZOOM_OUT QKeySequence::ZoomOut
+#define KVI_SHORTCUTS_WIN_ZOOM_DEFAULT Qt::ControlModifier + Qt::Key_0
 
 /*
 	@doc: keyboard
@@ -219,9 +227,11 @@
 		[b]Ctrl+B:[/b] Insert Bold control character[br]
 		[b]Ctrl+C:[/b] Copy to clipboard[br]
 		[b]Ctrl+F:[/b] Open "Find Text" dialog[br]
+		[b]Ctrl+L:[/b] Scroll to the "last read" line marker[br]
 		[b]Ctrl+I:[/b] Open "Insert icon" dialog[br]
 		[b]Ctrl+J:[/b] Open "Join Channels" dialog[br]
 		[b]Ctrl+K:[/b] Open "Insert Color" dialog[br]
+		[b]Ctrl+L:[/b] Scroll to the last read line[br]
 		[b]Ctrl+N:[/b] Open new context[br]
 		[b]Ctrl+O:[/b] Insert Reset control character[br]
 		[b]Ctrl+P:[/b] Insert "Plain text" control character[br]
@@ -233,6 +243,9 @@
 		[b]Ctrl+X:[/b] Cut to clipboard[br]
 		[b]Ctrl+Y:[/b] Toggle the commandline's KVS/User-friendly mode[br]
 		[b]Ctrl+Z:[/b] Undo last action[br]
+		[b]Ctrl+"+":[/b] Increase font size[br]
+		[b]Ctrl+"-":[/b] Decrease font size[br]
+		[b]Ctrl+0:[/b] Restore default font (and font size)[br]
 		[b]Ctrl+Shift+A:[/b] Go away/back[br]
 		[b]Ctrl+Shift+B:[/b] Open "Manage Toolbars" dialog[br]
 		[b]Ctrl+Shift+C:[/b] Connect/disconnect current irc context[br]
@@ -240,6 +253,8 @@
 		[b]Ctrl+Shift+E:[/b] Open Event editor[br]
 		[b]Ctrl+Shift+I:[/b] Open Identity options[br]
 		[b]Ctrl+Shift+L:[/b] Open Alias editor[br]
+		[b]Ctrl+Shift+M:[/b] Open "Manage Themes" dialog[br]
+		[b]Ctrl+Shift+N:[/b] Open "Manage Addons" dialog[br]
 		[b]Ctrl+Shift+O:[/b] Open "Options" dialog[br]
 		[b]Ctrl+Shift+P:[/b] Open Popup editor[br]
 		[b]Ctrl+Shift+Q:[/b] Open Action editor[br]
@@ -263,6 +278,7 @@
 		[b]PageDown:[/b] Scroll the output window down one page[br]
 		[b]Shift+PageUp:[/b] Scroll the output window up one line[br]
 		[b]Shift+PageDown:[/b] Scroll the output window down one line[br]
+		[b]Ctrl+L:[/b] Scroll to the last read line[br]
 		[b]Ctrl+W:[/b] Close current window[br]
 
 		[big]Text editing related hotkeys:[/big][br]

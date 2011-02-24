@@ -5,7 +5,7 @@
 //   File : libkvitrayicon.h
 //   Creation date : Tue Jan 02 2001 14:34:12 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2001 Szymon Stefanek (pragma at kvirc dot net)
 //   Copyright (C) 2007 Alexey Uzhva (wizard at opendoor dot ru)
 //   Copyright (C) 2008 Elvio Basello (hellvis69 at netsons dot org)
@@ -27,7 +27,7 @@
 //=============================================================================
 
 #include "kvi_settings.h"
-#include "kvi_frame.h"
+#include "KviMainWindow.h"
 
 #include <QSystemTrayIcon>
 #include <QLabel>
@@ -36,16 +36,16 @@ class QPixmap;
 class QTimer;
 class KviTalPopupMenu;
 class KviDynamicToolTip;
-//class KviFrame;
+//class KviMainWindow;
 
-class KviTrayIcon : public QSystemTrayIcon, public KviDockExtension
+class TrayIcon : public QSystemTrayIcon, public KviDockExtension
 {
 	Q_OBJECT
 public:
-	KviTrayIcon(KviFrame * win);
-	~KviTrayIcon();
+	TrayIcon(KviMainWindow * win);
+	~TrayIcon();
 protected:
-	KviFrame               * m_pFrm;
+	KviMainWindow               * m_pFrm;
 	KviDynamicToolTip      * m_pTip;
 	KviTalPopupMenu        * m_pContextPopup;
 	KviTalPopupMenu        * m_pAwayPopup;
@@ -63,7 +63,7 @@ protected:
 	unsigned int m_iQueries;
 	unsigned int m_iOther;
 public:
-	KviFrame * frame(){ return m_pFrm; };
+	KviMainWindow * frame(){ return m_pFrm; };
 public:
 	virtual void refresh();
 	virtual void die();

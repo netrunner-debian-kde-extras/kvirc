@@ -6,8 +6,8 @@
 //   File : kvi_stdarg.h
 //   Creation date : Sat Jan 03 2004 02:08:14 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2004-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2004-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -42,7 +42,7 @@
 // }
 //
 //
-#ifdef COMPILE_ON_WINDOWS
+#if defined(COMPILE_ON_WINDOWS) && defined(MINGW)
 	#define kvi_va_start_by_reference(__list,__arg) \
 	{ \
 		int supercalifragilisticoespiralidoso=_INTSIZEOF(__arg); \
@@ -57,9 +57,18 @@
 #else
 	#define kvi_va_start_by_reference va_start
 #endif
+
 #define kvi_va_arg va_arg
 #define kvi_va_end va_end
 
+
+#ifdef va_copy
+	#define kvi_va_copy(a,b) va_copy(a,b)
+#elif defined(__va_copy)
+	#define kvi_va_copy(a,b) __va_copy(a,b)
+#else
+	#define kvi_va_copy(a,b) ((a) = (b))
+#endif
 
 
 #endif //_KVI_STDARG_H_

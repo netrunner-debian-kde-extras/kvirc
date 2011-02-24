@@ -3,7 +3,7 @@
 //   File : libkvitorrent.cpp
 //   Creation date : Fri Jan 1 15:42:25 2007 GMT by Alexander Stillich
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2001-2008 Alexander Stillich (torque at pltn dot org)
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -23,29 +23,29 @@
 //=============================================================================
 
 
-#include "tc_interface.h"
-#include "tc_ktorrentdbusinterface.h"
-#include "tc_statusbarapplet.h"
+#include "TorrentInterface.h"
+#include "KTorrentDbusInterface.h"
+#include "StatusBarApplet.h"
 
-#include "kvi_module.h"
-#include "kvi_options.h"
-#include "kvi_frame.h"
-#include "kvi_locale.h"
+#include "KviModule.h"
+#include "KviOptions.h"
+#include "KviMainWindow.h"
+#include "KviLocale.h"
 #include "kvi_out.h"
 
-static KviPointerList<KviTorrentInterfaceDescriptor> * g_pDescriptorList = 0;
+static KviPointerList<TorrentInterfaceDescriptor> * g_pDescriptorList = 0;
 
-static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
+static TorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 {
 	int iBest = 0;
-	KviTorrentInterface * pBest = 0;
-	KviTorrentInterfaceDescriptor * d;
-	KviTorrentInterfaceDescriptor * pDBest = 0;
+	TorrentInterface * pBest = 0;
+	TorrentInterfaceDescriptor * d;
+	TorrentInterfaceDescriptor * pDBest = 0;
 
 	for (d=g_pDescriptorList->first(); d!=0; d=g_pDescriptorList->next())
 	{
 		// instance gets deleted by descriptor later
-		KviTorrentInterface *i = d->instance();
+		TorrentInterface *i = d->instance();
 		if (i)
 		{
 			int iScore = i->detect();
@@ -73,7 +73,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 		// no sure player found... try again with a destructive test
 		for(d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
 		{
-			KviMediaPlayerInterface * i = d->instance();
+			MpInterface * i = d->instance();
 			if(i)
 			{
 				int iScore = i->detect(true);
@@ -113,7 +113,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 }
 
 #define TC_KVS_FAIL_ON_NO_INTERFACE \
-	if (!KviTorrentInterface::selected()) \
+	if (!TorrentInterface::selected()) \
 	{ \
 		c->warning(__tr2qs_ctx("No torrent client interface selected. Try /torrent.detect", "torrent")); \
 		return true; \
@@ -127,7 +127,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 			{ \
 				c->warning(__tr2qs_ctx("The selected torrent client interface failed to execute the requested function", "torrent")); \
 				QString tmp = __tr2qs_ctx("Last interface error: ", "torrent"); \
-				tmp += KviTorrentInterface::selected()->lastError(); \
+				tmp += TorrentInterface::selected()->lastError(); \
 				c->warning(tmp); \
 			} \
 
@@ -139,7 +139,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 		\
 		TC_KVS_FAIL_ON_NO_INTERFACE \
 		\
-		if (!KviTorrentInterface::selected()->__ifacecommand()) \
+		if (!TorrentInterface::selected()->__ifacecommand()) \
 		{ \
 			TC_KVS_COMMAND_ERROR \
 		} \
@@ -156,7 +156,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 		\
 		TC_KVS_FAIL_ON_NO_INTERFACE \
 		\
-		if (!KviTorrentInterface::selected()->__ifacecommand(arg)) \
+		if (!TorrentInterface::selected()->__ifacecommand(arg)) \
 		{ \
 			TC_KVS_COMMAND_ERROR \
 		} \
@@ -177,7 +177,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 		\
 		TC_KVS_FAIL_ON_NO_INTERFACE \
 		\
-		if (!KviTorrentInterface::selected()->__ifacecommand(arg1, arg2, arg3)) \
+		if (!TorrentInterface::selected()->__ifacecommand(arg1, arg2, arg3)) \
 		{ \
 			TC_KVS_COMMAND_ERROR \
 		} \
@@ -190,7 +190,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 	TC_KVS_FUNCTION(__name) \
 	{ \
 		TC_KVS_FAIL_ON_NO_INTERFACE \
-		QString szRet = KviTorrentInterface::selected()->__ifacecommand(); \
+		QString szRet = TorrentInterface::selected()->__ifacecommand(); \
 		c->returnValue()->setString(szRet); \
 		return true; \
 	}
@@ -199,7 +199,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 	TC_KVS_FUNCTION(__name) \
 	{ \
 		TC_KVS_FAIL_ON_NO_INTERFACE \
-		kvs_int_t ret = KviTorrentInterface::selected()->__ifacecommand(); \
+		kvs_int_t ret = TorrentInterface::selected()->__ifacecommand(); \
 		c->returnValue()->setInteger(ret); \
 		return true; \
 	}
@@ -208,7 +208,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 	TC_KVS_FUNCTION(__name) \
 	{ \
 		TC_KVS_FAIL_ON_NO_INTERFACE \
-		kvs_real_t ret = KviTorrentInterface::selected()->__ifacecommand(); \
+		kvs_real_t ret = TorrentInterface::selected()->__ifacecommand(); \
 		c->returnValue()->setReal(ret); \
 		return true; \
 	}
@@ -221,7 +221,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 			KVSM_PARAMETER(__argname, KVS_PT_INT, 0, arg) \
 		KVSM_PARAMETERS_END(c) \
 		TC_KVS_FAIL_ON_NO_INTERFACE \
-		kvs_int_t ret = KviTorrentInterface::selected()->__ifacecommand(arg); \
+		kvs_int_t ret = TorrentInterface::selected()->__ifacecommand(arg); \
 		c->returnValue()->setInteger(ret); \
 		return true; \
 	}
@@ -234,7 +234,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 			KVSM_PARAMETER(__argname, KVS_PT_INT, 0, arg) \
 		KVSM_PARAMETERS_END(c) \
 		TC_KVS_FAIL_ON_NO_INTERFACE \
-		QString szRet = KviTorrentInterface::selected()->__ifacecommand(arg); \
+		QString szRet = TorrentInterface::selected()->__ifacecommand(arg); \
 		c->returnValue()->setString(szRet); \
 		return true; \
 	}
@@ -249,7 +249,7 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 			KVSM_PARAMETER(__argname2, KVS_PT_INT, 0, arg2) \
 		KVSM_PARAMETERS_END(c) \
 		TC_KVS_FAIL_ON_NO_INTERFACE \
-		QString szRet = KviTorrentInterface::selected()->__ifacecommand(arg1, arg2); \
+		QString szRet = TorrentInterface::selected()->__ifacecommand(arg1, arg2); \
 		c->returnValue()->setString(szRet); \
 		return true; \
 	}
@@ -264,14 +264,40 @@ static KviTorrentInterface *auto_detect_torrent_client(KviWindow * pOut = 0)
 			KVSM_PARAMETER(__argname2, KVS_PT_INT, 0, arg2) \
 		KVSM_PARAMETERS_END(c) \
 		TC_KVS_FAIL_ON_NO_INTERFACE \
-		kvs_int_t ret = KviTorrentInterface::selected()->__ifacecommand(arg1, arg2); \
+		kvs_int_t ret = TorrentInterface::selected()->__ifacecommand(arg1, arg2); \
 		c->returnValue()->setInteger(ret); \
 		return true; \
 	}
 
+/*
+	@doc: torrent.detect
+	@type:
+		command
+	@title:
+		torrent.detect
+	@short:
+		Detects the torrent client interface to use
+	@syntax:
+		torrent.detect [-q]
+	@description:
+		Attempts to detect the best torrent client interface
+		for the current system. The -q switch causes the detection
+		algorithm to run quietly. This function may attempt to start
+		the torrent clients in order to verify their presence on the system.
+		You can guide the function by starting the torrent client you
+		prefer before running it: if a running torrent client is found, it takes
+		precedence over the others.[br]
+		Take a look at the [module:torrent]torrent module documentation[/module]
+		for more details about how it works.[br]
+	@seealso:
+		[module:torrent]torrent module documentation[/module],
+		[cmd]torrent.setClient[/cmd],
+		[fnc]$torrent.client[/fnc]
+*/
+
 TC_KVS_COMMAND(detect)
 {
-	KviTorrentInterface::select(auto_detect_torrent_client(c->hasSwitch('q',"quiet") ? 0 : c->window()));
+	TorrentInterface::select(auto_detect_torrent_client(c->hasSwitch('q',"quiet") ? 0 : c->window()));
 	return true;
 }
 
@@ -287,10 +313,10 @@ TC_KVS_COMMAND(detect)
 		$torrent.maxUploadSpeed()
 	@description:
 		Returns maximum upload speed set in client.
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_INTRET_FUNCTION(maxUploadSpeed, maxUploadSpeed)
 
@@ -307,10 +333,10 @@ TC_KVS_INTRET_FUNCTION(maxUploadSpeed, maxUploadSpeed)
 		$torrent.maxDownloadSpeed()
 	@description:
 		Returns maximum download speed set in client.
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_INTRET_FUNCTION(maxDownloadSpeed, maxDownloadSpeed)
 
@@ -326,10 +352,10 @@ TC_KVS_INTRET_FUNCTION(maxDownloadSpeed, maxDownloadSpeed)
 		torrent.setMaxUploadSpeed <kbytes_per_sec>
 	@description:
 		Sets maximum upload speed
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_INT_COMMAND(setMaxUploadSpeed, setMaxUploadSpeed, "kbytes_per_sec")
 
@@ -345,10 +371,10 @@ TC_KVS_INT_COMMAND(setMaxUploadSpeed, setMaxUploadSpeed, "kbytes_per_sec")
 		torrent.setMaxDownloadSpeed <kbytes_per_sec>
 	@description:
 		Sets maximum download speed
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_INT_COMMAND(setMaxDownloadSpeed, setMaxDownloadSpeed, "kbytes_per_sec")
 
@@ -364,10 +390,10 @@ TC_KVS_INT_COMMAND(setMaxDownloadSpeed, setMaxDownloadSpeed, "kbytes_per_sec")
 		$torrent.speedUp()
 	@description:
 		Returns current total upload speed
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_FLOATRET_FUNCTION(speedUp, speedUp)
 
@@ -383,10 +409,10 @@ TC_KVS_FLOATRET_FUNCTION(speedUp, speedUp)
 		$torrent.speedDown()
 	@description:
 		Returns current total download speed
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_FLOATRET_FUNCTION(speedDown, speedDown)
 
@@ -402,10 +428,10 @@ TC_KVS_FLOATRET_FUNCTION(speedDown, speedDown)
 		$torrent.trafficUp()
 	@description:
 		Returns the total number of bytes uploaded
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_FLOATRET_FUNCTION(trafficUp, trafficUp)
 
@@ -416,15 +442,15 @@ TC_KVS_FLOATRET_FUNCTION(trafficUp, trafficUp)
 	@title:
 		$torrent.trafficDown
 	@short:
-		Returns the total number of bytes download
+		Returns the total number of bytes downloaded
 	@syntax:
 		$torrent.trafficDown()
 	@description:
-		Returns the total number of bytes download
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Returns the total number of bytes downloaded
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_FLOATRET_FUNCTION(trafficDown, trafficDown)
 
@@ -440,10 +466,10 @@ TC_KVS_FLOATRET_FUNCTION(trafficDown, trafficDown)
 		$torrent.name()
 	@description:
 		Returns number of torrents in client
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_INTRET_FUNCTION(count, count)
 
@@ -459,10 +485,10 @@ TC_KVS_INTRET_FUNCTION(count, count)
 		$torrent.name(torrent_number)
 	@description:
 		Returns torrent name as displayed in client
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_STRINGRET_INT_FUNCTION(name, name, "torrent_number")
 
@@ -478,10 +504,10 @@ TC_KVS_STRINGRET_INT_FUNCTION(name, name, "torrent_number")
 		torrent.start <torrent_number>
 	@description:
 		Starts downloading of torrent <torrent_number>
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module],
 		[cmd]torrent.stop[/cmd], [cmd]torrent.stopAll[/cmd],
 		[cmd]torrent.startAll[/cmd]
 */
@@ -499,10 +525,10 @@ TC_KVS_INT_COMMAND(start, start, "torrent_number")
 		torrent.stop <torrent_number>
 	@description:
 		Stops downloading of torrent <torrent_number>
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module],
 		[cmd]torrent.stopAll[/cmd], [cmd]torrent.startAll[/cmd],
 		[cmd]torrent.start[/cmd]
 */
@@ -520,10 +546,10 @@ TC_KVS_INT_COMMAND(stop, stop, "torrent_number")
 		torrent.announce <torrent_number>
 	@description:
 		Manually announces torrent to tracker
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_INT_COMMAND(announce, announce, "torrent_number")
 
@@ -539,10 +565,10 @@ TC_KVS_INT_COMMAND(announce, announce, "torrent_number")
 		$torrent.fileCount <torrent_number>
 	@description:
 		Returns the number of files in a torrent.
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_INTRET_INT_FUNCTION(fileCount, fileCount, "torrent_number")
 
@@ -558,10 +584,10 @@ TC_KVS_INTRET_INT_FUNCTION(fileCount, fileCount, "torrent_number")
 		$torrent.fileName <torrent_number> <file_number>
 	@description:
 		Returns the name of a file in a torrent.
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_STRINGRET_INT_INT_FUNCTION(fileName, fileName, "torrent_number", "file_number")
 
@@ -577,10 +603,10 @@ TC_KVS_STRINGRET_INT_INT_FUNCTION(fileName, fileName, "torrent_number", "file_nu
 		$torrent.filePriority <torrent_number> <file_number>
 	@description:
 		Returns the priority of a file in a torrent.
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_STRINGRET_INT_INT_FUNCTION(filePriority, filePriority, "torrent_number", "file_number")
 
@@ -596,10 +622,10 @@ TC_KVS_STRINGRET_INT_INT_FUNCTION(filePriority, filePriority, "torrent_number", 
 		torrent.setFilePriority <torrent_number> <file_number>
 	@description:
 		Sets the priority of a file in a torrent.
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_INT_INT_STRING_COMMAND(setFilePriority, setFilePriority, "torrent_number", "file_number", "priority")
 
@@ -615,10 +641,10 @@ TC_KVS_INT_INT_STRING_COMMAND(setFilePriority, setFilePriority, "torrent_number"
 		torrent.startAll
 	@description:
 		Starts downloading of all torrents
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module],
 		[cmd]torrent.stopAll[/cmd], [cmd]torrent.start[/cmd],
 		[cmd]torrent.stop[/cmd]
 */
@@ -637,38 +663,15 @@ TC_KVS_SIMPLE_COMMAND(startAll, startAll)
 		torrent.stopAll
 	@description:
 		Stops downloading of all torrents
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module],
 		[cmd]torrent.startAll[/cmd], [cmd]torrent.start[/cmd],
 		[cmd]torrent.stop[/cmd]
 */
 
 TC_KVS_SIMPLE_COMMAND(stopAll, stopAll)
-
-
-/*
-	@doc: torrent.list
-	@type:
-		function
-	@title:
-		torrent.list
-	@short:
-		Returns a list of all torrents
-	@syntax:
-		$torrent.list()
-	@description:
-		Returns a list of all torrents
-		Take a look at the [module:torrent]torrent client documentation[/module]
-		for more details about how it works.[br]
-	@seealso:
-		[module:torrent]torrent client documentation[/module],
-		[cmd]torrent.startAll[/cmd], [cmd]torrent.start[/cmd],
-		[cmd]torrent.stop[/cmd]
-*/
-
-//MP_KVS_SIMPLE_COMMAND(list,list)
 
 /*
 	@doc: torrent.setClient
@@ -684,10 +687,10 @@ TC_KVS_SIMPLE_COMMAND(stopAll, stopAll)
 		Sets the torrent client interface to be used by the
 		torrent interface module. <interface_name> must be one
 		of the client names returned by [cmd]torrent.clientList[/cmd]
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module],
 		[cmd]torrent.detect[/cmd], [fnc]$torrent.client[/fnc]
 */
 
@@ -699,11 +702,11 @@ TC_KVS_COMMAND(setClient)
 		KVSM_PARAMETER("client", KVS_PT_STRING, 0, client)
 	KVSM_PARAMETERS_END(c)
 
-	for (KviTorrentInterfaceDescriptor *d = g_pDescriptorList->first(); d; d=g_pDescriptorList->next())
+	for (TorrentInterfaceDescriptor *d = g_pDescriptorList->first(); d; d=g_pDescriptorList->next())
 	{
 		if (d->name() == client)
 		{
-			KviTorrentInterface::select(d->instance());
+			TorrentInterface::select(d->instance());
 			KVI_OPTION_STRING(KviOption_stringPreferredTorrentClient) = client;
 
 			if (!c->hasSwitch('q',"quiet"))
@@ -735,10 +738,10 @@ TC_KVS_COMMAND(setClient)
 		$torrent.client()
 	@description:
 		Returns the currently set torrent client interface.
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module],
 		[cmd]torrent.detect[/cmd], [cmd]torrent.setClient[/cmd]
 */
 TC_KVS_FUNCTION(client)
@@ -759,10 +762,10 @@ TC_KVS_FUNCTION(client)
 		$torrent.clientList()
 	@description:
 		Returns a list of all supported clients.
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module],
 		[cmd]torrent.detect[/cmd], [cmd]torrent.setClient[/cmd],
 		[cmd]torrent.client[/cmd]
 */
@@ -771,7 +774,7 @@ TC_KVS_FUNCTION(clientList)
 	KviKvsArray *pArray = new KviKvsArray();
 	int id=0;
 
-	for (KviTorrentInterfaceDescriptor *d=g_pDescriptorList->first(); d; d=g_pDescriptorList->next())
+	for (TorrentInterfaceDescriptor *d=g_pDescriptorList->first(); d; d=g_pDescriptorList->next())
 		pArray->set(id++, new KviKvsVariant(d->name()));
 
 	c->returnValue()->setArray(pArray);
@@ -790,12 +793,51 @@ TC_KVS_FUNCTION(clientList)
 		$torrent.state <torrent_number>
 	@description:
 		Returns state of torrent (Stopped, Stalled, Seeding, Downloading)
-		Take a look at the [module:torrent]torrent client documentation[/module]
+		Take a look at the [module:torrent]torrent module documentation[/module]
 		for more details about how it works.[br]
 	@seealso:
-		[module:torrent]torrent client documentation[/module],
+		[module:torrent]torrent module documentation[/module]
 */
 TC_KVS_STRINGRET_INT_FUNCTION(state, state, "torrent_number")
+
+/*
+	@doc: torrent
+	@type:
+		module
+	@short:
+		Interface to the torrent clients
+	@title:
+		The torrent module
+	@body:
+		The torrent module is an interface to torrent clients. It currently supports KTorrent using dbus.[br]
+		It provides the following set of commands:[br]
+		[cmd]torrent.detect[/cmd]: Performs an autodetection of installed torrent clients[br]
+		[cmd]torrent.setClient[/cmd]: Sets the torrent client interface[br]
+		[cmd]torrent.start[/cmd]: Starts downloading of a torrent[br]
+		[cmd]torrent.stop[/cmd]: Stops downloading of a torrent[br]
+		[cmd]torrent.announce[/cmd]: Manually announces torrent to tracker[br]
+		[cmd]torrent.startAll[/cmd]: Starts downloading of all torrents[br]
+		[cmd]torrent.stopAll[/cmd]: Stops downloading of all torrents[br]
+		[cmd]torrent.setMaxUploadSpeed[/cmd]: Sets maximum upload speed[br]
+		[cmd]torrent.setMaxDownloadSpeed[/cmd]: Sets maximum download speed[br]
+		[cmd]torrent.setFilePriority[/cmd]: Sets the priority of a file in a torrent[br]
+		[br]
+		It provides the following set of functions:[br]
+		[fnc]$torrent.client[/fnc]: Returns the currently set torrent client interface[br]
+		[fnc]$torrent.clientList[/fnc]: Returns a list of all supported clients[br]
+		[fnc]$torrent.maxUploadSpeed[/fnc]: Returns maximum upload speed set in client[br]
+		[fnc]$torrent.maxDownloadSpeed[/fnc]: Returns maximum download speed set in client[br]
+		[fnc]$torrent.speedUp[/fnc]: Returns current total upload speed[br]
+		[fnc]$torrent.speedDown[/fnc]: Returns current total download speed[br]
+		[fnc]$torrent.trafficUp[/fnc]: Returns the total number of bytes uploaded[br]
+		[fnc]$torrent.trafficDown[/fnc]: Returns the total number of bytes downloaded[br]
+		[fnc]$torrent.count[/fnc]: Returns number of torrents in client[br]
+		[fnc]$torrent.name[/fnc]: Returns torrent name as displayed in client[br]
+		[fnc]$torrent.state[/fnc]: Returns state of torrent[br]
+		[fnc]$torrent.fileCount[/fnc]: Returns the number of files in a torrent[br]
+		[fnc]$torrent.fileName[/fnc]: Returns the name of a file in a torrent[br]
+		[fnc]$torrent.filePriority[/fnc]: Returns the priority of a file in a torrent[br]
+*/
 
 static bool torrent_module_init(KviModule *m)
 {
@@ -827,29 +869,29 @@ static bool torrent_module_init(KviModule *m)
 	TC_KVS_REGFNC(fileName, "fileName")
 	TC_KVS_REGFNC(filePriority, "filePriority")
 
-	g_pDescriptorList = new KviPointerList<KviTorrentInterfaceDescriptor>;
+	g_pDescriptorList = new KviPointerList<TorrentInterfaceDescriptor>;
 	g_pDescriptorList->setAutoDelete(true);
 
 #ifdef COMPILE_KDE_SUPPORT
-	g_pDescriptorList->append(new KviKTorrentDBusInterfaceDescriptor);
+	g_pDescriptorList->append(new KTorrentDbusInterfaceDescriptor);
 #endif // COMPILE_KDE_SUPPORT
 
-	KviTorrentInterface::select(0);
+	TorrentInterface::select(0);
 
-	if (g_pFrame->mainStatusBar())
-		KviTorrentStatusBarApplet::selfRegister(g_pFrame->mainStatusBar());
+	if (g_pMainWindow->mainStatusBar())
+		StatusBarApplet::selfRegister(g_pMainWindow->mainStatusBar());
 
 
 	if(KVI_OPTION_STRING(KviOption_stringPreferredMediaPlayer) == "auto")
 	{
-		KviTorrentInterface::select(auto_detect_torrent_client());
+		TorrentInterface::select(auto_detect_torrent_client());
 
 	} else
 	{
-		for (KviTorrentInterfaceDescriptor *d=g_pDescriptorList->first(); d; d=g_pDescriptorList->next())
+		for (TorrentInterfaceDescriptor *d=g_pDescriptorList->first(); d; d=g_pDescriptorList->next())
 		{
 			if (d->name() == KVI_OPTION_STRING(KviOption_stringPreferredTorrentClient))
-				KviTorrentInterface::select(d->instance());
+				TorrentInterface::select(d->instance());
 		}
 	}
 
@@ -873,7 +915,7 @@ static bool torrent_module_ctrl(KviModule *,const char *,void *) // KviModule * 
 	{
 		// we expect param to be a pointer to QStringList
 		QStringList * l = (QStringList *)param;
-		for(KviMediaPlayerInterfaceDescriptor * d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
+		for(MpInterfaceDescriptor * d = g_pDescriptorList->first();d;d = g_pDescriptorList->next())
 		{
 			l->append(d->name());
 		}

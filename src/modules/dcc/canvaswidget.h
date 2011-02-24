@@ -5,8 +5,8 @@
 //   File : canvaswidget.h
 //   Creation date : Mon Jul 30 07 2001 04:49:49 by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@
 //
 //=============================================================================
 
-#include "broker.h"
+#include "DccBroker.h"
 
 #ifdef COMPILE_DCC_CANVAS
 	#include <QCanvas>
@@ -35,7 +35,7 @@
 	#include <QTable>
 	#include <QSplitter>
 
-	class KviCanvasWidget;
+	class DccCanvasWidget;
 
 	#define KVI_CANVAS_RTTI_CONTROL_TYPE_RECTANGLE 1
 	#define KVI_CANVAS_RTTI_CONTROL_TYPE_LINE 2
@@ -191,21 +191,21 @@
 	{
 		Q_OBJECT
 	public:
-		KviCanvasView(QCanvas * c,KviCanvasWidget * cw,QWidget * par);
+		KviCanvasView(QCanvas * c,DccCanvasWidget * cw,QWidget * par);
 		~KviCanvasView();
 	public:
-		enum State { Idle , SelectOrigin };
+		enum State { Idle, SelectOrigin };
 		enum ObjectType {
-			Rectangle , RichText , Line , Ellipse , Chord , Pie ,
-			PolygonTriangle , PolygonRectangle , PolygonPentagon ,
+			Rectangle, RichText, Line, Ellipse, Chord, Pie,
+			PolygonTriangle, PolygonRectangle, PolygonPentagon,
 			PolygonHexagon
 		};
 		enum DragMode {
-			None , All , Left , Right , Top , Bottom , LeftTop , RightTop ,
-			LeftBottom , RightBottom , Scale , SinglePoint , Rotate
+			None, All, Left, Right, Top, Bottom, LeftTop, RightTop,
+			LeftBottom, RightBottom, Scale, SinglePoint, Rotate
 		};
 	protected:
-		KviCanvasWidget * m_pCanvasWidget;
+		DccCanvasWidget * m_pCanvasWidget;
 
 		// Insertion of objects
 		State             m_state;
@@ -280,13 +280,13 @@
 	};
 
 
-	class KviCanvasWidget : public QWidget
+	class DccCanvasWidget : public QWidget
 	{
 		friend class KviCanvasView;
 		Q_OBJECT
 	public:
-		KviCanvasWidget(QWidget * par);
-		~KviCanvasWidget();
+		DccCanvasWidget(QWidget * par);
+		~DccCanvasWidget();
 	protected:
 		QSplitter     * m_pSplitter;
 		QCanvas       * m_pCanvas;

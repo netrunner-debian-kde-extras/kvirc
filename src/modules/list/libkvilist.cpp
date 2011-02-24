@@ -3,7 +3,7 @@
 //   File : libkvilist.cpp
 //   Creation date : Sun Oct 21 2001 13:29:12 CEST by Szymon Stefanek
 //
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -21,16 +21,16 @@
 //
 //=============================================================================
 
-#include "listwindow.h"
+#include "ListWindow.h"
 
-#include "kvi_module.h"
-#include "kvi_frame.h"
-#include "kvi_window.h"
-#include "kvi_locale.h"
+#include "KviModule.h"
+#include "KviMainWindow.h"
+#include "KviWindow.h"
+#include "KviLocale.h"
 
 #include <QSplitter>
 
-KviPointerList<KviListWindow> * g_pListWindowList = 0;
+KviPointerList<ListWindow> * g_pListWindowList = 0;
 
 
 /*
@@ -55,7 +55,7 @@ static bool list_kvs_cmd_open(KviKvsModuleCommandCall * c)
 
 	if(!(c->window()->context()->listWindow()))
 	{
-		KviListWindow * w = new KviListWindow(c->window()->frame(),c->window()->console());
+		ListWindow * w = new ListWindow(c->window()->frame(),c->window()->console());
 		c->window()->frame()->addWindow(w);
 	} else {
 		c->warning(__tr2qs("List window already open for this IRC context"));
@@ -66,7 +66,7 @@ static bool list_kvs_cmd_open(KviKvsModuleCommandCall * c)
 
 static bool list_module_init(KviModule * m)
 {
-	g_pListWindowList = new KviPointerList<KviListWindow>;
+	g_pListWindowList = new KviPointerList<ListWindow>;
 	g_pListWindowList->setAutoDelete(false);
 
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"open",list_kvs_cmd_open);
@@ -90,7 +90,7 @@ static bool list_module_can_unload(KviModule *)
 KVIRC_MODULE(
 	"List",                                             // module name
 	"4.0.0",                                                // module version
-	"Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)", // author & (C)
+	"Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)", // author & (C)
 	"List window extension",
 	list_module_init,
 	list_module_can_unload,

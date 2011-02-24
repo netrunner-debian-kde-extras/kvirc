@@ -3,7 +3,7 @@
 //   File : libkvisocketspy.cpp
 //   Creation date : Sun Nov 26 2000 13:05:00 CEST by Szymon Stefanek
 //
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -21,16 +21,16 @@
 //
 //=============================================================================
 
-#include "socketspywindow.h"
+#include "SocketSpyWindow.h"
 
-#include "kvi_module.h"
-#include "kvi_frame.h"
-#include "kvi_window.h"
-#include "kvi_locale.h"
+#include "KviModule.h"
+#include "KviMainWindow.h"
+#include "KviWindow.h"
+#include "KviLocale.h"
 
 #include <QSplitter>
 
-KviPointerList<KviSocketSpyWindow> * g_pSocketSpyWindowList = 0;
+KviPointerList<SocketSpyWindow> * g_pSocketSpyWindowList = 0;
 
 
 /*
@@ -52,14 +52,14 @@ KviPointerList<KviSocketSpyWindow> * g_pSocketSpyWindowList = 0;
 static bool socketspy_kvs_cmd_open(KviKvsModuleCommandCall * c)
 {
 	if(!c->window()->console())return c->context()->errorNoIrcContext();
-	KviSocketSpyWindow *w = new KviSocketSpyWindow(c->window()->frame(),c->window()->console());
+	SocketSpyWindow *w = new SocketSpyWindow(c->window()->frame(),c->window()->console());
 	c->window()->frame()->addWindow(w);
 	return true;
 }
 
 static bool socketspy_module_init(KviModule * m)
 {
-	g_pSocketSpyWindowList = new KviPointerList<KviSocketSpyWindow>;
+	g_pSocketSpyWindowList = new KviPointerList<SocketSpyWindow>;
 	g_pSocketSpyWindowList->setAutoDelete(false);
 
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"open",socketspy_kvs_cmd_open);

@@ -5,8 +5,8 @@
 //   File : kvi_socket.h
 //   Creation date : Thu Sep 20 03:50:22 2001 GMT by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -42,26 +42,27 @@
 
 
 
-#if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
+#if defined(COMPILE_ON_WINDOWS) || (defined(COMPILE_ON_MINGW) && !defined(OS2))
 
 	#define KVI_INVALID_SOCKET INVALID_SOCKET
 
-        //every decent win version should contain IPPROTO_IPV6
+	//every decent win version should contain IPPROTO_IPV6
 
-        //old mingw win32 headers doesn't contain this
-        #ifndef IPV6_PROTECTION_LEVEL
-        # define IPV6_PROTECTION_LEVEL          23
-	# define PROTECTION_LEVEL_UNRESTRICTED  10  /* for peer-to-peer apps  */
-	# define PROTECTION_LEVEL_DEFAULT       20  /* default level          */
-        # define PROTECTION_LEVEL_RESTRICTED    30  /* for Intranet apps      */
-        #endif
+	//old mingw win32 headers doesn't contain this
+	#ifndef IPV6_PROTECTION_LEVEL
+		#define IPV6_PROTECTION_LEVEL          23
+		#define PROTECTION_LEVEL_UNRESTRICTED  10  /* for peer-to-peer apps  */
+		#define PROTECTION_LEVEL_DEFAULT       20  /* default level          */
+		#define PROTECTION_LEVEL_RESTRICTED    30  /* for Intranet apps      */
+	#endif
 
 	#define KVI_IPV6_PROTECTION_LEVEL          IPV6_PROTECTION_LEVEL
 	#define KVI_PROTECTION_LEVEL_RESTRICTED    PROTECTION_LEVEL_RESTRICTED
 	#define KVI_PROTECTION_LEVEL_DEFAULT       PROTECTION_LEVEL_DEFAULT
 	#define KVI_PROTECTION_LEVEL_UNRESTRICTED  PROTECTION_LEVEL_UNRESTRICTED
-        #define KVI_IPPROTO_IPV6                   IPPROTO_IPV6
-#else
+	#define KVI_IPPROTO_IPV6                   IPPROTO_IPV6
+	
+#else //!(defined(COMPILE_ON_WINDOWS) || (defined(COMPILE_ON_MINGW) && !defined(OS2))
 
 	#include <sys/time.h>
 	#include <sys/types.h>
@@ -72,14 +73,12 @@
 	#include <unistd.h>
 
 	#define KVI_INVALID_SOCKET (-1)
-#endif
+#endif //!(defined(COMPILE_ON_WINDOWS) || (defined(COMPILE_ON_MINGW) && !defined(OS2))
 
 #ifndef MSG_NOSIGNAL
 	// At least solaris seems to not have it
 	#define MSG_NOSIGNAL 0
-#endif
-
-//#include "kvi_socketcalls.h"
+#endif //!MSG_NOSIGNAL
 
 
 //================================================================================================
@@ -99,7 +98,7 @@
 // kvi_socket_create
 // kvi_socket_open
 //
-//   Open a socket of the specified protocol family , type and protocol
+//   Open a socket of the specified protocol family, type and protocol
 //   You should always use the KVI_SOCKET_* constants as parameters
 //   Returns KVI_INVALID_SOCKET if the socket creation has failed.
 //   The returned socket is in blocking mode!

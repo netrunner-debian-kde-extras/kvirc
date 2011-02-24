@@ -3,9 +3,9 @@
 //   File : libkvichannelsjoin.cpp
 //   Creation date : Thu Nov 06 2001 12:30:25 CEST by Juanjo Alvarez
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2001 Juanjo Alvarez
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,17 +22,17 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 //=============================================================================
-#include "channelsjoinwindow.h"
+#include "ChannelsJoinDialog.h"
 
-#include "kvi_module.h"
-#include "kvi_window.h"
-#include "kvi_frame.h"
-#include "kvi_locale.h"
-#include "kvi_config.h"
+#include "KviModule.h"
+#include "KviWindow.h"
+#include "KviMainWindow.h"
+#include "KviLocale.h"
+#include "KviConfigurationFile.h"
 
 #include <QSplitter>
 
-KviChannelsJoinWindow * g_pChannelsWindow = 0;
+ChannelsJoinDialog * g_pChannelsWindow = 0;
 QRect                   g_rectChannelsJoinGeometry;
 
 /*
@@ -53,7 +53,7 @@ QRect                   g_rectChannelsJoinGeometry;
 
 static bool channelsjoin_kvs_cmd_open(KviKvsModuleCommandCall * c)
 {
-	if(!g_pChannelsWindow)g_pChannelsWindow = new KviChannelsJoinWindow(c->window()->frame(),"channelsjoin");
+	if(!g_pChannelsWindow)g_pChannelsWindow = new ChannelsJoinDialog(c->window()->frame(),"channelsjoin");
 
 	g_pChannelsWindow->setConsole(c->window()->console());
 
@@ -68,7 +68,7 @@ static bool channelsjoin_module_init(KviModule * m)
 {
 	QString fName;
 	m->getDefaultConfigFileName(fName);
-	KviConfig cfg(fName,KviConfig::Read);
+	KviConfigurationFile cfg(fName,KviConfigurationFile::Read);
 
 	g_rectChannelsJoinGeometry = cfg.readRectEntry("geometry",QRect(30,30,320,410));
 
@@ -80,7 +80,7 @@ static bool channelsjoin_module_cleanup(KviModule *m)
 {
 	QString fName;
 	m->getDefaultConfigFileName(fName);
-	KviConfig cfg(fName,KviConfig::Write);
+	KviConfigurationFile cfg(fName,KviConfigurationFile::Write);
 
 	cfg.writeEntry("geometry",g_rectChannelsJoinGeometry);
 

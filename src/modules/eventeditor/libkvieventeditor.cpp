@@ -3,8 +3,8 @@
 //   File : libkvieventeditor.cpp
 //   Creation date : Mon 23 Dec 2002 20:23:59 2002 GMT by Szymon Stefanek
 //
-//   This toolbar is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This toolbar is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,13 +22,13 @@
 //
 //=============================================================================
 
-#include "eventeditor.h"
+#include "EventEditorWindow.h"
 
-#include "kvi_module.h"
-#include "kvi_locale.h"
-#include "kvi_frame.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+#include "KviMainWindow.h"
 
-KviEventEditorWindow * g_pEventEditorWindow = 0;
+EventEditorWindow * g_pEventEditorWindow = 0;
 
 
 /*
@@ -49,7 +49,7 @@ static bool eventeditor_kvs_cmd_open(KviKvsModuleCommandCall * c)
 {
 	if(!g_pEventEditorWindow)
 	{
-		g_pEventEditorWindow = new KviEventEditorWindow(c->window()->frame());
+		g_pEventEditorWindow = new EventEditorWindow(c->window()->frame());
 		c->window()->frame()->addWindow(g_pEventEditorWindow);
 	}
 
@@ -73,8 +73,8 @@ static bool eventeditor_module_can_unload(KviModule *)
 
 static bool eventeditor_module_cleanup(KviModule *)
 {
-	if(g_pEventEditorWindow && g_pFrame)
-		g_pFrame->closeWindow(g_pEventEditorWindow);
+	if(g_pEventEditorWindow && g_pMainWindow)
+		g_pMainWindow->closeWindow(g_pEventEditorWindow);
 	g_pEventEditorWindow = 0;
 	return true;
 }

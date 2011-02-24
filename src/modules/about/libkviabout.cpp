@@ -3,11 +3,11 @@
 //   File : libkviabout.cpp
 //   Creation date : Tue Jul 6 1999 03:54:25 by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 1999 Szymon Stefanek (pragma at kvirc dot net)
 //   Copyright (C) 2000 Christian Strmmen
 //   Copyright (C) 2000 Till Bush (buti at geocities dot com)
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -25,12 +25,12 @@
 //
 //=============================================================================
 
-#include "aboutdialog.h"
+#include "AboutDialog.h"
 
-#include "kvi_module.h"
-#include "kvi_locale.h"
+#include "KviModule.h"
+#include "KviLocale.h"
 
-KviAboutDialog * g_pAboutDialog = 0;
+AboutDialog * g_pAboutDialog = 0;
 
 /*
 	@doc: about.kvirc
@@ -52,7 +52,7 @@ static bool about_kvs_command_kvirc(KviKvsModuleCommandCall *)
 {
  	if(!g_pAboutDialog)
 	{
-		g_pAboutDialog = new KviAboutDialog();
+		g_pAboutDialog = new AboutDialog();
 		g_pAboutDialog->show();
 	} else {
 		g_pAboutDialog->raise();
@@ -95,7 +95,7 @@ KVIRC_MODULE(
 	"Szymon Stefanek <pragma at kvirc dot net>" \
 	"Elvio Basello <hellvis69 at netsons dot org>",
 	"Exports the /about.kvirc command\n",
-	about_module_init ,
+	about_module_init,
 	about_module_can_unload,
 	0,
 	about_module_cleanup,

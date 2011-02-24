@@ -3,8 +3,8 @@
 //   File : libkviaddon.cpp
 //   Creation date : Tue 31 Mar 01:02:12 2005 GMT by Szymon Stefanek
 //
-//   This toolbar is part of the KVirc irc client distribution
-//   Copyright (C) 2005-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This toolbar is part of the KVIrc irc client distribution
+//   Copyright (C) 2005-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -23,23 +23,23 @@
 //=============================================================================
 
 #include "managementdialog.h"
-#include "addonfunctions.h"
+#include "AddonFunctions.h"
 
-#include "kvi_module.h"
-#include "kvi_kvs_scriptaddonmanager.h"
-#include "kvi_locale.h"
-#include "kvi_qstring.h"
-#include "kvi_parameterlist.h"
-#include "kvi_cmdformatter.h"
-#include "kvi_error.h"
+#include "KviModule.h"
+#include "KviKvsScriptAddonManager.h"
+#include "KviLocale.h"
+#include "KviQString.h"
+#include "KviParameterList.h"
+#include "KviCommandFormatter.h"
+#include "KviError.h"
 #include "kvi_out.h"
-#include "kvi_iconmanager.h"
-#include "kvi_mirccntrl.h"
-#include "kvi_config.h"
+#include "KviIconManager.h"
+#include "KviControlCodes.h"
+#include "KviConfigurationFile.h"
 #include "kvi_sourcesdate.h"
-#include "kvi_miscutils.h"
-#include "kvi_fileutils.h"
-#include "kvi_filedialog.h"
+#include "KviMiscUtils.h"
+#include "KviFileUtils.h"
+#include "KviFileDialog.h"
 
 #include <QFileInfo>
 
@@ -143,7 +143,7 @@ static bool addon_kvs_cmd_list(KviKvsModuleCommandCall * c)
 	KviPointerHashTableIterator<QString,KviKvsScriptAddon> it(*da);
 	while(KviKvsScriptAddon * a = it.current())
 	{
-		c->window()->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs_ctx("%cAddon id %Q, version %Q%c","addon"),KVI_TEXT_BOLD,&(a->name()),&(a->version()),KVI_TEXT_BOLD);
+		c->window()->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs_ctx("%cAddon id %Q, version %Q%c","addon"),KviControlCodes::Bold,&(a->name()),&(a->version()),KviControlCodes::Bold);
 		c->window()->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs_ctx("Name: %Q","addon"),&(a->visibleName()));
 		c->window()->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs_ctx("Description: %Q","addon"),&(a->description()));
 
@@ -603,8 +603,8 @@ static bool addon_kvs_cmd_register(KviKvsModuleCallbackCommandCall * c)
 	@switches:
 		!sw: -q | --quiet
 			Makes the command run quietly
-		!sw: -s | --skip-inexisting
-			Skip inexisting entries in the [files] list
+		!sw: -s | --skip-inexistant
+			Skip inexistant entries in the [files] list
 	@description:
 		Installs the [files] for the addon identified by the specified <id>.
 		The files will be automatically removed when the addon is uninstalled.
@@ -638,7 +638,8 @@ static bool addon_kvs_cmd_installfiles(KviKvsModuleCommandCall * c)
 	KVSM_PARAMETERS_END(c)
 
 	bool bQuiet = c->switches()->find('q',"quiet");
-	bool bSkipInexisting = c->switches()->find('i',"skip-inexisting");
+	// we had a typo here, support the old switch name for backward scripts compatibility
+	bool bSkipInexistant = c->switches()->find('i',"skip-inexistant") || c->switches()->find('i',"skip-inexisting");
 
 	KviKvsScriptAddon * a = KviKvsScriptAddonManager::instance()->findAddon(szName);
 	if(!a)
@@ -685,10 +686,10 @@ static bool addon_kvs_cmd_installfiles(KviKvsModuleCommandCall * c)
 			QDir dir(szPath);
 			if(!dir.exists())
 			{
-				if(!bSkipInexisting)
+				if(!bSkipInexistant)
 					return c->error(__tr2qs_ctx("The directory '%1' doesn't exist","addon").arg(szPath));
 				if(!bQuiet)
-					c->warning(__tr2qs_ctx("Skipping inexisting entry '%1'","addon").arg(szEntry));
+					c->warning(__tr2qs_ctx("Skipping inexistant entry '%1'","addon").arg(szEntry));
 				continue;
 			}
 
@@ -708,16 +709,16 @@ static bool addon_kvs_cmd_installfiles(KviKvsModuleCommandCall * c)
 		QFileInfo inf(szEntry);
 		if(!inf.exists())
 		{
-			if(!bSkipInexisting)
+			if(!bSkipInexistant)
 				return c->error(__tr2qs_ctx("The file '%1' doesn't exist","addon").arg(szEntry));
 			if(!bQuiet)
-				c->warning(__tr2qs_ctx("Skipping inexisting entry '%1'","addon").arg(szEntry));
+				c->warning(__tr2qs_ctx("Skipping inexistant entry '%1'","addon").arg(szEntry));
 			continue;
 		}
 
 		if(!inf.isFile())
 		{
-			if(!bSkipInexisting)
+			if(!bSkipInexistant)
 				return c->error(__tr2qs_ctx("The entry '%1' is not a file","addon").arg(szEntry));
 			if(!bQuiet)
 				c->warning(__tr2qs_ctx("Skipping invalid entry '%1'","addon").arg(szEntry));
@@ -729,7 +730,7 @@ static bool addon_kvs_cmd_installfiles(KviKvsModuleCommandCall * c)
 
 	// create target path
 	QString szTargetPath;
-	g_pApp->getLocalKvircDirectory(szTargetPath,KviApp::None,szTarget);
+	g_pApp->getLocalKvircDirectory(szTargetPath,KviApplication::None,szTarget);
 
 	KviFileUtils::makeDir(szTargetPath);
 
@@ -743,7 +744,7 @@ static bool addon_kvs_cmd_installfiles(KviKvsModuleCommandCall * c)
 		}
 
 		QString szEntry = QString("%1%2%3").arg(szTarget).arg(QString(KVI_PATH_SEPARATOR_CHAR)).arg(inf.fileName());
-		g_pApp->getLocalKvircDirectory(szTargetPath,KviApp::None,szEntry);
+		g_pApp->getLocalKvircDirectory(szTargetPath,KviApplication::None,szEntry);
 
 		if(!bQuiet)
 			c->window()->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs_ctx("Installing file '%1' into '%2'","addon").arg(*it).arg(szTargetPath));
@@ -765,14 +766,17 @@ static bool addon_kvs_cmd_installfiles(KviKvsModuleCommandCall * c)
 	@short:
 		Shows the addon addon management editor
 	@syntax:
-		addon.dialog
+		addon.dialog [-t]
 	@description:
-		Shows the addon addon management editor
+		Shows the addon addon management editor.[br]
+		If the [-t] switch is used, the dialog is opened as toplevel window,
+		otherwise it is opened as part of the current frame window.[br]
 */
 
-static bool addon_kvs_cmd_dialog(KviKvsModuleCommandCall *)
+static bool addon_kvs_cmd_dialog(KviKvsModuleCommandCall *c)
 {
-	KviScriptManagementDialog::display();
+
+	AddonManagementDialog::display(c->hasSwitch('t',"toplevel"));
 	return true;
 }
 
@@ -799,7 +803,7 @@ static bool addon_kvs_cmd_install(KviKvsModuleCommandCall * c)
 	KVSM_PARAMETERS_END(c)
 
 	QString szError;
-	if(!KviAddonFunctions::installAddonPackage(szAddonPackFile,szError))
+	if(!AddonFunctions::installAddonPackage(szAddonPackFile,szError))
 	{
 		c->error(__tr2qs_ctx("Error installing addon package: %Q","addon"),&szError);
 		return false;
@@ -827,7 +831,7 @@ static bool addon_module_init(KviModule *m)
 
 	QString szBuf;
 	m->getDefaultConfigFileName(szBuf);
-	KviConfig cfg(szBuf,KviConfig::Read);
+	KviConfigurationFile cfg(szBuf,KviConfigurationFile::Read);
 	g_rectManagementDialogGeometry = cfg.readRectEntry("EditorGeometry",QRect(10,10,390,440));
 
 	return true;
@@ -835,11 +839,11 @@ static bool addon_module_init(KviModule *m)
 
 static bool addon_module_cleanup(KviModule *m)
 {
-	KviScriptManagementDialog::cleanup();
+	AddonManagementDialog::cleanup();
 
 	QString szBuf;
 	m->getDefaultConfigFileName(szBuf);
-	KviConfig cfg(szBuf,KviConfig::Write);
+	KviConfigurationFile cfg(szBuf,KviConfigurationFile::Write);
 	cfg.writeEntry("EditorGeometry",g_rectManagementDialogGeometry);
 
 	return true;
@@ -847,7 +851,7 @@ static bool addon_module_cleanup(KviModule *m)
 
 static bool addon_module_can_unload(KviModule *)
 {
-	return (!KviScriptManagementDialog::instance());
+	return (!AddonManagementDialog::instance());
 }
 
 

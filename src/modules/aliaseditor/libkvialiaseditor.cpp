@@ -3,8 +3,8 @@
 //   File : libkvialiaseditor.cpp
 //   Creation date : Mon 23 Dec 2002 14:30:59 2002 GMT by Szymon Stefanek
 //
-//   This toolbar is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This toolbar is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,14 +22,14 @@
 //
 //=============================================================================
 
-#include "aliaseditor.h"
+#include "AliasEditorWindow.h"
 
-#include "kvi_module.h"
-#include "kvi_locale.h"
-#include "kvi_frame.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+#include "KviMainWindow.h"
 
 
-KviAliasEditorWindow * g_pAliasEditorWindow = 0;
+AliasEditorWindow * g_pAliasEditorWindow = 0;
 KviModule * g_pAliasEditorModule = 0;
 
 
@@ -51,7 +51,7 @@ static bool aliaseditor_kvs_cmd_open(KviKvsModuleCommandCall * c)
 {
 	if(!g_pAliasEditorWindow)
 	{
-		g_pAliasEditorWindow = new KviAliasEditorWindow(c->window()->frame());
+		g_pAliasEditorWindow = new AliasEditorWindow(c->window()->frame());
 		c->window()->frame()->addWindow(g_pAliasEditorWindow);
 	}
 
@@ -75,8 +75,8 @@ static bool aliaseditor_module_can_unload(KviModule * )
 
 static bool aliaseditor_module_cleanup(KviModule *)
 {
-	if(g_pAliasEditorWindow && g_pFrame)
-		g_pFrame->closeWindow(g_pAliasEditorWindow);
+	if(g_pAliasEditorWindow && g_pMainWindow)
+		g_pMainWindow->closeWindow(g_pAliasEditorWindow);
 	g_pAliasEditorWindow = 0;
 	return true;
 }
@@ -84,7 +84,7 @@ static bool aliaseditor_module_cleanup(KviModule *)
 KVIRC_MODULE(
 	"AliasEditor",                                                       // module name
 	"4.0.0",                                                             // module version
-	"Copyright (C) 2002-2005 Szymon Stefanek (pragma at kvirc dot net)", // author & (C)
+	"Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)", // author & (C)
 	"Editor for the script aliases",
 	aliaseditor_module_init,
 	aliaseditor_module_can_unload,

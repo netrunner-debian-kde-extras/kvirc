@@ -3,8 +3,8 @@
 //   File : libkvimircimport.cpp
 //   Creation date : Tue Aug 27 01:20:35 2002 GMT by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -24,15 +24,14 @@
 
 #include "libkvimircimport.h"
 
-#include "kvi_module.h"
-#include "kvi_filedialog.h"
-#include "kvi_fileutils.h"
+#include "KviModule.h"
+#include "KviFileDialog.h"
+#include "KviFileUtils.h"
 #include "kvi_fileextensions.h"
-#include "kvi_locale.h"
-#include "kvi_config.h"
-#include "kvi_app.h"
-#include "kvi_qstring.h"
-#include "kvi_tal_vbox.h"
+#include "KviLocale.h"
+#include "KviConfigurationFile.h"
+#include "KviApplication.h"
+#include "KviTalVBox.h"
 
 #include <QMessageBox>
 #include <QDir>
@@ -55,7 +54,7 @@ KviMircServersIniImport::~KviMircServersIniImport()
 
 int KviMircServersIniImport::doImport(const QString& filename)
 {
-	KviConfig cfg(filename,KviConfig::Read,true);
+	KviConfigurationFile cfg(filename,KviConfigurationFile::Read,true);
 	int iCount = 0;
 	if(cfg.hasGroup("servers"))
 	{
@@ -64,7 +63,7 @@ int KviMircServersIniImport::doImport(const QString& filename)
 		QString key;
 		QString entry;
 		do {
-			KviQString::sprintf(key,"n%d",i);
+			key = QString("n%1").arg(i);
 			entry = cfg.readEntry(key,"");
 			if(!entry.isEmpty())
 			{
@@ -73,37 +72,39 @@ int KviMircServersIniImport::doImport(const QString& filename)
 				QString port;
 				kvi_u32_t uPort = 0;
 				// <description>SERVER:<server:port>GROUP:<network>
-				int idx = KviQString::find(entry,"SERVER:");
+				int idx = entry.indexOf("SERVER:",0,Qt::CaseSensitive);
 				if(idx != -1)
 				{
 					description = entry.left(idx);
 					entry.remove(0,idx + 7);
-					idx = KviQString::find(entry,"GROUP:");
+					idx = entry.indexOf("GROUP:",0,Qt::CaseSensitive);
 					if(idx != -1)
 					{
 						port = entry.left(idx);
 						entry.remove(0,idx + 6);
 					}
-					idx = KviQString::find(port,':');
+					idx = port.indexOf(':',0,Qt::CaseSensitive);
 					if(idx != -1)
 					{
 						serv = port.left(idx);
 						port.remove(0,idx + 1);
 						bool bOk;
 						uPort = port.toUInt(&bOk);
-						if(!bOk)uPort = 6667;
+						if(!bOk)
+							uPort = 6667;
 					} else {
 						serv = port;
 						uPort = 6667;
 					}
 				}
-				if(entry.isEmpty())entry = __tr2qs("Standalone Servers");
+				if(entry.isEmpty())
+					entry = __tr2qs("Standalone Servers");
 				if(!serv.isEmpty())
 				{
-					KviServer s;
-					s.m_szHostname = serv;
-					s.m_szDescription = description;
-					s.m_uPort = uPort;
+					KviIrcServer s;
+					s.setHostName(serv);
+					s.setDescription(description);
+					s.setPort(uPort);
 					iCount++;
 					emit server(s,entry);
 				}
@@ -111,16 +112,15 @@ int KviMircServersIniImport::doImport(const QString& filename)
 			}
 		} while(!entry.isEmpty());
 	} else {
-		QString tmp;
-		KviQString::sprintf(tmp,__tr2qs("%Q doesn't look like a servers.ini file.\nImport failed."),&filename);
-		QMessageBox::warning(0,__tr2qs("Warning - KVIrc"),tmp);
+		QString szTmp = QString(__tr2qs("%1 doesn't look like a servers.ini file.\nImport failed.")).arg(filename);
+		QMessageBox::warning(0,__tr2qs("Warning - KVIrc"),szTmp);
 	}
 	return iCount;
 }
 
 void KviMircServersIniImport::start()
 {
-	//KviStr buffer;
+	//KviCString buffer;
 	QString buffer;
 	if(!KviFileDialog::askForOpenFileName(buffer,__tr("Choose a servers.ini file"),0,KVI_FILTER_INI,false,true))return;
 
@@ -350,7 +350,7 @@ static bool mircimport_module_can_unload(KviModule *)
 }
 
 /*
-KVIMODULEEXPORTFUNC KviServerImport * mircimport_module_createIrcServerImport(const char *filterName)
+KVIMODULEEXPORTFUNC KviIrcServerImport * mircimport_module_createIrcServerImport(const char *filterName)
 {
 	if(kvi_strEqualCI(filterName,__tr("Import from servers.ini")))
 	{

@@ -3,8 +3,8 @@
 //   File : libkvisystem.cpp
 //   Creation date : Fri Nov 16 03:50:12 2001 GMT by Szymon Stefanek
 //
-//   This system is part of the KVirc irc client distribution
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This system is part of the KVIrc irc client distribution
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //   Copyright ©        2009 Kai Wasserbäch <debian@carbon-project.org>
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -23,17 +23,17 @@
 //
 //=============================================================================
 
-#include "plugin.h"
+#include "Plugin.h"
 
 #include "kvi_settings.h"
-#include "kvi_module.h"
-#include "kvi_string.h"
-#include "kvi_thread.h"
-#include "kvi_locale.h"
-#include "kvi_app.h"
-#include "kvi_env.h"
-#include "kvi_osinfo.h"
-#include "kvi_modulemanager.h"
+#include "KviModule.h"
+#include "KviCString.h"
+#include "KviThread.h"
+#include "KviLocale.h"
+#include "KviApplication.h"
+#include "KviEnvironment.h"
+#include "KviOsInfo.h"
+#include "KviModuleManager.h"
 
 #include <QClipboard>
 #include <QByteArray>
@@ -53,7 +53,7 @@
 	#include <QStringList>
 #endif
 
-KviPluginManager * g_pPluginManager;
+PluginManager * g_pPluginManager;
 
 /*
 	@doc: system.ostype
@@ -212,7 +212,7 @@ static bool system_kvs_fnc_getenv(KviKvsModuleFunctionCall *c)
 	c->returnValue()->setString(env.isEmpty() ? QString::fromLocal8Bit(env) : QString::fromLocal8Bit(def));
 #else
 */
-	char * b = kvi_getenv(szVar.data());
+	char * b = KviEnvironment::getVariable(szVar.data());
 	c->returnValue()->setString(b ? QString::fromLocal8Bit(b) : QString());
 //#endif
 	return true;
@@ -413,7 +413,7 @@ static bool system_kvs_fnc_hostname(KviKvsModuleFunctionCall *c)
 	@short:
 		Performs a DBus call
 	@syntax:
-		<variant> $system.dbus(<service:string>,<path:string>,<interface:string>,<method:string>[,<parameter1:string>[,<parameter2:string>[,...]]])
+		<variant> $system.dbus(<service:string>,<path:string>,<interface:string>,<method:string>[,<bus_type:string>[,<parameter1:string>[,<parameter2:string>[,...]]]])
 	@description:
 		This function allows performing simple Dbus calls without executing
 		an external process. This feature is available ONLY when KDE support
@@ -424,6 +424,8 @@ static bool system_kvs_fnc_hostname(KviKvsModuleFunctionCall *c)
 		on the remote object and <parameter1>,<parameter2>,... is the list of
 		parameters to be passed. The <function> name must contain the
 		trailing parenthesis and parameter specification (see examples).
+		The <bus_type> specifies the bus to connect, use "system" for systemBus or
+		"session" for sessionBus. If it's leaved blank, it will use sessionBus.
 		The parameters MUST be in the form "type=value"
 		where "type" is the C++ type of the parameter and value
 		is the string rappresentation of the parameter data. Currently
@@ -450,7 +452,7 @@ static bool system_kvs_fnc_hostname(KviKvsModuleFunctionCall *c)
 
 static bool system_kvs_fnc_dbus(KviKvsModuleFunctionCall *c)
 {
-	QString szService, szPath, szInterface, szMethod;
+	QString szService, szPath, szInterface, szMethod, szBusType;
 	QStringList parms;
 
 	KVSM_PARAMETERS_BEGIN(c)
@@ -458,23 +460,39 @@ static bool system_kvs_fnc_dbus(KviKvsModuleFunctionCall *c)
 		KVSM_PARAMETER("path",KVS_PT_NONEMPTYSTRING,0,szPath)
 		KVSM_PARAMETER("interface",KVS_PT_NONEMPTYSTRING,0,szInterface)
 		KVSM_PARAMETER("method",KVS_PT_NONEMPTYSTRING,0,szMethod)
+		KVSM_PARAMETER("bus_type",KVS_PT_STRING,0,szBusType)
 		KVSM_PARAMETER("parameter_list",KVS_PT_STRINGLIST,KVS_PF_OPTIONAL,parms)
 	KVSM_PARAMETERS_END(c)
 
 #ifdef COMPILE_KDE_SUPPORT
 
-	QDBusInterface remoteApp(szService, szPath, szInterface);
+	if(szBusType.isEmpty())
+		szBusType = "session";
+
+	QDBusConnection busType("");
+	
+	if(szBusType == "system")
+	{
+		busType = QDBusConnection::systemBus();
+	} else if(szBusType == "session"){
+		busType = QDBusConnection::sessionBus();
+	} else {
+		c->warning(__tr2qs("No DBus type specified"));
+		return false;
+	}
+	
+	QDBusInterface remoteApp(szService, szPath, szInterface, busType);
 	if(!remoteApp.isValid())
 	{
-			c->warning(__tr2qs("Invalid DBus interface"));
-			return false;
+		c->warning(__tr2qs("Invalid DBus interface"));
+		return false;
 	}
 
 	QList<QVariant> ds;
 
 	for ( QStringList::Iterator it = parms.begin(); it != parms.end(); ++it )
 	{
-		KviStr tmp = *it;
+		KviCString tmp = *it;
 
 		if(tmp.isEmpty())
 		{
@@ -482,7 +500,7 @@ static bool system_kvs_fnc_dbus(KviKvsModuleFunctionCall *c)
 			return false;
 		}
 
-		KviStr szType = tmp.leftToFirst('=',false);
+		KviCString szType = tmp.leftToFirst('=',false);
 		tmp.cutToFirst('=',true);
 		if(szType.isEmpty())szType = "int";
 		bool bOk;
@@ -594,7 +612,7 @@ static bool system_kvs_fnc_dbus(KviKvsModuleFunctionCall *c)
 		system.setenv <variable:string> [<value:string>]
 	@description:
 		Sets the enviroinement <variable> to the <value> string.[br]
-		If <value> is not given , the <variable> is unset.[br]
+		If <value> is not given, the <variable> is unset.[br]
 	@seealso:
 		[fnc]$system.getenv[/fnc]
 */
@@ -612,7 +630,7 @@ static bool system_kvs_cmd_setenv(KviKvsModuleCommandCall * c)
 	QByteArray szVar = szVariable.toLocal8Bit();
 	QByteArray szVal = szValue.toLocal8Bit();
 
-	if(szVal.isEmpty())kvi_unsetenv(szVar.data());
+	if(szVal.isEmpty())KviEnvironment::unsetVariable(szVar.data());
 	else
 	{
 /*#ifdef COMPILE_ON_WINDOWS
@@ -621,8 +639,8 @@ static bool system_kvs_cmd_setenv(KviKvsModuleCommandCall * c)
 		Var			=	szVal.data();
 		VarAndVal	=	Var+"="+Val;
 		putenv(VarAndVal);
-#else*/ // <-- this stuff is implicit in kvi_setenv: that's why we have the kvi_ version.
-		kvi_setenv(szVar.data(),szVal.data());
+#else*/ // <-- this stuff is implicit in KviEnvironment::setVariable: that's why we have the kvi_ version.
+		KviEnvironment::setVariable(szVar.data(),szVal.data());
 /*#endif*/
 	}
 	return true;
@@ -759,7 +777,7 @@ static bool system_module_init(KviModule * m)
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setSelection",system_kvs_cmd_setSelection);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"runcmd",system_kvs_cmd_runcmd);
 
-	g_pPluginManager = new(KviPluginManager);
+	g_pPluginManager = new(PluginManager);
 
 	return true;
 }

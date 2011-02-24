@@ -3,7 +3,7 @@
 //   File : libkvipythoncore.cpp
 //   Creation date : Fri Nov 07 00:18:31 2008 GMT by Elvio Basello
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2008 Elvio Basello (hellvis69 at netsons dot org)
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -18,18 +18,18 @@
 //
 //   You should have received a copy of the GNU General Public License
 //   along with this program. If not, write to the Free Software Foundation,
-//   Inc. ,59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+//   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 //=============================================================================
 
 
 #include "kvi_settings.h"
-#include "kvi_module.h"
-#include "kvi_locale.h"
-//#include "kvi_modulemanager.h"
-//#include "kvi_fileutils.h"
-//#include "kvi_app.h"
-//#include "kvi_options.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+//#include "KviModuleManager.h"
+//#include "KviFileUtils.h"
+//#include "KviApplication.h"
+//#include "KviOptions.h"
 //#include "kvi_out.h"
 
 #ifdef COMPILE_PYTHON_SUPPORT
@@ -42,7 +42,7 @@ KviKvsRunTimeContext * g_pCurrentKvsContext = 0;
 bool g_bExecuteQuiet = false;
 QStringList g_lWarningList;
 QString g_lError;
-static KviStr g_szLastReturnValue("");
+static KviCString g_szLastReturnValue("");
 
 static PyThreadState * mainThreadState = NULL;
 
@@ -71,7 +71,7 @@ KviPythonInterpreter::~KviPythonInterpreter()
 {
 	done();
 }
-	
+
 bool KviPythonInterpreter::init()
 {
 // get the global lock
@@ -100,7 +100,7 @@ bool KviPythonInterpreter::init()
 	PyEval_ReleaseLock();
 	return true;
 }
-	
+
 void KviPythonInterpreter::done()
 {
 	if(!m_pThreadState)return;
@@ -138,20 +138,6 @@ bool KviPythonInterpreter::execute(
 	// swap in my thread state
 	PyThreadState_Swap(m_pThreadState);
 
-	
-
-#if 0 // now it's done in the initialization function of the interpreter
-	//prepend some helping functions
-	QString szPreCode= QString("import kvirc\n" \
-		"import sys\n" \
-		"class kvirc_stderr_grabber:\n" \
-		"\tdef write(self,s):\n" \
-		"\t\tkvirc.error(s)\n" \
-		"sys.stderr=kvirc_stderr_grabber()\n"
-	);
-	PyRun_SimpleString(szPreCode.toUtf8().data());
-#endif
-
 	QString szVarCode = "aArgs = [";
 
 	bool bFirst = true;
@@ -169,8 +155,11 @@ bool KviPythonInterpreter::execute(
 
 	PyRun_SimpleString(szVarCode.toUtf8().data());
 
+	//clean "cr" from the python code (ticket #1028)
+	QString szCleanCode = szCode;
+	szCleanCode.replace(QRegExp("\r\n?"), "\n");
 	// execute some python code
-	retVal = PyRun_SimpleString(szCode.toUtf8().data());
+	retVal = PyRun_SimpleString(szCleanCode.toUtf8().data());
 
 	szRetVal.setNum(retVal);
 

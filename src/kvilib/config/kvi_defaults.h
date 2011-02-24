@@ -6,8 +6,8 @@
 //   File : kvi_defaults.h
 //   Creation date : Wed Jun 21 2000 13:23:13 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -62,6 +62,8 @@
 	#define KVI_HOME_CONFIG_FILE_NAME ".kvirc4.rc"
 #endif
 
+#define KVI_FORCE_LOCALE_FILE_NAME ".kvirc_force_locale"
+
 #define KVI_DEFAULT_INCOMING_SUBDIRECTORY_NAME "Downloads"
 
 #define KVI_DEFAULT_NICKNAME_TOKEN "%nick%"
@@ -71,7 +73,7 @@
 #define KVI_DEFAULT_NICKNAME3 "%nick%|3"
 #define KVI_DEFAULT_NICKNAME4 "%nick%|4"
 #define KVI_DEFAULT_USERNAME "kvirc"
-#define KVI_DEFAULT_REALNAME "KVIrc " KVI_VERSION " '" KVI_RELEASE_NAME "' http://kvirc.net/"
+#define KVI_DEFAULT_REALNAME "KVIrc $version(v) $version(n) http://kvirc.net/"
 
 #define KVI_DEFAULT_PART_MESSAGE "Once you know what it is you want to be true, instinct is a very useful device for enabling you to know that it is"
 #define KVI_DEFAULT_QUIT_MESSAGE "KVIrc $version(v) $version(n) http://www.kvirc.net/"

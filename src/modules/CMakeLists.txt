@@ -14,6 +14,10 @@ INCLUDE_DIRECTORIES(
 	../kvilib/system/
 	../kvirc/kernel/
 	../kvirc/kvs/
+	../kvirc/kvs/event/
+	../kvirc/kvs/object/
+	../kvirc/kvs/parser/
+	../kvirc/kvs/tree/
 	../kvirc/module/
 	../kvirc/sparser/
 	../kvirc/ui/
@@ -24,19 +28,18 @@ SUBDIRS(
 	chan channelsjoin classeditor codetester config context
 	dcc dialog
 	editor eventeditor
-	file filetransferwindow
+	file filetransferwindow fish
 	help http
 	ident iograph
 	lamerizer language links list log logview
 	mask math mediaplayer mircimport my
 	notifier
 	objects options
-	perlcore popupeditor proxydb pythoncore
+	perlcore popup popupeditor proxydb pythoncore
 	raweditor regchan reguser rijndael rot13
 	serverdb setup sharedfile sharedfileswindow snd socketspy spaste str system
 	texticons term theme tip tmphighlight toolbar toolbareditor torrent trayicon
-	upnp
-	url
+	upnp url userlist
 	window
 )
 

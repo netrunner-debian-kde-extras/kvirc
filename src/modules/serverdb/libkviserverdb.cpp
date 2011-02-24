@@ -3,7 +3,7 @@
 //   File : libkviserverdb.cpp
 //   Creation date : Tue Jul  1 01:48:49 2008 GMT by Elvio Basello
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2008 Elvio Basello (hellvis69 at netsons dot org)
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -22,15 +22,79 @@
 //
 //=============================================================================
 
-#include "kvi_module.h"
-#include "kvi_app.h"
-#include "kvi_locale.h"
-#include "kvi_ircserver.h"
-#include "kvi_ircserverdb.h"
+#include "KviModule.h"
+#include "KviApplication.h"
+#include "KviLocale.h"
+#include "KviIrcServer.h"
+#include "KviIrcServerDataBase.h"
 
 #include <QString>
 
-extern KVIRC_API KviServerDataBase * g_pServerDataBase;
+extern KVIRC_API KviIrcServerDataBase * g_pServerDataBase;
+
+/*
+	@doc: serverdb
+	@type:
+		module
+	@short:
+		Interface to the servers database
+	@title:
+		The serverdb module
+	@body:
+		The serverdb module is the scripting interface to the servers and networks database.[br]
+		It provides the following set of commands:[br]
+		[cmd]serverdb.addNetwork[/cmd]: adds a network entry to the database[br]
+		[cmd]serverdb.addServer[/cmd]: adds a server entry to the database[br]
+		[cmd]serverdb.setNetworkConnectCommand[/cmd]: sets a "on connect" script for the network[br]
+		[cmd]serverdb.setNetworkEncoding[/cmd]: sets the network encoding[br]
+		[cmd]serverdb.setNetworkTextEncoding[/cmd]: sets the network text encoding[br]
+		[cmd]serverdb.setNetworkDescription[/cmd]: sets the network description[br]
+		[cmd]serverdb.setNetworkLoginCommand[/cmd]: sets a "on login" script for the network[br]
+		[cmd]serverdb.setNetworkNickName[/cmd]: sets the network specific nickname[br]
+		[cmd]serverdb.setNetworkRealName[/cmd]: sets the network specific realname[br]
+		[cmd]serverdb.setNetworkUserName[/cmd]: sets the network specific username[br]
+		[cmd]serverdb.setNetworkJoinChannels[/cmd]: sets the network autojoin channels list[br]
+		[cmd]serverdb.setServerConnectCommand[/cmd]: sets a "on connect" script for the server[br]
+		[cmd]serverdb.setServerEncoding[/cmd]: sets the server encoding[br]
+		[cmd]serverdb.setServerTextEncoding[/cmd]: sets the server text encoding[br]
+		[cmd]serverdb.setServerDescription[/cmd]: sets the server description[br]
+		[cmd]serverdb.setServerLoginCommand[/cmd]: sets a "on login" script for the server[br]
+		[cmd]serverdb.setServerNickName[/cmd]: sets the server specific nickname[br]
+		[cmd]serverdb.setServerRealName[/cmd]: sets the server specific realname[br]
+		[cmd]serverdb.setServerUserName[/cmd]: sets the server specific username[br]
+		[cmd]serverdb.setServerJoinChannels[/cmd]: sets the server autojoin channels list[br]
+		[br]
+		It provides the following set of functions:[br]
+		[fnc]$serverdb.cacheIp[/fnc]: returns the cache-ip status for a server[br]
+		[fnc]$serverdb.networkConnectCommand[/fnc]: returns the "on connect" script for a network[br]
+		[fnc]$serverdb.networkDescription[/fnc]: returns the description for a network[br]
+		[fnc]$serverdb.networkEncoding[/fnc]: returns the encoding for a network[br]
+		[fnc]$serverdb.networkTextEncoding[/fnc]: returns the text encoding for a network[br]
+		[fnc]$serverdb.networkLoginCommand[/fnc]: returns the "on login" script for a network[br]
+		[fnc]$serverdb.networkName[/fnc]: returns the name of a network[br]
+		[fnc]$serverdb.networkNickName[/fnc]: returns the specific nickname for a network[br]
+		[fnc]$serverdb.networkRealName[/fnc]: returns the specific realname for a network[br]
+		[fnc]$serverdb.networkUserName[/fnc]: returns the specific username for a network[br]
+		[fnc]$serverdb.networkJoinChannels[/fnc]: returns the list of autojoin channels for a network[br]
+		[fnc]$serverdb.serverConnectCommand[/fnc]: returns the "on connect" script for a server[br]
+		[fnc]$serverdb.serverDescription[/fnc]: returns the description for a server[br]
+		[fnc]$serverdb.serverEncoding[/fnc]: returns the encoding for a server[br]
+		[fnc]$serverdb.serverTextEncoding[/fnc]: returns the text encoding for a server[br]
+		[fnc]$serverdb.serverId[/fnc]: returns the unique id for a server[br]
+		[fnc]$serverdb.serverIp[/fnc]: returns the ip for a server[br]
+		[fnc]$serverdb.serverLoginCommand[/fnc]: returns the "on login" script for a server[br]
+		[fnc]$serverdb.serverNickName[/fnc]: returns the specific nickname for a server[br]
+		[fnc]$serverdb.serverPassword[/fnc]: returns the password for a server[br]
+		[fnc]$serverdb.serverPort[/fnc]: returns the port for a server[br]
+		[fnc]$serverdb.serverRealName[/fnc]: returns the specific realname for a server[br]
+		[fnc]$serverdb.serverUserName[/fnc]: returns the specific username for a server[br]
+		[fnc]$serverdb.serverJoinChannels[/fnc]: returns the list of autojoin channels for a server[br]
+		[fnc]$serverdb.isAutoConnect[/fnc]: returns the autoconnect status for a server[br]
+		[fnc]$serverdb.isIPv6[/fnc]: returns the ipv6 status for a server[br]
+		[fnc]$serverdb.isSSL[/fnc]: returns the ssl status for a server[br]
+		[fnc]$serverdb.networkExists[/fnc]: checks if a network exists[br]
+		[fnc]$serverdb.serverExists[/fnc]: checks if a server exists[br]
+*/
 
 /*
 	@doc: serverdb.networkExists
@@ -40,11 +104,11 @@ extern KVIRC_API KviServerDataBase * g_pServerDataBase;
 		$serverdb.networkExists
 	@short:
 		Checks if the network already exists in the DB
-	@synthax:
-		<bool> $serverdb.networkExists
+	@syntax:
+		<bool> $serverdb.networkExists(<network_name:string>)
 	@description:
 		Checks if the network already exists in the DB.[br]
-		It returns 1 if the network exixts, 0 otherwise
+		It returns 1 if the network exixts, 0 otherwise.
 	@seealso:
 		[module:serverdb]ServerDB module documentation[/module]
 */
@@ -62,7 +126,7 @@ static bool serverdb_kvs_fnc_networkExists(KviKvsModuleFunctionCall * c)
 		return false;
 	}
 
-	KviNetwork * pNetwork = g_pServerDataBase->findNetwork(szNetwork);
+	KviIrcNetwork * pNetwork = g_pServerDataBase->findNetwork(szNetwork);
 	if(!pNetwork)
 	{
 		c->returnValue()->setBoolean(false);
@@ -81,8 +145,8 @@ static bool serverdb_kvs_fnc_networkExists(KviKvsModuleFunctionCall * c)
 		$serverdb.serverExists
 	@short:
 		Checks if the network already exists in the DB
-	@synthax:
-		<bool> $serverdb.serverExists(<string:servername>[,<string:networkname>])
+	@syntax:
+		<bool> $serverdb.serverExists(<servername:string>[,<networkname:string>])
 	@description:
 		Checks if the server already exists for a network in the DB.[br]
 		If no network name is provided, the check is made globally.[br]
@@ -108,14 +172,14 @@ static bool serverdb_kvs_fnc_serverExists(KviKvsModuleFunctionCall * c)
 	if(!szNetwork.isEmpty())
 	{
 		// Check in the given network
-		KviNetwork * pRecord = g_pServerDataBase->findNetwork(szNetwork);
+		KviIrcNetwork * pRecord = g_pServerDataBase->findNetwork(szNetwork);
 		if(!pRecord)
 		{
 			c->returnValue()->setBoolean(false);
 			return true;
 		}
 
-		KviServer * pCheckServer = pRecord->findServer(szServer);
+		KviIrcServer * pCheckServer = pRecord->findServer(szServer);
 		if(!pCheckServer)
 		{
 			c->returnValue()->setBoolean(false);
@@ -125,13 +189,13 @@ static bool serverdb_kvs_fnc_serverExists(KviKvsModuleFunctionCall * c)
 		c->returnValue()->setBoolean(true);
 	} else {
 		// Check through all networks
-		KviPointerHashTableIterator<QString,KviNetwork> it(*(g_pServerDataBase->recordDict()));
+		KviPointerHashTableIterator<QString,KviIrcNetwork> it(*(g_pServerDataBase->recordDict()));
 
-		while(KviNetwork * r = it.current())
+		while(KviIrcNetwork * r = it.current())
 		{
-			KviPointerList<KviServer> * sl = r->serverList();
+			KviPointerList<KviIrcServer> * sl = r->serverList();
 
-			for(KviServer * s = sl->first(); s; s = sl->next())
+			for(KviIrcServer * s = sl->first(); s; s = sl->next())
 			{
 				if(QString::compare(s->hostName().toUtf8().data(),szServer,Qt::CaseInsensitive)==0)
 				{
@@ -148,7 +212,7 @@ static bool serverdb_kvs_fnc_serverExists(KviKvsModuleFunctionCall * c)
 	return true;
 }
 
-#define SERVERDB_GET_NETWORK_PROPERTY(__functionName,__callName) \
+#define BEGIN_SERVERDB_GET_NETWORK_PROPERTY(__functionName) \
 	static bool __functionName(KviKvsModuleFunctionCall * c) \
 	{ \
 		QString szName; \
@@ -163,19 +227,26 @@ static bool serverdb_kvs_fnc_serverExists(KviKvsModuleFunctionCall * c)
 			return false; \
 		} \
 		\
-		KviNetwork * pNetwork = g_pServerDataBase->findNetwork(szName); \
+		KviIrcNetwork * pNetwork = g_pServerDataBase->findNetwork(szName); \
 		if(!pNetwork) \
 		{ \
 			c->error(__tr2qs_ctx("The specified network does not exist","serverdb")); \
 			return false; \
-		} \
-		\
-		c->returnValue()->setString(pNetwork->__callName()); \
-		\
+		}
+
+
+#define END_SERVERDB_GET_NETWORK_PROPERTY \
 		return true; \
 	}
 
-#define SERVERDB_GET_SERVER_PROPERTY(__functionName,__callName,__variantSetCallName) \
+#define SERVERDB_GET_NETWORK_PROPERTY(__functionName,__callName) \
+	BEGIN_SERVERDB_GET_NETWORK_PROPERTY(__functionName) \
+		\
+		c->returnValue()->setString(pNetwork->__callName()); \
+		\
+	END_SERVERDB_GET_NETWORK_PROPERTY
+
+#define BEGIN_SERVERDB_GET_SERVER_PROPERTY(__functionName) \
 	static bool __functionName(KviKvsModuleFunctionCall * c) \
 	{ \
 		QString szNetName, szServName; \
@@ -197,24 +268,30 @@ static bool serverdb_kvs_fnc_serverExists(KviKvsModuleFunctionCall * c)
 			return false; \
 		} \
 		\
-		KviNetwork * pRecord = g_pServerDataBase->findNetwork(szNetName); \
+		KviIrcNetwork * pRecord = g_pServerDataBase->findNetwork(szNetName); \
 		if(!pRecord) \
 		{ \
 			c->error(__tr2qs_ctx("The specified network does not exist","serverdb")); \
 			return false; \
 		} \
 		\
-		KviServer * pServer = pRecord->findServer(szServName); \
+		KviIrcServer * pServer = pRecord->findServer(szServName); \
 		if(!pServer) \
 		{ \
 			c->error(__tr2qs_ctx("The specified server does not exist","serverdb")); \
 			return false; \
-		} \
-		\
-		c->returnValue()->__variantSetCallName(pServer->__callName()); \
-		\
+		}
+
+
+#define END_SERVERDB_GET_SERVER_PROPERTY \
 		return true; \
 	}
+
+#define SERVERDB_GET_SERVER_PROPERTY(__functionName,__callName,__variantSetCallName) \
+		BEGIN_SERVERDB_GET_SERVER_PROPERTY(__functionName) \
+		c->returnValue()->__variantSetCallName(pServer->__callName()); \
+		END_SERVERDB_GET_SERVER_PROPERTY
+
 
 /*
 	@doc: serverdb.networkNickName
@@ -224,8 +301,8 @@ static bool serverdb_kvs_fnc_serverExists(KviKvsModuleFunctionCall * c)
 		$serverdb.networkNickName
 	@short:
 		Returns the nickname
-	@synthax:
-		<string> $serverdb.networkNickName(<string:network>)
+	@syntax:
+		<string> $serverdb.networkNickName(<network:string>)
 	@description:
 		Returns the nickname set for the network <network> if set
 	@seealso:
@@ -241,10 +318,10 @@ SERVERDB_GET_NETWORK_PROPERTY(serverdb_kvs_fnc_networkNickName,nickName)
 		$serverdb.networkUserName
 	@short:
 		Returns the username
-	@synthax:
-		<string> $serverdb.networkUserName(<string:network>)
+	@syntax:
+		<string> $serverdb.networkUserName(<network:string>)
 	@description:
-		Returns the username set for the network <network> if set
+		Returns the username set for the network <network> if set.
 	@seealso:
 		[module:serverdb]ServerDB module documentation[/module]
 */
@@ -258,8 +335,8 @@ SERVERDB_GET_NETWORK_PROPERTY(serverdb_kvs_fnc_networkUserName,userName)
 		$serverdb.networkRealName
 	@short:
 		Returns the realname
-	@synthax:
-		<string> $serverdb.networkRealName(<string:network>)
+	@syntax:
+		<string> $serverdb.networkRealName(<network:string>)
 	@description:
 		Returns the realname set for the network <network> if set
 	@seealso:
@@ -275,8 +352,8 @@ SERVERDB_GET_NETWORK_PROPERTY(serverdb_kvs_fnc_networkRealName,realName)
 		$serverdb.networkEncoding
 	@short:
 		Returns the encoding
-	@synthax:
-		<string> $serverdb.networkEncoding(<string:network>)
+	@syntax:
+		<string> $serverdb.networkEncoding(<network:string>)
 	@description:
 		Returns the encoding used for the network <network> for server specific messages, like channel and nick names, if set
 	@seealso:
@@ -292,8 +369,8 @@ SERVERDB_GET_NETWORK_PROPERTY(serverdb_kvs_fnc_networkEncoding,encoding)
 		$serverdb.networkTextEncoding
 	@short:
 		Returns the encoding
-	@synthax:
-		<string> $serverdb.networkTextEncoding(<string:network>)
+	@syntax:
+		<string> $serverdb.networkTextEncoding(<network:string>)
 	@description:
 		Returns the encoding used for the network <network> for text messages, if set
 	@seealso:
@@ -309,8 +386,8 @@ SERVERDB_GET_NETWORK_PROPERTY(serverdb_kvs_fnc_networkTextEncoding,textEncoding)
 		$serverdb.networkDescription
 	@short:
 		Returns the description
-	@synthax:
-		<string> $serverdb.networkDescription(<string:network>)
+	@syntax:
+		<string> $serverdb.networkDescription(<network:string>)
 	@description:
 		Returns the description set for the network <network> if set
 	@seealso:
@@ -326,8 +403,8 @@ SERVERDB_GET_NETWORK_PROPERTY(serverdb_kvs_fnc_networkDescription,description)
 		$serverdb.networkConnectCommand
 	@short:
 		Returns the connect command
-	@synthax:
-		<string> $serverdb.networkConnectCommand(<string:network>)
+	@syntax:
+		<string> $serverdb.networkConnectCommand(<network:string>)
 	@description:
 		Returns the connect command set for the network <network> if set
 	@seealso:
@@ -343,8 +420,8 @@ SERVERDB_GET_NETWORK_PROPERTY(serverdb_kvs_fnc_networkConnectCommand,onConnectCo
 		$serverdb.networkLoginCommand
 	@short:
 		Returns the login command
-	@synthax:
-		<string> $serverdb.networkLoginCommand(<string:network>)
+	@syntax:
+		<string> $serverdb.networkLoginCommand(<network:string>)
 	@description:
 		Returns the login command set for the network <network> if set
 	@seealso:
@@ -360,14 +437,49 @@ SERVERDB_GET_NETWORK_PROPERTY(serverdb_kvs_fnc_networkLoginCommand,onLoginComman
 		$serverdb.networkName
 	@short:
 		Returns the name
-	@synthax:
-		<string> $serverdb.networkName(<string:network>)
+	@syntax:
+		<string> $serverdb.networkName(<network:string>)
 	@description:
 		Returns the name of the network <network>
 	@seealso:
 		[module:serverdb]ServerDB module documentation[/module]
 */
 SERVERDB_GET_NETWORK_PROPERTY(serverdb_kvs_fnc_networkName,name)
+
+/*
+	@doc: serverdb.networkJoinChannels
+	@type:
+		function
+	@title:
+		$serverdb.networkJoinChannels
+	@short:
+		Returns the list of autojoin channels
+	@syntax:
+		<string> $serverdb.networkJoinChannels(<network:string>)
+	@description:
+		Returns an array of autojoin channels and their relative passwords set for the network <network>[br]
+		Each item in the array is in the format <channel:string>:<password:string>
+	@seealso:
+		[module:serverdb]ServerDB module documentation[/module]
+*/
+BEGIN_SERVERDB_GET_NETWORK_PROPERTY(serverdb_kvs_fnc_networkJoinChannels)
+
+	KviKvsArray * pArray = new KviKvsArray();
+
+	QStringList * pAutoJoinChannels = pNetwork->autoJoinChannelList();
+	if(pAutoJoinChannels)
+	{
+		kvs_uint_t idx = 0;
+		foreach(QString szEntry,*pAutoJoinChannels)
+		{
+			pArray->set(idx,new KviKvsVariant(szEntry));
+			idx++;
+		}
+	}
+
+	c->returnValue()->setArray(pArray);
+
+END_SERVERDB_GET_NETWORK_PROPERTY
 
 /*
 	@doc: serverdb.serverNickName
@@ -377,8 +489,8 @@ SERVERDB_GET_NETWORK_PROPERTY(serverdb_kvs_fnc_networkName,name)
 		$serverdb.serverNickName
 	@short:
 		Returns the nickname
-	@synthax:
-		<string> $serverdb.serverNickName(<string:network>,<string:server>)
+	@syntax:
+		<string> $serverdb.serverNickName(<network:string>,<server:string>)
 	@description:
 		Returns the nickname set for the server <server> of the network <network> if set
 	@seealso:
@@ -394,8 +506,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverNickName,nickName,setString)
 		$serverdb.serverUserName
 	@short:
 		Returns the username
-	@synthax:
-		<string> $serverdb.serverUserName(<string:network>,<string:server>)
+	@syntax:
+		<string> $serverdb.serverUserName(<network:string>,<server:string>)
 	@description:
 		Returns the username set for the server <server> of the network <network> if set
 	@seealso:
@@ -411,8 +523,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverUserName,userName,setString)
 		$serverdb.serverRealName
 	@short:
 		Returns the realname
-	@synthax:
-		<string> $serverdb.serverRealName(<string:network>,<string:server>)
+	@syntax:
+		<string> $serverdb.serverRealName(<network:string>,<server:string>)
 	@description:
 		Returns the realname set for the server <server> of the network <network> if set
 	@seealso:
@@ -428,8 +540,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverRealName,realName,setString)
 		$serverdb.serverEncoding
 	@short:
 		Returns the encoding
-	@synthax:
-		<string> $serverdb.serverEncoding(<string:network>,<string:server>)
+	@syntax:
+		<string> $serverdb.serverEncoding(<network:string>,<server:string>)
 	@description:
 		Returns the encoding used for the server <server> of the network <network> for server specific messages, like channel and nick names, if set
 	@seealso:
@@ -445,8 +557,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverEncoding,encoding,setString)
 		$serverdb.serverTextEncoding
 	@short:
 		Returns the encoding
-	@synthax:
-		<string> $serverdb.serverTextEncoding(<string:network>,<string:server>)
+	@syntax:
+		<string> $serverdb.serverTextEncoding(<network:string>,<server:string>)
 	@description:
 		Returns the encoding used for the server <server> of the network <network> for server specific messages, like channel and nick names, if set
 	@seealso:
@@ -462,8 +574,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverTextEncoding,textEncoding,se
 		$serverdb.serverDescription
 	@short:
 		Returns the description
-	@synthax:
-		<string> $serverdb.serverDescription(<string:network>,<string:server>)
+	@syntax:
+		<string> $serverdb.serverDescription(<network:string>,<server:string>)
 	@description:
 		Returns the description set for the server <server> of the network <network> if set
 	@seealso:
@@ -479,8 +591,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverDescription,description,setS
 		$serverdb.serverConnectCommand
 	@short:
 		Returns the connect command
-	@synthax:
-		<string> $serverdb.serverConnectCommand(<string:network>,<string:server>)
+	@syntax:
+		<string> $serverdb.serverConnectCommand(<network:string>,<server:string>)
 	@description:
 		Returns the connect command set for the server <server> of the network <network> if set
 	@seealso:
@@ -496,8 +608,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverConnectCommand,onConnectComm
 		$serverdb.serverLoginCommand
 	@short:
 		Returns the login command
-	@synthax:
-		<string> $serverdb.serverLoginCommand(<string:network>,<string:server>)
+	@syntax:
+		<string> $serverdb.serverLoginCommand(<network:string>,<server:string>)
 	@description:
 		Returns the login command set for the server <server> of the network <network> if set
 	@seealso:
@@ -513,8 +625,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverLoginCommand,onLoginCommand,
 		$serverdb.serverIp
 	@short:
 		Returns the IP address
-	@synthax:
-		<string> $serverdb.serverIp(<string:network>,<string:server>)
+	@syntax:
+		<string> $serverdb.serverIp(<network:string>,<server:string>)
 	@description:
 		Returns the IP address of the server <server> of the network <network>
 	@seealso:
@@ -530,8 +642,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverIp,ip,setString)
 		$serverdb.serverId
 	@short:
 		Returns the ID
-	@synthax:
-		<string> $serverdb.serverId(<string:network>,<string:server>)
+	@syntax:
+		<string> $serverdb.serverId(<network:string>,<server:string>)
 	@description:
 		Returns the ID of the server <server> of the network <network>
 	@seealso:
@@ -547,8 +659,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverId,id,setString)
 		$serverdb.serverPassword
 	@short:
 		Returns the password
-	@synthax:
-		<string> $serverdb.serverPassword(<string:network>,<string:server>)
+	@syntax:
+		<string> $serverdb.serverPassword(<network:string>,<server:string>)
 	@description:
 		Returns the password of the server <server> of the network <network> if set
 	@seealso:
@@ -564,8 +676,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverPassword,password,setString)
 		$serverdb.serverPort
 	@short:
 		Returns the port
-	@synthax:
-		<int> $serverdb.serverPort(<string:network>,<string:server>)
+	@syntax:
+		<int> $serverdb.serverPort(<network:string>,<server:string>)
 	@description:
 		Returns the port of the server <server> of the network <network> if set
 	@seealso:
@@ -581,8 +693,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverPort,port,setInteger)
 		$serverdb.isAutoConnect
 	@short:
 		Returns the autoconnect status
-	@synthax:
-		<bool> $serverdb.isAutoConnect(<string:network>,<string:server>)
+	@syntax:
+		<bool> $serverdb.isAutoConnect(<network:string>,<server:string>)
 	@description:
 		Returns true if the server <server> of the network <network> if set to autoconnect, false otherwise
 	@seealso:
@@ -598,8 +710,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverAutoConnect,autoConnect,setB
 		$serverdb.isIPv6
 	@short:
 		Returns the IPv6 status
-	@synthax:
-		<bool> $serverdb.isIPv6(<string:network>,<string:server>)
+	@syntax:
+		<bool> $serverdb.isIPv6(<network:string>,<server:string>)
 	@description:
 		Returns true if the server <server> of the network <network> if set to connect using IPv6 sockets, false otherwise
 	@seealso:
@@ -615,8 +727,8 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverIPv6,isIPv6,setBoolean)
 		$serverdb.isSSL
 	@short:
 		Returns the SSL status
-	@synthax:
-		<bool> $serverdb.isSSL(<string:network>,<string:server>)
+	@syntax:
+		<bool> $serverdb.isSSL(<network:string>,<server:string>)
 	@description:
 		Returns true if the server <server> of the network <network> if set to connect using SSL (Secure Socket Layer) sockets, false otherwise
 	@seealso:
@@ -632,14 +744,50 @@ SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverSSL,useSSL,setBoolean)
 		$serverdb.cacheIp
 	@short:
 		Returns the cache-ip status
-	@synthax:
-		<bool> $serverdb.cacheIp(<string:network>,<string:server>)
+	@syntax:
+		<bool> $serverdb.cacheIp(<network:string>,<server:string>)
 	@description:
 		Returns true if KVIrc is set to cache the ip of the server <server> of the network <network>, false otherwise
 	@seealso:
 		[module:serverdb]ServerDB module documentation[/module]
 */
 SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverCacheIp,cacheIp,setBoolean)
+
+/*
+	@doc: serverdb.serverJoinChannels
+	@type:
+		function
+	@title:
+		$serverdb.serverJoinChannels
+	@short:
+		Returns the list of autojoin channels
+	@syntax:
+		<array> $serverdb.serverJoinChannels(<network:string>,<server:string>)
+	@description:
+		Returns an array containing the autojoin channels and their relative passwords set for the server <server> of the network <network>[br]
+		Each item in the array is in the format channel_name:password
+	@seealso:
+		[module:serverdb]ServerDB module documentation[/module]
+*/
+BEGIN_SERVERDB_GET_SERVER_PROPERTY(serverdb_kvs_fnc_serverJoinChannels)
+
+	KviKvsArray * pArray = new KviKvsArray();
+
+	QStringList * pAutoJoinChannels = pServer->autoJoinChannelList();
+	if(pAutoJoinChannels)
+	{
+		kvs_uint_t idx = 0;
+		foreach(QString szEntry,*pAutoJoinChannels)
+		{
+			pArray->set(idx,new KviKvsVariant(szEntry));
+			idx++;
+		}
+	}
+
+	c->returnValue()->setArray(pArray);
+
+END_SERVERDB_GET_SERVER_PROPERTY
+
 
 /*
 	@doc: serverdb.addNetwork
@@ -678,7 +826,7 @@ static bool serverdb_kvs_cmd_addNetwork(KviKvsModuleCommandCall * c)
 		return false;
 	}
 
-	KviNetwork * pNetwork = g_pServerDataBase->findNetwork(szNetName);
+	KviIrcNetwork * pNetwork = g_pServerDataBase->findNetwork(szNetName);
 	if(pNetwork)
 	{
 		if(c->switches()->find('q',"quiet")) return true;
@@ -686,7 +834,7 @@ static bool serverdb_kvs_cmd_addNetwork(KviKvsModuleCommandCall * c)
 		return false;
 	}
 
-	pNetwork = new KviNetwork(szNetName);
+	pNetwork = new KviIrcNetwork(szNetName);
 	if(c->switches()->find('a',"autoconnect")) pNetwork->setAutoConnect(true);
 
 	g_pServerDataBase->addNetwork(pNetwork);
@@ -702,7 +850,7 @@ static bool serverdb_kvs_cmd_addNetwork(KviKvsModuleCommandCall * c)
 	@short:
 		Adds a server
 	@syntax:
-		serverdb.addServer [switches] <string:network> <string:server>
+		serverdb.addServer [switches] <network:string> <server:string>
 	@description:
 		Adds the server <server> to the network <network>.
 	@switches:
@@ -755,7 +903,7 @@ static bool serverdb_kvs_cmd_addServer(KviKvsModuleCommandCall * c)
 		return false;
 	}
 
-	KviNetwork * pRecord = g_pServerDataBase->findNetwork(szNetwork);
+	KviIrcNetwork * pRecord = g_pServerDataBase->findNetwork(szNetwork);
 	if(!pRecord)
 	{
 		// FIXME: default to orphan servers
@@ -763,10 +911,10 @@ static bool serverdb_kvs_cmd_addServer(KviKvsModuleCommandCall * c)
 		return false;
 	}
 
-	KviServer * pServer = new KviServer();
+	KviIrcServer * pServer = new KviIrcServer();
 	pServer->setHostName(szServer);
 
-	KviServer * pServerRecord = pRecord->findServer(pServer);
+	KviIrcServer * pServerRecord = pRecord->findServer(pServer);
 	if(pServerRecord)
 	{
 		if(c->switches()->find('q',"quiet")) return true;
@@ -781,11 +929,10 @@ static bool serverdb_kvs_cmd_addServer(KviKvsModuleCommandCall * c)
 
 	QString tmp;
 
-	unsigned int uPort;
 	if(c->switches()->getAsStringIfExisting('p',"port",tmp))
 	{
 		bool bOk;
-		uPort = tmp.toInt(&bOk);
+		unsigned int uPort = tmp.toInt(&bOk);
 		if(!bOk) uPort = 6667;
 		pServer->setPort(uPort);
 	}
@@ -800,11 +947,11 @@ static bool serverdb_kvs_cmd_addServer(KviKvsModuleCommandCall * c)
 #define SERVERDB_SET_NETWORK_PROPERTY(__functionName,__callName) \
 	static bool __functionName(KviKvsModuleCommandCall * c) \
 	{ \
-		QString szName, szPropertyName; \
+		QString szName, szPropertyValue; \
 		\
 		KVSM_PARAMETERS_BEGIN(c) \
 			KVSM_PARAMETER("name",KVS_PT_STRING,0,szName) \
-			KVSM_PARAMETER("property",KVS_PT_STRING,KVS_PF_APPENDREMAINING,szPropertyName) \
+			KVSM_PARAMETER("property",KVS_PT_STRING,KVS_PF_APPENDREMAINING,szPropertyValue) \
 		KVSM_PARAMETERS_END(c) \
 		\
 		if(szName.isEmpty()) \
@@ -813,13 +960,7 @@ static bool serverdb_kvs_cmd_addServer(KviKvsModuleCommandCall * c)
 			return false; \
 		} \
 		\
-		if(szPropertyName.isEmpty()) \
-		{ \
-			c->error(__tr2qs_ctx("You must provide the value as parameter","serverdb")); \
-			return false; \
-		} \
-		\
-		KviNetwork * pNetwork = g_pServerDataBase->findNetwork(szName); \
+		KviIrcNetwork * pNetwork = g_pServerDataBase->findNetwork(szName); \
 		if(!pNetwork) \
 		{ \
 			if(c->switches()->find('q',"quiet")) return true; \
@@ -827,7 +968,7 @@ static bool serverdb_kvs_cmd_addServer(KviKvsModuleCommandCall * c)
 			return false; \
 		} \
 		\
-		pNetwork->__callName(szPropertyName); \
+		pNetwork->__callName(szPropertyValue); \
 		\
 		return true; \
 	}
@@ -835,12 +976,12 @@ static bool serverdb_kvs_cmd_addServer(KviKvsModuleCommandCall * c)
 #define SERVERDB_SET_SERVER_PROPERTY(__functionName,__callName) \
 	static bool __functionName(KviKvsModuleCommandCall * c) \
 	{ \
-		QString szNetName, szServName, szPropertyName; \
+		QString szNetName, szServName, szPropertyValue; \
 		\
 		KVSM_PARAMETERS_BEGIN(c) \
 			KVSM_PARAMETER("network_name",KVS_PT_STRING,0,szNetName) \
 			KVSM_PARAMETER("server_name",KVS_PT_STRING,0,szServName) \
-			KVSM_PARAMETER("property",KVS_PT_STRING,KVS_PF_APPENDREMAINING,szPropertyName) \
+			KVSM_PARAMETER("property",KVS_PT_STRING,KVS_PF_APPENDREMAINING,szPropertyValue) \
 		KVSM_PARAMETERS_END(c) \
 		\
 		if(szNetName.isEmpty()) \
@@ -855,13 +996,7 @@ static bool serverdb_kvs_cmd_addServer(KviKvsModuleCommandCall * c)
 			return false; \
 		} \
 		\
-		if(szPropertyName.isEmpty()) \
-		{ \
-			c->error(__tr2qs_ctx("You must provide the value as parameter","serverdb")); \
-			return false; \
-		} \
-		\
-		KviNetwork * pRecord = g_pServerDataBase->findNetwork(szNetName); \
+		KviIrcNetwork * pRecord = g_pServerDataBase->findNetwork(szNetName); \
 		if(!pRecord) \
 		{ \
 			if(c->switches()->find('q',"quiet")) return true; \
@@ -869,7 +1004,7 @@ static bool serverdb_kvs_cmd_addServer(KviKvsModuleCommandCall * c)
 			return false; \
 		} \
 		\
-		KviServer * pServer = pRecord->findServer(szServName); \
+		KviIrcServer * pServer = pRecord->findServer(szServName); \
 		if(!pServer) \
 		{ \
 			if(c->switches()->find('q',"quiet")) return true; \
@@ -877,7 +1012,7 @@ static bool serverdb_kvs_cmd_addServer(KviKvsModuleCommandCall * c)
 			return false; \
 		} \
 		\
-		pServer->__callName(szPropertyName); \
+		pServer->__callName(szPropertyValue); \
 		\
 		return true; \
 	}
@@ -891,7 +1026,7 @@ static bool serverdb_kvs_cmd_addServer(KviKvsModuleCommandCall * c)
 	@short:
 		Sets the nickname
 	@syntax:
-		serverdb.setNetworkNickName [switches] <string:name> <string:nick>
+		serverdb.setNetworkNickName [switches] <name:string> <nick:string>
 	@description:
 		Sets the nickname <nick> for the specified network <name>.
 	@switches:
@@ -916,7 +1051,7 @@ SERVERDB_SET_NETWORK_PROPERTY(serverdb_kvs_cmd_setNetworkNickName,setNickName)
 	@short:
 		Sets the username
 	@syntax:
-		serverdb.setNetworkUserName [switches] <string:name> <string:username>
+		serverdb.setNetworkUserName [switches] <name:string> <username:string>
 	@description:
 		Sets the username <username> for the specified network <name>.
 	@switches:
@@ -941,7 +1076,7 @@ SERVERDB_SET_NETWORK_PROPERTY(serverdb_kvs_cmd_setNetworkUserName,setUserName)
 	@short:
 		Sets the realname
 	@syntax:
-		serverdb.setNetworkRealName [switches] <string:name> <string:realname>
+		serverdb.setNetworkRealName [switches] <name:string> <realname:string>
 	@description:
 		Sets the realname <realname> for the specified network <name>.
 	@switches:
@@ -966,7 +1101,7 @@ SERVERDB_SET_NETWORK_PROPERTY(serverdb_kvs_cmd_setNetworkRealName,setRealName)
 	@short:
 		Sets the encoding
 	@syntax:
-		serverdb.setNetworkEncoding [switches] <string:name> <string:encoding>
+		serverdb.setNetworkEncoding [switches] <name:string> <encoding:string>
 	@description:
 		Sets the encoding <encoding> for the specified network <name>. This encoding will be used for server-specific
 		text, like channel names and nicknames.
@@ -992,7 +1127,7 @@ SERVERDB_SET_NETWORK_PROPERTY(serverdb_kvs_cmd_setNetworkEncoding,setEncoding)
 	@short:
 		Sets the encoding
 	@syntax:
-		serverdb.setNetworkTextEncoding [switches] <string:name> <string:encoding>
+		serverdb.setNetworkTextEncoding [switches] <name:string> <encoding:string>
 	@description:
 		Sets the encoding <encoding> for the specified network <name>. This encoding will be used for text messages.
 	@switches:
@@ -1017,7 +1152,7 @@ SERVERDB_SET_NETWORK_PROPERTY(serverdb_kvs_cmd_setNetworkTextEncoding,setTextEnc
 	@short:
 		Sets the description
 	@syntax:
-		serverdb.setNetworkDescription [switches] <string:name> <string:description>
+		serverdb.setNetworkDescription [switches] <name:string> <description:string>
 	@description:
 		Sets the description <description> for the specified network <name>.
 	@switches:
@@ -1042,7 +1177,7 @@ SERVERDB_SET_NETWORK_PROPERTY(serverdb_kvs_cmd_setNetworkDescription,setDescript
 	@short:
 		Sets the connect command
 	@syntax:
-		serverdb.setNetworkConnectCommand [switches] <string:name> <string:command>
+		serverdb.setNetworkConnectCommand [switches] <name:string> <command:string>
 	@description:
 		Sets the command <command> to run on connect for the specified network <name>.
 	@switches:
@@ -1067,7 +1202,7 @@ SERVERDB_SET_NETWORK_PROPERTY(serverdb_kvs_cmd_setNetworkConnectCommand,setOnCon
 	@short:
 		Sets the login command
 	@syntax:
-		serverdb.setNetworkLoginCommand [switches] <string:name> <string:command>
+		serverdb.setNetworkLoginCommand [switches] <name:string> <command:string>
 	@description:
 		Sets the command <command> to run on login for the specified network <name>.
 	@switches:
@@ -1084,6 +1219,29 @@ SERVERDB_SET_NETWORK_PROPERTY(serverdb_kvs_cmd_setNetworkConnectCommand,setOnCon
 SERVERDB_SET_NETWORK_PROPERTY(serverdb_kvs_cmd_setNetworkLoginCommand,setOnLoginCommand)
 
 /*
+	@doc: serverdb.setNetworkJoinChannels
+	@type:
+		command
+	@title:
+		serverdb.setNetworkJoinChannels
+	@short:
+		Sets the autojoin channels list
+	@syntax:
+		serverdb.setNetworkJoinChannels <name:string> <channel_list:string>
+	@description:
+		Sets the autojoin channels list for the specified network <name>.[br]
+		Items in the list have to be separated by a comma, and each item has to be in the form <channel:string>:<password:string>
+	@examples:
+		[example]
+		[comment]Set two autojoin channels for freenode[/comment][br]
+		serverdb.setNetworkJoinChannels Freenode #kvirc:,#secretchan:password
+		[/example]
+	@seealso:
+		[module:serverdb]ServerDB module documentation[/module]
+*/
+SERVERDB_SET_NETWORK_PROPERTY(serverdb_kvs_cmd_setNetworkJoinChannels,setAutoJoinChannelList)
+
+/*
 	@doc: serverdb.setServerNickName
 	@type:
 		command
@@ -1092,9 +1250,9 @@ SERVERDB_SET_NETWORK_PROPERTY(serverdb_kvs_cmd_setNetworkLoginCommand,setOnLogin
 	@short:
 		Sets the nickname
 	@syntax:
-		serverdb.setServerNickName [switches] <string:name> <string:nick>
+		serverdb.setServerNickName [switches] <network:string> <server:string> <nick:string>
 	@description:
-		Sets the nickname <nick> for the specified server <name>.
+		Sets the nickname <nick> for the specified server <server> in the network <network>.
 	@switches:
 		!sw: -q | --quiet
 		Do not print errors if the server already exists.
@@ -1117,9 +1275,9 @@ SERVERDB_SET_SERVER_PROPERTY(serverdb_kvs_cmd_setServerNickName,setNickName)
 	@short:
 		Sets the username
 	@syntax:
-		serverdb.setServerUserName [switches] <string:name> <string:username>
+		serverdb.setServerUserName [switches] <network:string> <server:string> <username:string>
 	@description:
-		Sets the username <username> for the specified server <name>.
+		Sets the username <username> for the specified server <server> in the network <network>.
 	@switches:
 		!sw: -q | --quiet
 		Do not print errors if the server already exists.
@@ -1142,9 +1300,9 @@ SERVERDB_SET_SERVER_PROPERTY(serverdb_kvs_cmd_setServerUserName,setUserName)
 	@short:
 		Sets the realname
 	@syntax:
-		serverdb.setServerRealName [switches] <string:name> <string:realname>
+		serverdb.setServerRealName [switches] <network:string> <server:string> <realname:string>
 	@description:
-		Sets the realname <realname> for the specified server <name>.
+		Sets the realname <realname> for the specified server <server> in the network <network>.
 	@switches:
 		!sw: -q | --quiet
 		Do not print errors if the server already exists.
@@ -1167,9 +1325,9 @@ SERVERDB_SET_SERVER_PROPERTY(serverdb_kvs_cmd_setServerRealName,setRealName)
 	@short:
 		Sets the encoding
 	@syntax:
-		serverdb.setServerEncoding [switches] <string:name> <string:encoding>
+		serverdb.setServerEncoding [switches] <network:string> <server:string> <encoding:string>
 	@description:
-		Sets the encoding <encoding> for the specified server <name>. This encoding will be used for server-specific
+		Sets the encoding <encoding> for the specified server <server> in the network <network>. This encoding will be used for server-specific
 		text, like channel names and nicknames.
 	@switches:
 		!sw: -q | --quiet
@@ -1177,7 +1335,7 @@ SERVERDB_SET_SERVER_PROPERTY(serverdb_kvs_cmd_setServerRealName,setRealName)
 	@examples:
 		[example]
 		[comment]Quietly sets the encoding UTF-8 for the irc.freenode.net server[/comment][br]
-		serverdb.setServerEncoding -q Freenode UTF-8
+		serverdb.setServerEncoding -q irc.freenode.net UTF-8
 		[/example]
 	@seealso:
 		[module:serverdb]ServerDB module documentation[/module]
@@ -1193,16 +1351,16 @@ SERVERDB_SET_SERVER_PROPERTY(serverdb_kvs_cmd_setServerEncoding,setEncoding)
 	@short:
 		Sets the text encoding
 	@syntax:
-		serverdb.setServerTextEncoding [switches] <string:name> <string:encoding>
+		serverdb.setServerTextEncoding [switches] <network:string> <server:string> <encoding:string>
 	@description:
-		Sets the encoding <encoding> for the specified server <name>. This encoding will be used for text messages.
+		Sets the encoding <encoding> for the specified server <server> in the network <network>. This encoding will be used for text messages.
 	@switches:
 		!sw: -q | --quiet
 		Do not print errors if the server already exists.
 	@examples:
 		[example]
 		[comment]Quietly sets the text encoding UTF-8 for the irc.freenode.net server[/comment][br]
-		serverdb.setServerTextEncoding -q Freenode UTF-8
+		serverdb.setServerTextEncoding -q irc.freenode.net UTF-8
 		[/example]
 	@seealso:
 		[module:serverdb]ServerDB module documentation[/module]
@@ -1218,9 +1376,9 @@ SERVERDB_SET_SERVER_PROPERTY(serverdb_kvs_cmd_setServerTextEncoding,setTextEncod
 	@short:
 		Sets the description
 	@syntax:
-		serverdb.setServerDescription [switches] <string:name> <string:description>
+		serverdb.setServerDescription [switches] <network:string> <server:string> <description:string>
 	@description:
-		Sets the description <description> for the specified server <name>.
+		Sets the description <description> for the specified server <server> in the network <network>.
 	@switches:
 		!sw: -q | --quiet
 		Do not print errors if the server already exists.
@@ -1243,9 +1401,9 @@ SERVERDB_SET_SERVER_PROPERTY(serverdb_kvs_cmd_setServerDescription,setDescriptio
 	@short:
 		Sets the connect command
 	@syntax:
-		serverdb.setServerConnectCommand [switches] <string:name> <string:command>
+		serverdb.setServerConnectCommand [switches] <network:string> <server:string> <command:string>
 	@description:
-		Sets the command <command> to run on connect for the specified server <name>.
+		Sets the command <command> to run on connect for the specified server <server> in the network <network>.
 	@switches:
 		!sw: -q | --quiet
 		Do not print errors if the server already exists.
@@ -1268,9 +1426,9 @@ SERVERDB_SET_SERVER_PROPERTY(serverdb_kvs_cmd_setServerConnectCommand,setOnConne
 	@short:
 		Sets the login command
 	@syntax:
-		serverdb.setServerLoginCommand [switches] <string:name> <string:command>
+		serverdb.setServerLoginCommand [switches] <network:string> <server:string> <command:string>
 	@description:
-		Sets the command <command> to run on login for the specified server <name>.
+		Sets the command <command> to run on login for the specified server <server> in the network <network>.
 	@switches:
 		!sw: -q | --quiet
 		Do not print errors if the server already exists.
@@ -1283,6 +1441,29 @@ SERVERDB_SET_SERVER_PROPERTY(serverdb_kvs_cmd_setServerConnectCommand,setOnConne
 		[module:serverdb]ServerDB module documentation[/module]
 */
 SERVERDB_SET_SERVER_PROPERTY(serverdb_kvs_cmd_setServerLoginCommand,setOnLoginCommand)
+
+/*
+	@doc: serverdb.setServerJoinChannels
+	@type:
+		command
+	@title:
+		serverdb.setServerJoinChannels
+	@short:
+		Sets the autojoin channels list
+	@syntax:
+		serverdb.setServerJoinChannels <network:string> <server:string> <channel_list:string>
+	@description:
+		Sets the autojoin channels list for the specified server <server> in the network <network>.[br]
+		Items in the list have to be separated by a comma, and each item has to be in the form <channel:string>:<password:string>
+	@examples:
+		[example]
+		[comment]Set two autojoin channels for irc.freenode.net[/comment][br]
+		serverdb.setServerJoinChannels irc.freenode.net #kvirc:,#secretchan:password
+		[/example]
+	@seealso:
+		[module:serverdb]ServerDB module documentation[/module]
+*/
+SERVERDB_SET_SERVER_PROPERTY(serverdb_kvs_cmd_setServerJoinChannels,setAutoJoinChannelList)
 
 static bool serverdb_module_init(KviModule * m)
 {
@@ -1300,6 +1481,7 @@ static bool serverdb_module_init(KviModule * m)
 	KVSM_REGISTER_FUNCTION(m,"networkNickName",serverdb_kvs_fnc_networkNickName);
 	KVSM_REGISTER_FUNCTION(m,"networkRealName",serverdb_kvs_fnc_networkRealName);
 	KVSM_REGISTER_FUNCTION(m,"networkUserName",serverdb_kvs_fnc_networkUserName);
+	KVSM_REGISTER_FUNCTION(m,"networkJoinChannels",serverdb_kvs_fnc_networkJoinChannels);
 	KVSM_REGISTER_FUNCTION(m,"serverConnectCommand",serverdb_kvs_fnc_serverConnectCommand);
 	KVSM_REGISTER_FUNCTION(m,"serverDescription",serverdb_kvs_fnc_serverDescription);
 	KVSM_REGISTER_FUNCTION(m,"serverEncoding",serverdb_kvs_fnc_serverEncoding);
@@ -1312,6 +1494,7 @@ static bool serverdb_module_init(KviModule * m)
 	KVSM_REGISTER_FUNCTION(m,"serverPort",serverdb_kvs_fnc_serverPort);
 	KVSM_REGISTER_FUNCTION(m,"serverRealName",serverdb_kvs_fnc_serverRealName);
 	KVSM_REGISTER_FUNCTION(m,"serverUserName",serverdb_kvs_fnc_serverUserName);
+	KVSM_REGISTER_FUNCTION(m,"serverJoinChannels",serverdb_kvs_fnc_serverJoinChannels);
 	KVSM_REGISTER_FUNCTION(m,"isAutoConnect",serverdb_kvs_fnc_serverAutoConnect);
 	KVSM_REGISTER_FUNCTION(m,"isIPv6",serverdb_kvs_fnc_serverIPv6);
 	KVSM_REGISTER_FUNCTION(m,"isSSL",serverdb_kvs_fnc_serverSSL);
@@ -1328,6 +1511,7 @@ static bool serverdb_module_init(KviModule * m)
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setNetworkNickName",serverdb_kvs_cmd_setNetworkNickName);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setNetworkRealName",serverdb_kvs_cmd_setNetworkRealName);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setNetworkUserName",serverdb_kvs_cmd_setNetworkUserName);
+	KVSM_REGISTER_SIMPLE_COMMAND(m,"setNetworkJoinChannels",serverdb_kvs_cmd_setNetworkJoinChannels);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setServerConnectCommand",serverdb_kvs_cmd_setServerConnectCommand);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setServerEncoding",serverdb_kvs_cmd_setServerEncoding);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setServerTextEncoding",serverdb_kvs_cmd_setServerTextEncoding);
@@ -1336,6 +1520,7 @@ static bool serverdb_module_init(KviModule * m)
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setServerNickName",serverdb_kvs_cmd_setServerNickName);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setServerRealName",serverdb_kvs_cmd_setServerRealName);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setServerUserName",serverdb_kvs_cmd_setServerUserName);
+	KVSM_REGISTER_SIMPLE_COMMAND(m,"setServerJoinChannels",serverdb_kvs_cmd_setServerJoinChannels);
 
 	return true;
 }

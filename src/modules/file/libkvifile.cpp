@@ -3,8 +3,8 @@
 //   File : libkvifile.cpp
 //   Creation date : Fri Nov  9 03:27:59 2001 GMT by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,14 +22,14 @@
 //
 //=============================================================================
 
-#include "kvi_module.h"
-#include "kvi_fileutils.h"
-#include "kvi_locale.h"
-#include "kvi_malloc.h"
-#include "kvi_app.h"
-#include "kvi_options.h"
-#include "kvi_kvs_arraycast.h"
-#include "kvi_file.h"
+#include "KviModule.h"
+#include "KviFileUtils.h"
+#include "KviLocale.h"
+#include "KviMemory.h"
+#include "KviApplication.h"
+#include "KviOptions.h"
+#include "KviKvsArrayCast.h"
+#include "KviFile.h"
 
 #include <QFileInfo>
 #include <QDir>
@@ -37,10 +37,10 @@
 #include <QTextCodec>
 #include <QByteArray>
 
-#if defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_NO_EMBEDDED_CODE)
+#if defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_CRYPTOPP_SUPPORT)
 	// The current implementation
 	#include <openssl/evp.h>
-#elif defined(COMPILE_NO_EMBEDDED_CODE)
+#elif defined(COMPILE_CRYPTOPP_SUPPORT)
 	// The preferred new implementation (until QCryptographicHash supports all
 	// hashes we want).
 	// As Crypto++ is concerned for security they warn about MD5 and friends,
@@ -97,8 +97,8 @@
 		Overwrites the file even if it already exists.
 	@description:
 		Makes a copy of the <source> file as <destination>.[br]
-		If the [-o] switch is used , the <destination> file is overwritten , if already exists.[br]
-		With no [-o] switch , this command does not overwrite files.[br]
+		If the [-o] switch is used, the <destination> file is overwritten, if already exists.[br]
+		With no [-o] switch, this command does not overwrite files.[br]
 		The destination path must be already existing: if you want to ensure this, use [fnc]$file.mkdir[/fnc] first.[br]
 		The paths (<source> and <destination>) are adjusted according to the system that KVIrc
 		is running on so you don't have to bother about portability: it *should* be automatically
@@ -202,7 +202,7 @@ static bool file_kvs_cmd_delimagepath(KviKvsModuleCommandCall * c)
 	@keyterms:
 		writing data to files
 	@short:
-		Writes an ascii data string to a file
+		Writes character data string to a file
 	@syntax:
 		file.write [-a] [-l] <filename:string> <data:string>
 	@switches:
@@ -212,14 +212,16 @@ static bool file_kvs_cmd_delimagepath(KviKvsModuleCommandCall * c)
 		Causes the file to be written in the local 8 bit character set instead of the
 		default utf8.
 	@description:
-		Writes <data> (which is an ASCII string) to the file <filename>.[br]
+		Writes <data> (which is a string of characters) to the file <filename>.[br]
 		It does NOT append a traling LF character: if you want it you must explicitly specify it in the <data> parameter.[br]
 		-a causes the command to append the <data> to the file instead of overwriting the entire file.[br]
 		The path is adjusted according to the system that KVIrc
 		is running on so you don't have to bother about portability: it *should* be automatically
 		guaranteed. Just use UNIX style paths for them.[br]
 		The file is saved in utf8 unless the -l switch is specified (in that case the local 8 bit encoding is used).
-		Please note that uf8 is the only character set that preserves ALL the possible characters.
+		Please note that utf8 is the only character set that preserves ALL the possible characters
+		with the exception of the null terminator. If you want to write binary data
+		take a look at [fnc]$file.writeBytes[/cmd] instead.
 	@seealso:
 		[cmd]file.rename[/cmd], [fnc]$file.exists[/fnc]
 */
@@ -245,6 +247,84 @@ static bool file_kvs_cmd_write(KviKvsModuleCommandCall * c)
 }
 
 /*
+	@doc: file.writeBytes
+	@type:
+		command
+	@title:
+		file.writeBytes
+	@keyterms:
+		writing data to files
+	@short:
+		Writes binary data string to a file
+	@syntax:
+		file.writeBytes [-a] <filename:string> <dataArray:array>
+	@switches:
+		!sw: -a | --append
+		If the file already exists, append the data instead of overwriting the original contents.
+	@description:
+		Writes <dataArray> (which must be an array) to the file <filename>.[br]
+		The array should either contain integers between 0 and 255, which will be written as bytes,
+		or strings, which will be written in utf8 encoding.
+		-a causes the command to append the <data> to the file instead of overwriting the entire file.[br]
+		The path is adjusted according to the system that KVIrc
+		is running on so you don't have to bother about portability: it *should* be automatically
+		guaranteed. Just use UNIX style paths for them.[br]
+	@examples:
+		[example]
+			for(%i=0;%i<256;%i++)
+				%a[%i] = %i
+			file.writeBytes "/home/pragma/test.bin" %a
+		[/example]
+	@seealso:
+		[cmd]file.rename[/cmd], [fnc]$file.exists[/fnc], [fnc]$file.write[/fnc]
+*/
+static bool file_kvs_cmd_writeBytes(KviKvsModuleCommandCall * c)
+{
+	QString szFileName;
+	KviKvsArray * pArray = NULL;
+	
+	KVSM_PARAMETERS_BEGIN(c)
+		KVSM_PARAMETER("filename",KVS_PT_NONEMPTYSTRING,0,szFileName)
+		KVSM_PARAMETER("dataArray",KVS_PT_ARRAY,0,pArray)
+	KVSM_PARAMETERS_END(c)
+
+	KviFileUtils::adjustFilePath(szFileName);
+
+	if(!pArray)
+		return c->error(__tr2qs("Missing data array"));
+
+	KviFile f(szFileName);
+	if(!f.open(QFile::WriteOnly | (c->switches()->find('a',"append") ? QFile::Append : QFile::Truncate)))
+	{
+		c->warning(__tr2qs("Can't open file %1 for writing").arg(szFileName));
+		return true;
+	}
+
+	QByteArray aBuffer;
+
+	for(kvs_uint_t i=0;i<pArray->size();i++)
+	{
+		KviKvsVariant * pData = pArray->at(i);
+		kvs_int_t iValue;
+		if(pData->asInteger(iValue))
+		{
+			aBuffer.append((char)iValue);
+		} else {
+			QString szValue;
+			pData->asString(szValue);
+			aBuffer.append(szValue.toUtf8());
+		}
+	}
+
+	if(!aBuffer.data())
+		return true; // nothing to do
+	if(f.write(aBuffer.data(),aBuffer.length()) != ((unsigned int)(aBuffer.length())))
+		c->warning(__tr2qs("Error writing bytes to file %1").arg(szFileName));
+
+	return true;
+}
+
+/*
 	@doc: file.rename
 	@type:
 		command
@@ -259,7 +339,7 @@ static bool file_kvs_cmd_write(KviKvsModuleCommandCall * c)
 	@description:
 		Renames a file from <oldname> to <newname>.[br]
 		This command can also rename directories.[br]
-		If the <newname> file already exists , this command fails.[br]
+		If the <newname> file already exists, this command fails.[br]
 		The paths (<oldname> and <newname>) are adjusted according to the system that KVIrc
 		is running on so you don't have to bother about portability: it *should* be automatically
 		guaranteed.Just use UNIX style paths for them.[br]
@@ -334,7 +414,7 @@ static bool file_kvs_cmd_mkdir(KviKvsModuleCommandCall * c)
 		Suppresses any warning message
 	@description:
 		Removes the file <name>.[br]
-		-q suppresses any warning message (about non existing file , for example).[br]
+		-q suppresses any warning message (about non existing file, for example).[br]
 		The path is adjusted according to the system that KVIrc
 		is running on so you don't have to bother about portability: it *should* be automatically
 		guaranteed. Just use an UNIX style path.[br]
@@ -374,7 +454,7 @@ static bool file_kvs_cmd_remove(KviKvsModuleCommandCall * c)
 	@description:
 		Removes the directory <name>.[br]
 		The directory must be empty for this command to success.[br]
-		-q suppresses any warning message (about non existing directory , for example).[br]
+		-q suppresses any warning message (about non existing directory, for example).[br]
 		The path is adjusted according to the system that KVIrc
 		is running on so you don't have to bother about portability: it *should* be automatically
 		guaranteed. Just use an UNIX style path.[br]
@@ -404,12 +484,19 @@ static bool file_kvs_cmd_rmdir(KviKvsModuleCommandCall * c)
 	@title:
 		$file.exists
 	@short:
-		Check if a file exists
+		Check if a file or directory exists
 	@syntax:
-		<boolean> $file.exists(<filename:string>)
+		<boolean> $file.exists(<file or directory path:string>)
 	@description:
-		Returns true if the file <filename> exists (this is also valid for directories!).[br]
-		The <filename> should be an unix-style file path and is adjusted according to the system that KVIrc is running on.[br]
+		Returns true if the specified file or directory exists.[br]
+		The path should be given in UNIX-style and is adjusted according to the system that KVIrc is running on.[br]
+	@examples:
+		[example]
+			# Windows
+			echo $file.exists(c:/windows/notepad.exe);
+			# Linux, other unixes
+			echo $file.exists(/etc/passwd);
+		[/example]
 */
 static bool file_kvs_fnc_exists(KviKvsModuleFunctionCall * c)
 {
@@ -434,7 +521,7 @@ static bool file_kvs_fnc_exists(KviKvsModuleFunctionCall * c)
 	@syntax:
 		<string> $file.type(<filename:string>)
 	@description:
-		Returns "f" if the <filename> points to a real file , "d" if <filename>
+		Returns "f" if the <filename> points to a real file, "d" if <filename>
 		is the name of a directory or "l" if it is a symbolic link.[br]
 		The <filename> should be an unix-style file path and is adjusted according to the system that KVIrc is running on.[br]
 */
@@ -464,7 +551,7 @@ static bool file_kvs_fnc_type(KviKvsModuleFunctionCall * c)
 		<integer> $file.size(<filename:string>)
 	@description:
 		Returns the size of the file pointed by <filename>.[br]
-		If the file does not exist , this function returns 0.[br]
+		If the file does not exist, this function returns 0.[br]
 		The <filename> should be an unix-style file path and is adjusted according to the system that KVIrc is running on.[br]
 */
 static bool file_kvs_fnc_size(KviKvsModuleFunctionCall * c)
@@ -486,11 +573,12 @@ static bool file_kvs_fnc_size(KviKvsModuleFunctionCall * c)
 	@title:
 		$file.allSizes
 	@short:
-		Returns all sizes of a specified directory.
+		Returns the size of each file in a specified directory.
 	@syntax:
 	<array> $file.allSize(<dirname:string>)
 	@description:
-	Returns the size of every files of the specified directory as an array.[br]
+	Returns the size of each file in a specified directory as an array.[br]
+	This function is not recursive: it wont return the size of files in subdirectories of <dirname>.
 */
 static bool file_kvs_fnc_allSizes(KviKvsModuleFunctionCall * c)
 {
@@ -540,7 +628,7 @@ static bool file_kvs_fnc_allSizes(KviKvsModuleFunctionCall * c)
 		<string> $file.fixpath(<filename:string>)
 	@description:
 		Returns the <filename> adjusted to match the current operating
-		system file path conventions.[br] This means that on UNIX , a path like "C:\folder\file.mp3"
+		system file path conventions.[br] This means that on UNIX, a path like "C:\folder\file.mp3"
 		will be returned as "/folder/file.mp3" and vice-versa.[br]
 		There is a minor problem with unix paths converted to the windows system: unix
 		has no "drive" concept thus the unix paths do not contain a drive. KVIrc will
@@ -574,7 +662,7 @@ static bool file_kvs_fnc_fixpath(KviKvsModuleFunctionCall * c)
 		<string> $file.ps()
 	@description:
 		Returns the file path separator for the current operating system.[br]
-		On windows , '\' is returned , on UNIX , '/'.[br]
+		On windows, '\' is returned, on UNIX, '/'.[br]
 	@seealso:
 		[fnc]$file.fixpath[/fnc]
 */
@@ -596,7 +684,7 @@ static bool file_kvs_fnc_ps(KviKvsModuleFunctionCall * c)
 		<array> $file.ls(<directory:string>,[<flags:string>[,<namefilter:string>]])
 	@description:
 		Returns the listing of the specified directory as an array.[br]
-		The <directory> should be an unix-style file path and is adjusted according to the system that KVIrc is running on.[br]
+		The <directory> should be a unix-style file path and is adjusted according to the system that KVIrc is running on.[br]
 		<flags> may be a combination of the following characters:[br]
 		d: list directories[br]
 		f: list files[br]
@@ -612,8 +700,8 @@ static bool file_kvs_fnc_ps(KviKvsModuleFunctionCall * c)
 		z: put the directories first, then the files[br]
 		k: invert sort order[br]
 		i: case insensitive sort[br]
-		If <flags> is empty then a default of 'dfrwxhs'.[br]
-		If none of r,w,x is set then KVIrc sets all of them by default.[br]
+		If <flags> is empty then a default of 'dfrwxhs' is set.[br]
+		If none of the r,w,x flags are set then KVIrc sets all of them by default.[br]
 		If <namefilter> is passed then it is interpreted as a wildcard string
 		that must match the entries to be returned.[br]
 	@example:
@@ -700,13 +788,14 @@ static bool file_kvs_fnc_ls(KviKvsModuleFunctionCall * c)
 	@description:
 		Reads at most <size> bytes of the file pointed by <filename>.[br]
 		<size> is an upper limit but may be not reached if the real file is smaller.[br]
-		The data read is returned as a string , so if the file contains binary data,
+		The data read is returned as a string, so if the file contains binary data,
 		expect strange results.[br] If <size> is not specified, then KVIrc tries to read
 		the whole file up to the 1 MiB limit (so if you want to read a file that is
 		bigger thatn 1 MiB then you MUST specify the <size>).[br]
+		If you want read binary data (with null bytes inside) then take a look at [fnc]$file.readBytes[/fnc].
 		WARNING: always check the file size before attemting to read a whole file...
 		reading a CDROM iso image may sit down your system :) (and will prolly crash while
-		allocating memory , before attempting to read anything)[br]
+		allocating memory, before attempting to read anything)[br]
 		An empty string is returned if a serious error occures.[br]
 		The <filename> is adjusted according to the system that KVIrc is running on.[br]
 		Flags are actually limited to the single letter 'l'. By default the file
@@ -717,7 +806,7 @@ static bool file_kvs_fnc_ls(KviKvsModuleFunctionCall * c)
 			echo $file.read(/proc/cpuinfo)
 		[/example]
 	@seealso:
-		[fnc]$file.readbinary[/fnc]
+		[fnc]$file.readBytes[/fnc]
 */
 static bool file_kvs_fnc_read(KviKvsModuleFunctionCall * c)
 {
@@ -740,28 +829,31 @@ static bool file_kvs_fnc_read(KviKvsModuleFunctionCall * c)
 
 	if(c->params()->count() < 2)uSize = 1024 * 1024; // 1 meg file default
 
-	char * buf = (char *)kvi_malloc(sizeof(char) * (uSize + 1));
+	char * buf = (char *)KviMemory::allocate(sizeof(char) * (uSize + 1));
 	unsigned int uReaded = 0;
 	unsigned int uRetries = 0;
 
 	while((uReaded < uSize) && (!f.atEnd()))
 	{
-		int readedNow = f.read(buf + uReaded,uSize - uReaded);
-		if(readedNow < 0)
-		{
-			kvi_free(buf);
-			c->warning(__tr2qs("Read error for file %Q"),&szNameZ);
-			return true;
-		} else readedNow += uReaded;
-		uRetries ++;
 		if(uRetries > 1000)
 		{
 			// ops
-			kvi_free(buf);
+			KviMemory::free(buf);
 			c->warning(__tr2qs("Read error for file %Q (have been unable to read the requested size in 1000 retries)"),&szNameZ);
 			return true;
 		}
+
+		int readedNow = f.read(buf + uReaded,uSize - uReaded);
+
+		if(readedNow < 0)
+		{
+			KviMemory::free(buf);
+			c->warning(__tr2qs("Read error for file %Q"),&szNameZ);
+			return true;
+		}
+
 		uReaded += readedNow;
+		uRetries++;
 	}
 
 	buf[uReaded] = '\0';
@@ -771,7 +863,103 @@ static bool file_kvs_fnc_read(KviKvsModuleFunctionCall * c)
 	else
 		c->returnValue()->setString(QString::fromLocal8Bit(buf));
 
-	kvi_free(buf);
+	KviMemory::free(buf);
+
+	return true;
+}
+
+/*
+	@doc: file.readBytes
+	@type:
+		function
+	@title:
+		$file.readBytes
+	@short:
+		Reads a binary file
+	@syntax:
+		<array> $file.read(<filename:string>[,<size:integer>])
+	@description:
+		Reads at most <size> bytes of the file pointed by <filename>
+		and returns it as an array of integers (bytes).
+		<size> is an upper limit but may be not reached if the real file is smaller.[br]
+		If <size> is not specified, then KVIrc tries to read
+		the whole file up to the 1 MiB limit (so if you want to read a file that is
+		bigger thatn 1 MiB then you MUST specify the <size>).[br]
+		If you want simple text data then take a look at [fnc]$file.read[/fnc].
+		WARNING: always check the file size before attemting to read a whole file...
+		reading a CDROM iso image may sit down your system :) (and will prolly crash while
+		allocating memory, before attempting to read anything)[br]
+		An empty array (or just "nothing") is returned if a serious error occures.[br]
+		The <filename> is adjusted according to the system that KVIrc is running on.[br]
+	@examples:
+		[example]
+			echo $file.readBytes(/proc/cpuinfo)
+		[/example]
+	@seealso:
+		[fnc]$file.read[/fnc], [cmd]file.writeBytes[/cmd]
+*/
+static bool file_kvs_fnc_readBytes(KviKvsModuleFunctionCall * c)
+{
+	QString szNameZ;
+	kvs_uint_t uSize;
+	QString szFlags;
+	KVSM_PARAMETERS_BEGIN(c)
+		KVSM_PARAMETER("filename",KVS_PT_NONEMPTYSTRING,0,szNameZ)
+		KVSM_PARAMETER("size",KVS_PT_UINT,KVS_PF_OPTIONAL,uSize)
+	KVSM_PARAMETERS_END(c)
+	KviFileUtils::adjustFilePath(szNameZ);
+
+	QFile f(szNameZ);
+	if(!f.open(QIODevice::ReadOnly))
+	{
+		c->warning(__tr2qs("Can't open the file \"%Q\" for reading"),&szNameZ);
+		return true;
+	}
+
+	if(c->params()->count() < 2)
+		uSize = 1024 * 1024; // 1 meg file default
+
+	unsigned char * buf = (unsigned char *)KviMemory::allocate(sizeof(char) * (uSize + 1));
+	unsigned int uReaded = 0;
+	unsigned int uRetries = 0;
+
+	while((uReaded < uSize) && (!f.atEnd()))
+	{
+		if(uRetries > 1000)
+		{
+			// ops
+			KviMemory::free(buf);
+			c->warning(__tr2qs("Read error for file %Q (have been unable to read the requested size in 1000 retries)"),&szNameZ);
+			return true;
+		}
+
+		int readedNow = f.read((char *)(buf + uReaded),uSize - uReaded);
+
+		if(readedNow < 0)
+		{
+			KviMemory::free(buf);
+			c->warning(__tr2qs("Read error for file %Q"),&szNameZ);
+			return true;
+		}
+
+		uReaded += readedNow;
+		uRetries++;
+	}
+
+	KviKvsArray * pArray = new KviKvsArray();
+
+	kvs_uint_t u = 0;
+	unsigned char * p = buf;
+	while(u < uReaded)
+	{
+		pArray->set(u,new KviKvsVariant((kvs_int_t)(*p)));
+		u++;
+		p++;
+	}
+
+	c->returnValue()->setArray(pArray);
+
+	KviMemory::free(buf);
 
 	return true;
 }
@@ -963,13 +1151,13 @@ static bool file_kvs_cmd_writeLines(KviKvsModuleCommandCall * c)
 	@description:
 		Returns the path to the KVIrc local data directory.[br]
 		The KVIrc local data directory is always writeable and contains
-		the various subdirectories that KVIrc uses internally: audio , avatars ,
-		config , help , incoming , log , modules , msgcolors and pics.[br]
-		If <relative_path> is passed , then it is appended at the end of the directory
-		to form a complete filepath.[br]
+		the various subdirectories that KVIrc uses internally: audio, avatars,
+		config, help, incoming, log, modules, msgcolors and pics.[br]
+		If <relative_path> is passed, then it is appended to the directory path to
+		form a complete filepath.[br]
 		The path is adjusted to contain single separators suitable for the platform
-		that KVIrc is atually running on (thus you not need to care about path
-		separators in the <relative_path> , KVIrc will adjust them).[br]
+		that KVIrc is atually running on (thus you do not need to care about path
+		separators in the <relative_path>, KVIrc will adjust them).[br]
 	@examples:
 		[example]
 			echo KVIrc looks for pictures in $file.localdir(pics)
@@ -984,7 +1172,7 @@ static bool file_kvs_fnc_localdir(KviKvsModuleFunctionCall * c)
 	KVSM_PARAMETERS_END(c)
 	if(szName.isEmpty())szName.append(KVI_PATH_SEPARATOR_CHAR);
 	QString szPath;
-	g_pApp->getLocalKvircDirectory(szPath,KviApp::None,szName);
+	g_pApp->getLocalKvircDirectory(szPath,KviApplication::None,szName);
 	KviFileUtils::adjustFilePath(szPath);
 	c->returnValue()->setString(szPath);
 	return true;
@@ -1002,11 +1190,11 @@ static bool file_kvs_fnc_localdir(KviKvsModuleFunctionCall * c)
 		<string> $file.homedir([relative_path:string])
 	@description:
 		Returns the user's HOME directory path.[br]
-		If <relative_path> is passed , then it is appended at the end of the directory
-		to form a complete filepath.[br]
+		If <relative_path> is passed, then it is appendedto the directory path to
+		form a complete filepath.[br]
 		The path is adjusted to contain single separators suitable for the platform
-		that KVIrc is atually running on (thus you not need to care about path
-		separators in the <relative_path> , KVIrc will adjust them).[br]
+		that KVIrc is atually running on (thus you do not need to care about path
+		separators in the <relative_path>, KVIrc will adjust them).[br]
 */
 static bool file_kvs_fnc_homedir(KviKvsModuleFunctionCall * c)
 {
@@ -1036,11 +1224,11 @@ static bool file_kvs_fnc_homedir(KviKvsModuleFunctionCall * c)
 		$file.rootdir
 	@description:
 		Returns the system's root directory (/ on UNIX and C:/ on Windows).[br]
-		If <relative_path> is passed , then it is appended at the end of the directory
+		If <relative_path> is passed, then it is appended at the end of the directory
 		to form a complete filepath.[br]
 		The path is adjusted to contain single separators suitable for the platform
 		that KVIrc is atually running on (thus you not need to care about path
-		separators in the <relative_path> , KVIrc will adjust them).[br]
+		separators in the <relative_path>, KVIrc will adjust them).[br]
 */
 static bool file_kvs_fnc_rootdir(KviKvsModuleFunctionCall * c)
 {
@@ -1069,11 +1257,11 @@ static bool file_kvs_fnc_rootdir(KviKvsModuleFunctionCall * c)
 		<string> $file.cwd([relative_path:string])
 	@description:
 		Returns the current working directory.[br]
-		If <relative_path> is passed , then it is appended at the end of the directory
+		If <relative_path> is passed, then it is appended at the end of the directory
 		to form a complete filepath.[br]
 		The path is adjusted to contain single separators suitable for the platform
-		that KVIrc is atually running on (thus you not need to care about path
-		separators in the <relative_path> , KVIrc will adjust them).[br]
+		that KVIrc is actually running on (thus you do not need to care about path
+		separators in the <relative_path>, KVIrc will adjust them).[br]
 */
 static bool file_kvs_fnc_cwd(KviKvsModuleFunctionCall * c)
 {
@@ -1103,14 +1291,14 @@ static bool file_kvs_fnc_cwd(KviKvsModuleFunctionCall * c)
 		$file.globaldir
 	@description:
 		Returns the path to the KVIrc global data directory.[br]
-		The KVIrc local data directory is always readable but usually not writeable and contains
-		the various subdirectories that KVIrc uses internally: audio , avatars ,
-		config , help , incoming , log , modules , msgcolors and pics.[br]
-		If <relative_path> is passed , then it is appended at the end of the directory
-		to form a complete filepath.[br]
+		The KVIrc local data directory is always readable (but usually not writeable) and contains
+		the various subdirectories that KVIrc uses internally: audio, avatars,
+		config, help, incoming, log, modules, msgcolors and pics.[br]
+		If <relative_path> is passed, then it is appended to the directory path to
+		form a complete filepath.[br]
 		The path is adjusted to contain single separators suitable for the platform
-		that KVIrc is atually running on (thus you not need to care about path
-		separators in the <relative_path> , KVIrc will adjust them).[br]
+		that KVIrc is atually running on (thus you do not need to care about path
+		separators in the <relative_path>, KVIrc will adjust them).[br]
 	@examples:
 		[example]
 			echo KVIrc looks for pictures in $file.globaldir(pics)
@@ -1125,7 +1313,7 @@ static bool file_kvs_fnc_globaldir(KviKvsModuleFunctionCall * c)
 	KVSM_PARAMETERS_END(c)
 	if(szName.isEmpty())szName.append(KVI_PATH_SEPARATOR_CHAR);
 	QString szPath;
-	g_pApp->getGlobalKvircDirectory(szPath,KviApp::None,szName);
+	g_pApp->getGlobalKvircDirectory(szPath,KviApplication::None,szName);
 	KviFileUtils::adjustFilePath(szPath);
 	c->returnValue()->setString(szPath);
 	return true;
@@ -1201,10 +1389,10 @@ static bool file_kvs_fnc_extractfilename(KviKvsModuleFunctionCall * c)
 	@syntax:
 		<string> $file.digest(<file:string>[,<algorithm:string>])
 	@description:
-		Calculates digest for the file identified by the given string using algorithm
+		Calculates a digest for the file identified by the given string using the algorithm
 		passed as 2nd argument.
-		Currently supported: md5, md4, md2, sha1, mdc2, ripemd160, dss1
-		Default is md5. Requires OpenSSL support or (better) Crypto++, but offers a
+		Currently supported: md5 (default), md4, md2, sha1, mdc2, ripemd160 and dss1.
+		Requires OpenSSL support or (better) Crypto++, but offers a
 		minimal set of hashes in any case.
 */
 static bool file_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
@@ -1213,7 +1401,7 @@ static bool file_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("data",KVS_PT_NONEMPTYSTRING,0,szFile)
-		KVSM_PARAMETER("algorythm",KVS_PT_NONEMPTYSTRING,KVS_PF_OPTIONAL,szAlgo)
+		KVSM_PARAMETER("algorithm",KVS_PT_NONEMPTYSTRING,KVS_PF_OPTIONAL,szAlgo)
 	KVSM_PARAMETERS_END(c)
 
 	KviFileUtils::adjustFilePath(szFile);
@@ -1232,7 +1420,7 @@ static bool file_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 		return true;
 	}
 
-#if defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_NO_EMBEDDED_CODE)
+#if defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_CRYPTOPP_SUPPORT)
 	if(szAlgo.isEmpty()) szAlgo = "md5";
 
 	EVP_MD_CTX mdctx;
@@ -1245,7 +1433,7 @@ static bool file_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 	pMD = EVP_get_digestbyname(szAlgo.toUtf8().data());
 	if(!pMD)
 	{
-		c->warning(__tr2qs("%Q algorytm is not supported"),&szAlgo);
+		c->warning(__tr2qs("%Q algorithm is not supported"),&szAlgo);
 		return true;
 	}
 
@@ -1264,7 +1452,7 @@ static bool file_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 #endif
 		szResult.append(cBuffer);
 	}
-#elif defined(COMPILE_NO_EMBEDDED_CODE)
+#elif defined(COMPILE_CRYPTOPP_SUPPORT)
 	// Crypto++ implementation
 	std::string szDigest;
 	std::string szMsg = szFile.toLocal8Bit().data();
@@ -1348,6 +1536,7 @@ static bool file_module_init(KviModule * m)
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"rename",file_kvs_cmd_rename);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"rmdir",file_kvs_cmd_rmdir);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"write",file_kvs_cmd_write);
+	KVSM_REGISTER_SIMPLE_COMMAND(m,"writeBytes",file_kvs_cmd_writeBytes);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"writeLines",file_kvs_cmd_writeLines);
 
 	KVSM_REGISTER_FUNCTION(m,"allsizes",file_kvs_fnc_allSizes);
@@ -1363,6 +1552,7 @@ static bool file_module_init(KviModule * m)
 	KVSM_REGISTER_FUNCTION(m,"ls",file_kvs_fnc_ls);
 	KVSM_REGISTER_FUNCTION(m,"ps",file_kvs_fnc_ps);
 	KVSM_REGISTER_FUNCTION(m,"read",file_kvs_fnc_read);
+	KVSM_REGISTER_FUNCTION(m,"readBytes",file_kvs_fnc_readBytes);
 	KVSM_REGISTER_FUNCTION(m,"readLines",file_kvs_fnc_readLines);
 	KVSM_REGISTER_FUNCTION(m,"rootdir",file_kvs_fnc_rootdir);
 	KVSM_REGISTER_FUNCTION(m,"size",file_kvs_fnc_size);

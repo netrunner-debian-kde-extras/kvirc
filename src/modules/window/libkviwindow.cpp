@@ -3,8 +3,8 @@
 //   File : libkviwindow.cpp
 //   Creation date : Sat Sep 01 2001 17:13:12 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,39 +22,40 @@
 //
 //=============================================================================
 
-#include "userwindow.h"
+#include "UserWindow.h"
 
-#include "kvi_module.h"
-#include "kvi_console.h"
-#include "kvi_options.h"
-#include "kvi_ircsocket.h"
-#include "kvi_frame.h"
-#include "kvi_locale.h"
-#include "kvi_app.h"
-#include "kvi_error.h"
-#include "kvi_ircview.h"
-#include "kvi_input.h"
-#include "kvi_iconmanager.h"
-#include "kvi_modulemanager.h"
-#include "kvi_memmove.h"
-#include "kvi_malloc.h"
-#include "kvi_channel.h"
-#include "kvi_pointerhashtable.h"
+#include "KviModule.h"
+#include "KviConsoleWindow.h"
+#include "KviOptions.h"
+#include "KviIrcSocket.h"
+#include "KviMainWindow.h"
+#include "KviLocale.h"
+#include "KviApplication.h"
+#include "KviError.h"
+#include "KviIrcView.h"
+#include "KviInput.h"
+#include "KviIconManager.h"
+#include "KviModuleManager.h"
+#include "KviMemory.h"
+#include "KviMemory.h"
+#include "KviMdiChild.h"
+#include "KviChannelWindow.h"
+#include "KviPointerHashTable.h"
 
 #include <QTimer>
 
 
 #ifdef COMPILE_CRYPT_SUPPORT
-	#include "kvi_crypt.h"
-	#include "kvi_cryptcontroller.h"
-	// kvi_app.cpp
+	#include "KviCryptEngine.h"
+	#include "KviCryptController.h"
+	// KviApplication.cpp
 	extern KVIRC_API KviCryptEngineManager * g_pCryptEngineManager;
 #endif
 
 
-// kvi_app.cpp
+// KviApplication.cpp
 extern KVIRC_API KviPointerHashTable<QString,KviWindow> * g_pGlobalWindowDict;
-KviPointerList<KviUserWindow> * g_pUserWindowList = 0;
+KviPointerList<UserWindow> * g_pUserWindowList = 0;
 
 // $window.caption $window.x $window.y $window.width $window.height $window.isActive $window.type
 // $window.input.text $window.input.cursorpos $window.input.textlen
@@ -122,9 +123,9 @@ static bool window_kvs_cmd_clearOutput(KviKvsModuleCommandCall * c)
 	if(pWnd)
 	{
 		if(pWnd->view())pWnd->view()->clearBuffer();
-		if(pWnd->type() == KVI_WINDOW_TYPE_CHANNEL)
+		if(pWnd->type() == KviWindow::Channel)
 		{
-			KviChannel *chan = (KviChannel *)pWnd;
+			KviChannelWindow *chan = (KviChannelWindow *)pWnd;
 			if(chan->messageView()) chan->messageView()->clearBuffer();
 		}
 	}
@@ -175,7 +176,7 @@ static bool window_kvs_cmd_close(KviKvsModuleCommandCall * c)
 		no operation is performed. If the specified window
 		does not exist a warning is printed unless the -q switch is used.
 	@seealso:
-		[cmd]window.undock[/cmd]
+		[cmd]window.undock[/cmd], [fnc]$window.isDocked[/fnc]
 */
 
 static bool window_kvs_cmd_dock(KviKvsModuleCommandCall * c)
@@ -204,7 +205,7 @@ static bool window_kvs_cmd_dock(KviKvsModuleCommandCall * c)
 		no operation is performed. If the specified window
 		does not exist a warning is printed unless the -q switch is used.
 	@seealso:
-		[cmd]window.dock[/cmd]
+		[cmd]window.dock[/cmd], [fnc]$window.isDocked[/fnc]
 */
 
 static bool window_kvs_cmd_undock(KviKvsModuleCommandCall * c)
@@ -479,6 +480,35 @@ static bool window_kvs_fnc_activityTemperature(KviKvsModuleFunctionCall * c)
 }
 
 /*
+	@doc: window.isDocked
+	@type:
+		function
+	@title:
+		$window.isDocked
+	@short:
+		Checks if a window is currently docked
+	@syntax:
+		$window.isDocked
+		$window.isDocked(<window_id>)
+	@description:
+		Returns 1 if the window specified by <window_id> is currently docked and 0 otherwise.
+		The form with no parameters works on the current window. If the specified window
+		doesn't exist then 0 is returned.
+	@seealso:
+		[cmd]window.dock[/cmd], [cmd]window.undock[/cmd]
+*/
+
+static bool window_kvs_fnc_isDocked(KviKvsModuleFunctionCall * c)
+{
+	GET_KVS_FNC_WINDOW_ID
+	if(pWnd)
+	{
+		c->returnValue()->setBoolean(pWnd->mdiParent() ? true : false);
+	}
+	return true;
+}
+
+/*
 	@doc: window.isMinimized
 	@type:
 		function
@@ -579,15 +609,15 @@ static bool window_kvs_fnc_hasUserFocus(KviKvsModuleFunctionCall * c)
 	@title:
 		$window.console
 	@short:
-		Returns the console that a window is attacched to
+		Returns the console that a window is attached to
 	@syntax:
 		$window.console
 		$window.console(<window_id>)
 	@description:
-		Returns the id of the console window that the window specified by window_id is attacched to.
+		Returns the id of the console window that the window specified by window_id is attached to.
 		The console is the main (and only) console of the IRC context. If window_id is missing then
 		the current window is used. If this window does not belong to an irc context (and thus has
-		no attacched console) then 0 is returned.
+		no attached console) then 0 is returned.
 	@seealso:
 */
 
@@ -873,7 +903,7 @@ static bool window_kvs_cmd_listtypes(KviKvsModuleCommandCall * c)
 		See [cmd]window.listtypes[/cmd] for a list of available window types in this KVIrc release.[br]
 		If <type> is the special word 'all', all the window types are listed.[br]
 		<irc_context_id> specifies the irc context in which the windows are searched.[br]
-		If no <irc_context_id> is specified , the current one is used.[br]
+		If no <irc_context_id> is specified, the current one is used.[br]
 		If <irc_context_id> is the special word 'all', all the irc context are searched.[br]
 		If <irc_context_id> is the special word 'none' then only windows not belonging to any
 		irc context are listed.[br]
@@ -894,11 +924,11 @@ static bool window_kvs_cmd_listtypes(KviKvsModuleCommandCall * c)
 			[comment]# List all the windows in all irc contexts[/comment]
 			[cmd]echo[/cmd] $window.list(all,all)
 			[comment]# List all the DCC Send windows: They don't belong to any irc context[/comment]
-			[cmd]echo[/cmd] $window.list(dccsend,none)
+			[cmd]echo[/cmd] $window.list(dcctransfer,none)
 			[comment]# List all the user windows created with $window.open[/comment]
 			[comment]# They may either belong to an irc context or not[/comment]
 			[cmd]echo[/cmd] $window.list(userwnd,any)
-			[comment]# Ok , let's use it[/comment]
+			[comment]# Ok, let's use it[/comment]
 			[comment]# A nice alias that allows iterating commands through all the consoles[/comment]
 			[comment]# Note the array returned by $window.list[/comment]
 			[comment]# This is by LatinSuD :)[/comment]
@@ -1087,7 +1117,7 @@ static bool window_kvs_fnc_list(KviKvsModuleFunctionCall * c)
 		If <caption> is given then the new window will have it as the initial plain text <caption>.
 		You can change the caption later by calling [cmd]window.setWindowTitle[/cmd].[br]
 		If <irc_context> is given then the new window is bound to the specified irc context
-		and will be destroyed when the attacched console closes.
+		and will be destroyed when the attached console closes.
 		If <irc_context> is omitted or is 0 then the window will be context free (not bound
 		to any context) and will exist until it is closed by the GUI, by a [cmd]window.close[/cmd]
 		call or until KVIrc terminates. When <irc_context> is given but is not valid
@@ -1113,20 +1143,26 @@ static bool window_kvs_fnc_open(KviKvsModuleFunctionCall * c)
 	QString szFlags;
 	QString szCaption;
 	kvs_uint_t uCtx;
-	kvs_int_t iIcon;
+	QString szIcon;
 
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("flags",KVS_PT_STRING,KVS_PF_OPTIONAL,szFlags)
 		KVSM_PARAMETER("caption",KVS_PT_STRING,KVS_PF_OPTIONAL,szCaption)
 		KVSM_PARAMETER("irc_context",KVS_PT_UINT,KVS_PF_OPTIONAL,uCtx)
-		KVSM_PARAMETER("icon",KVS_PT_INT,KVS_PF_OPTIONAL,iIcon)
+		KVSM_PARAMETER("icon",KVS_PT_STRING,KVS_PF_OPTIONAL,szIcon)
 	KVSM_PARAMETERS_END(c)
-	iIcon = iIcon % KVI_NUM_SMALL_ICONS;
+	QPixmap *pPix=g_pIconManager->getImage(szIcon);
+	if(!pPix){
 
+	    c->warning(__tr2qs("The specified Icon does not exists: switching to 'none'"));
+	    szIcon.prepend("$icon(");
+	    szIcon.append(")");
+	}
 	int iFlags = 0;
-	if(szFlags.contains('i'))iFlags |= KviUserWindow::HasInput;
+	if(szFlags.contains('i'))
+		iFlags |= UserWindow::HasInput;
 
-	KviConsole * pConsole = 0;
+	KviConsoleWindow * pConsole = 0;
 	if(c->parameterList()->count() >= 3)
 	{
 		pConsole = g_pApp->findConsole(uCtx);
@@ -1136,17 +1172,18 @@ static bool window_kvs_fnc_open(KviKvsModuleFunctionCall * c)
 		}
 	}
 
-	KviUserWindow * wnd = new KviUserWindow(
+	UserWindow * pWnd = new UserWindow(
 		c->window()->frame(),
 		szCaption.toUtf8().data(),
-		iIcon,
+		szIcon,
 		pConsole,
 		iFlags);
 
-	c->window()->frame()->addWindow(wnd,!szFlags.contains('m'));
-	if(szFlags.contains('m'))wnd->minimize();
+	c->window()->frame()->addWindow(pWnd,!szFlags.contains('m'));
+	if(szFlags.contains('m'))
+		pWnd->minimize();
 
-	c->returnValue()->setInteger(QString(wnd->id()).toUInt());
+	c->returnValue()->setInteger(QString(pWnd->id()).toUInt());
 	return true;
 }
 
@@ -1166,9 +1203,7 @@ static bool window_kvs_fnc_open(KviKvsModuleFunctionCall * c)
 	@description:
 		Sets the caption of the user window specified by <window_id> to <plain_text_caption>.[br]
 		If <window_id> is an empty string then the current window is assumed.[br]
-		The window must be of type userwnd and must have been created by [fnc]$window.open[/fnc]:
-		it is not possible to change the caption of other window types.[br]
-		If the window does not exists or is not of the expected type then a warning is printed unless the -q switch is used.[br]
+		If the window does not exists then a warning is printed unless the -q switch is used.[br]
 	@seealso:
 */
 
@@ -1190,11 +1225,17 @@ static bool window_kvs_cmd_setWindowTitle(KviKvsModuleCommandCall * c)
 		return true;
 	}
 
-	if(pWnd->type() == KVI_WINDOW_TYPE_USERWINDOW)
+	if(pWnd->type() == KviWindow::UserWindow)
 	{
-		((KviUserWindow *)pWnd)->setWindowTitleStrings(szPlain);
+		((UserWindow *)pWnd)->setWindowTitleStrings(szPlain);
 	} else {
-		if(!c->hasSwitch('q',"quiet"))c->warning(__tr2qs("The specified window is not of type \"userwnd\""));
+		//store the window title (needed for functions that search windows by their captions)
+		((KviWindow *)pWnd)->setFixedCaption(szPlain);
+
+		if(((KviWindow *)pWnd)->mdiParent())
+			((KviWindow *)pWnd)->mdiParent()->setWindowTitle(szPlain);
+		else
+			((KviWindow *)pWnd)->setWindowTitle(szPlain);
 	}
 	return true;
 }
@@ -1423,9 +1464,34 @@ static bool window_kvs_cmd_setBackground(KviKvsModuleCommandCall * c)
 		[fnc]$asciiToHex[/fnc], [fnc]$features[/fnc]
 */
 
+/*
+	@doc: window.savePropertiesAsDefault
+	@type:
+		command
+	@title:
+		window.savePropertiesAsDefault
+	@short:
+		Saves the window properties as default
+	@syntax:
+		window.savePropertiesAsDefault [window_id]
+	@description:
+		Saves the window properties of the specified window as default for every window
+		of the same type (eg: all queries, all channels, ..).
+		If window_id is missing then the current window properties are used.
+*/
+
+static bool window_kvs_cmd_savePropertiesAsDefault(KviKvsModuleCommandCall * c)
+{
+	GET_KVS_WINDOW_ID
+	if(pWnd)
+	{
+		pWnd->savePropertiesAsDefault();
+	}
+	return true;
+}
 
 #ifdef COMPILE_CRYPT_SUPPORT
-static bool initializeCryptEngine(KviCryptEngine * eng,KviStr &szEncryptKey,KviStr &szDecryptKey,QString &szError)
+static bool initializeCryptEngine(KviCryptEngine * eng,KviCString &szEncryptKey,KviCString &szDecryptKey,QString &szError)
 {
 	char * encKey = 0;
 	int encKeyLen = 0;
@@ -1434,9 +1500,9 @@ static bool initializeCryptEngine(KviCryptEngine * eng,KviStr &szEncryptKey,KviS
 	encKeyLen = szEncryptKey.hexToBuffer(&tmpKey,false);
 	if(encKeyLen > 0)
 	{
-		encKey = (char *)kvi_malloc(encKeyLen);
-		kvi_memmove(encKey,tmpKey,encKeyLen);
-		KviStr::freeBuffer(tmpKey);
+		encKey = (char *)KviMemory::allocate(encKeyLen);
+		KviMemory::move(encKey,tmpKey,encKeyLen);
+		KviCString::freeBuffer(tmpKey);
 	} else {
 		szError = __tr2qs("The encrypt key wasn't a valid hexadecimal string");
 		return false;
@@ -1448,9 +1514,9 @@ static bool initializeCryptEngine(KviCryptEngine * eng,KviStr &szEncryptKey,KviS
 	decKeyLen = szDecryptKey.hexToBuffer(&tmpKey,false);
 	if(decKeyLen > 0)
 	{
-		decKey = (char *)kvi_malloc(decKeyLen);
-		kvi_memmove(decKey,tmpKey,decKeyLen);
-		KviStr::freeBuffer(tmpKey);
+		decKey = (char *)KviMemory::allocate(decKeyLen);
+		KviMemory::move(decKey,tmpKey,decKeyLen);
+		KviCString::freeBuffer(tmpKey);
 	} else {
 		szError = __tr2qs("The decrypt key wasn't a valid hexadecimal string");
 		return false;
@@ -1458,8 +1524,8 @@ static bool initializeCryptEngine(KviCryptEngine * eng,KviStr &szEncryptKey,KviS
 	bool bRet = eng->init(encKey,encKeyLen,decKey,decKeyLen);
 	if(!bRet)
 		szError = eng->lastError();
-	if(encKey)kvi_free(encKey);
-	if(decKey)kvi_free(decKey);
+	if(encKey)KviMemory::free(encKey);
+	if(decKey)KviMemory::free(decKey);
 	return bRet;
 }
 #endif
@@ -1470,7 +1536,7 @@ static bool window_kvs_cmd_setCryptEngine(KviKvsModuleCommandCall * c)
 	QString szEngine;
 	QString szEncryptKey;
 	QString szDecryptKey;
-	KviWindow * pWnd;
+
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("window_id",KVS_PT_STRING,0,szWnd)
 		KVSM_PARAMETER("enginename",KVS_PT_STRING,KVS_PF_OPTIONAL,szEngine)
@@ -1479,7 +1545,7 @@ static bool window_kvs_cmd_setCryptEngine(KviKvsModuleCommandCall * c)
 	KVSM_PARAMETERS_END(c)
 	if(szDecryptKey.isEmpty())szDecryptKey = szEncryptKey;
 #ifdef COMPILE_CRYPT_SUPPORT
-	pWnd = g_pApp->findWindow(szWnd.toUtf8().data());
+	KviWindow * pWnd = g_pApp->findWindow(szWnd.toUtf8().data());
 	if(!pWnd)
 	{
 		if(!c->hasSwitch('q',"quiet"))
@@ -1508,17 +1574,17 @@ static bool window_kvs_cmd_setCryptEngine(KviKvsModuleCommandCall * c)
 		KviCryptEngine * e = g_pCryptEngineManager->allocateEngine(szEngine.toUtf8().data());
 		if(e)
 		{
-			KviStr enc = KviStr(szEncryptKey.toUtf8().data());
-			KviStr dec = KviStr(szDecryptKey.toUtf8().data());
+			KviCString enc = KviCString(szEncryptKey.toUtf8().data());
+			KviCString dec = KviCString(szDecryptKey.toUtf8().data());
 			QString szError;
 			if(initializeCryptEngine(e,enc,dec,szError))
 			{
 				KviCryptSessionInfo * inf = KviCryptController::allocateCryptSessionInfo();
-				inf->pEngine = e;
-				inf->szEngineName = szEngine;
+				inf->m_pEngine = e;
+				inf->m_szEngineName = szEngine;
 
-				inf->bDoEncrypt = (!c->hasSwitch('n',"onlydecrypt"));
-				inf->bDoDecrypt = (!c->hasSwitch('m',"onlyencrypt")) || c->hasSwitch('n',"onlydecrypt");
+				inf->m_bDoEncrypt = (!c->hasSwitch('n',"onlydecrypt"));
+				inf->m_bDoDecrypt = (!c->hasSwitch('m',"onlyencrypt")) || c->hasSwitch('n',"onlydecrypt");
 				pWnd->setCryptSessionInfo(inf);
 			} else {
 				if(szError.isEmpty())szError = __tr2qs("Unknown engine error");
@@ -1540,7 +1606,7 @@ static bool window_kvs_cmd_setCryptEngine(KviKvsModuleCommandCall * c)
 
 static bool window_module_init(KviModule *m)
 {
-	g_pUserWindowList = new KviPointerList<KviUserWindow>();
+	g_pUserWindowList = new KviPointerList<UserWindow>();
 	g_pUserWindowList->setAutoDelete(false);
 
 	KVSM_REGISTER_FUNCTION(m,"activityTemperature",window_kvs_fnc_activityTemperature);
@@ -1549,6 +1615,7 @@ static bool window_module_init(KviModule *m)
 	KVSM_REGISTER_FUNCTION(m,"console",window_kvs_fnc_console);
 	KVSM_REGISTER_FUNCTION(m,"hasUserFocus",window_kvs_fnc_hasUserFocus);
 	KVSM_REGISTER_FUNCTION(m,"hasOutput",window_kvs_fnc_hasOutput);
+	KVSM_REGISTER_FUNCTION(m,"isDocked",window_kvs_fnc_isDocked);
 	KVSM_REGISTER_FUNCTION(m,"isMinimized",window_kvs_fnc_isMinimized);
 	KVSM_REGISTER_FUNCTION(m,"isMaximized",window_kvs_fnc_isMaximized);
 	KVSM_REGISTER_FUNCTION(m,"caption",window_kvs_fnc_caption);
@@ -1576,6 +1643,7 @@ static bool window_module_init(KviModule *m)
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setCryptEngine",window_kvs_cmd_setCryptEngine);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"setInputText",window_kvs_cmd_setInputText);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"insertInInputText",window_kvs_cmd_insertInInputText);
+	KVSM_REGISTER_SIMPLE_COMMAND(m,"savePropertiesAsDefault",window_kvs_cmd_savePropertiesAsDefault);
 
 	// saveOutput (view()->saveBuffer())
 /*
@@ -1604,7 +1672,7 @@ static bool window_module_init(KviModule *m)
 
 static bool window_module_cleanup(KviModule *)
 {
-	while(KviUserWindow * w = g_pUserWindowList->first())
+	while(UserWindow * w = g_pUserWindowList->first())
 		w->close();
 	delete g_pUserWindowList;
 	return true;

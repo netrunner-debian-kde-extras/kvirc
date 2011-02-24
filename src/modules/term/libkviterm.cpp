@@ -3,8 +3,8 @@
 //   File : libkviterm.cpp
 //   Creation date : Wed Aug 30 2000 15:29:02 by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -23,19 +23,19 @@
 //=============================================================================
 
 #include "kvi_settings.h"
-#include "kvi_module.h"
-#include "kvi_window.h"
-#include "kvi_frame.h"
-#include "kvi_pointerlist.h"
+#include "KviModule.h"
+#include "KviWindow.h"
+#include "KviMainWindow.h"
+#include "KviPointerList.h"
 
 #include <QSplitter>
 
 #ifdef COMPILE_KDE_SUPPORT
-	#include "termwidget.h"
-	#include "termwindow.h"
+	#include "TermWidget.h"
+	#include "TermWindow.h"
 
-	KviPointerList<KviTermWidget> * g_pTermWidgetList      = 0;
-	KviPointerList<KviTermWindow> * g_pTermWindowList      = 0;
+	KviPointerList<TermWidget> * g_pTermWidgetList      = 0;
+	KviPointerList<TermWindow> * g_pTermWindowList      = 0;
 #endif
 
 KviModule * g_pTermModule = 0;
@@ -69,10 +69,10 @@ static bool term_kvs_cmd_open(KviKvsModuleCommandCall * c)
 	c->module()->lock(); // multiple locks are allowed
 	if(c->hasSwitch('m',"mdi"))
 	{
-		KviTermWindow *w = new KviTermWindow(c->window()->frame(),"Terminal emulator");
+		TermWindow *w = new TermWindow(c->window()->frame(),"Terminal emulator");
 		c->window()->frame()->addWindow(w);
 	} else {
-		KviTermWidget *w = new KviTermWidget(c->window()->frame()->splitter(), c->window()->frame(),true);
+		TermWidget *w = new TermWidget(c->window()->frame()->splitter(), c->window()->frame(),true);
 		w->show();
 	}
 #else
@@ -86,9 +86,9 @@ static bool term_module_init(KviModule * m)
 	g_pTermModule = m;
 
 #ifdef COMPILE_KDE_SUPPORT
-	g_pTermWidgetList = new KviPointerList<KviTermWidget>;
+	g_pTermWidgetList = new KviPointerList<TermWidget>;
 	g_pTermWidgetList->setAutoDelete(false);
-	g_pTermWindowList = new KviPointerList<KviTermWindow>;
+	g_pTermWindowList = new KviPointerList<TermWindow>;
 	g_pTermWindowList->setAutoDelete(false);
 #endif
 

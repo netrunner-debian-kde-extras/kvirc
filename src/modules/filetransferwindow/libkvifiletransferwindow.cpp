@@ -3,7 +3,7 @@
 //   File : libkvifiletransferwindow.cpp
 //   Creation date : Mon Apr 21 2003 23:14:12 CEST by Szymon Stefanek
 //
-//   Copyright (C) 2003-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   Copyright (C) 2003-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -21,18 +21,18 @@
 //
 //=============================================================================
 
-#include "filetransferwindow.h"
+#include "FileTransferWindow.h"
 
-#include "kvi_module.h"
-#include "kvi_app.h"
-#include "kvi_frame.h"
-#include "kvi_window.h"
-#include "kvi_locale.h"
-#include "kvi_iconmanager.h"
+#include "KviModule.h"
+#include "KviApplication.h"
+#include "KviMainWindow.h"
+#include "KviWindow.h"
+#include "KviLocale.h"
+#include "KviIconManager.h"
 
 #include <QSplitter>
 
-KviFileTransferWindow * g_pFileTransferWindow = 0;
+FileTransferWindow * g_pFileTransferWindow = 0;
 
 static KviModuleExtension * filetransferwindow_extension_alloc(KviModuleExtensionAllocStruct * s)
 {
@@ -55,8 +55,8 @@ static KviModuleExtension * filetransferwindow_extension_alloc(KviModuleExtensio
 			}
 		}
 
-		g_pFileTransferWindow = new KviFileTransferWindow(s->pDescriptor,g_pFrame);
-		g_pFrame->addWindow(g_pFileTransferWindow,!bCreateMinimized);
+		g_pFileTransferWindow = new FileTransferWindow(s->pDescriptor,g_pMainWindow);
+		g_pMainWindow->addWindow(g_pFileTransferWindow,!bCreateMinimized);
 		if(bCreateMinimized)g_pFileTransferWindow->minimize();
 		return g_pFileTransferWindow;
 	}
@@ -123,7 +123,7 @@ static bool filetransferwindow_module_init(KviModule * m)
 		__tr2qs("Manage File &Transfers"),
 		filetransferwindow_extension_alloc);
 
-	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_FILETRANSFER)));
+	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::FileTransfer)));
 
 
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"open",filetransferwindow_kvs_cmd_open);
@@ -133,8 +133,8 @@ static bool filetransferwindow_module_init(KviModule * m)
 
 static bool filetransferwindow_module_cleanup(KviModule *)
 {
-	if(g_pFileTransferWindow && g_pFrame)
-		g_pFrame->closeWindow(g_pFileTransferWindow);
+	if(g_pFileTransferWindow && g_pMainWindow)
+		g_pMainWindow->closeWindow(g_pFileTransferWindow);
 	g_pFileTransferWindow = 0;
 	return true;
 }

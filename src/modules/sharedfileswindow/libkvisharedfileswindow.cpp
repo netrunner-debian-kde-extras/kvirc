@@ -3,7 +3,7 @@
 //   File : libkvisharedfileswindow.cpp
 //   Creation date : Mon Apr 21 2003 23:14:12 CEST by Szymon Stefanek
 //
-//   Copyright (C) 2003-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   Copyright (C) 2003-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -21,20 +21,20 @@
 //
 //=============================================================================
 
-#include "sharedfileswindow.h"
+#include "SharedFilesWindow.h"
 
-#include "kvi_module.h"
-#include "kvi_app.h"
-#include "kvi_frame.h"
-#include "kvi_window.h"
-#include "kvi_locale.h"
-#include "kvi_iconmanager.h"
+#include "KviModule.h"
+#include "KviApplication.h"
+#include "KviMainWindow.h"
+#include "KviWindow.h"
+#include "KviLocale.h"
+#include "KviIconManager.h"
 
 #include <QSplitter>
 
 #define KVI_SHARED_FILES_WINDOW_EXTENSION_NAME "Shared files window extension"
 
-KviSharedFilesWindow * g_pSharedFilesWindow = 0;
+SharedFilesWindow * g_pSharedFilesWindow = 0;
 
 static KviModuleExtension * sharedfileswindow_extension_alloc(KviModuleExtensionAllocStruct * s)
 {
@@ -57,8 +57,8 @@ static KviModuleExtension * sharedfileswindow_extension_alloc(KviModuleExtension
 			}
 		}
 
-		g_pSharedFilesWindow = new KviSharedFilesWindow(s->pDescriptor,g_pFrame);
-		g_pFrame->addWindow(g_pSharedFilesWindow,!bCreateMinimized);
+		g_pSharedFilesWindow = new SharedFilesWindow(s->pDescriptor,g_pMainWindow);
+		g_pMainWindow->addWindow(g_pSharedFilesWindow,!bCreateMinimized);
 		if(bCreateMinimized)g_pSharedFilesWindow->minimize();
 		return g_pSharedFilesWindow;
 	}
@@ -123,7 +123,7 @@ static bool sharedfileswindow_module_init(KviModule * m)
 		__tr2qs_ctx("Manage S&hared Files","sharedfileswindow"),
 		sharedfileswindow_extension_alloc);
 
-	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_SHAREDFILES)));
+	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::SharedFiles)));
 
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"open",sharedfileswindow_kvs_cmd_open);
 	return true;
@@ -131,8 +131,8 @@ static bool sharedfileswindow_module_init(KviModule * m)
 
 static bool sharedfileswindow_module_cleanup(KviModule *)
 {
-	if(g_pSharedFilesWindow && g_pFrame)
-		g_pFrame->closeWindow(g_pSharedFilesWindow);
+	if(g_pSharedFilesWindow && g_pMainWindow)
+		g_pMainWindow->closeWindow(g_pSharedFilesWindow);
 	g_pSharedFilesWindow = 0;
 	return true;
 }

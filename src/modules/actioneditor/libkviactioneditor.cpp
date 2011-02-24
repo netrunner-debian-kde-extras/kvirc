@@ -3,8 +3,8 @@
 //   File : libkviactioneditor.cpp
 //   Creation date : Tue 29 Dec 2004 02:45:59 2002 GMT by Szymon Stefanek
 //
-//   This toolbar is part of the KVirc irc client distribution
-//   Copyright (C) 2004-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This toolbar is part of the KVIrc irc client distribution
+//   Copyright (C) 2004-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,13 +22,13 @@
 //
 //=============================================================================
 
-#include "actioneditor.h"
+#include "ActionEditor.h"
 
-#include "kvi_module.h"
-#include "kvi_locale.h"
-#include "kvi_frame.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+#include "KviMainWindow.h"
 
-KviActionEditorWindow * g_pActionEditorWindow = 0;
+ActionEditorWindow * g_pActionEditorWindow = 0;
 
 
 /*
@@ -49,7 +49,7 @@ static bool actioneditor_kvs_cmd_open(KviKvsModuleCommandCall * c)
 {
 	if(!g_pActionEditorWindow)
 	{
-		g_pActionEditorWindow = new KviActionEditorWindow(c->window()->frame());
+		g_pActionEditorWindow = new ActionEditorWindow(c->window()->frame());
 		c->window()->frame()->addWindow(g_pActionEditorWindow);
 	}
 
@@ -71,8 +71,8 @@ static bool actioneditor_module_can_unload(KviModule *)
 
 static bool actioneditor_module_cleanup(KviModule *)
 {
-	if(g_pActionEditorWindow && g_pFrame)
-		g_pFrame->closeWindow(g_pActionEditorWindow);
+	if(g_pActionEditorWindow && g_pMainWindow)
+		g_pMainWindow->closeWindow(g_pActionEditorWindow);
 	g_pActionEditorWindow = 0;
 	return true;
 }

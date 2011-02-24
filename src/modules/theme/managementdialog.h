@@ -6,7 +6,7 @@
 //   Creation date : Sat 30 Dec 2006 14:54:56 by Szymon Stefanek
 //
 //   This file is part of the KVIrc IRC Client distribution
-//   Copyright (C) 2006-2008 Szymon Stefanek <pragma at kvirc dot net>
+//   Copyright (C) 2006-2010 Szymon Stefanek <pragma at kvirc dot net>
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -24,14 +24,14 @@
 //
 //=============================================================================
 
-#include "kvi_optionswidget.h"
-#include "kvi_pointerlist.h"
-#include "kvi_theme.h"
-#include "kvi_tal_popupmenu.h"
-#include "kvi_tal_wizard.h"
-#include "kvi_tal_listwidget.h"
+#include "KviOptionsWidget.h"
+#include "KviPointerList.h"
+#include "KviTheme.h"
+#include "KviTalPopupMenu.h"
+#include "KviTalWizard.h"
+#include "KviTalListWidget.h"
 
-#include <QDialog>
+#include <QWidget>
 #include <QComboBox>
 #include <QCursor>
 #include <QTextDocument>
@@ -45,11 +45,11 @@ class QLabel;
 class KviDynamicToolTip;
 
 
-class KviThemeListWidgetItem : public KviTalListWidgetItem
+class ThemeListWidgetItem : public KviTalListWidgetItem
 {
 public:
-	KviThemeListWidgetItem(KviTalListWidget * box,KviThemeInfo * inf);
-	virtual ~KviThemeListWidgetItem();
+	ThemeListWidgetItem(KviTalListWidget * box,KviThemeInfo * inf);
+	virtual ~ThemeListWidgetItem();
 public:
 	KviThemeInfo   * m_pThemeInfo;
 public:
@@ -57,22 +57,22 @@ public:
 };
 
 
-class KviThemeManagementDialog : public QDialog
+class ThemeManagementDialog : public QWidget
 {
 	Q_OBJECT
 public:
-	KviThemeManagementDialog(QWidget * parent);
-	virtual ~KviThemeManagementDialog();
+	ThemeManagementDialog(QWidget * parent);
+	virtual ~ThemeManagementDialog();
 protected:
-	static KviThemeManagementDialog   * m_pInstance;
+	static ThemeManagementDialog   * m_pInstance;
 	KviTalIconAndRichTextItemDelegate * m_pItemDelegate;
 	KviTalListWidget    * m_pListWidget;
 	KviTalPopupMenu     * m_pContextPopup;
 	QToolButton         * m_pDeleteThemeButton;
 	QToolButton         * m_pPackThemeButton;
 public:
-	static KviThemeManagementDialog * instance(){ return m_pInstance; };
-	static void display();
+	static ThemeManagementDialog * instance(){ return m_pInstance; };
+	static void display(bool bTopLevel);
 	static void cleanup();
 protected:
 	void fillThemeBox(const QString &szDir);
@@ -93,15 +93,5 @@ protected slots:
 	//void tipRequest(KviDynamicToolTip *pTip,const QPoint &pnt);
 	void tipRequest(QListWidgetItem *item,const QPoint &pnt);
 };
-/*
-class KviThemeDelegate : public QItemDelegate
-{
-public:
-	KviThemeDelegate(QListWidget * pWidget)
-		: QItemDelegate(pWidget){};
-	~KviThemeDelegate(){};
-	 QSize sizeHint(const QStyleOptionViewItem &option,const QModelIndex &index) const;
-	 void paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
-};
-*/
+
 #endif //!_MANAGEMENTDIALOG_H_

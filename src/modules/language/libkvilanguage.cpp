@@ -3,8 +3,8 @@
 //   File : libkvilanguage.cpp
 //   Creation date : Fri 25 Dec 20:16:49 2004 GMT by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2004-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2004-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,9 +22,9 @@
 //
 //=============================================================================
 
-#include "kvi_module.h"
-#include "kvi_app.h"
-#include "kvi_locale.h"
+#include "KviModule.h"
+#include "KviApplication.h"
+#include "KviLocale.h"
 
 #include <QFileInfo>
 

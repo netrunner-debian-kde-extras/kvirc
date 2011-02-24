@@ -95,6 +95,10 @@ NICK: Ze_M
 MAIL: mmodem00 at netvisao dot pt
 ROLE: Portuguese translation, default script patches and Mandriva (MDE) packager.
 
+NAME: Erkan Kodalak
+NICK: Nakre
+MAIL: bravehearterkan at hotmail dot com
+ROLE: Turkish translation and bug hunting
 
 SECTION: Graphics
 
@@ -115,7 +119,7 @@ SECTION: Packagers
 NAME: Massimiliano Leone
 NICK: k0sm|k0
 MAIL: k0smik0 at logorroici dot org
-ROLE: Debian packages, moral support
+ROLE: Debian packages, official femal users supporter
 TEXT: One must make one's self superior to humanity, in power,
 TEXT: in loftiness of soul, in contempt. - Friedrich Nietzsche
 
@@ -327,3 +331,4 @@ NICK: cpet
 MAIL: chris at officialunix dot com
 ROLE: FreeBSD Port mantainer
 TEXT: FreeBSD Gimp.
+

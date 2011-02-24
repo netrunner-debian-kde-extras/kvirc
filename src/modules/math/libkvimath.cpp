@@ -3,8 +3,8 @@
 //   File : libkvimath.cpp
 //   Creation date : Sat Jan 13 14:00:12 2006 GMT by Szymon Stefanek
 //
-//   This math is part of the KVirc irc client distribution
-//   Copyright (C) 2006-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This math is part of the KVIrc irc client distribution
+//   Copyright (C) 2006-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -23,8 +23,8 @@
 //=============================================================================
 
 #include "kvi_settings.h"
-#include "kvi_module.h"
-#include "kvi_string.h"
+#include "KviModule.h"
+#include "KviCString.h"
 
 #include <math.h>
 

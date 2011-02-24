@@ -18,7 +18,7 @@ alias(avatar)
 	# avatar target file
 	if(!$0)
 	{
-		echo "Missing target, no action taken"
+		echo $tr("Missing target, no action taken","defscript")
 		return
 	}
 	if($1)
@@ -148,12 +148,15 @@ alias(wallop)
 
 	# Due to server flood, timing may be very high
 	echo -w=$active $tr("Sending wallop to","defscript") $chan.name($active)
-	timer(wallop,5000,$chan.users(,,o),$0-){
+	timer(wallop,5000,$chan.users(,,o),$0-)
+	{
 		if(%:localOps == ""){ %:localOps = $chan.users(,,o); %:curIndex = 0; }
 		if(%:curIndex == %:localOps[]#){ killtimer wallop; return; }
 
-		for(%i=0;%i<1;%i++){
-			if(%:localOps[%:curIndex] != $my.nick){
+		for(%i=0;%i<1;%i++)
+		{
+			if(%:localOps[%:curIndex] != $my.nick)
+			{
 				if(%:curIndex == %:localOps[]#){ killtimer wallop; return; }
 				msg -q %:localOps[%:curIndex] $1-
 				%:curIndex++
@@ -233,7 +236,7 @@ alias(kb)
 	if(!$0)
 	{
 		echo $tr("Usage:","defscript")
-		echo "	  /kb <nick_list> [" $tr("reason") "]"
+		echo "	  /kb <nick_list> [" $tr("reason","defscript") "]"
 		halt;
 	}
 
@@ -247,12 +250,14 @@ alias(kb)
 	{
 		if(%nick)
 		{
-			%mask = $mask(%nick,$option(uintDefaultBanType));
+			#if we don't know the user ident/host (yet), we can only ban his nick
+			if($isWellKnown(%nick)) %mask = $mask(%nick,$option(uintDefaultBanType));
+			else %mask = %nick;
 
 			if(!%mask)%mask = %nick; # plain ban
 
 			%reason = $1-
-			#if(!%reason)%reason = "You're not welcome here!"
+			#if(!%reason)%reason = $tr("You're not welcome here!","defscript")
 
 			# This is tricky : we send everything
 			# as a single raw message just because
@@ -289,8 +294,9 @@ alias(amsgall)
 
 alias(ameall)
 {
-	foreach(%i,$window.list(channel),$window.list(query)){
-	if(%i!="") me -r=%i $0-
+	foreach(%i,$window.list(channel),$window.list(query))
+	{
+		if(%i!="") me -r=%i $0-
 	}
 }
 
@@ -348,13 +354,13 @@ alias(ignore)
 {
 	# This one adds a registered users database entry
 	# For the specified nick and uses the specified mask
-	# If no mask is specified , a default one is constructed
+	# If no mask is specified, a default one is constructed
 	# Then the "ignore" property is set for the user to 1
 
 	if(!$0)
 	{
 		echo $tr("Usage:","defscript")
-		echo "	  /ignore [-r] <nick>"
+		echo "	  /ignore [-m|--remove] [-p|--query] [-c|--channel] [-n|--notice] [-t|--ctcp] [-i|--invite] [-d|--dcc] <nick>"
 		halt
 	}
 
@@ -362,14 +368,26 @@ alias(ignore)
 
 	reguser.add -f -q $0 $mask($0,15);
 
-	# And finally set the property (use -n so the notify lists will be restarted)
+	# And finally set the property
 	# Check if ignore or unignore the user
 
-	if(!$sw(r,remove))
+	if($sw(m,remove))
 	{
+		reguser.setIgnoreEnabled $0 0
+	} else {
 		reguser.setIgnoreEnabled $0 1
-		reguser.setIgnoreFlags -p -c -n -t -i -d $0
-	} else reguser.setIgnoreEnabled $0 0
+		%flags="";
+		if($sw(p, query)) %flags = $str.append(%flags," -p")
+		if($sw(c, channel)) %flags = $str.append(%flags," -c")
+		if($sw(n, notice)) %flags = $str.append(%flags," -n")
+		if($sw(t, ctcp)) %flags = $str.append(%flags," -t")
+		if($sw(i, invite)) %flags = $str.append(%flags," -i")
+		if($sw(d, dcc)) %flags = $str.append(%flags," -d")
+
+		# if no flag has been passed, enable them all
+		if($isEmpty(%flags)) %flags = " -p -c -n -t -i -d"
+		eval reguser.setIgnoreFlags %flags $escape($0)
+	}
 }
 
 # Dcc...people commonly use "dcc send" instead of "dcc.send"
@@ -472,7 +490,7 @@ alias(dns)
 	if(!$0)
 	{
 		echo $tr("Usage:","defscript")
-		echo echo "  /dns <nickname>"
+		echo "  /dns <nickname>"
 		halt
 	}
 

@@ -5,8 +5,8 @@
 //   File : kvi_iograph.cpp
 //   Creation date : Tue Oct 31 2000 00:14:12 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -26,10 +26,10 @@
 
 #include <QQueue>
 
-#include "kvi_frame.h"
+#include "KviMainWindow.h"
 #include "kvi_inttypes.h"
-#include "kvi_moduleextension.h"
-#include "kvi_window.h"
+#include "KviModuleExtension.h"
+#include "KviWindow.h"
 
 #define KVI_IOGRAPH_NUMBER_POINTS 60
 #define KVI_IOGRAPH_HORIZ_SEGMENTS 10
@@ -53,11 +53,11 @@ protected:
 	virtual void paintEvent (QPaintEvent *e);
 };
 
-class KviIOGraphWindow : public KviWindow , public KviModuleExtension
+class KviIOGraphWindow : public KviWindow, public KviModuleExtension
 {
 	Q_OBJECT
 public:
-	KviIOGraphWindow(KviModuleExtensionDescriptor * d,KviFrame * lpFrm,const char * name);
+	KviIOGraphWindow(KviModuleExtensionDescriptor * d,KviMainWindow * lpFrm,const char * name);
 	~KviIOGraphWindow();
 private:
 	KviIOGraphWidget * m_pIOGraph;

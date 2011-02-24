@@ -3,8 +3,8 @@
 //   File : libkviaction.cpp
 //   Creation date : Tue 7 Dec 00:05:59 2002 GMT by Szymon Stefanek
 //
-//   This toolbar is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This toolbar is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,20 +22,20 @@
 //
 //=============================================================================
 
-#include "kvi_module.h"
-#include "kvi_action.h"
-#include "kvi_actionmanager.h"
-#include "kvi_locale.h"
-#include "kvi_qstring.h"
-#include "kvi_parameterlist.h"
-#include "kvi_cmdformatter.h"
-#include "kvi_qstring.h"
-#include "kvi_error.h"
+#include "KviModule.h"
+#include "KviAction.h"
+#include "KviActionManager.h"
+#include "KviLocale.h"
+#include "KviQString.h"
+#include "KviParameterList.h"
+#include "KviCommandFormatter.h"
+#include "KviQString.h"
+#include "KviError.h"
 #include "kvi_out.h"
-#include "kvi_iconmanager.h"
-#include "kvi_mirccntrl.h"
-#include "kvi_kvs_useraction.h"
-#include "kvi_kvs_script.h"
+#include "KviIconManager.h"
+#include "KviControlCodes.h"
+#include "KviKvsUserAction.h"
+#include "KviKvsScript.h"
 
 /*
 	@doc: action.list
@@ -59,9 +59,9 @@ static bool action_kvs_cmd_list(KviKvsModuleCommandCall * c)
 	while(KviAction * a = it.current())
 	{
 		if(a->isKviUserActionNeverOverrideThis())
-			pOut->output(KVI_OUT_VERBOSE,__tr2qs("%cCore action: %Q"),KVI_TEXT_BOLD,&(a->name()));
+			pOut->output(KVI_OUT_VERBOSE,__tr2qs("%cCore action: %Q"),KviControlCodes::Bold,&(a->name()));
 		else
-			pOut->output(KVI_OUT_VERBOSE,__tr2qs("%cUser action: %Q"),KVI_TEXT_BOLD,&(a->name()));
+			pOut->output(KVI_OUT_VERBOSE,__tr2qs("%cUser action: %Q"),KviControlCodes::Bold,&(a->name()));
 		pOut->output(KVI_OUT_VERBOSE,__tr2qs("Label: %Q"),&(a->visibleName()));
 		pOut->output(KVI_OUT_VERBOSE,__tr2qs("Category: %Q"),&(a->category()->visibleName()));
 		pOut->output(KVI_OUT_VERBOSE,__tr2qs("Description: %Q"),&(a->description()));
@@ -433,7 +433,7 @@ static bool action_kvs_cmd_create(KviKvsModuleCallbackCommandCall * c)
 	int iOldFlags = iFlags;
 	iFlags = KviAction::validateFlags(iFlags);
 	if(iFlags != iOldFlags)
-		debug("action.validate has provided invalid flags: %d fixed to %d",iOldFlags,iFlags);
+		qDebug("action.validate has provided invalid flags: %d fixed to %d",iOldFlags,iFlags);
 
 	KviKvsUserAction * a = KviKvsUserAction::createInstance(KviActionManager::instance(),
 		szName,szCmd,szVisibleText,
@@ -502,7 +502,7 @@ static bool action_kvs_fnc_isEnabled(KviKvsModuleFunctionCall * c)
 
 static bool action_module_init(KviModule *m)
 {
-	// setlabel , $label , $position , move , $itempos , $itemexists , $itemtype
+	// setlabel, $label, $position, move, $itempos, $itemexists, $itemtype
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"list",action_kvs_cmd_list);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"trigger",action_kvs_cmd_trigger);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"enable",action_kvs_cmd_enable);

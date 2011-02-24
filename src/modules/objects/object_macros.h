@@ -5,8 +5,8 @@
 //   File : object_macros.h
 //   Creation date : Sat Jun 18 2005 15:32:01 by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2005-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2005-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -24,11 +24,11 @@
 //
 //=============================================================================
 
-#include "kvi_kvs_kernel.h"
-#include "kvi_kvs_object.h"
-#include "kvi_kvs_object_class.h"
-#include "kvi_kvs_object_controller.h"
-#include "kvi_kvs_object_functioncall.h"
+#include "KviKvsKernel.h"
+#include "KviKvsObject.h"
+#include "KviKvsObjectClass.h"
+#include "KviKvsObjectController.h"
+#include "KviKvsObjectFunctionCall.h"
 
 #define KVSO_DECLARE_OBJECT(__className) \
 	__className(KviKvsObjectClass * pClass,KviKvsObject * pParent,const QString &szName); \
@@ -96,7 +96,7 @@ g_pKvs##__className##Class->registerFunctionHandler(#__szName,(KviKvsObjectFunct
 	}
 
 #define KVSO_CLASS_FUNCTION(__className,__functionName)\
-	bool KviKvsObject_##__className::__functionName(KviKvsObjectFunctionCall * c)
+	bool KvsObject_##__className::__functionName(KviKvsObjectFunctionCall * c)
 
 #define CHECK_INTERNAL_POINTER(__pointer)\
 	if(!__pointer) \

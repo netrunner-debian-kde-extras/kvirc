@@ -3,8 +3,8 @@
 //   File : libkvitoolbar.cpp
 //   Creation date : Wed 6 Nov 22:51:59 2002 GMT by Szymon Stefanek
 //
-//   This toolbar is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This toolbar is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,17 +22,17 @@
 //
 //=============================================================================
 
-#include "kvi_module.h"
-#include "kvi_locale.h"
-#include "kvi_window.h"
-#include "kvi_app.h"
-#include "kvi_error.h"
-#include "kvi_cmdformatter.h"
-#include "kvi_customtoolbar.h"
-#include "kvi_customtoolbardescriptor.h"
-#include "kvi_customtoolbarmanager.h"
-#include "kvi_actionmanager.h"
-#include "kvi_kvs_useraction.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+#include "KviWindow.h"
+#include "KviApplication.h"
+#include "KviError.h"
+#include "KviCommandFormatter.h"
+#include "KviCustomToolBar.h"
+#include "KviCustomToolBarDescriptor.h"
+#include "KviCustomToolBarManager.h"
+#include "KviActionManager.h"
+#include "KviKvsUserAction.h"
 
 /*
 	@doc: toolbar.create
@@ -320,8 +320,8 @@ static bool toolbar_kvs_fnc_exists(KviKvsModuleFunctionCall * c)
 	@syntax:
 		<boolean> $toolbar.isVisible(<id:string>)
 	@description:
-		Returns 1 if the toolbar with the specified <id> is actually visible and 0 otherwise.[br]
-		If the toolbar is not defined at all this function still returns 0.[br]
+		Returns 1 if the toolbar with the specified <id> is visible,
+		or 0 when invisible or the given toolbar does not exist. 
 	@seealso:
 		[cmd]toolbar.show[/cmd]
 */
@@ -348,8 +348,8 @@ static bool toolbar_kvs_fnc_isVisible(KviKvsModuleFunctionCall * c)
 	@syntax:
 		<array> $toolbar.list()
 	@description:
-		Returns a list of defined toolbar identifiers.[br]
-		You can use this function to loop thru all the toolbar definitions.[br]
+		Returns a list of defined toolbar identifiers -
+		this can be used to loop through all defined toolbars. 
 	@seealso:
 */
 

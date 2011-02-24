@@ -5,8 +5,8 @@
 //   File : libkvidialog.cpp
 //   Creation date : Sat Sep 15 2001 01:13:25 by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -24,12 +24,12 @@
 //
 //=============================================================================
 
-#include "kvi_window.h"
-#include "kvi_string.h"
-#include "kvi_parameterlist.h"
-#include "kvi_filedialog.h"
-#include "kvi_imagedialog.h"
-#include "kvi_kvs_callbackobject.h"
+#include "KviWindow.h"
+#include "KviCString.h"
+#include "KviParameterList.h"
+#include "KviFileDialog.h"
+#include "KviImageDialog.h"
+#include "KviKvsCallbackObject.h"
 
 #include <QMessageBox>
 #include <QDialog>

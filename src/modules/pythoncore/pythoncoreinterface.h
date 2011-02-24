@@ -6,7 +6,7 @@
 //   File : pythoncoreinterface.h
 //   Creation date : Fri Nov 07 00:18:31 2008 GMT by Elvio Basello
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2008 Elvio Basello (hellvis69 at netsons dot org)
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -26,8 +26,8 @@
 //=============================================================================
 
 #include "kvi_settings.h"
-#include "kvi_qstring.h"
-#include "kvi_kvs_runtimecontext.h"
+#include "KviQString.h"
+#include "KviKvsRunTimeContext.h"
 
 #include <QStringList>
 

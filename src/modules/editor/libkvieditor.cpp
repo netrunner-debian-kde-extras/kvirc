@@ -3,8 +3,8 @@
 //   File : libkvieditor.cpp
 //   Creation date : Mon Sep 11 2000 12:19:00 by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,19 +22,19 @@
 //
 //=============================================================================
 
-#include "scripteditor.h"
+#include "ScriptEditorImplementation.h"
 
-#include "kvi_module.h"
-#include "kvi_window.h"
+#include "KviModule.h"
+#include "KviWindow.h"
 
 
 KviModule * g_pEditorModulePointer = 0;
 
-KviPointerList<KviScriptEditorImplementation> * g_pScriptEditorWindowList = 0;
+KviPointerList<ScriptEditorImplementation> * g_pScriptEditorWindowList = 0;
 
 static bool editor_module_init(KviModule * m)
 {
-	g_pScriptEditorWindowList = new KviPointerList<KviScriptEditorImplementation>;
+	g_pScriptEditorWindowList = new KviPointerList<ScriptEditorImplementation>;
 	g_pScriptEditorWindowList->setAutoDelete(false);
 
 	g_pEditorModulePointer = m;
@@ -45,8 +45,8 @@ static bool editor_module_init(KviModule * m)
 static bool editor_module_cleanup(KviModule *)
 {
 	/*
-	 * This causes 2 crashes: one in KviApp destructor (closing windows needs
-	 * g_pFrame, that is deleted before this unloading routine) and the second in
+	 * This causes 2 crashes: one in KviApplication destructor (closing windows needs
+	 * g_pMainWindow, that is deleted before this unloading routine) and the second in
 	 * the codetester window (it deletes us in its denstructor, and we tries to back-delete it)
 	 * So it's commented out by now..
 	 */
@@ -56,12 +56,12 @@ static bool editor_module_cleanup(KviModule *)
 		QObject * w = g_pScriptEditorWindowList->first()->parent();;
 		while(w)
 		{
-			//debug("%s %s %i %s",__FILE__,__FUNCTION__,__LINE__,w->className());
+			//qDebug("%s %s %i %s",__FILE__,__FUNCTION__,__LINE__,w->className());
 			if(w->inherits("KviWindow"))
 			{
-			//	debug("%s %s %i",__FILE__,__FUNCTION__,__LINE__);
+			//	qDebug("%s %s %i",__FILE__,__FUNCTION__,__LINE__);
 				//((KviWindow *)w)->close();
-			//	debug("%s %s %i",__FILE__,__FUNCTION__,__LINE__);
+			//	qDebug("%s %s %i",__FILE__,__FUNCTION__,__LINE__);
 				break;
 			}
 		w = w->parent();
@@ -97,10 +97,10 @@ KVIRC_MODULE(
 
 KVIMODULEEXPORTFUNC KviScriptEditor * editor_module_createScriptEditor(QWidget * par)
 {
-	return new KviScriptEditorImplementation(par);
+	return new ScriptEditorImplementation(par);
 }
 
 KVIMODULEEXPORTFUNC void editor_module_destroyScriptEditor(KviScriptEditor * e)
 {
-	delete ((KviScriptEditorImplementation *)e);
+	delete ((ScriptEditorImplementation *)e);
 }

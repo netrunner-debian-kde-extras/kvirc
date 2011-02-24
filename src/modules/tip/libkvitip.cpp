@@ -3,8 +3,8 @@
 //   File : libkvitip.cpp
 //   Creation date : Thu May 10 2001 13:50:11 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -24,12 +24,12 @@
 
 #include "libkvitip.h"
 
-#include "kvi_module.h"
-#include "kvi_locale.h"
-#include "kvi_app.h"
-#include "kvi_iconmanager.h"
-#include "kvi_options.h"
-#include "kvi_fileutils.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+#include "KviApplication.h"
+#include "KviIconManager.h"
+#include "KviOptions.h"
+#include "KviFileUtils.h"
 
 #include <QPushButton>
 #include <QFont>
@@ -37,9 +37,9 @@
 #include <QDesktopWidget>
 #include <QCloseEvent>
 
-KviTipWindow * g_pTipWindow = 0;
+TipWindow * g_pTipWindow = 0;
 
-KviTipFrame::KviTipFrame(QWidget * par)
+TipFrame::TipFrame(QWidget * par)
 : QFrame(par)
 {
 	QString buffer;
@@ -60,11 +60,11 @@ KviTipFrame::KviTipFrame(QWidget * par)
 	setLayout(layout);
 }
 
-KviTipFrame::~KviTipFrame()
+TipFrame::~TipFrame()
 {
 }
 
-void KviTipFrame::setText(const QString &text)
+void TipFrame::setText(const QString &text)
 {
 	QString szText= "<center>";
 	szText += text;
@@ -73,12 +73,12 @@ void KviTipFrame::setText(const QString &text)
 	update();
 }
 
-KviTipWindow::KviTipWindow()
+TipWindow::TipWindow()
 {
 	setObjectName("kvirc_tip_window");
 	m_pConfig = 0;
 
-	m_pTipFrame = new KviTipFrame(this);
+	m_pTipFrame = new TipFrame(this);
 	QPushButton * pb = new QPushButton("<<",this);
 	connect(pb,SIGNAL(clicked()),this,SLOT(prevTip()));
 
@@ -92,7 +92,7 @@ KviTipWindow::KviTipWindow()
 	m_pShowAtStartupCheck = new QCheckBox(__tr2qs("Show at startup"),this);
 	m_pShowAtStartupCheck->setChecked(KVI_OPTION_BOOL(KviOption_boolShowTipAtStartup));
 
-	setWindowIcon(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_IDEA)));
+	setWindowIcon(*(g_pIconManager->getSmallIcon(KviIconManager::Idea)));
 
 	setWindowTitle(__tr2qs("Did you know..."));
 
@@ -108,19 +108,19 @@ KviTipWindow::KviTipWindow()
 
 }
 
-KviTipWindow::~KviTipWindow()
+TipWindow::~TipWindow()
 {
 	KVI_OPTION_BOOL(KviOption_boolShowTipAtStartup) = m_pShowAtStartupCheck->isChecked();
 	if(m_pConfig)closeConfig();
 }
 
-void KviTipWindow::showEvent(QShowEvent *)
+void TipWindow::showEvent(QShowEvent *)
 {
 	QRect rect = g_pApp->desktop()->screenGeometry(g_pApp->desktop()->primaryScreen());
 	move((rect.width() - width())/2,(rect.height() - height())/2);
 }
 
-bool KviTipWindow::openConfig(QString filename,bool bEnsureExists)
+bool TipWindow::openConfig(QString filename,bool bEnsureExists)
 {
 	if(m_pConfig)closeConfig();
 
@@ -128,33 +128,33 @@ bool KviTipWindow::openConfig(QString filename,bool bEnsureExists)
 //	m_szConfigFileName.cutToLast('/');
 
 	QString buffer;
-	g_pApp->getReadOnlyConfigPath(buffer,m_szConfigFileName.toUtf8().data(),KviApp::ConfigPlugins,true);
-	debug("Check path %s and file %s",buffer.toUtf8().data(),m_szConfigFileName.toUtf8().data());
+	g_pApp->getReadOnlyConfigPath(buffer,m_szConfigFileName.toUtf8().data(),KviApplication::ConfigPlugins,true);
+	qDebug("Check path %s and file %s",buffer.toUtf8().data(),m_szConfigFileName.toUtf8().data());
 	if(bEnsureExists)
 	{
 		if(!KviFileUtils::fileExists(buffer))return false;
 	}
 
-	m_pConfig = new KviConfig(buffer,KviConfig::Read);
+	m_pConfig = new KviConfigurationFile(buffer,KviConfigurationFile::Read);
 
 	return true;
 }
 
-void KviTipWindow::closeConfig()
+void TipWindow::closeConfig()
 {
 	QString buffer;
-	g_pApp->getLocalKvircDirectory(buffer,KviApp::ConfigPlugins,m_szConfigFileName);
+	g_pApp->getLocalKvircDirectory(buffer,KviApplication::ConfigPlugins,m_szConfigFileName);
 	m_pConfig->setSavePath(buffer);
 	delete m_pConfig;
 	m_pConfig = 0;
 }
 
-void KviTipWindow::nextTip()
+void TipWindow::nextTip()
 {
 	if(!m_pConfig)
 	{
-		KviStr szLocale = KviLocale::localeName();
-		KviStr szFile;
+		KviCString szLocale = KviLocale::localeName();
+		KviCString szFile;
 		szFile.sprintf("libkvitip_%s.kvc",szLocale.ptr());
 		if(!openConfig(szFile.ptr(),true))
 		{
@@ -175,7 +175,7 @@ void KviTipWindow::nextTip()
 	uCurTip++;
 	if(uCurTip >= uNumTips)uCurTip = 0;
 
-	KviStr tmp(KviStr::Format,"%u",uCurTip);
+	KviCString tmp(KviCString::Format,"%u",uCurTip);
 	QString szTip = m_pConfig->readEntry(tmp.ptr(),__tr2qs("<b>Can't find any tip... :(</b>"));
 
 	//qDebug("REDECODED=%s",szTip.toUtf8().data());
@@ -185,12 +185,12 @@ void KviTipWindow::nextTip()
 	m_pTipFrame->setText(szTip);
 }
 
-void KviTipWindow::prevTip()
+void TipWindow::prevTip()
 {
 	if(!m_pConfig)
 	{
-		KviStr szLocale = KviLocale::localeName();
-		KviStr szFile;
+		KviCString szLocale = KviLocale::localeName();
+		KviCString szFile;
 		szFile.sprintf("libkvitip_%s.kvc",szLocale.ptr());
 		if(!openConfig(szFile.ptr(),true))
 		{
@@ -212,7 +212,7 @@ void KviTipWindow::prevTip()
 	if(uCurTip == 0)uCurTip = uNumTips-1;
 	else uCurTip--;
 
-	KviStr tmp(KviStr::Format,"%u",uCurTip);
+	KviCString tmp(KviCString::Format,"%u",uCurTip);
 	QString szTip = m_pConfig->readEntry(tmp.ptr(),__tr2qs("<b>Can't find any tip... :(</b>"));
 
 	//qDebug("REDECODED=%s",szTip.toUtf8().data());
@@ -222,7 +222,7 @@ void KviTipWindow::prevTip()
 	m_pTipFrame->setText(szTip);
 }
 
-void KviTipWindow::closeEvent(QCloseEvent *e)
+void TipWindow::closeEvent(QCloseEvent *e)
 {
 	e->ignore();
 	delete this;
@@ -241,7 +241,7 @@ void KviTipWindow::closeEvent(QCloseEvent *e)
 		tip.open [tip_file_name:string]
 	@description:
 		Opens the "did you know..." tip window.<br>
-		If <tip_file_name> is specified , that tip is used instead of
+		If <tip_file_name> is specified, that tip is used instead of
 		the default tips provided with kvirc.<br>
 		<tip_file_name> must be a file name with no path and must refer to a
 		standard KVIrc configuration file found in the global or local
@@ -257,7 +257,7 @@ static bool tip_kvs_cmd_open(KviKvsModuleCommandCall * c)
 		KVSM_PARAMETER("filename",KVS_PT_STRING,KVS_PF_OPTIONAL,szTipfilename)
 	KVSM_PARAMETERS_END(c)
 
-	if(!g_pTipWindow)g_pTipWindow = new KviTipWindow();
+	if(!g_pTipWindow)g_pTipWindow = new TipWindow();
 	if (!szTipfilename.isEmpty())
 		g_pTipWindow->openConfig(szTipfilename);
 	g_pTipWindow->nextTip();

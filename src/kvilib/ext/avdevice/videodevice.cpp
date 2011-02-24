@@ -3,7 +3,7 @@
 //   File : videodevice.cpp
 //   Creation date : Tue Nov 10 18:08:09 2009 GMT by Fabio Bas
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2009 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -54,7 +54,7 @@
 #include "bayer.h"
 #include "sonix_compress.h"
 
-#include "kvi_locale.h"
+#include "KviLocale.h"
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
 
@@ -65,6 +65,9 @@ namespace AV {
 VideoDevice::VideoDevice()
 	: descriptor(-1), m_streambuffers(0), m_current_input(0)
 {
+	descriptor = -1;
+	m_streambuffers  = 0;
+	m_current_input = 0;
 }
 
 
@@ -78,7 +81,7 @@ VideoDevice::~VideoDevice()
     \brief Sets up the supported video-controls for the current input
     
     Determines which video-controls are supported for the current input,
-    reads all needed informations about them and stores the data to the local members
+    reads all needed information about them and stores the data to the local members
  */
 void VideoDevice::setupControls()
 {
@@ -141,7 +144,9 @@ void VideoDevice::setupControls()
 			}
 			break;
 #endif
-		VIDEODEV_DRIVER_V4L:
+#ifdef COMPILE_V4L1_CODE
+
+		case VIDEODEV_DRIVER_V4L:
 			{
 				NumericVideoControl numCtrl;
 				numCtrl.value_min = 0;
@@ -165,8 +170,9 @@ void VideoDevice::setupControls()
 				m_numericCtrls.push_back( numCtrl );
 			}
 			break;
+#endif //COMPILE_V4L1_CODE
 #endif
-		VIDEODEV_DRIVER_NONE:
+		case VIDEODEV_DRIVER_NONE:
 		default:
 			break;
 	}
@@ -332,9 +338,9 @@ int VideoDevice::setFileName(QString filename)
 }
 
 /*!
-    \fn QString VideoDevice::fileName() const
+    \fn QString VideoDevice::fileName()
  */
-QString VideoDevice::fileName() const
+QString VideoDevice::fileName()
 {
 	return full_filename;
 }
@@ -353,9 +359,9 @@ int VideoDevice::open()
 		return EXIT_SUCCESS;
 	}
 #ifdef HAVE_LIBV4L2
-	descriptor = ::v4l2_open (QFile::encodeName(full_filename), O_RDWR, 0);
+	descriptor = ::v4l2_open (QFile::encodeName(full_filename), O_RDWR | O_NONBLOCK, 0);
 #else
-	descriptor = ::open (QFile::encodeName(full_filename), O_RDWR, 0);
+	descriptor = ::open (QFile::encodeName(full_filename), O_RDWR | O_NONBLOCK, 0);
 #endif
 	if(isOpen())
 	{
@@ -510,6 +516,7 @@ detectSignalStandards();
 
 #endif
 
+#ifdef COMPILE_V4L1_CODE
 		CLEAR(V4L_capabilities);
 
 		if(m_driver==VIDEODEV_DRIVER_NONE)
@@ -573,6 +580,7 @@ detectSignalStandards();
 
 			}
 		}
+#endif //COMPILE_V4L1_CODE
 #endif
 		m_name=m_model; // Take care about changing the name to be different from the model itself...
 
@@ -702,6 +710,7 @@ int VideoDevice::initDevice()
 			}
 			break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 		case VIDEODEV_DRIVER_V4L:
 			m_videoread=true;
 			m_io_method=IO_METHOD_READ;
@@ -712,6 +721,7 @@ int VideoDevice::initDevice()
 				qDebug() << "    Streaming interface";
 			}
 			break;
+#endif //COMPILE_V4L1_CODE
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -755,32 +765,32 @@ int VideoDevice::inputs()
 }
 
 
-int VideoDevice::width() const
+int VideoDevice::width()
 {
 	return currentwidth;
 }
 
-int VideoDevice::minWidth() const
+int VideoDevice::minWidth()
 {
 	return minwidth;
 }
 
-int VideoDevice::maxWidth() const
+int VideoDevice::maxWidth()
 {
 	return maxwidth;
 }
 
-int VideoDevice::height() const
+int VideoDevice::height()
 {
 	return currentheight;
 }
 
-int VideoDevice::minHeight() const
+int VideoDevice::minHeight()
 {
 	return minheight;
 }
 
-int VideoDevice::maxHeight() const
+int VideoDevice::maxHeight()
 {
 	return maxheight;
 }
@@ -886,6 +896,7 @@ qDebug() << "VIDIOC_S_FMT worked (" << errno << ").Returned width: " << pixelFor
 				}
 				break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 			case VIDEODEV_DRIVER_V4L:
 				{
 					struct video_window V4L_videowindow;
@@ -912,6 +923,7 @@ qDebug() << "------------- width: " << V4L_videowindow.width << " Height: " << V
 
 				}
 				break;
+#endif //COMPILE_V4L1_CODE
 #endif
 			case VIDEODEV_DRIVER_NONE:
 			default:
@@ -984,6 +996,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 			}
 			break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 		case VIDEODEV_DRIVER_V4L:
 			{
 			struct video_picture V4L_picture;
@@ -1011,6 +1024,7 @@ pixel_format VideoDevice::setPixelFormat(pixel_format newformat)
 
 			}
 			break;
+#endif //COMPILE_V4L1_CODE
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -1061,6 +1075,7 @@ int VideoDevice::selectInput(int newinput)
 				setupControls();
 				break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 			case VIDEODEV_DRIVER_V4L:
 				struct video_channel V4L_input;
 				V4L_input.channel=newinput;
@@ -1072,6 +1087,7 @@ int VideoDevice::selectInput(int newinput)
 				}
 				setupControls();
 				break;
+#endif //COMPILE_V4L1_CODE
 #endif
 			case VIDEODEV_DRIVER_NONE:
 			default:
@@ -1186,15 +1202,13 @@ int VideoDevice::getFrame()
 #endif
 				if (-1 == bytesread) // must verify this point with ov511 driver.
 				{
-					qDebug() << "IO_METHOD_READ failed.";
-					switch (errno)
+					if (errno == EAGAIN)
 					{
-						case EAGAIN:
-							return EXIT_FAILURE;
-						case EIO: /* Could ignore EIO, see spec. fall through */
-						default:
-						return errnoReturn ("read");
+//						qDebug() << "No new frame available.";
+						return EXIT_FAILURE;
 					}
+					else
+						return errnoReturn ("read");
 				}
 				if((int)m_currentbuffer.data.size() < bytesread)
 				{
@@ -1209,18 +1223,13 @@ int VideoDevice::getFrame()
 				v4l2buffer.memory = V4L2_MEMORY_MMAP;
 				if (-1 == xioctl (VIDIOC_DQBUF, &v4l2buffer))
 				{
-					qDebug() << full_filename << " MMAPed getFrame failed.";
-					switch (errno)
+					if (errno == EAGAIN)
 					{
-						case EAGAIN:
-						{
-							qDebug() << full_filename << " MMAPed getFrame failed: EAGAIN. Pointer: ";
-							return EXIT_FAILURE;
-						}
-						case EIO: /* Could ignore EIO, see spec. fall through */
-						default:
-							return errnoReturn ("VIDIOC_DQBUF");
+//						qDebug() << "No new frame available.";
+						return EXIT_FAILURE;
 					}
+					else
+						return errnoReturn ("VIDIOC_DQBUF");
 				}
 /*				if (v4l2buffer.index < m_streambuffers)
 					return EXIT_FAILURE;*/ //it was an assert()
@@ -1230,7 +1239,7 @@ int VideoDevice::getFrame()
 					(uint) m_rawbuffers.size() <= v4l2buffer.index)
 					return EXIT_FAILURE;
 
-				if (m_rawbuffers[v4l2buffer.index].length < m_currentbuffer.data.size())
+				if (m_rawbuffers[v4l2buffer.index].length < (uint)m_currentbuffer.data.size())
 				{
 					qDebug() <<  "Buffer size mismatch: expecting raw buffer length to be" << m_currentbuffer.data.size() << "but it was" << m_rawbuffers[v4l2buffer.index].length;
 					return EXIT_FAILURE;
@@ -1252,14 +1261,13 @@ int VideoDevice::getFrame()
 					v4l2buffer.memory = V4L2_MEMORY_USERPTR;
 					if (-1 == xioctl (VIDIOC_DQBUF, &v4l2buffer))
 					{
-						switch (errno)
+						if (errno == EAGAIN)
 						{
-							case EAGAIN:
-								return EXIT_FAILURE;
-							case EIO: /* Could ignore EIO, see spec. fall through */
-							default:
-								return errnoReturn ("VIDIOC_DQBUF");
+//							qDebug() << "No new frame available.";
+							return EXIT_FAILURE;
 						}
+						else
+							return errnoReturn ("VIDIOC_DQBUF");
 					}
 					if ((unsigned int) m_rawbuffers.size() < m_streambuffers)
 						return EXIT_FAILURE;
@@ -1706,7 +1714,7 @@ int VideoDevice::close()
     \return A list of all supported numeric controls for the current input
     \brief Returns the supported numeric controls for the current input
  */
-QList<NumericVideoControl> VideoDevice::getSupportedNumericControls() const
+QList<NumericVideoControl> VideoDevice::getSupportedNumericControls()
 {
 	return m_numericCtrls;
 }
@@ -1716,7 +1724,7 @@ QList<NumericVideoControl> VideoDevice::getSupportedNumericControls() const
     \return A list of all supported boolean controls for the current input
     \brief Returns the supported boolean controls for the current input
  */
-QList<BooleanVideoControl> VideoDevice::getSupportedBooleanControls() const
+QList<BooleanVideoControl> VideoDevice::getSupportedBooleanControls()
 {
 	return m_booleanCtrls;
 }
@@ -1726,7 +1734,7 @@ QList<BooleanVideoControl> VideoDevice::getSupportedBooleanControls() const
     \return A list of all supported menu-controls for the current input
     \brief Returns the supported menu-controls for the current input
  */
-QList<MenuVideoControl> VideoDevice::getSupportedMenuControls() const
+QList<MenuVideoControl> VideoDevice::getSupportedMenuControls()
 {
 	return m_menuCtrls;
 }
@@ -1736,7 +1744,7 @@ QList<MenuVideoControl> VideoDevice::getSupportedMenuControls() const
     \return A list of all supported action-controls for the current input
     \brief Returns the supported action-controls for the current input
  */
-QList<ActionVideoControl> VideoDevice::getSupportedActionControls() const
+QList<ActionVideoControl> VideoDevice::getSupportedActionControls()
 {
 	return m_actionCtrls;
 }
@@ -1839,6 +1847,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 			}
 			break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 		case VIDEODEV_DRIVER_V4L:
 			struct video_picture V4L_picture;
 			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
@@ -1868,6 +1877,7 @@ int VideoDevice::getControlValue(quint32 ctrl_id, qint32 * value)
 			}
 			qDebug() << "Reported current value is" << *value << ".";
 			return EXIT_SUCCESS;
+#endif //COMPILE_V4L1_CODE
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -1985,6 +1995,7 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 			}
 			break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 		case VIDEODEV_DRIVER_V4L:
 			struct video_picture V4L_picture;
 			if(-1 == xioctl(VIDIOCGPICT, &V4L_picture))
@@ -2029,6 +2040,7 @@ int VideoDevice::setControlValue(quint32 ctrl_id, qint32 value)
 				return EXIT_FAILURE;
 			}
 			return EXIT_SUCCESS;
+#endif //COMPILE_V4L1_CODE
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2092,6 +2104,7 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 			}
 			break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 		case VIDEODEV_DRIVER_V4L:
 			switch(palette)
 			{
@@ -2109,6 +2122,7 @@ pixel_format VideoDevice::pixelFormatForPalette( int palette )
 				case VIDEO_PALETTE_YUV422P	: return PIXELFORMAT_YUV422P;	break;
 			}
 			break;
+#endif //COMPILE_V4L1_CODE
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2172,6 +2186,7 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 			}
 			break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 		case VIDEODEV_DRIVER_V4L:
 			switch(pixelformat)
 			{
@@ -2216,6 +2231,7 @@ int VideoDevice::pixelFormatCode(pixel_format pixelformat)
 				case PIXELFORMAT_YYUV	: return 0;			break;
 			}
 			break;
+#endif //COMPILE_V4L1_CODE
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2378,6 +2394,7 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 			}
 			break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 		case VIDEODEV_DRIVER_V4L:
 			switch(pixelformat)
 			{
@@ -2394,6 +2411,7 @@ QString VideoDevice::pixelFormatName(int pixelformat)
 				case VIDEO_PALETTE_YUV422P	: returnvalue = pixelFormatName(PIXELFORMAT_YUV422P);	break;
 			}
 			break;
+#endif //COMPILE_V4L1_CODE
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2430,6 +2448,7 @@ int VideoDevice::detectPixelFormats()
 			}
 //			break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 		case VIDEODEV_DRIVER_V4L:
 // TODO: THis thing can be used to detec what pixel formats are supported in a API-independent way, but V4L2 has VIDIOC_ENUM_PIXFMT.
 // The correct thing to do is to isolate these calls and do a proper implementation for V4L and another for V4L2 when this thing will be migrated to a plugin architecture.
@@ -2473,6 +2492,7 @@ int VideoDevice::detectPixelFormats()
 			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_WNVA))	{ qDebug() << pixelFormatName(PIXELFORMAT_WNVA); }
 			if(PIXELFORMAT_NONE != setPixelFormat(PIXELFORMAT_YYUV))	{ qDebug() << pixelFormatName(PIXELFORMAT_YYUV); }
 			break;
+#endif //COMPILE_V4L1_CODE
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2542,6 +2562,7 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 			}
 			break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 		case VIDEODEV_DRIVER_V4L:
 			switch(standard)
 			{
@@ -2596,6 +2617,7 @@ __u64 VideoDevice::signalStandardCode(signal_standard standard)
 				case STANDARD_ALL	: return VIDEO_MODE_AUTO;	break;
 			}
 			break;
+#endif //COMPILE_V4L1_CODE
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2723,6 +2745,7 @@ QString VideoDevice::signalStandardName(int standard)
 			}
 			break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 		case VIDEODEV_DRIVER_V4L:
 			switch(standard)
 			{
@@ -2736,6 +2759,7 @@ QString VideoDevice::signalStandardName(int standard)
 				case VIDEO_MODE_NTSC_JP	: returnvalue = signalStandardName(STANDARD_NTSC_M_JP);	break;	// Undocumented value found to be compatible with V4L bttv driver
 			}
 			break;
+#endif //COMPILE_V4L1_CODE
 #endif
 		case VIDEODEV_DRIVER_NONE:
 		default:
@@ -2801,8 +2825,10 @@ int VideoDevice::detectSignalStandards()
 
 				break;
 #endif
+#ifdef COMPILE_V4L1_CODE
 			case VIDEODEV_DRIVER_V4L:
 				break;
+#endif //COMPILE_V4L1_CODE
 #endif
 			case VIDEODEV_DRIVER_NONE:
 			default:
@@ -2981,37 +3007,37 @@ int VideoDevice::initUserptr()
 	return EXIT_FAILURE;
 }
 
-bool VideoDevice::canCapture() const
+bool VideoDevice::canCapture()
 {
 	return m_videocapture;
 }
 
-bool VideoDevice::canChromakey() const
+bool VideoDevice::canChromakey()
 {
 	return m_videochromakey;
 }
 
-bool VideoDevice::canScale() const
+bool VideoDevice::canScale()
 {
 	return m_videoscale;
 }
 
-bool VideoDevice::canOverlay() const
+bool VideoDevice::canOverlay()
 {
 	return m_videooverlay;
 }
 
-bool VideoDevice::canRead() const
+bool VideoDevice::canRead()
 {
 	return m_videoread;
 }
 
-bool VideoDevice::canAsyncIO() const
+bool VideoDevice::canAsyncIO()
 {
 	return m_videoasyncio;
 }
 
-bool VideoDevice::canStream() const
+bool VideoDevice::canStream()
 {
 	return m_videostream;
 }

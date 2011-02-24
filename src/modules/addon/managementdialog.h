@@ -6,7 +6,7 @@
 //   Creation date : Fri 08 Apr 2005 14:54:56 by Szymon Stefanek
 //
 //   This file is part of the KVIrc IRC Client distribution
-//   Copyright (C) 2005-2008 Szymon Stefanek <pragma at kvirc dot net>
+//   Copyright (C) 2005-2010 Szymon Stefanek <pragma at kvirc dot net>
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -25,11 +25,10 @@
 //=============================================================================
 
 #include "kvi_settings.h"
-#include "kvi_tal_listwidget.h"
+#include "KviTalListWidget.h"
 
 #include <QWidget>
 #include <QLabel>
-#include <QDialog>
 #include <QColor>
 #include <QTextDocument>
 #include <QListWidget>
@@ -39,11 +38,11 @@
 class QPixmap;
 class KviKvsScriptAddon;
 
-class KviScriptAddonListViewItem : public KviTalListWidgetItem
+class AddonListViewItem : public KviTalListWidgetItem
 {
 public:
-	KviScriptAddonListViewItem(KviTalListWidget * v,KviKvsScriptAddon * a);
-	~KviScriptAddonListViewItem();
+	AddonListViewItem(KviTalListWidget * v,KviKvsScriptAddon * a);
+	~AddonListViewItem();
 protected:
 	KviKvsScriptAddon * m_pAddon;
 	QTextDocument     * m_pText;
@@ -55,23 +54,23 @@ public:
 };
 
 
-class KviScriptManagementDialog : public QDialog
+class AddonManagementDialog : public QWidget
 {
 	Q_OBJECT
 protected:
-	KviScriptManagementDialog(QWidget * p);
+	AddonManagementDialog(QWidget * p);
 public:
-	~KviScriptManagementDialog();
+	~AddonManagementDialog();
 protected:
 	KviTalListWidget                 * m_pListWidget;
-	static KviScriptManagementDialog * m_pInstance;
+	static AddonManagementDialog * m_pInstance;
 	QToolButton                      * m_pConfigureButton;
 	QToolButton                      * m_pHelpButton;
 	QToolButton                      * m_pPackButton;
 	QToolButton                      * m_pUninstallButton;
 public:
-	static KviScriptManagementDialog * instance(){ return m_pInstance; };
-	static void display();
+	static AddonManagementDialog * instance(){ return m_pInstance; };
+	static void display(bool bTopLevel);
 	static void cleanup();
 protected:
 	void fillListView();

@@ -3,8 +3,8 @@
 //   File : libkvisharedfile.cpp (orig : libkvioffer.cpp)
 //   Creation date : Wed Sep 27 2000 20:59:02 CEST by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,16 +22,16 @@
 //
 //=============================================================================
 
-#include "kvi_module.h"
-#include "kvi_sharedfiles.h"
-#include "kvi_ircmask.h"
-#include "kvi_fileutils.h"
-#include "kvi_locale.h"
+#include "KviModule.h"
+#include "KviSharedFilesManager.h"
+#include "KviIrcMask.h"
+#include "KviFileUtils.h"
+#include "KviLocale.h"
 #include "kvi_out.h"
-#include "kvi_mirccntrl.h"
-#include "kvi_window.h"
-#include "kvi_frame.h"
-#include "kvi_pointerhashtable.h"
+#include "KviControlCodes.h"
+#include "KviWindow.h"
+#include "KviMainWindow.h"
+#include "KviPointerHashTable.h"
 
 #include <time.h>
 
@@ -59,7 +59,7 @@ extern KVIRC_API KviSharedFilesManager * g_pSharedFilesManager;
 	@description:
 		Adds <filename> to the list of the active shared files.
 		The users will be able to request the file via [cmd]dcc.get[/cmd].
-		If [user_mask] is specified , the access to the file is limited
+		If [user_mask] is specified, the access to the file is limited
 		to the users that match this mask, otherwise the mask will
 		be automatically set to '*!*@*'.[br]
 		If the 't' switch is used, the sharedfile will be removed after
@@ -217,7 +217,7 @@ static bool sharedfile_kvs_cmd_list(KviKvsModuleCommandCall * c)
 		for(KviSharedFile * o = l->first();o;o = l->next())
 		{
 			c->window()->output(KVI_OUT_NONE,"%c%d. %s",
-				KVI_TEXT_BOLD,idx + 1,it.currentKey().toUtf8().data());
+				KviControlCodes::Bold,idx + 1,it.currentKey().toUtf8().data());
 			c->window()->output(KVI_OUT_NONE,__tr2qs_ctx("    File: %s (%u bytes)","sharedfileswindow"),
 				o->absFilePath().toUtf8().data(),o->fileSize());
 			c->window()->output(KVI_OUT_NONE,__tr2qs_ctx("    Mask: %s","sharedfileswindow"),

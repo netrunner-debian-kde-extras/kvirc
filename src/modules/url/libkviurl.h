@@ -24,13 +24,13 @@
 //
 //=============================================================================
 
-#include "kvi_locale.h"
-#include "kvi_config.h"
-#include "kvi_irctoolbar.h"
-#include "kvi_window.h"
-#include "kvi_tal_menubar.h"
-#include "kvi_mextoolbar.h"
-#include "kvi_kvs_action.h"
+#include "KviLocale.h"
+#include "KviConfigurationFile.h"
+#include "KviIrcToolBar.h"
+#include "KviWindow.h"
+#include "KviTalMenuBar.h"
+#include "KviMexToolBar.h"
+#include "KviKvsAction.h"
 #include <QTreeWidget>
 
 #include <QDialog>
@@ -53,12 +53,12 @@ typedef struct _KviUrl
 	QString timestamp;
 } KviUrl;
 
-class KviUrlDialogTreeWidget : public QTreeWidget
+class UrlDialogTreeWidget : public QTreeWidget
 {
 	Q_OBJECT
 public:
-	KviUrlDialogTreeWidget(QWidget*);
-	~KviUrlDialogTreeWidget(){};
+	UrlDialogTreeWidget(QWidget*);
+	~UrlDialogTreeWidget(){};
 protected:
 	void mousePressEvent (QMouseEvent *e);
 	void paintEvent(QPaintEvent * event);
@@ -81,7 +81,7 @@ protected:
 	QPixmap *myIconPtr();
 	void resizeEvent(QResizeEvent *);
 public:
-	KviUrlDialogTreeWidget *m_pUrlList;
+	UrlDialogTreeWidget *m_pUrlList;
 	void addUrl(QString url, QString window, QString count, QString timestamp);
 //	void saveProperties();
 protected slots:
@@ -105,7 +105,7 @@ class BanFrame : public QFrame
 public:
 	BanFrame(QWidget *parent=0, const char *name=0, bool banEnable = false);
 	~BanFrame();
-	void saveBans(KviConfig *cfg);
+	void saveBans(KviConfigurationFile *cfg);
 private:
 	QCheckBox     *m_pEnable;
 	QListWidget   *m_pBanList;

@@ -8,9 +8,10 @@ defpopup(highlight)
 {
 	prologue
 	{
-		if($0!=""){
+		if($0!="")
+		{
 			%:regName = $reguser.match($mask($0))
-		        %:beingHl = $reguser.property(%:regName,highlight)
+			%:beingHl = $reguser.property(%:regName,highlight)
 			%:beingHlTmp = $tmphighlight.isNickHighLighted($0)
 		}
 	}
@@ -73,7 +74,8 @@ defpopup(channelhighlight)
 {
 	prologue
 	{
-		if($window!="" && !$chan.isDead()){
+		if($window!="" && !$chan.isDead())
+		{
 			%:beingHlTmp = $tmphighlight.isChannelHighLighted($window)
 		}
 	}
@@ -99,12 +101,12 @@ defpopup(ignore)
 		if(%:regName)
 		{
 			%:inIgnoreList = $reguser.isIgnoreEnabled(%:regName);
-			if(%:inIgnoreList) %:ignLabelText << $tr("is being ignored")
-			else %:ignLabelText << $tr("is not being ignored")
+			if(%:inIgnoreList) %:ignLabelText << $tr("is being ignored","defscript")
+			else %:ignLabelText << $tr("is not being ignored","defscript")
 
 			%:ignLabelText << "</p>"
 		} else {
-			%:ignLabelText << $tr("is not being ignored")"</p>"
+			%:ignLabelText << $tr("is not being ignored","defscript")"</p>"
 		}
 	}
 
@@ -334,7 +336,7 @@ defpopup(registration)
 			if(%:defAvatar)%:labelText << "<br><b>$0</b>" $tr("has a default avatar","defscript")
 			%:labelText << "</p>"
 		} else {
-			%:labelText << $tr("is not registered")"</p>"
+			%:labelText << $tr("is not registered","defscript")"</p>"
 		}
 	}
 
@@ -347,7 +349,7 @@ defpopup(registration)
 
 	popup($tr("Quick Registration","defscript")) (!%:regName)
 	{
-		item($tr("Register as") $0 "("$mask($0,11)")") ("$reguser.exactMatch($mask($0,11))" == "")
+		item($tr("Register as","defscript") $0 "("$mask($0,11)")") ("$reguser.exactMatch($mask($0,11))" == "")
 		{
 			reguser.add -f -q $0 $mask($0,11)
 		}
@@ -484,7 +486,8 @@ defpopup(channel)
 		}
 	}
 
-	item("/WHOIS" %:visible "("$tr("idle time","defscript")")",75,whois_item)
+
+	item($str.printf($tr("/WHOIS ?s (idle time)","defscript"),%:visible),75,whois_item)
 	{
 		foreach(%i,$str.split(",",$0))
 			whois %i %i
@@ -494,17 +497,17 @@ defpopup(channel)
 
 	popup($tr("&Information","defscript"),49,"information_popup")
 	{
-		item("/WHOIS" %:visible,75,"whois_item")
+		item($str.printf($tr("/WHOIS ?s","defscript"),%:visible),75,"whois_item")
 		{
 			whois $0
 		}
 
-		item(/WHOWAS %:visible,92)
+		item($str.printf($tr("/WHOWAS ?s","defscript"),%:visible),92)
 		{
 			whowas $0
 		}
 
-		item(/WHO %:visible,75)
+		item($str.printf($tr("/WHO ?s","defscript"),%:visible),75)
 		{
 			who $0
 		}
@@ -623,7 +626,7 @@ defpopup(channel)
 
 		item($tr("Configure ban mask...","defscript"),20)
 		{
-			options.edit KviChannelAdvancedOptionsWidget
+			options.edit OptionsWidget_channelAdvanced
 		}
 	}
 
@@ -658,9 +661,9 @@ defpopup(channel)
 #
 defpopup(channelpopup)
 {
-	item($tr("&Join","defscript") $0,145)
+	item($tr("&Hop","defscript") $0,145)
 	{
-		hop $0
+		hop $0;
 	}
 
 	item($tr("&Part","defscript") $0,40)
@@ -1108,7 +1111,8 @@ defpopup(querytextview)
 		}
 	}
 
-	item(/WHOIS $0 "("$tr("idle time","defscript")")",75) (!%:multiple)
+		
+	item($str.printf($tr("/WHOIS ?s (idle time)","defscript"),$0),75) (!%:multiple)
 	{
 		whois $0 $0
 	}
@@ -1117,17 +1121,17 @@ defpopup(querytextview)
 
 	popup($tr("&Information","defscript"),49)
 	{
-		item(/WHOIS $0,75)
+		item($str.printf($tr("/WHOIS ?s","defscript"),$0),75)
 		{
 			whois $0
 		}
 
-		item(/WHOWAS $0,92)
+		item($str.printf($tr("/WHOWAS ?s","defscript"),$0),92)
 		{
 			whowas $0
 		}
 
-		item(/WHO $0,75)
+		item($str.printf($tr("/WHO ?s","defscript"),$0),75)
 		{
 			who $0
 		}
@@ -1181,7 +1185,8 @@ defpopup(logging)
 
 		# If this window is being logged actually , $log.file will be non empty
 		# and pointing to the log file actually open.
-		%:logfile = $file.extractfilename($log.file)
+		if($isSet($log.file))
+			%:logfile = $file.extractfilename($log.file)
 	}
 
 	label($tr("Logging to","defscript"):<br><b>%:logfile</b>) ("%:logfile" != "")
@@ -1200,7 +1205,7 @@ defpopup(logging)
 
 	label($tr("Not Logging","defscript")) (!%:logfile)
 
-	item($tr("Log To Default File,"defscript""),119) (!%:logfile)
+	item($tr("Log To Default File","defscript"),119) (!%:logfile)
 	{
 		log.start
 	}
@@ -1248,7 +1253,7 @@ defpopup(defaulttextview)
 		}
 	}
 
-	item(/WHOIS $0 "("$tr("idle time","defscript")")",75) (!%:multiple)
+	item($str.printf($tr("/WHOIS ?s (idle time)","defscript"),$0),75) (!%:multiple)
 	{
 		whois $0 $0
 	}
@@ -1257,17 +1262,17 @@ defpopup(defaulttextview)
 
 	popup($tr("&Information","defscript"),49)
 	{
-		item(/WHOIS $0,75)
+		item($str.printf($tr("/WHOIS ?s","defscript"),$0),75)
 		{
 			whois $0
 		}
 
-		item(/WHOWAS $0,92)
+		item($str.printf($tr("/WHOWAS ?s","defscript"),$0),92)
 		{
 			whowas $0
 		}
 
-		item(/WHO $0,75)
+		item($str.printf($tr("/WHO ?s","defscript"),$0),75)
 		{
 			who $0
 		}
@@ -1322,35 +1327,175 @@ file.addimagepath %mypath/pics/
 #
 
 
-#
-# A default popup for the middle click in a text view
-# This should manage logging , buffer saving and other
-# stuff common to ALL windows
-#
+# window popup
 
 defpopup(windowpopup)
 {
+	prologue
+	{
+		%:bIsConnectedConsole = $(($window.type == "console") && ($context.state == "connected"));
+
+		if($window.type == "channel")
+		{
+			%:bIsChannel = $true;
+			%:szNetwork = $context.serverdbNetworkName()
+			%:szServer = $context.serverdbServerHostName()
+			%:bIsAutoJoinedOnNetwork = $false;
+			%:bIsAutoJoinedOnServer = $false;
+	
+			if($serverdb.networkExists(%:szNetwork))
+			{
+				foreach(%szChanAndPass,$serverdb.networkJoinChannels(%:szNetwork))
+				{
+					%aChanAndPass = $str.split(":",%szChanAndPass)
+				
+					if(%aChanAndPass[0] == $chan.name)
+					{
+						%:bIsAutoJoinedOnNetwork = $true;
+						break;
+					}
+				}
+				if($serverdb.serverExists(%:szServer,%:szNetwork))
+				{
+					foreach(%szChanAndPass,$serverdb.serverJoinChannels(%:szNetwork,%:szServer))
+					{
+						%aChanAndPass = $str.split(":",%szChanAndPass)
+				
+						if(%aChanAndPass[0] == $chan.name)
+						{
+							%:bIsAutoJoinedOnServer = $true;
+							break;
+						}
+					}
+				} else {
+					%:szServer = ""
+				}
+			} else {
+				%:szNetwork = ""
+			}
+			%:bIsAutoJoined = $(%:bIsAutoJoinedOnNetwork || %:bIsAutoJoinedOnServer)
+		} else {
+			%:bIsChannel = $false;
+		}
+	}
+
+
+	item($tr("Dock","defscript"), 6) (!$window.isDocked()) window.dock
+	item($tr("Undock","defscript"), 7) ($window.isDocked()) window.undock
+
+	separator
+
+	item($tr("Minimize","defscript"), 3) (!$window.isMinimized()) window.minimize
+	item($tr("Maximize","defscript"), 2) (!$window.isMaximized()) window.maximize
+	item($tr("Restore","defscript"), 4) ($window.isMinimized() || $window.isMaximized()) window.restore
+
+	separator
+
+	item($tr("Close","defscript"), 1) window.close
+
+	separator
+
 	extpopup(Logging,logging,119)
 
-#	popup(Buffer)
-#	{
-#		item("Save to file...")window.savebuffer
-#		item("Clear")window.clear
-#		item("Find...")window.findtext
-#	}
-#	popup(View)
-#	{
-#		item("Show images")($window.images == 0)window.images 1
-#		item("Enable timestamps")($window.timestamp == 0)window.timestamp 1
-#		item("Disable timestamps")($window.timestam == 1)window.timestamp 0
-#		item("Set font...")$window.setfont
-#		item("Set background...")$window.setbackground
-#	}
-#	popup(Mdi)
-#	{
-#		item("Minimize")window.minimize
-#		item("Maximize")window.maximize
-#	}
+	item($tr("Set window props as default","defscript"), 10) window.savePropertiesAsDefault
+
+	# channel-specific items
+
+	separator(%:bIsChannel)
+
+	popup($tr("Automatically Join Channel","defscript"),$icon("join"))(%:bIsChannel && (!%:bIsAutoJoined) && ((%:szServer != "") || (%:szNetwork != "")))
+	{
+
+		item($str.printf($tr("When Connecting to Server '?s'","defscript"),%:szServer),$icon("server"))(%:szServer != "")
+		{
+			%aChans = $serverdb.serverJoinChannels(%:szNetwork,%:szServer)
+			%aChans <+ $chan.name
+			serverdb.setServerJoinChannels %:szNetwork %:szServer %aChans
+		}
+
+		item($str.printf($tr("When Connecting to Network '?s'","defscript"),%:szNetwork),$icon("world"))(%:szNetwork != "")
+		{
+			%aChans = $serverdb.networkJoinChannels(%:szNetwork)
+			%aChans <+ $chan.name
+			serverdb.setNetworkJoinChannels %:szNetwork %aChans
+		}
+	}
+
+	item($str.printf($tr("Stop Auto-Joining Channel on Server '?s'","defscript"),%:szServer),$icon("part"))(%:bIsChannel && %:bIsAutoJoinedOnServer)
+	{
+		%aChans = $array()
+		foreach(%szChanAndPass,$serverdb.serverJoinChannels(%:szNetwork,%:szServer))
+		{
+			%aChanAndPass = $str.split(":",%szChanAndPass)
+	
+			if(%aChanAndPass[0] != $chan.name)
+				%aChans <+ %szChanAndPass;
+		}
+		serverdb.setServerJoinChannels %:szNetwork %:szServer %aChans
+	}
+
+	item($str.printf($tr("Stop Auto-Joining Channel on Network '?s'","defscript"),%:szNetwork),$icon("part"))(%:bIsChannel && %:bIsAutoJoinedOnNetwork)
+	{
+		%aChans = $array()
+		foreach(%szChanAndPass,$serverdb.networkJoinChannels(%:szNetwork))
+		{
+			%aChanAndPass = $str.split(":",%szChanAndPass)
+	
+			if(%aChanAndPass[0] != $chan.name)
+				%aChans <+ %szChanAndPass;
+		}
+		serverdb.setNetworkJoinChannels %:szNetwork %aChans
+	}
+
+	# console-specific items
+
+	separator(%:bIsConnectedConsole)
+
+	item($tr("Part All Channels","defscript"), 31) (%:bIsConnectedConsole && ($window.list(channel)))
+	{
+		foreach(%x,$window.list(channel))
+			window.close %x
+	}
+
+	item($tr("Close All Queries","defscript"), 47) (%:bIsConnectedConsole && ($window.list(query)))
+	{
+		foreach(%x,$window.list(query))
+			window.close %x
+	}
+
+	item($tr("Close All Dead Channels" ,"defscript"), 232) (%:bIsConnectedConsole && ($window.list(deadchannel)))
+	{
+		foreach(%x,$window.list(deadchannel))
+			window.close %x
+	}
+
+	item($tr("Close All Dead Queries" ,"defscript"), 233) (%:bIsConnectedConsole && ($window.list(deadquery)))
+	{
+		foreach(%x,$window.list(deadquery))
+			window.close %x
+	}
+
+	separator(%:bIsConnectedConsole)
+
+	item($tr("Unhighlight All Windows" ,"defscript")) (%:bIsConnectedConsole)
+	{
+		foreach(%x,$window.list(all))
+			window.highlight 0 %x
+	}
+
+	item($tr("Unhighlight All Channels" ,"defscript")) (%:bIsConnectedConsole && ($window.list(channel)))
+	{
+		foreach(%x,$window.list(channel))
+			window.highlight 0 %x
+	}
+
+	item($tr("Unhighlight All Queries" ,"defscript")) (%:bIsConnectedConsole && ($window.list(query)))
+	{
+		foreach(%x,$window.list(query))
+			window.highlight 0 %x
+	}
+
+# end: console-specific items
 }
 
 # Host link popup

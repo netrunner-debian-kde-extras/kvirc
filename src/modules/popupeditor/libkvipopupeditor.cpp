@@ -3,8 +3,8 @@
 //   File : libkvipopupeditor.cpp
 //   Creation date : Mon 23 Dec 2002 20:23:59 2002 GMT by Szymon Stefanek
 //
-//   This toolbar is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This toolbar is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,14 +22,14 @@
 //
 //=============================================================================
 
-#include "popupeditor.h"
+#include "PopupEditorWindow.h"
 
-#include "kvi_module.h"
-#include "kvi_locale.h"
-#include "kvi_frame.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+#include "KviMainWindow.h"
 
 
-KviPopupEditorWindow * g_pPopupEditorWindow = 0;
+PopupEditorWindow * g_pPopupEditorWindow = 0;
 
 
 /*
@@ -50,7 +50,7 @@ static bool popupeditor_kvs_cmd_open(KviKvsModuleCommandCall * c)
 {
 	if(!g_pPopupEditorWindow)
 	{
-		g_pPopupEditorWindow = new KviPopupEditorWindow(c->window()->frame());
+		g_pPopupEditorWindow = new PopupEditorWindow(c->window()->frame());
 		c->window()->frame()->addWindow(g_pPopupEditorWindow);
 	}
 
@@ -72,8 +72,8 @@ static bool popupeditor_module_can_unload(KviModule *)
 
 static bool popupeditor_module_cleanup(KviModule *)
 {
-	if(g_pPopupEditorWindow && g_pFrame)
-		g_pFrame->closeWindow(g_pPopupEditorWindow);
+	if(g_pPopupEditorWindow && g_pMainWindow)
+		g_pMainWindow->closeWindow(g_pPopupEditorWindow);
 	g_pPopupEditorWindow = 0;
 	return true;
 }

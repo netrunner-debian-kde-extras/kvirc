@@ -3,9 +3,9 @@
 //   File : libkvirot13.cpp
 //   Creation date : Fri Jan 30 2002 09:25:15 GMT by Aeriana
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2009 Aeriana (aeriana at quasarnet dot org)
-//   Copyright (C) 2002-2009 Szymon Stefanek (pragma at kvirc dot net)
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -25,9 +25,9 @@
 
 #include "libkvirot13.h"
 
-#include "kvi_module.h"
+#include "KviModule.h"
 #include "kvi_debug.h"
-#include "kvi_locale.h"
+#include "KviLocale.h"
 
 
 
@@ -47,10 +47,9 @@
 
 #ifdef COMPILE_CRYPT_SUPPORT
 
-	#include "kvi_memmove.h"
-	#include "kvi_malloc.h"
-
-	#include "kvi_pointerlist.h"
+	#include "KviMemory.h"
+	#include "KviPointerList.h"
+	#include "KviCryptEngineDescription.h"
 
 	static KviPointerList<KviCryptEngine> * g_pEngineList = 0;
 
@@ -70,7 +69,7 @@
 		return true;
 	}
 
-	KviCryptEngine::EncryptResult KviRot13Engine::encrypt(const char * plainText,KviStr &outBuffer)
+	KviCryptEngine::EncryptResult KviRot13Engine::encrypt(const char * plainText,KviCString &outBuffer)
 	{
 		outBuffer = plainText;
 		unsigned char * aux = (unsigned char *)outBuffer.ptr();
@@ -90,7 +89,7 @@
 		return KviCryptEngine::Encoded;
 	}
 
-	KviCryptEngine::DecryptResult KviRot13Engine::decrypt(const char * inBuffer,KviStr &plainText)
+	KviCryptEngine::DecryptResult KviRot13Engine::decrypt(const char * inBuffer,KviCString &plainText)
 	{
 		plainText = inBuffer;
 		return KviCryptEngine::DecryptOkWasPlainText;
@@ -119,12 +118,12 @@ static bool rot13_module_init(KviModule * m)
 	g_pEngineList->setAutoDelete(false);
 
 	KviCryptEngineDescription * d = new KviCryptEngineDescription;
-	d->szName = "ROT13";
-	d->szAuthor = "Aeriana";
-	d->szDescription = __tr2qs("The simple Caesar-cypher encryption that replaces each letter with the one 13 places forward or back along the alphabet; it is used to enclose the text in a sealed wrapper that the reader must choose to open - e.g. for posting things that might offend some readers, or spoilers.");
-	d->iFlags = KVI_CRYPTENGINE_CAN_ENCRYPT;
-	d->allocFunc = allocRot13Engine;
-	d->deallocFunc = deallocRot13Engine;
+	d->m_szName = "ROT13";
+	d->m_szAuthor = "Aeriana";
+	d->m_szDescription = __tr2qs("The simple Caesar-cypher encryption that replaces each letter with the one 13 places forward or back along the alphabet; it is used to enclose the text in a sealed wrapper that the reader must choose to open - e.g. for posting things that might offend some readers, or spoilers.");
+	d->m_iFlags = KviCryptEngine::CanEncrypt;
+	d->m_allocFunc = allocRot13Engine;
+	d->m_deallocFunc = deallocRot13Engine;
 	m->registerCryptEngine(d);
 
 	return true;
@@ -136,7 +135,8 @@ static bool rot13_module_init(KviModule * m)
 static bool rot13_module_cleanup(KviModule *m)
 {
 #ifdef COMPILE_CRYPT_SUPPORT
-	while(g_pEngineList->first())delete g_pEngineList->first();
+	while(g_pEngineList->first())
+		delete g_pEngineList->first();
 	delete g_pEngineList;
 	g_pEngineList = 0;
 	m->unregisterCryptEngines();
@@ -161,9 +161,9 @@ static bool rot13_module_can_unload(KviModule *)
 KVIRC_MODULE(
 	"ROT13 crypt engine",
 	"4.0.0",
-	"Aeriana <aeriana at quasarnet dot org>" ,
+	"Aeriana <aeriana at quasarnet dot org>",
 	"Exports the ROT13 text transformation engine",
-	rot13_module_init ,
+	rot13_module_init,
 	rot13_module_can_unload,
 	0,
 	rot13_module_cleanup,

@@ -3,8 +3,8 @@
 //   File : libkviregchan.cpp
 //   Creation date : Sat Jun 29 02:55:18 2002 GMT by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -23,15 +23,15 @@
 //=============================================================================
 
 // incomplete
-#include "kvi_module.h"
-#include "kvi_regchan.h"
-#include "kvi_locale.h"
+#include "KviModule.h"
+#include "KviRegisteredChannelDataBase.h"
+#include "KviLocale.h"
 #include "kvi_out.h"
-#include "kvi_mirccntrl.h"
-#include "kvi_window.h"
+#include "KviControlCodes.h"
+#include "KviWindow.h"
 #include "kvi_debug.h"
 
-// kvi_app.cpp
+// KviApplication.cpp
 extern KVIRC_API KviRegisteredChannelDataBase * g_pRegisteredChannelDataBase;
 
 /*
@@ -209,6 +209,7 @@ static bool regchan_kvs_cmd_showlist(KviKvsModuleCommandCall * c)
 	for(it = g_pRegisteredChannelDataBase->channelDict()->begin();it != g_pRegisteredChannelDataBase->channelDict()->end();++it)
 	{
 		KviRegisteredChannelList * l = it.value();
+		KVI_ASSERT(l);
 
 		for(KviRegisteredChannel * ch = l->first();ch;ch = l->next())
 		{
@@ -216,7 +217,7 @@ static bool regchan_kvs_cmd_showlist(KviKvsModuleCommandCall * c)
 			c->window()->outputNoFmt(
 					KVI_OUT_SYSTEMMESSAGE,
 					__tr2qs_ctx("Channel: %1%2@%3","register")
-						.arg(QChar(KVI_TEXT_BOLD))
+						.arg(QChar(KviControlCodes::Bold))
 						.arg(ch->name())
 						.arg(ch->netMask())
 				);
@@ -231,7 +232,6 @@ static bool regchan_kvs_cmd_showlist(KviKvsModuleCommandCall * c)
 					);
 			}
 		}
-		++it;
 	}
 
 	c->window()->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs_ctx("Total %d channels","register"),tot);
@@ -281,6 +281,7 @@ static bool regchan_kvs_fnc_list(KviKvsModuleFunctionCall * c)
 	for(it = g_pRegisteredChannelDataBase->channelDict()->begin();it != g_pRegisteredChannelDataBase->channelDict()->end();++it)
 	{
 		KviRegisteredChannelList * l = it.value();
+		KVI_ASSERT(l);
 
 		for(KviRegisteredChannel * ch = l->first();ch;ch = l->next())
 		{

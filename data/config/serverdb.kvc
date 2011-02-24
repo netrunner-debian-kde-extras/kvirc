@@ -1016,6 +1016,10 @@ NServers=3
 100_Hostname=irc.powertech.no
 100_Description=PowerTech%20IPv6%20Server
 NServers=101
+[IrcNet.ru]
+0_Hostname=irc.ircnet.ru
+0_Description=IrcNet.ru:%20Random%20server
+NServers=1
 [Irctoo]
 0_Hostname=irc.irctoo.net
 0_Description=Irctoo:%20Random%20server
@@ -1040,6 +1044,10 @@ NServers=1
 2_Hostname=nanterre.fr.eu.kewl.org
 2_Description=Kewl.org:%20EU,%20FR,%20Nanterre
 NServers=3
+[KottNet]
+0_Hostname=irc.kottnet.net
+0_Description=KottNet.net:%20Random%20server
+NServers=1
 [Kreynet]
 0_Hostname=irc.krey.net
 0_Description=KreyNet:%20Random%20server
@@ -1334,6 +1342,12 @@ NServers=1
 0_Hostname=irc.risanet.com
 0_Description=Risanet:%20Random%20server
 NServers=1
+[Rullz]
+0_Hostname=irc.rullz.lv
+0_Description=Rullz:%20Main%20server
+1_Hostname=irc.netparks.lv
+1_Description=Rullz:%20Latvia,%20Riga
+NServers=2
 [Rusnet]
 0_Hostname=irc.rinet.ru
 0_Description=Rusnet:%20EU,%20RU,%20Moscow
@@ -1651,4 +1665,7 @@ NServers=2
 1_SSL=true
 1_Port=9999
 NServers=2
+[GeekShed]
+0_Hostname=irc.geekshed.net
+0_Description=GeekShed:%20Random%20server
 

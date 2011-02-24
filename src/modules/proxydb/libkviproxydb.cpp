@@ -3,7 +3,7 @@
 //   File : libkviproxydb.cpp
 //   Creation date : Wed Jul 16 16:36:27 2008 GMT by Elvio Basello
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2008 Elvio Basello (hellvis69 at netsons dot org)
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -22,10 +22,11 @@
 //
 //=============================================================================
 
-#include "kvi_module.h"
-#include "kvi_app.h"
-#include "kvi_locale.h"
-#include "kvi_proxydb.h"
+#include "KviModule.h"
+#include "KviApplication.h"
+#include "KviLocale.h"
+#include "KviProxy.h"
+#include "KviProxyDataBase.h"
 
 #include <QString>
 #include <QHostAddress>
@@ -134,7 +135,7 @@ static bool proxydb_kvs_fnc_protocol(KviKvsModuleFunctionCall * c)
 	@seealso:
 		[module:serverdb]ServerDB module documentation[/module]
 */
-PROXYDB_GET_PROPERTY(proxydb_kvs_fnc_hostname,hostname,setString)
+PROXYDB_GET_PROPERTY(proxydb_kvs_fnc_hostname,hostName,setString)
 
 /*
 	@doc: proxydb.ip
@@ -288,12 +289,11 @@ static bool proxydb_kvs_cmd_addProxy(KviKvsModuleCommandCall * c)
 	if(c->switches()->find('i',"ipv6")) pProxy->setIPv6(true);
 
 	QString tmp;
-	unsigned int uPort;
 
 	if(c->switches()->getAsStringIfExisting('p',"port",tmp))
 	{
 		bool bOk;
-		uPort = tmp.toInt(&bOk);
+		unsigned int uPort = tmp.toInt(&bOk);
 		if(!bOk) uPort = 6667;
 		pProxy->setPort(uPort);
 	}
@@ -378,7 +378,7 @@ static bool proxydb_kvs_cmd_setPort(KviKvsModuleCommandCall * c)
 	uPort = szPort.toInt(&bOk);
 	if(!bOk) uPort = 1080;
 	pProxy->setPort(uPort);
-	debug("PROXYDB Port: %d",uPort);
+	qDebug("PROXYDB Port: %d",uPort);
 
 	return true;
 }
@@ -615,7 +615,7 @@ static bool proxydb_kvs_cmd_setProtocol(KviKvsModuleCommandCall * c)
 		} \
 		\
 		pProxy->__callName(szPropertyName); \
-		debug("PROXYDB Property: %s",szPropertyName.toUtf8().data()); \
+		qDebug("PROXYDB Property: %s",szPropertyName.toUtf8().data()); \
 		\
 		return true; \
 	}

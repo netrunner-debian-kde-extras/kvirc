@@ -3,7 +3,7 @@
 //   File : libkvitexticons.cpp
 //   Creation date : Wed May 10 14:00:12 2006 GMT by Alexey Uzhva
 //
-//   This math is part of the KVirc irc client distribution
+//   This math is part of the KVIrc irc client distribution
 //   Copyright (C) 2006-2008 Alexey Uzhva (wizard at opendoor dot ru)
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -22,8 +22,9 @@
 //
 //=============================================================================
 
-#include "kvi_module.h"
-#include "kvi_texticonmanager.h"
+#include "KviModule.h"
+#include "KviIconManager.h"
+#include "KviTextIconManager.h"
 
 /*
 	@doc: texticons.get
@@ -114,7 +115,7 @@ static bool texticons_kvs_cmd_set(KviKvsModuleCommandCall * c)
 		pIcon = g_pTextIconManager->lookupTextIcon(szName);
 		if(!pIcon)
 		{
-			KviTextIcon * pTmpIcon = new KviTextIcon(-1);
+			KviTextIcon * pTmpIcon = new KviTextIcon(KviIconManager::None);
 			g_pTextIconManager->insert(szName,*pTmpIcon);
 			delete pTmpIcon;
 			pIcon = g_pTextIconManager->lookupTextIcon(szName);
@@ -129,7 +130,6 @@ static bool texticons_kvs_cmd_set(KviKvsModuleCommandCall * c)
 			pIcon->setFilename(szIcon);
 
 	}
-	g_pTextIconManager->checkDefaultAssociations();
 	return true;
 }
 

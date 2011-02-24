@@ -3,8 +3,8 @@
 //   File : libkvistr.cpp
 //   Creation date : Thu Dec 27 2001 17:13:12 GMT by Szymon Stefanek
 //
-//   This str is part of the KVirc irc client distribution
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This str is part of the KVIrc irc client distribution
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //   Copyright ©        2009 Kai Wasserbäch <debian@carbon-project.org>
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -25,22 +25,27 @@
 
 //#warning: FIXME: Incomplete documentation ('seealso', 'example', etc)
 
-#include "kvi_module.h"
-#include "kvi_locale.h"
-#include "kvi_mirccntrl.h"
-#include "kvi_qstring.h"
+#include "KviModule.h"
+#include "KviLocale.h"
+#include "KviControlCodes.h"
+#include "KviQString.h"
 #include "kvi_debug.h"
 #include "kvi_settings.h"
-#include "kvi_malloc.h"
-#include "kvi_kvs_arraycast.h"
+#include "KviMemory.h"
+#include "KviKvsArrayCast.h"
+#include "KviOptions.h"
 
 #include <QRegExp>
 #include <QClipboard>
 
-#if defined( COMPILE_SSL_SUPPORT ) && !defined( COMPILE_NO_EMBEDDED_CODE )
+#ifdef COMPILE_SSL_SUPPORT
 	// The current implementation
+	#include <KviSSL.h>
 	#include <openssl/evp.h>
-#elif defined(COMPILE_NO_EMBEDDED_CODE)
+	#include <openssl/pem.h>
+#endif
+
+#ifdef COMPILE_CRYPTOPP_SUPPORT
 	// The preferred new implementation (until QCryptographicHash supports all
 	// hashes we want).
 	// As Crypto++ is concerned for security they warn about MD5 and friends,
@@ -73,7 +78,9 @@
 		);
 		return szDigest;
 	}
-#else
+#endif
+
+#if !defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_CRYPTOPP_SUPPORT)
 	// The fallback we can always use, but with very limited set of
 	// functionality.
 	#include <QCryptographicHash>
@@ -484,7 +491,7 @@ static bool str_kvs_fnc_cmp(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("tocompare",KVS_PT_STRING,0,szString2)
 		KVSM_PARAMETER("case",KVS_PT_BOOL,KVS_PF_OPTIONAL,bCase)
 	KVSM_PARAMETERS_END(c)
-	iCmp = bCase ? KviQString::cmpCS(szString,szString2) : KviQString::cmpCI(szString,szString2);
+	iCmp = bCase ? szString.compare(szString2,Qt::CaseSensitive) : szString.compare(szString2,Qt::CaseInsensitive);
 	c->returnValue()->setInteger(iCmp);
 	return true;
 }
@@ -681,9 +688,10 @@ static bool str_kvs_fnc_right(KviKvsModuleFunctionCall * c)
 	@syntax:
 		<string> $str.mid(<data:string>,<startidx:int>,<nchars:int>)
 	@description:
-		This function returns a substring of the first string parameter wich is the
+		This function returns a substring of the first string parameter which is the
 		string starting at the (numeric) index given with startidx and counting nchars
-		forward.
+		forward. If <nchars> is not given or is less than 1, all the characters until
+		the end of the string will be returned.
 */
 static bool str_kvs_fnc_mid(KviKvsModuleFunctionCall * c)
 {
@@ -692,9 +700,9 @@ static bool str_kvs_fnc_mid(KviKvsModuleFunctionCall * c)
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("data",KVS_PT_STRING,0,szString)
 		KVSM_PARAMETER("startidx",KVS_PT_INTEGER,0,iIdx)
-		KVSM_PARAMETER("nchars",KVS_PT_INTEGER,0,iNchars)
+		KVSM_PARAMETER("nchars",KVS_PT_INTEGER,KVS_PF_OPTIONAL,iNchars)
 	KVSM_PARAMETERS_END(c)
-	c->returnValue()->setString(szString.mid(iIdx,iNchars));
+	c->returnValue()->setString(szString.mid(iIdx,iNchars<1?-1:iNchars));
 	return true;
 }
 
@@ -882,7 +890,7 @@ static bool str_kvs_fnc_stripcolors(KviKvsModuleFunctionCall * c)
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("string",KVS_PT_STRING,0,szString)
 	KVSM_PARAMETERS_END(c)
-	c->returnValue()->setString(KviMircCntrl::stripControlBytes(szString));
+	c->returnValue()->setString(KviControlCodes::stripControlBytes(szString));
 	return true;
 }
 
@@ -1147,7 +1155,7 @@ static bool str_kvs_fnc_match(KviKvsModuleFunctionCall * c)
 		<string> $str.word(<n:int>,<string:string>)
 	@description:
 		Returns the nth word inside the <string> (with n starting from 0!)[br]
-		A word is a substring not containing spaces (ASCII chars 32, carriage returns , tabs etc...).[br]
+		A word is a substring not containing spaces (ASCII chars 32, carriage returns, tabs etc...).[br]
 		If the string contains less than n+1 words then an empty string is returned.[br]
 		This function is faster than a call to [fnc]split[/fnc]() and array indexing
 		if you need a single word to be extracted from a complex string.[br]
@@ -1364,10 +1372,10 @@ static bool str_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 	QString szString,szType,szResult;
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("data",KVS_PT_NONEMPTYSTRING,0,szString)
-		KVSM_PARAMETER("algorythm",KVS_PT_NONEMPTYSTRING,KVS_PF_OPTIONAL,szType)
+		KVSM_PARAMETER("algorithm",KVS_PT_NONEMPTYSTRING,KVS_PF_OPTIONAL,szType)
 	KVSM_PARAMETERS_END(c)
 
-#if defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_NO_EMBEDDED_CODE)
+#if defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_CRYPTOPP_SUPPORT)
 	if(szType.isEmpty()) szType = "md5";
 
 	EVP_MD_CTX mdctx;
@@ -1380,7 +1388,7 @@ static bool str_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 	md = EVP_get_digestbyname(szType.toUtf8().data());
 	if(!md)
 	{
-		c->warning(__tr2qs("%Q algorytm is not supported"),&szType);
+		c->warning(__tr2qs("%Q algorithm is not supported"),&szType);
 		return true;
 	}
 
@@ -1401,7 +1409,7 @@ static bool str_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 	}
 
 	c->returnValue()->setString(szResult);
-#elif defined(COMPILE_NO_EMBEDDED_CODE)
+#elif defined(COMPILE_CRYPTOPP_SUPPORT)
 	// Crypto++ implementation
 	std::string szDigest;
 	std::string szMsg = szString.toLocal8Bit().data();
@@ -1551,7 +1559,7 @@ static bool str_kvs_fnc_join(KviKvsModuleFunctionCall * c)
 	@title:
 		$str.grep
 	@short:
-		Emulates the GNU Regular Expression Parser
+		Performs searches in arrays of strings via regular expression matching
 	@syntax:
 		<array> $str.grep(<match:string>,<strings:array>[,<flags:string>,<offset:integer>])
 	@description:
@@ -1681,16 +1689,16 @@ static bool str_kvs_fnc_grep(KviKvsModuleFunctionCall * c)
 	@description:
 		Splits the <data> string by <separator> and returns an array of substrings.[br]
 		<flags> may be a combination of the characters 's', 'w', 'r' and 'n'.[br]
-		If s is specified, <separator> matching is case sensitive, otherwise is case insensitive.[br]
+		If s is specified, <separator> matching is case sensitive, otherwise it is case insensitive.[br]
 		If w is specified, <separator> is treated as a wildcard-type regular expression
-		(with * and ? wildcars).[br]
+		(with * and ? wildcards).[br]
 		If r is specified, <separator> is treated as a extended-type regular expression
 		(with character classes, special escapes etc..).[br]
-		If both w and r are specified w takes precedence.[br]
-		If none of w and r are specified <separator> is treated as a simple string to be matched.[br]
-		If 'n' is specified then eventual empty fields are discarded.[br]
-		If <maxfield> is specified then at most <maxfields> items are returned in the array (i.e. the last
-		item may be not splitted completly).
+		If both w and r are specified, w takes precedence.[br]
+		If neither w and r are specified <separator> is treated as a simple string to be matched.[br]
+		If 'n' is specified then any resulting empty fields are discarded.[br]
+		If <maxfield> is specified, then at most <maxfields> items are returned in the array (i.e. the last
+		item may be not completely split).
 	@examples:
 		[example]
 			[comment]# Split the fields[/comment]
@@ -1710,7 +1718,7 @@ static bool str_kvs_fnc_grep(KviKvsModuleFunctionCall * c)
 			%Test[] = $str.split("Y*H","hihiYeaHhohohoyeahYepYEAHhi",sw)
 			echo %Test[]
 		[/example]
-		If used in "non-array" context it returns just a comma separated list of substrings:[br]
+		If used outside of an array context, a comma-separated list of substrings is returned:[br]
 		[example]
 			[cmd]echo[/cmd] $str.split("[ ]*","Condense spaces and change &nbsp; &nbsp; all &nbsp; &nbsp; &nbsp; it in commas",r)
 		[/example]
@@ -1878,17 +1886,15 @@ static bool str_kvs_fnc_printf(KviKvsModuleFunctionCall * c)
 
 #define MEMINCREMENT 32
 
-	int reallen = 0;
-	int allocsize = MEMINCREMENT;
-
 	//s.setLength(allocsize);
 
-	const QChar * fmt = KviQString::nullTerminatedArray(szFormat);
+	const QChar * fmt = szFormat.constData();
 
 	if(fmt)
 	{
-		QChar * buffer = (QChar *)kvi_malloc(sizeof(QChar) * allocsize);
-		//QChar * p = (QChar *)s.unicode();
+		int reallen = 0;
+		int allocsize = MEMINCREMENT;
+		QChar * buffer = (QChar *)KviMemory::allocate(sizeof(QChar) * allocsize);
 
 		//9999999999999999999999999999999\0
 		char numberBuffer[1024];
@@ -1903,14 +1909,14 @@ static bool str_kvs_fnc_printf(KviKvsModuleFunctionCall * c)
 	#define INCREMENT_MEM \
 		{ \
 			allocsize += MEMINCREMENT; \
-			buffer = (QChar *)kvi_realloc(buffer,sizeof(QChar) * allocsize); \
+			buffer = (QChar *)KviMemory::reallocate(buffer,sizeof(QChar) * allocsize); \
 			p = buffer + reallen; \
 		}
 
 	#define INCREMENT_MEM_BY(numchars) \
 		{ \
 			allocsize += numchars + MEMINCREMENT; \
-			buffer = (QChar *)kvi_realloc(buffer,sizeof(QChar) * allocsize); \
+			buffer = (QChar *)KviMemory::reallocate(buffer,sizeof(QChar) * allocsize); \
 			p = buffer + reallen; \
 		}
 
@@ -2083,27 +2089,31 @@ static bool str_kvs_fnc_printf(KviKvsModuleFunctionCall * c)
 					continue;
 				}
 				break;
+				case 'e':
+				case 'E':
+				case 'F':
+				case 'f':
 				case '.':
 				{
 					// precision mark
 					const QChar * save = fmt;
-					fmt++;
-					unsigned int uPrecision = 0;
-
 					char fmtbuffer[8];
 					fmtbuffer[0] = '%';
 					fmtbuffer[1] = '.';
-
 					int idx = 2;
 
-					while((fmt->unicode() >= '0') && (fmt->unicode() <= '9') && (idx < 6))
+					if(fmt->unicode() == '.')
 					{
-						uPrecision *= 10;
-						fmtbuffer[idx] = fmt->unicode();
-						uPrecision += fmtbuffer[idx] - '0';
+						// handle the optional precision parameter
 						fmt++;
-						idx++;
+						while((fmt->unicode() >= '0') && (fmt->unicode() <= '9') && (idx < 6))
+						{
+							fmtbuffer[idx] = fmt->unicode();
+							fmt++;
+							idx++;
+						}
 					}
+
 					fmtbuffer[idx] = fmt->unicode();
 					fmtbuffer[idx+1] = 0;
 
@@ -2124,7 +2134,11 @@ static bool str_kvs_fnc_printf(KviKvsModuleFunctionCall * c)
 						case 'E':
 						case 'F':
 						case 'f':
+#if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
+							_snprintf(numberBuffer,sizeof(numberBuffer),fmtbuffer,argRValue);
+#else
 							::sprintf(numberBuffer,fmtbuffer,argRValue);
+#endif
 							//copy now....
 							argValue = kvi_strLen(numberBuffer);
 							if((allocsize - reallen) < argValue)INCREMENT_MEM_BY(argValue)
@@ -2165,11 +2179,289 @@ static bool str_kvs_fnc_printf(KviKvsModuleFunctionCall * c)
 		}
 
 		s.setUnicode(buffer,reallen);
-		kvi_free(buffer);
+		KviMemory::free(buffer);
 	}
 
 	c->returnValue()->setString(s);
 	return true;
+}
+
+
+/*
+	@doc: str.evpSign
+	@type:
+		function
+	@title:
+		$str.evpSign
+	@short:
+		Returns a signature for a message created using your certificate's private key
+	@syntax:
+		<string> $str.evpSign(<message:string>[,<certificate:string>[,<password:string>]])
+	@description:
+		This function returns a base64-encoded signature string created signing the
+		provided <message> using the private key of the specified <certificate>.[br]
+		If the <certificate> parameter is omitted, the private key specified in the
+		kvirc options will be used.[br]
+		If any error occurs, this function will return an empty string.
+	@examples:
+		[example]
+			# Emulate a call with no parameters
+			%message="test message";
+			%pcert=$file.read($option(stringSSLPrivateKeyPath));
+			%sign=$str.evpSign(%message,%pcert,$option(stringSSLPrivateKeyPass));
+		[/example]
+		[example]
+			# Sign and verify the signature using the certificates from options
+			%message="test message";
+			%sign=$str.evpSign(%message);
+			if($str.evpVerify(%message, %sign))
+			{
+				echo "signature is valid";
+			} else {
+				echo "signature is not valid";
+			}
+		[/example]
+	@seealso:
+		[fnc]$str.evpVerify[/fnc]
+		[fnc]$certificate[/fnc]
+		[fnc]$dcc.getSSLCertInfo[/fnc]
+*/
+
+static bool str_kvs_fnc_evpSign(KviKvsModuleFunctionCall * c)
+{
+	QByteArray szMessage;
+	QByteArray szCert;
+	QByteArray szPass;
+	KVSM_PARAMETERS_BEGIN(c)
+		KVSM_PARAMETER("message",KVS_PT_NONEMPTYCSTRING,0,szMessage)
+		KVSM_PARAMETER("certificate",KVS_PT_NONEMPTYCSTRING,KVS_PF_OPTIONAL,szCert)
+		KVSM_PARAMETER("password",KVS_PT_NONEMPTYCSTRING,KVS_PF_OPTIONAL,szPass)
+	KVSM_PARAMETERS_END(c)
+
+#if defined(COMPILE_SSL_SUPPORT)
+
+	KviSSL::globalSSLInit();
+	EVP_MD_CTX md_ctx;
+	EVP_PKEY * pKey = 0;
+	unsigned int len = 0;
+	unsigned char *sig = 0;
+
+	if(szCert.isEmpty())
+	{
+		//use default cert
+		if(!KVI_OPTION_BOOL(KviOption_boolUseSSLPrivateKey))
+		{
+			c->warning(__tr2qs("No certificate specified and no private key certificate defined in KVIrc options."));
+			c->returnValue()->setString("");
+			return true;
+		}
+
+		FILE * f = fopen(KVI_OPTION_STRING(KviOption_stringSSLPrivateKeyPath).toUtf8().data(),"r");
+		if(!f)
+		{
+			c->warning(__tr2qs("File I/O error while trying to use the private key file %s"),KVI_OPTION_STRING(KviOption_stringSSLPrivateKeyPath).toUtf8().data());
+			c->returnValue()->setString("");
+			return true;
+		}
+
+		szPass = KVI_OPTION_STRING(KviOption_stringSSLPrivateKeyPass).toUtf8();
+		PEM_read_PrivateKey(f, &pKey, NULL, szPass.data());
+
+		fclose(f);
+
+		if(!pKey)
+		{
+			c->warning(__tr2qs("Can not read private key while trying to use the default private key certificate %s"),KVI_OPTION_STRING(KviOption_stringSSLPrivateKeyPath).toUtf8().data());
+			c->returnValue()->setString("");
+			return true;
+		}
+	} else {
+		// get from parameter (with optional password)
+		BIO *in;
+		in = BIO_new_mem_buf((unsigned char*)szCert.data(), szCert.size());
+		PEM_read_bio_PrivateKey(in, &pKey, NULL, szPass.data());
+		BIO_free(in);
+
+		if(!pKey)
+		{
+			c->warning(__tr2qs("Can not read private key while trying to use the provided certificate (wrong password?)"));
+			c->returnValue()->setString("");
+			return true;
+		}
+	}
+
+	len = EVP_PKEY_size(pKey);
+	sig = (unsigned char*)KviMemory::allocate(len*sizeof(char));
+
+	EVP_SignInit(&md_ctx, EVP_sha1());
+	EVP_SignUpdate(&md_ctx, (unsigned char *)szMessage.data(), szMessage.length());
+	if (EVP_SignFinal (&md_ctx, sig, &len, pKey))
+	{
+		QByteArray szSign((const char *)sig, len);
+		OPENSSL_free(sig);
+		EVP_PKEY_free(pKey);
+		c->returnValue()->setString(szSign.toBase64().data());
+		return true;
+	}
+	c->warning(__tr2qs("An error occured while signing the message."));
+	c->returnValue()->setString("");
+	return true;
+
+#else
+	c->warning(__tr2qs("KVIrc is compiled without OpenSSL support."));
+	c->returnValue()->setString("");
+	return true;
+#endif
+}
+
+/*
+	@doc: str.evpVerify
+	@type:
+		function
+	@title:
+		$str.evpVerify
+	@short:
+		Verifies the signature for a message against a public key
+	@syntax:
+		<bool> $str.evpVerify(<message:string>,<signature:string>[,<certificate:string>[,<password:string>]])
+	@description:
+		This function verifies the signature for a message against a publick key contained in a certificate.[br]
+		The signature has to be base64-encoded, as the one returned by [fnc]$str.evpSign[/fnc].[br]
+		If the <certificate> parameter is omitted, the public key certificate specified in the
+		kvirc options will be used.[br]
+		If any error occurs, this function will return false.
+	@examples:
+		[example]
+			# Emulate a call with no certificate parameters
+			%message="test message";
+			%signature=$str.evpSign(%message);
+			%cert=$file.read($option(stringSSLCertificatePath));
+			$str.evpVerify(%message,%signature,%cert,$option(stringSSLCertificatePass));
+		[/example]
+		[example]
+			# Sign and verify the signature using the certificates from options
+			%message="test message";
+			%sign=$str.evpSign(%message);
+			if($str.evpVerify(%message, %sign))
+			{
+				echo "signature is valid";
+			} else {
+				echo "signature is not valid";
+			}
+		[/example]
+	@seealso:
+		[fnc]$str.evpSign[/fnc]
+		[fnc]$certificate[/fnc]
+		[fnc]$dcc.getSSLCertInfo[/fnc]
+*/
+
+static bool str_kvs_fnc_evpVerify(KviKvsModuleFunctionCall * c)
+{
+	QByteArray szMessage;
+	QByteArray szCert;
+	QByteArray szSign;
+	QByteArray szSignB64;
+	QByteArray szPass;
+
+	KVSM_PARAMETERS_BEGIN(c)
+		KVSM_PARAMETER("message",KVS_PT_NONEMPTYCSTRING,0,szMessage)
+		KVSM_PARAMETER("signature",KVS_PT_NONEMPTYCSTRING,0,szSignB64)
+		KVSM_PARAMETER("certificate",KVS_PT_NONEMPTYCSTRING,KVS_PF_OPTIONAL,szCert)
+		KVSM_PARAMETER("password",KVS_PT_NONEMPTYCSTRING,KVS_PF_OPTIONAL,szPass)
+	KVSM_PARAMETERS_END(c)
+
+#if defined(COMPILE_SSL_SUPPORT)
+
+	KviSSL::globalSSLInit();
+	szSign = QByteArray::fromBase64(szSignB64);
+	const char * message = szMessage.data();
+
+	EVP_MD_CTX md_ctx;
+	EVP_PKEY *pKey = 0;
+	X509 *cert = 0;
+	int err = -1;
+
+	if(szCert.isEmpty())
+	{
+		//use default cert
+		if(!KVI_OPTION_BOOL(KviOption_boolUseSSLCertificate))
+		{
+			c->warning(__tr2qs("No certificate specified and no public key certificate defined in KVIrc options."));
+			c->returnValue()->setString("");
+			return true;
+		}
+
+		FILE * f = fopen(KVI_OPTION_STRING(KviOption_stringSSLCertificatePath).toUtf8().data(),"r");
+		if(!f)
+		{
+			c->warning(__tr2qs("File I/O error while trying to use the public key file %s"),KVI_OPTION_STRING(KviOption_stringSSLCertificatePath).toUtf8().data());
+			c->returnValue()->setString("");
+			return true;
+		}
+
+		szPass = KVI_OPTION_STRING(KviOption_stringSSLCertificatePass).toUtf8();
+		PEM_read_X509(f, &cert, NULL, szPass.data());
+
+		fclose(f);
+
+		if(cert)
+		{
+			pKey = (EVP_PKEY *) X509_get_pubkey(cert);
+			X509_free(cert);
+		}
+
+		if(!pKey)
+		{
+			c->warning(__tr2qs("Can not read public key while trying to use the default public key certificate %s"),KVI_OPTION_STRING(KviOption_stringSSLCertificatePath).toUtf8().data());
+			c->returnValue()->setString("");
+			return true;
+		}
+	} else {
+		// get from parameter (with optional password)
+		BIO *in = BIO_new_mem_buf((unsigned char*)szCert.data(), szCert.size());
+		PEM_read_bio_X509(in, &cert, 0, szPass.data());
+
+		if(cert)
+		{
+			pKey = (EVP_PKEY *) X509_get_pubkey(cert);
+			X509_free(cert);
+		} else {
+			pKey = PEM_read_bio_PUBKEY(in, NULL, 0, szPass.data());
+		}
+
+		BIO_free(in);
+
+		if(!pKey)
+		{
+			c->warning(__tr2qs("Can not read public key from the provided certificate."));
+			c->returnValue()->setBoolean(false);
+			return true;
+		}
+	}
+
+	EVP_VerifyInit(&md_ctx, EVP_sha1());
+	EVP_VerifyUpdate(&md_ctx, message, strlen(message));
+	err = EVP_VerifyFinal(&md_ctx, (unsigned char*)szSign.data(), szSign.size(), pKey);
+	EVP_MD_CTX_cleanup(&md_ctx);
+	EVP_PKEY_free(pKey);
+	switch(err)
+	{
+		case 0:
+			c->returnValue()->setBoolean(false);
+			return true;
+		case 1:
+			c->returnValue()->setBoolean(true);
+			return true;
+		default:
+			c->warning(__tr2qs("An error occured during signature verification."));
+			c->returnValue()->setBoolean(false);
+			return true;
+	}
+#else
+	c->warning(__tr2qs("KVIrc is compiled without OpenSSL support."));
+	c->returnValue()->setBoolean(false);
+	return true;
+#endif
 }
 
 
@@ -2223,7 +2515,9 @@ static bool str_module_init(KviModule * m)
 	KVSM_REGISTER_FUNCTION(m,"upcase",str_kvs_fnc_upcase);
 	KVSM_REGISTER_FUNCTION(m,"urlencode",str_kvs_fnc_urlencode);
 	KVSM_REGISTER_FUNCTION(m,"word",str_kvs_fnc_word);
-	
+	KVSM_REGISTER_FUNCTION(m,"evpSign",str_kvs_fnc_evpSign);
+	KVSM_REGISTER_FUNCTION(m,"evpVerify",str_kvs_fnc_evpVerify);
+
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"toClipboard",str_kvs_cmd_toClipboard);
 	return true;
 }

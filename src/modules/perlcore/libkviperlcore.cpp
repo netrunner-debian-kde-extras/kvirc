@@ -3,8 +3,8 @@
 //   File : libkviperlcore.cpp
 //   Creation date : Tue Jul 13 13:03:31 2004 GMT by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2004-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2004-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,16 +22,16 @@
 //
 //=============================================================================
 
-#include "kvi_module.h"
+#include "KviModule.h"
 #include "kvi_settings.h"
-#include "kvi_locale.h"
+#include "KviLocale.h"
 #include "kvi_out.h"
-#include "kvi_window.h"
-#include "kvi_app.h"
-#include "kvi_kvs_script.h"
-#include "kvi_kvs_variant.h"
-#include "kvi_userinput.h"
-#include "kvi_pointerhashtable.h"
+#include "KviWindow.h"
+#include "KviApplication.h"
+#include "KviKvsScript.h"
+#include "KviKvsVariant.h"
+#include "KviUserInput.h"
+#include "KviPointerHashTable.h"
 
 #include <QByteArray>
 
@@ -70,11 +70,11 @@
 
 	#include "ppport.h"
 
-	#include "kvi_kvs_runtimecontext.h"
+	#include "KviKvsRunTimeContext.h"
 
 	static KviKvsRunTimeContext * g_pCurrentKvsContext = 0;
 	static bool g_bExecuteQuiet = false;
-	static KviStr g_szLastReturnValue("");
+	static KviCString g_szLastReturnValue("");
 	static QStringList g_lWarningList;
 
 	#include "xs.inc"
@@ -179,15 +179,14 @@ bool KviPerlInterpreter::init()
 	// declaration could be dropped as well...
 	// I just haven't tried :D
 
-	KviQString::sprintf(
-		szInitCode,
+	szInitCode = QString(
 		"{\n" \
 			"package KVIrc;\n" \
 			"require Exporter;\n" \
 			"our @ISA = qw(Exporter);\n" \
 			"1;\n" \
 		"}\n" \
-		"$g_szContext = \"%Q\";\n" \
+		"$g_szContext = \"%1\";\n" \
 		"$g_bExecuteQuiet = 0;\n" \
 		"$SIG{__WARN__} = sub\n" \
 		"{\n" \
@@ -195,8 +194,7 @@ bool KviPerlInterpreter::init()
 		"	($p,$f,$l) = caller;\n" \
 		"	KVIrc::internalWarning(\"At line \".$l.\" of perl code: \");\n" \
 		"	KVIrc::internalWarning(join(' ',@_));\n" \
-		"}\n",
-		&m_szContextName);
+		"}\n").arg(m_szContextName);
 
 	eval_pv(szInitCode.toUtf8().data(),false);
 	return true;

@@ -3,8 +3,8 @@
 //   File : canvaswidget.cpp
 //   Creation date : Mon Jul 30 07 2001 04:50:50 by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2001-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -25,9 +25,9 @@
 #include "canvaswidget.h"
 
 #ifdef COMPILE_DCC_CANVAS
-	#include "kvi_string.h"
-	#include "kvi_locale.h"
-	#include "kvi_tal_popupmenu.h"
+	#include "KviCString.h"
+	#include "KviLocale.h"
+	#include "KviTalPopupMenu.h"
 
 	#include <QCursor>
 	#include <QPainter>
@@ -457,7 +457,7 @@
 	//
 	// KviCanvasView
 	//
-	KviCanvasView::KviCanvasView(QCanvas * c,KviCanvasWidget * cw,QWidget * par)
+	KviCanvasView::KviCanvasView(QCanvas * c,DccCanvasWidget * cw,QWidget * par)
 	: QCanvasView(c,par)
 	{
 		m_pCanvasWidget = cw;
@@ -799,7 +799,7 @@
 		{
 			m_dragMode = Rotate;
 			m_dragPointArray = it->internalPoints();
-	//		debug("Here");
+	//		qDebug("Here");
 			setCursor(sizeHorCursor);
 			return;
 		}
@@ -835,7 +835,7 @@
 			{
 				QPoint act((int)(p.x() - it->x()),(int)(p.y() - it->y()));
 				double dAngle = ssm_2d_rotationAngle(m_dragBegin.x(),m_dragBegin.y(),act.x(),act.y());
-	//			debug("%d,%d %d,%d %f",m_dragBegin.x(),m_dragBegin.y(),act.x(),act.y(),dAngle);
+	//			qDebug("%d,%d %d,%d %f",m_dragBegin.x(),m_dragBegin.y(),act.x(),act.y(),dAngle);
 				QPointArray thePoints = m_dragPointArray.copy();
 				for(unsigned int i=0;i<thePoints.size();i++)
 				{
@@ -1300,13 +1300,13 @@
 			break;
 			case QVariant::Font:
 			{
-				KviStr txt = ((QComboBox *)w)->currentText();
+				KviCString txt = ((QComboBox *)w)->currentText();
 				if(txt.hasData())
 				{
-					KviStr fam = txt;
+					KviCString fam = txt;
 					fam.cutFromFirst(',',true);
 					fam.trimmed();
-					KviStr psz = txt;
+					KviCString psz = txt;
 					psz.cutToFirst(',',true);
 					psz.trimmed();
 					bool bOk;
@@ -1451,9 +1451,9 @@
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
-	// KviCanvasWidget
+	// DccCanvasWidget
 	//
-	KviCanvasWidget::KviCanvasWidget(QWidget * par)
+	DccCanvasWidget::DccCanvasWidget(QWidget * par)
 	: QWidget(par,"canvas_widget")
 	{
 		m_pCanvas = new QCanvas(this);
@@ -1495,11 +1495,11 @@
 		m_pMenuBar->insertItem(__tr2qs_ctx("&Insert","dcc"),add);
 	}
 
-	KviCanvasWidget::~KviCanvasWidget()
+	DccCanvasWidget::~DccCanvasWidget()
 	{
 	}
 
-	void KviCanvasWidget::resizeEvent(QResizeEvent *)
+	void DccCanvasWidget::resizeEvent(QResizeEvent *)
 	{
 		int h = m_pMenuBar->sizeHint().height();
 		m_pMenuBar->setGeometry(0,0,width(),h);

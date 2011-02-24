@@ -3,7 +3,7 @@
 //   File : videodevice.h
 //   Creation date : Tue Nov 10 18:08:09 2009 GMT by Fabio Bas
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2009 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -56,6 +56,9 @@
 
 #include "kvi_settings.h"
 
+// V4L1 was removed in kernel 2.6.38
+#undef COMPILE_V4L1_CODE
+
 #ifndef COMPILE_DISABLE_AVDEVICE
 
 #include <asm/types.h>
@@ -74,7 +77,7 @@
 
 #include <linux/fs.h>
 #include <linux/kernel.h>
-#include <linux/videodev.h>
+#include <linux/videodev2.h>
 #define VIDEO_MODE_PAL_Nc  3
 #define VIDEO_MODE_PAL_M   4
 #define VIDEO_MODE_PAL_N   5
@@ -105,8 +108,10 @@ typedef enum
 {
 	VIDEODEV_DRIVER_NONE
 #ifndef COMPILE_DISABLE_AVDEVICE
+#ifdef COMPILE_V4L1_CODE
         ,
 	VIDEODEV_DRIVER_V4L
+#endif //COMPILE_V4L1_CODE
 #ifdef V4L2_CAP_VIDEO_CAPTURE
         ,
 	VIDEODEV_DRIVER_V4L2
@@ -291,7 +296,7 @@ public:
 	VideoDevice();
 	virtual ~VideoDevice();
 	int setFileName(QString filename);
-	QString fileName() const;
+	QString fileName();
 	void setUdi( const QString & );
 	QString udi() const;
 	virtual int open();
@@ -299,12 +304,12 @@ public:
 
 	int showDeviceCapabilities();
 
-	int width() const;
-	int minWidth() const ;
-	int maxWidth() const;
-	int height() const;
-	int minHeight() const;
-	int maxHeight() const;
+	int width();
+	int minWidth();
+	int maxWidth();
+	int height();
+	int minHeight();
+	int maxHeight();
 	virtual int setSize( int newwidth, int newheight);
 
 	virtual pixel_format setPixelFormat(pixel_format newformat);
@@ -331,21 +336,21 @@ public:
 	virtual int stopCapturing();
 	virtual int close();
 
-	QList<NumericVideoControl> getSupportedNumericControls() const;
-	QList<BooleanVideoControl> getSupportedBooleanControls() const;
-	QList<MenuVideoControl> getSupportedMenuControls() const;
-	QList<ActionVideoControl> getSupportedActionControls() const;
+	QList<NumericVideoControl> getSupportedNumericControls();
+	QList<BooleanVideoControl> getSupportedBooleanControls();
+	QList<MenuVideoControl> getSupportedMenuControls();
+	QList<ActionVideoControl> getSupportedActionControls();
 
 	int getControlValue(quint32 ctrl_id, qint32 * value);
 	int setControlValue(quint32 ctrl_id, qint32 value);
 
-	bool canCapture() const;
-	bool canChromakey() const;
-	bool canScale() const;
-	bool canOverlay() const;
-	bool canRead() const;
-	bool canAsyncIO() const;
-	bool canStream() const;
+	bool canCapture();
+	bool canChromakey();
+	bool canScale();
+	bool canOverlay();
+	bool canRead();
+	bool canAsyncIO();
+	bool canStream();
 
 	QString m_name;
 	QVector<Kopete::AV::VideoInput> m_input;
@@ -386,8 +391,10 @@ protected:
 	struct v4l2_format fmt;
 //	struct v4l2_input m_input;
 #endif
+#ifdef COMPILE_V4L1_CODE
 	struct video_capability V4L_capabilities;
 	struct video_buffer V4L_videobuffer;
+#endif
 #endif	
 	int currentwidth, minwidth, maxwidth, currentheight, minheight, maxheight;
 

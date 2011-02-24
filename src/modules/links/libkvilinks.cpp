@@ -3,7 +3,7 @@
 //   File : libkvilinks.cpp
 //   Creation date : Thu Dec 21 2000 12:39:12 CEST by Szymon Stefanek
 //
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -21,16 +21,16 @@
 //
 //=============================================================================
 
-#include "linkswindow.h"
+#include "LinksWindow.h"
 
-#include "kvi_module.h"
-#include "kvi_frame.h"
-#include "kvi_window.h"
-#include "kvi_locale.h"
+#include "KviModule.h"
+#include "KviMainWindow.h"
+#include "KviWindow.h"
+#include "KviLocale.h"
 
 #include <QSplitter>
 
-KviPointerList<KviLinksWindow> * g_pLinksWindowList = 0;
+KviPointerList<LinksWindow> * g_pLinksWindowList = 0;
 
 
 /*
@@ -66,7 +66,7 @@ static bool links_kvs_cmd_open(KviKvsModuleCommandCall * c)
 
 	if(!(c->window()->context()->linksWindow()))
 	{
-		KviLinksWindow *w = new KviLinksWindow(c->window()->frame(),c->window()->console());
+		LinksWindow *w = new LinksWindow(c->window()->frame(),c->window()->console());
 		c->window()->frame()->addWindow(w);
 	} else {
 		c->warning(__tr2qs("Links window alread open for this IRC context"));
@@ -77,7 +77,7 @@ static bool links_kvs_cmd_open(KviKvsModuleCommandCall * c)
 
 static bool links_module_init(KviModule * m)
 {
-	g_pLinksWindowList = new KviPointerList<KviLinksWindow>;
+	g_pLinksWindowList = new KviPointerList<LinksWindow>;
 	g_pLinksWindowList->setAutoDelete(false);
 
 
@@ -103,7 +103,7 @@ static bool links_module_can_unload(KviModule *)
 KVIRC_MODULE(
 	"Links",                                             // module name
 	"4.0.0",                                                // module version
-	"Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)", // author & (C)
+	"Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)", // author & (C)
 	"Links window extension",
 	links_module_init,
 	links_module_can_unload,

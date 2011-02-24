@@ -3,8 +3,8 @@
 //   File : libkvimy.cpp
 //   Creation date : Mon Jul  1 02:46:49 2002 GMT by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2002-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,22 +22,22 @@
 //
 //=============================================================================
 
-#include "kvi_module.h"
-#include "kvi_console.h"
-#include "kvi_app.h"
-#include "kvi_locale.h"
-#include "kvi_irclink.h"
-#include "kvi_ircconnection.h"
-#include "kvi_ircconnectionuserinfo.h"
-#include "kvi_ircconnectionserverinfo.h"
-#include "kvi_ircserver.h"
+#include "KviModule.h"
+#include "KviConsoleWindow.h"
+#include "KviApplication.h"
+#include "KviLocale.h"
+#include "KviIrcLink.h"
+#include "KviIrcConnection.h"
+#include "KviIrcConnectionUserInfo.h"
+#include "KviIrcConnectionServerInfo.h"
+#include "KviIrcServer.h"
 
-#include "idle.h"
+#include "Idle.h"
 Idle* g_pIdle;
 
 #define GET_KVS_CONSOLE \
 	kvs_uint_t  uiWnd; \
-	KviConsole *wnd =0; \
+	KviConsoleWindow *wnd =0; \
 	KVSM_PARAMETERS_BEGIN(c) \
 		KVSM_PARAMETER("context_id",KVS_PT_UINT,KVS_PF_OPTIONAL,uiWnd) \
 	KVSM_PARAMETERS_END(c) \
@@ -343,8 +343,10 @@ static bool my_kvs_fnc_serverIsSSL(KviKvsModuleFunctionCall * c)
 		in that irc_context.[br]
 		Please note that this function returns the name of the server as reported
 		by the server itself. Some servers report a bogus value for this field.
-		You should take a look at $context.serverIpAddress or $context.serverHostName
-		if you want a value that can be used to really reconnect to this server.
+		You should take a look at [fnc]$context.serverIpAddress[/fnc] if you want a value that
+		can be used to really reconnect to this server. If you want a value
+		to manipulate the server entry via the serverdb functions then
+		you probably need [fnc]$context.serverdbServerHostName[/fnc].
 */
 
 static bool my_kvs_fnc_server(KviKvsModuleFunctionCall * c)
@@ -353,7 +355,7 @@ static bool my_kvs_fnc_server(KviKvsModuleFunctionCall * c)
 	if(wnd)
 	{
 		if(wnd->connection())
-			c->returnValue()->setString(wnd->connection()->serverInfo()->name());
+			c->returnValue()->setString(wnd->connection()->currentServerName());
 	}
 	return true;
 }
@@ -381,7 +383,7 @@ static bool my_kvs_fnc_network(KviKvsModuleFunctionCall * c)
 	if(wnd)
 	{
 		if(wnd->connection())
-			c->returnValue()->setString(wnd->currentNetworkName().toUtf8().data());
+			c->returnValue()->setString(wnd->currentNetworkName());
 	}
 	return true;
 }

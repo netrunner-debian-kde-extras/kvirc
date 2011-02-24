@@ -5,8 +5,8 @@
 //   File : kvi_out.h
 //   Creation date : Fri Jun 30 2000 14:13:21 by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -166,9 +166,10 @@
 #define KVI_OUT_MEIRCOP 139
 #define KVI_OUT_MEDEIRCOP 140
 #define KVI_OUT_CAP 141
+#define KVI_OUT_CHANURL 142
 
 //#define KVI_NUM_MSGTYPE_OPTIONS 142
-// UPDATE THE TOTAL COUNT IN kvi_options.h !!!!
+// UPDATE THE TOTAL COUNT IN KviOptions.h !!!!
 
 
 #endif //_KVI_OPTIONS_H_

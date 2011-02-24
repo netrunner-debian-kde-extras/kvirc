@@ -3,7 +3,7 @@
 //   File : libkvipython.cpp
 //   Creation date : Fri Nov 07 00:18:31 2008 GMT by Elvio Basello
 //
-//   This file is part of the KVirc irc client distribution
+//   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2008 Elvio Basello (hellvis69 at netsons dot org)
 //
 //   This program is FREE software. You can redistribute it and/or
@@ -18,17 +18,17 @@
 //
 //   You should have received a copy of the GNU General Public License
 //   along with this program. If not, write to the Free Software Foundation,
-//   Inc. ,59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+//   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 //=============================================================================
 
 #include "kvi_settings.h"
-#include "kvi_module.h"
-#include "kvi_modulemanager.h"
-//#include "kvi_fileutils.h"
-#include "kvi_locale.h"
-//#include "kvi_app.h"
-//#include "kvi_options.h"
+#include "KviModule.h"
+#include "KviModuleManager.h"
+//#include "KviFileUtils.h"
+#include "KviLocale.h"
+//#include "KviApplication.h"
+//#include "KviOptions.h"
 //#include "kvi_out.h"
 
 #ifdef COMPILE_PYTHON_SUPPORT

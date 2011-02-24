@@ -14,35 +14,35 @@ INCLUDE_DIRECTORIES(
 # Please note that the sources have alphabetic order here
 
 SET(kvilib_MOC_HDRS
-	ext/kvi_animatedpixmap.h
-	ext/kvi_animatedpixmapcache.h
-	ext/kvi_crypt.h
-	ext/kvi_regusersdb.h
-	ext/kvi_sharedfiles.h
-	irc/kvi_ircuserdb.h
-	net/kvi_dns.h
-	net/kvi_http.h
-	system/kvi_locale.h
-	system/kvi_thread.h
-	tal/kvi_tal_application.h
-	tal/kvi_tal_filedialog.h
-	tal/kvi_tal_groupbox.h
-	tal/kvi_tal_hbox.h
-	tal/kvi_tal_listwidget.h
-	tal/kvi_tal_mainwindow.h
-	tal/kvi_tal_menubar.h
-	tal/kvi_tal_popupmenu.h
-	tal/kvi_tal_tabdialog.h
-	tal/kvi_tal_tablewidget.h
-	tal/kvi_tal_toolbar.h
-	tal/kvi_tal_tooltip.h
-	tal/kvi_tal_vbox.h
-	tal/kvi_tal_wizard.h
+	ext/KviAnimatedPixmap.h
+	ext/KviAnimatedPixmapCache.h
+	ext/KviCryptEngine.h
+	ext/KviRegisteredUserDataBase.h
+	ext/KviSharedFilesManager.h
+	irc/KviIrcUserDataBase.h
+	net/KviDnsResolver.h
+	net/KviHttpRequest.h
+	system/KviLocale.h
+	system/KviThread.h
+	tal/KviTalApplication.h
+	tal/KviTalFileDialog.h
+	tal/KviTalGroupBox.h
+	tal/KviTalHBox.h
+	tal/KviTalListWidget.h
+	tal/KviTalMainWindow.h
+	tal/KviTalMenuBar.h
+	tal/KviTalPopupMenu.h
+	tal/KviTalTabDialog.h
+	tal/KviTalTableWidget.h
+	tal/KviTalToolBar.h
+	tal/KviTalToolTip.h
+	tal/KviTalVBox.h
+	tal/KviTalWizard.h
 )
 
 IF(COMPILE_DBUS_SUPPORT)
 	LIST(APPEND kvilib_MOC_HDRS
-		ext/kvi_dbusadaptor.h
+		ext/KviDbusAdaptor.h
 	)
 ENDIF()
 
@@ -55,82 +55,93 @@ ENDIF()
 # Please note that the sources have alphabetic order here
 
 SET(kvilib_SRCS
-	config/kvi_buildinfo.cpp
-	core/kvi_error.cpp
-	core/kvi_heapobject.cpp
-	core/kvi_hstrEqualCIN.cpp
-	core/kvi_malloc.cpp
-	core/kvi_memmove.cpp
-	core/kvi_qstring.cpp
-	core/kvi_string.cpp
-	ext/kvi_cmdformatter.cpp
-	ext/kvi_config.cpp
-	ext/kvi_crypt.cpp
-	ext/kvi_databuffer.cpp
-	ext/kvi_dbusadaptor.cpp
-	ext/kvi_garbage.cpp
-	ext/kvi_mediatype.cpp
-	ext/kvi_miscutils.cpp
-	ext/kvi_msgtype.cpp
-	ext/kvi_osinfo.cpp
-	ext/kvi_pixmap.cpp
-	ext/kvi_animatedpixmap.cpp
-	ext/kvi_animatedpixmapcache.cpp
-	ext/kvi_nickcolors.cpp
-	ext/kvi_proxydb.cpp
-	ext/kvi_regchan.cpp
-	ext/kvi_regusersdb.cpp
-	ext/kvi_sharedfiles.cpp
-	ext/kvi_stringconversion.cpp
-	file/kvi_file.cpp
-	file/kvi_fileutils.cpp
-	file/kvi_packagefile.cpp
-	irc/kvi_avatar.cpp
-	irc/kvi_avatarcache.cpp
-	irc/kvi_identityprofile.cpp
-	irc/kvi_ircmask.cpp
-	irc/kvi_ircserver.cpp
-	irc/kvi_ircserverdb.cpp
-	irc/kvi_ircuserdb.cpp
-	irc/kvi_mirccntrl.cpp
-	irc/kvi_network.cpp
-	irc/kvi_nickserv.cpp
-	irc/kvi_useridentity.cpp
-	net/kvi_dns.cpp
-	net/kvi_http.cpp
-	net/kvi_netutils.cpp
-	net/kvi_sasl.cpp
+	config/KviBuildInfo.cpp
+	core/KviError.cpp
+	core/KviHeapObject.cpp
+	core/KviMemory.cpp
+	core/KviQString.cpp
+	core/KviCString.cpp
+	ext/KviCommandFormatter.cpp
+	ext/KviConfigurationFile.cpp
+	ext/KviCryptEngine.cpp
+	ext/KviCryptEngineManager.cpp
+	ext/KviDataBuffer.cpp
+	ext/KviDbusAdaptor.cpp
+	ext/KviDebugContext.cpp
+	ext/KviMediaManager.cpp
+	ext/KviMiscUtils.cpp
+	ext/KviMessageTypeSettings.cpp
+	ext/KviOsInfo.cpp
+	ext/KviPixmap.cpp
+	ext/KviPixmapUtils.cpp
+	ext/KviAnimatedPixmap.cpp
+	ext/KviAnimatedPixmapCache.cpp
+	ext/KviNickColors.cpp
+	ext/KviProxy.cpp
+	ext/KviProxyDataBase.cpp
+	ext/KviRegisteredChannel.cpp
+	ext/KviRegisteredChannelDataBase.cpp
+	ext/KviRegisteredUser.cpp
+	ext/KviRegisteredUserDataBase.cpp
+	ext/KviRegisteredUserGroup.cpp
+	ext/KviRegisteredUserMask.cpp
+	ext/KviSharedFile.cpp
+	ext/KviSharedFilesManager.cpp
+	ext/KviStringConversion.cpp
+	file/KviFile.cpp
+	file/KviFileUtils.cpp
+	file/KviPackageIOEngine.cpp
+	file/KviPackageReader.cpp
+	file/KviPackageWriter.cpp
+	irc/KviAvatar.cpp
+	irc/KviAvatarCache.cpp
+	irc/KviControlCodes.cpp
+	irc/KviIdentityProfile.cpp
+	irc/KviIdentityProfileSet.cpp
+	irc/KviIrcMask.cpp
+	irc/KviIrcNetwork.cpp
+	irc/KviIrcServer.cpp
+	irc/KviIrcServerDataBase.cpp
+	irc/KviIrcServerReconnectInfo.cpp
+	irc/KviIrcUserDataBase.cpp
+	irc/KviIrcUserEntry.cpp
+	irc/KviNickServRule.cpp
+	irc/KviNickServRuleSet.cpp
+	irc/KviUserIdentity.cpp
+	irc/KviUserIdentityManager.cpp
+	net/KviDnsResolver.cpp
+	net/KviHttpRequest.cpp
+	net/KviNetUtils.cpp
+	net/KviSASL.cpp
 	net/kvi_socket.cpp
-	net/kvi_ssl.cpp
-	net/kvi_url.cpp
-	system/kvi_env.cpp
-	system/kvi_locale.cpp
-	system/kvi_thread.cpp
-	system/kvi_time.cpp
-	tal/kvi_tal_application.cpp
-	tal/kvi_tal_filedialog.cpp
-	tal/kvi_tal_groupbox.cpp
-	tal/kvi_tal_hbox.cpp
-	tal/kvi_tal_itemdelegates.cpp
-	tal/kvi_tal_listwidget.cpp
-	tal/kvi_tal_mainwindow.cpp
-	tal/kvi_tal_menubar.cpp
-	tal/kvi_tal_popupmenu.cpp
-	tal/kvi_tal_splitter.cpp
-	tal/kvi_tal_tabdialog.cpp
-	tal/kvi_tal_tablewidget.cpp
-	tal/kvi_tal_toolbar.cpp
-	tal/kvi_tal_tooltip.cpp
-	tal/kvi_tal_vbox.cpp
-	tal/kvi_tal_wizard.cpp
+	net/KviSSL.cpp
+	net/KviUrl.cpp
+	system/KviEnvironment.cpp
+	system/KviLocale.cpp
+	system/KviThread.cpp
+	system/KviTimeUtils.cpp
+	tal/KviTalApplication.cpp
+	tal/KviTalFileDialog.cpp
+	tal/KviTalGroupBox.cpp
+	tal/KviTalHBox.cpp
+	tal/KviTalIconAndRichTextItemDelegate.cpp
+	tal/KviTalListWidget.cpp
+	tal/KviTalMainWindow.cpp
+	tal/KviTalMenuBar.cpp
+	tal/KviTalPopupMenu.cpp
+	tal/KviTalSplitter.cpp
+	tal/KviTalTabDialog.cpp
+	tal/KviTalTableWidget.cpp
+	tal/KviTalToolBar.cpp
+	tal/KviTalToolTip.cpp
+	tal/KviTalVBox.cpp
+	tal/KviTalWizard.cpp
 )
 
 IF(NOT DEFINED COMPILE_DISABLE_AVDEVICE)
 	LIST(APPEND kvilib_SRCS
 		ext/avdevice/videodevice.cpp 
 		ext/avdevice/videoinput.cpp 
-		ext/avdevice/dummyvideodevice.cpp
-		ext/avdevice/videodevicevector.cpp
 		ext/avdevice/videodevicepool.cpp 
 		ext/avdevice/bayer.cpp
 		ext/avdevice/sonix_compress.cpp
@@ -139,7 +150,8 @@ ENDIF()
 
 IF(NOT DEFINED COMPILE_DISABLE_OGG_THEORA)
 	LIST(APPEND kvilib_SRCS
-		ext/kvi_oggtheora.cpp
+		ext/KviOggTheoraDecoder.cpp
+		ext/KviOggTheoraEncoder.cpp
 	)
 ENDIF()
 
@@ -156,6 +168,10 @@ ENDIF()
 #we need this defined when mingw will compile moc files
 IF(WIN32)
         ADD_DEFINITIONS(-D__KVILIB__)
+ENDIF()
+
+IF(MSVC)
+	LIST(APPEND LIBS wsock32.lib ws2_32.lib)
 ENDIF()
 
 ADD_LIBRARY(${KVILIB_BINARYNAME} SHARED ${kvilib_SRCS} ${kvilib_MOC_SRCS})

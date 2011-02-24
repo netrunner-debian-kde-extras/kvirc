@@ -3,8 +3,8 @@
 //   File : libkvihelp.cpp
 //   Creation date : Sun Aug 13 2000 03:00:00 by Szymon Stefanek
 //
-//   This file is part of the KVirc irc client distribution
-//   Copyright (C) 2000-2008 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,23 +22,23 @@
 //
 //=============================================================================
 
-#include "helpwidget.h"
-#include "helpwindow.h"
-#include "index.h"
-#include "kvi_locale.h"
-#include "kvi_module.h"
-#include "kvi_fileutils.h"
+#include "HelpWidget.h"
+#include "HelpWindow.h"
+#include "HelpIndex.h"
+#include "KviLocale.h"
+#include "KviModule.h"
+#include "KviFileUtils.h"
 #include "kvi_sourcesdate.h"
-#include "kvi_app.h"
-#include "kvi_frame.h"
+#include "KviApplication.h"
+#include "KviMainWindow.h"
 
 #include <QDir>
 #include <QFileInfo>
 #include <QSplitter>
 
-Index        * g_pDocIndex = 0;
-KviPointerList<KviHelpWidget> * g_pHelpWidgetList = 0;
-KviPointerList<KviHelpWindow> * g_pHelpWindowList = 0;
+HelpIndex        * g_pDocIndex = 0;
+KviPointerList<HelpWidget> * g_pHelpWidgetList = 0;
+KviPointerList<HelpWindow> * g_pHelpWindowList = 0;
 
 /*
 	@doc: help.open
@@ -54,7 +54,7 @@ KviPointerList<KviHelpWindow> * g_pHelpWindowList = 0;
 		Finds the first available help browser in the current frame
 		then opens the specified [document].
 		If no [document] is specified it the documentation index is shown.
-		If no help browser is available , a new one is created.
+		If no help browser is available, a new one is created.
 		[document] can be an absolute path or a relative one: in this case
 		the document is searched in the KVIrc documentation directory.[br]
 		If no document has been found using absolute and relative paths,
@@ -103,14 +103,13 @@ static bool help_kvs_cmd_open(KviKvsModuleCommandCall * c)
 	 * 2) local help (in user directory)
 	 * 3) global help (in kvirc directory)
 	 */
-	
+
 	// try absolute path
 	QFileInfo f(szParam);
-
-	if(!f.exists())
+	if(!f.exists() || !f.isAbsolute())
 	{
 		// try relative path (to local help)
-		g_pApp->getLocalKvircDirectory(szHelpDir,KviApp::Help);
+		g_pApp->getLocalKvircDirectory(szHelpDir,KviApplication::Help);
 		dirHelp = QDir(szHelpDir);
 		szDoc = dirHelp.absoluteFilePath(szParam);
 		qDebug("No abs path, trying local relative path: %s",szDoc.toUtf8().data());
@@ -119,7 +118,7 @@ static bool help_kvs_cmd_open(KviKvsModuleCommandCall * c)
 		if(!f.exists())
 		{
 			//try relative path (to global help)
-			g_pApp->getGlobalKvircDirectory(szHelpDir,KviApp::Help);
+			g_pApp->getGlobalKvircDirectory(szHelpDir,KviApplication::Help);
 			dirHelp = QDir(szHelpDir);
 
 			szDoc = dirHelp.absoluteFilePath(szParam);
@@ -137,8 +136,8 @@ static bool help_kvs_cmd_open(KviKvsModuleCommandCall * c)
 			if (!g_pDocIndex->documentList().count())
 			{
 				QString szDoclist,szDict;
-				g_pApp->getLocalKvircDirectory(szDoclist,KviApp::Help,"help.doclist." KVI_SOURCES_DATE);
-				g_pApp->getLocalKvircDirectory(szDict,KviApp::Help,"help.dict." KVI_SOURCES_DATE);
+				g_pApp->getLocalKvircDirectory(szDoclist,KviApplication::Help,"help.doclist." KVI_SOURCES_DATE);
+				g_pApp->getLocalKvircDirectory(szDict,KviApplication::Help,"help.dict." KVI_SOURCES_DATE);
 				if ( KviFileUtils::fileExists(szDoclist) && KviFileUtils::fileExists( szDict ))
 				{
 					g_pDocIndex->readDict();
@@ -178,7 +177,7 @@ static bool help_kvs_cmd_open(KviKvsModuleCommandCall * c)
 
 	if(!c->switches()->find('n',"new"))
 	{
-		KviHelpWidget * w = (KviHelpWidget *)c->window()->frame()->findChild<KviHelpWidget *>("help_widget");
+		HelpWidget * w = (HelpWidget *)c->window()->frame()->findChild<HelpWidget *>("help_widget");
 
 		if(w)
 		{
@@ -188,11 +187,11 @@ static bool help_kvs_cmd_open(KviKvsModuleCommandCall * c)
 	}
 	if(c->switches()->find('m',"mdi"))
 	{
-		KviHelpWindow *w = new KviHelpWindow(c->window()->frame(),"Help browser");
+		HelpWindow *w = new HelpWindow(c->window()->frame(),"Help browser");
 		w->textBrowser()->setSource(QUrl::fromLocalFile(f.absoluteFilePath()));
 		c->window()->frame()->addWindow(w);
 	} else {
-		KviHelpWidget *w = new KviHelpWidget(c->window()->frame()->splitter(),
+		HelpWidget *w = new HelpWidget(c->window()->frame()->splitter(),
 			c->window()->frame(),true);
 		w->textBrowser()->setSource(QUrl::fromLocalFile(f.absoluteFilePath()));
 		w->show();
@@ -205,18 +204,18 @@ static bool help_module_init(KviModule * m)
 {
 	QString szHelpDir,szDocList;
 
-	g_pApp->getLocalKvircDirectory(szDocList,KviApp::Help,"help.doclist." KVI_SOURCES_DATE);
-	g_pApp->getGlobalKvircDirectory(szHelpDir,KviApp::Help);
+	g_pApp->getLocalKvircDirectory(szDocList,KviApplication::Help,"help.doclist." KVI_SOURCES_DATE);
+	g_pApp->getGlobalKvircDirectory(szHelpDir,KviApplication::Help);
 
-	g_pDocIndex = new Index(szHelpDir,szDocList);
+	g_pDocIndex = new HelpIndex(szHelpDir,szDocList);
 	g_pDocIndex->setDocListFile(szDocList);
 
-	g_pApp->getLocalKvircDirectory(szHelpDir,KviApp::Help,"help.dict." KVI_SOURCES_DATE);
+	g_pApp->getLocalKvircDirectory(szHelpDir,KviApplication::Help,"help.dict." KVI_SOURCES_DATE);
 	g_pDocIndex->setDictionaryFile(szHelpDir);
 
-	g_pHelpWidgetList = new KviPointerList<KviHelpWidget>;
+	g_pHelpWidgetList = new KviPointerList<HelpWidget>;
 	g_pHelpWidgetList->setAutoDelete(false);
-	g_pHelpWindowList = new KviPointerList<KviHelpWindow>;
+	g_pHelpWindowList = new KviPointerList<HelpWindow>;
 	g_pHelpWindowList->setAutoDelete(false);
 
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"open",help_kvs_cmd_open);

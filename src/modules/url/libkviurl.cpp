@@ -24,20 +24,22 @@
 
 #include "libkviurl.h"
 
-#include "kvi_module.h"
-#include "kvi_app.h"
-#include "kvi_frame.h"
-#include "kvi_menubar.h"
-#include "kvi_internalcmd.h"
-#include "kvi_iconmanager.h"
-#include "kvi_action.h"
-#include "kvi_actionmanager.h"
-#include "kvi_windowlist.h"
-#include "kvi_pointerlist.h"
-#include "kvi_kvs_eventmanager.h"
-#include "kvi_tal_popupmenu.h"
-#include "kvi_window.h"
-#include "kvi_options.h"
+#include "KviModule.h"
+#include "KviApplication.h"
+#include "KviMainWindow.h"
+#include "KviMenuBar.h"
+#include "KviMdiManager.h"
+#include "KviInternalCommand.h"
+#include "KviIconManager.h"
+#include "KviAction.h"
+#include "KviActionManager.h"
+#include "KviWindowListBase.h"
+#include "KviPointerList.h"
+#include "KviKvsEventManager.h"
+#include "KviTalPopupMenu.h"
+#include "KviWindow.h"
+#include "KviOptions.h"
+#include "KviQString.h"
 #include "kvi_out.h"
 
 #include <QFileDialog>
@@ -88,12 +90,12 @@ static KviModuleExtension * url_extension_alloc(KviModuleExtensionAllocStruct *)
 	return 0;
 }
 
-KviUrlDialogTreeWidget::KviUrlDialogTreeWidget(QWidget * par)
+UrlDialogTreeWidget::UrlDialogTreeWidget(QWidget * par)
 : QTreeWidget(par)
 {
 }
 
-void KviUrlDialogTreeWidget::mousePressEvent (QMouseEvent *e)
+void UrlDialogTreeWidget::mousePressEvent (QMouseEvent *e)
 {
 	if (e->button() == Qt::RightButton)
 	{
@@ -104,7 +106,7 @@ void KviUrlDialogTreeWidget::mousePressEvent (QMouseEvent *e)
 	QTreeWidget::mousePressEvent(e);
 }
 
-void KviUrlDialogTreeWidget::paintEvent(QPaintEvent * event)
+void UrlDialogTreeWidget::paintEvent(QPaintEvent * event)
 {
 	QPainter *p = new QPainter(viewport());
 	QStyleOptionViewItem option = viewOptions();
@@ -121,7 +123,7 @@ void KviUrlDialogTreeWidget::paintEvent(QPaintEvent * event)
 		p->restore();
 	} else if(g_pShadedChildGlobalDesktopBackground)
 	{
-		QPoint pnt = ((KviWindow*)parent())->mdiParent() ? viewport()->mapTo(g_pFrame, rect.topLeft() + g_pFrame->mdiManager()->scrollBarsOffset()) : viewport()->mapTo((KviWindow*)parent(), rect.topLeft());
+		QPoint pnt = ((KviWindow*)parent())->mdiParent() ? viewport()->mapTo(g_pMainWindow, rect.topLeft() + g_pMainWindow->mdiManager()->scrollBarsOffset()) : viewport()->mapTo((KviWindow*)parent(), rect.topLeft());
 		p->drawTiledPixmap(rect,*(g_pShadedChildGlobalDesktopBackground), pnt);
 	} else {
 #endif
@@ -146,7 +148,7 @@ KviUrlAction::KviUrlAction(QObject * pParent)
 		__tr2qs("Shows the URL list window"),
 		KviActionManager::categoryGeneric(),
 		"kvi_bigicon_www.png",
-		QString("%1").arg(KVI_SMALLICON_URL)
+		QString("%1").arg(KviIconManager::Url)
 	)
 {
 }
@@ -158,15 +160,15 @@ KviUrlAction::~KviUrlAction()
 // ---------------------------- CLASS URLDIALOG ------------------------begin //
 
 UrlDialog::UrlDialog(KviPointerList<KviUrl> *)
-	:KviWindow(KVI_WINDOW_TYPE_TOOL,g_pFrame,"URL List")
+	:KviWindow(KviWindow::Tool,g_pMainWindow,"URL List")
 {
 	setAutoFillBackground(false);
 	
-	m_pUrlList = new KviUrlDialogTreeWidget(this);
+	m_pUrlList = new UrlDialogTreeWidget(this);
 
 	m_pMenuBar = new KviTalMenuBar(this,"url menu");
 	//m_pUrlList = new KviListView(this,"list");
-	KviConfig cfg(szConfigPath,KviConfig::Read);
+	KviConfigurationFile cfg(szConfigPath,KviConfigurationFile::Read);
 /*
 	KviTalPopupMenu *pop;
 
@@ -287,9 +289,9 @@ void UrlDialog::findtext()
 	}
 	for(KviUrl *tmp=g_pList->first();tmp;tmp=g_pList->next())
 	{
-		if (tmp->url == KviStr(m_pUrlList->currentItem()->text(0))) {
+		if (tmp->url == KviCString(m_pUrlList->currentItem()->text(0))) {
 			g_pList->find(tmp);
-			KviStr ft="findtext %";
+			KviCString ft="findtext %";
 			ft.replaceAll('%',tmp->url.ptr());
 			KviWindow *wnd = m_pFrm->findWindow(tmp->window.ptr());
 			if (wnd) {
@@ -306,7 +308,9 @@ void UrlDialog::findtext()
 void UrlDialog::dblclk_url(QTreeWidgetItem *item, int)
 {
 	QString cmd="openurl ";
-	cmd.append(item->text(0));
+	QString szUrl = item->text(0);
+	KviQString::escapeKvs(&szUrl);
+	cmd.append(szUrl);
 	KviKvsScript::run(cmd,this);
 }
 
@@ -319,11 +323,11 @@ void UrlDialog::popup(QTreeWidgetItem *item, const QPoint &point)
 	p.insertSeparator();
 	m_pListPopup = new KviTalPopupMenu(0,"list");
 
-	for(KviWindow *w=g_pFrame->windowList()->first();w;w=g_pFrame->windowList()->next())
+	for(KviWindow *w=g_pMainWindow->windowList()->first();w;w=g_pMainWindow->windowList()->next())
 	{
-		if ((w->type() == KVI_WINDOW_TYPE_CHANNEL) ||
-			(w->type() == KVI_WINDOW_TYPE_QUERY) ||
-			 (w->type() == KVI_WINDOW_TYPE_DCCCHAT))
+		if ((w->type() == KviWindow::Channel) ||
+			(w->type() == KviWindow::Query) ||
+			 (w->type() == KviWindow::DccChat))
 		{
 			m_pListPopup->addAction(w->plainTextCaption());
 		}
@@ -343,17 +347,23 @@ void UrlDialog::contextMenu(const QPoint &point)
 void UrlDialog::sayToWin(QAction * act)
 {
 	KviWindow *wnd = g_pApp->findWindowByCaption(act->text());
-	QString say=QString("PRIVMSG %1 %2").arg(wnd->windowName(), m_szUrl);
 	if(wnd)
 	{
+		QString szUrl = m_szUrl;
+		QString szWindow = wnd->windowName();
+		KviQString::escapeKvs(&szUrl);
+		KviQString::escapeKvs(&szWindow);
+		QString say=QString("PRIVMSG %1 %2").arg(szWindow, szUrl);
 		KviKvsScript::run(say,wnd);
-		g_pFrame->setActiveWindow(wnd);
-	} else QMessageBox::warning(0,__tr2qs("Warning - KVIrc"),__tr2qs("Window not found."),QMessageBox::Ok,QMessageBox::NoButton,QMessageBox::NoButton);
+		g_pMainWindow->setActiveWindow(wnd);
+	} else {
+		QMessageBox::warning(0,__tr2qs("Warning - KVIrc"),__tr2qs("Window not found."),QMessageBox::Ok,QMessageBox::NoButton,QMessageBox::NoButton);
+	}
 }
 
 QPixmap *UrlDialog::myIconPtr()
 {
-	return g_pIconManager->getSmallIcon(KVI_SMALLICON_URL);
+	return g_pIconManager->getSmallIcon(KviIconManager::Url);
 }
 
 void UrlDialog::addUrl(QString url, QString window, QString count, QString timestamp)
@@ -386,7 +396,7 @@ void UrlDialog::resizeEvent(QResizeEvent *)
 UrlDialog::~UrlDialog()
 {
 	/*
-	KviConfig cfg(szConfigPath,KviConfig::Write);
+	KviConfigurationFile cfg(szConfigPath,KviConfigurationFile::Write);
 	cfg.setGroup("ConfigDialog");
 	if (cfg.readBoolEntry("SaveColumnWidthOnClose",false)) {
 		cfg.setGroup("ColsWidth");
@@ -416,7 +426,7 @@ ConfigDialog::ConfigDialog()
 
 	QGridLayout *g = new QGridLayout(this);
 
-	KviConfig *cfg = new KviConfig(szConfigPath,KviConfig::Read);
+	KviConfigurationFile *cfg = new KviConfigurationFile(szConfigPath,KviConfigurationFile::Read);
 	cfg->setGroup("ConfigDialog");
 
 	cb[0] = new QCheckBox(__tr2qs("Save URL list on module unload"),this);
@@ -457,7 +467,7 @@ void ConfigDialog::discardbtn()
 
 void ConfigDialog::acceptbtn()
 {
-	KviConfig *cfg = new KviConfig(szConfigPath,KviConfig::Write);
+	KviConfigurationFile *cfg = new KviConfigurationFile(szConfigPath,KviConfigurationFile::Write);
 	cfg->setGroup("ConfigDialog");
 
 	if (m_pBanFrame) m_pBanFrame->saveBans(cfg);
@@ -561,7 +571,7 @@ void BanFrame::removeBan()
 
 }
 
-void BanFrame::saveBans(KviConfig *cfg)
+void BanFrame::saveBans(KviConfigurationFile *cfg)
 {
 	cfg->writeEntry("BanEnabled",m_pEnable->isChecked());
 	if (m_pEnable->isChecked()) saveBanList();
@@ -577,7 +587,7 @@ BanFrame::~BanFrame()
 void saveUrlList()
 {
 	QString urllist;
-	g_pApp->getLocalKvircDirectory(urllist,KviApp::ConfigPlugins);
+	g_pApp->getLocalKvircDirectory(urllist,KviApplication::ConfigPlugins);
 	urllist += g_pUrlListFilename;
 	QFile file;
 	file.setFileName(urllist);
@@ -601,7 +611,7 @@ void saveUrlList()
 void loadUrlList()
 {
 	QString urllist;
-	g_pApp->getLocalKvircDirectory(urllist,KviApp::ConfigPlugins);
+	g_pApp->getLocalKvircDirectory(urllist,KviApplication::ConfigPlugins);
 	urllist += g_pUrlListFilename;
 	QFile file;
 	file.setFileName(urllist);
@@ -641,7 +651,7 @@ void loadUrlList()
 void saveBanList()
 {
 	QString banlist;
-	g_pApp->getLocalKvircDirectory(banlist,KviApp::ConfigPlugins);
+	g_pApp->getLocalKvircDirectory(banlist,KviApplication::ConfigPlugins);
 	banlist += g_pBanListFilename;
 	QFile file;
 	file.setFileName(banlist);
@@ -661,7 +671,7 @@ void saveBanList()
 void loadBanList()
 {
 	QString banlist;
-	g_pApp->getLocalKvircDirectory(banlist,KviApp::ConfigPlugins);
+	g_pApp->getLocalKvircDirectory(banlist,KviApplication::ConfigPlugins);
 	banlist += g_pBanListFilename;
 	QFile file;
 	file.setFileName(banlist);
@@ -732,7 +742,7 @@ bool urllist()
 	if (tmpitem->dlg) return false;
 
 	tmpitem->dlg = new UrlDialog(g_pList);
-	g_pFrame->addWindow(tmpitem->dlg);
+	g_pMainWindow->addWindow(tmpitem->dlg);
 
 	for(KviUrl *tmp=g_pList->first();tmp;tmp=g_pList->next())
 	{
@@ -866,7 +876,7 @@ static bool url_module_init(KviModule *m)
 							KVI_URL_EXTENSION_NAME,
 							__tr2qs("View URL list"),
 							url_extension_alloc);
-	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_URL)));
+	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::Url)));
 
 	g_pList = new KviPointerList<KviUrl>;
 	g_pList->setAutoDelete(true);
@@ -884,7 +894,7 @@ static bool url_module_init(KviModule *m)
 
 	m->kvsRegisterAppEventHandler(KviEvent_OnURL,urllist_module_event_onUrl);
 
-	g_pApp->getLocalKvircDirectory(szConfigPath,KviApp::ConfigPlugins,"url.conf");
+	g_pApp->getLocalKvircDirectory(szConfigPath,KviApplication::ConfigPlugins,"url.conf");
 
 	loadUrlList();
 	loadBanList();
@@ -898,7 +908,7 @@ static bool url_module_init(KviModule *m)
 
 static bool url_module_cleanup(KviModule *)
 {
-	KviConfig cfg(szConfigPath,KviConfig::Read);
+	KviConfigurationFile cfg(szConfigPath,KviConfigurationFile::Read);
 	cfg.setGroup("ConfigDialog");
 	if (cfg.readBoolEntry("SaveUrlListOnUnload",false) == true) saveUrlList();
 	for (UrlDlgList *tmpitem=g_pUrlDlgList->first();tmpitem;tmpitem=g_pUrlDlgList->next()) {
@@ -962,7 +972,7 @@ void url_module_config()
 
 KVIRC_MODULE(
 	"URL",
-	"4.0.0" ,
+	"4.0.0",
 	"Copyright (C) 2002 Andrea Parrella <yap@yapsoft.it>",
 	"url list module for KVIrc",
 	url_module_init,
