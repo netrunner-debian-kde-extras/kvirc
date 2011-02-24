@@ -1,0 +1,473 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Alexander Antsev <kagami@crossplatform.ru>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-06-10 20:53+0200\n"
+"PO-Revision-Date: 2010-06-14 10:47+0400\n"
+"Last-Translator: Igor Govorov <govorov.igor at gmail.com>\n"
+"Language-Team: Russian <kde-russian@lists.kde.ru>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: src/modules/addon/libkviaddon.cpp:146
+msgid "%cAddon id %Q, version %Q%c"
+msgstr "%cДополнение %Q, версия %Q%c"
+
+#: src/modules/addon/addonfunctions.cpp:295
+msgid "Addon Engine Version"
+msgstr "Версия движка дополнения"
+
+#: src/modules/addon/packaddondialog.cpp:306
+#: src/modules/addon/packaddondialog.cpp:332
+msgid "Addon Packaging Error"
+msgstr "Ошибка упаковки дополнения"
+
+#: src/modules/addon/packaddondialog.cpp:315
+msgid "Addon Packaging Warning"
+msgstr "Предупреждение упаковки дополнения"
+
+#: src/modules/addon/libkviaddon.cpp:581
+msgid "Addon registration failed"
+msgstr "Не удалось зарегистрировать дополнение"
+
+#: src/modules/addon/libkviaddon.cpp:586
+msgid "Addon successfully registered"
+msgstr "Дополнение успешно зарегистрировано"
+
+#: src/modules/addon/libkviaddon.cpp:555
+msgid "Attempting to register addon \"%Q\" with version %Q"
+msgstr "Попытка зарегистрировать дополнение \"%Q\" версии %Q"
+
+#: src/modules/addon/addonfunctions.cpp:97
+#: src/modules/addon/addonfunctions.cpp:292
+msgid "Author"
+msgstr "Автор"
+
+#: src/modules/addon/packaddondialog.cpp:683
+msgid "Cancel"
+msgstr "Отмена"
+
+#: src/modules/addon/packaddondialog.cpp:274
+msgid "Cannot open file for writing."
+msgstr "Не могу открыть файл на запись."
+
+#: src/modules/addon/packaddondialog.cpp:281
+msgid "Cannot write to the file descriptor."
+msgstr "Не могу записать в дескриптор файла."
+
+#: src/modules/addon/managementdialog.cpp:170
+msgid "Close"
+msgstr "Закрыть "
+
+#: src/modules/addon/managementdialog.cpp:110
+msgid "Configure Addon..."
+msgstr "Конфигурация дополнения..."
+
+#: src/modules/addon/managementdialog.cpp:258
+msgid "Confirm addon uninstallation"
+msgstr "Подтвердите удаление дополнения"
+
+#: src/modules/addon/packaddondialog.cpp:52
+msgid "Create Addon Package - KVIrc"
+msgstr "Создать пакет дополнения - KVIrc"
+
+#: src/modules/addon/managementdialog.cpp:132
+msgid "Create an Addon as a Distributable Package"
+msgstr "Создать дополнение как распространяемый пакет"
+
+#: src/modules/addon/addonfunctions.cpp:98
+#: src/modules/addon/addonfunctions.cpp:293
+msgid "Created at"
+msgstr "Дата создания"
+
+#: src/modules/addon/addonfunctions.cpp:99
+#: src/modules/addon/addonfunctions.cpp:294
+msgid "Created with"
+msgstr "Создано с помощью"
+
+#: src/modules/addon/managementdialog.cpp:122
+msgid "Delete Selected Addons"
+msgstr "Удалить выбранные дополнения"
+
+#: src/modules/addon/packaddondialog.cpp:506
+msgid "Description must be short"
+msgstr "Описание должно быть коротким"
+
+#: src/modules/addon/libkviaddon.cpp:148
+msgid "Description: %Q"
+msgstr "Описание: %Q"
+
+#: src/modules/addon/addonfunctions.cpp:214
+msgid "Do Not Install"
+msgstr "Не устанавливать"
+
+#: src/modules/addon/managementdialog.cpp:253
+msgid "Do you really want to uninstall the addon \"%1\" ?"
+msgstr "Вы действительно хотите удалить дополнение \"%1\"?"
+
+#: src/modules/addon/addonfunctions.cpp:213
+msgid "Do you want to proceed with the installation ?"
+msgstr "Вы хотите продолжить установку?"
+
+#: src/modules/addon/libkviaddon.cpp:636
+msgid "Error installing addon package: %Q"
+msgstr "Не могу установить пакет дополнения: %Q"
+
+#: src/modules/addon/packaddondialog.cpp:361
+#: src/modules/addon/packaddondialog.cpp:371
+#: src/modules/addon/packaddondialog.cpp:381
+#: src/modules/addon/packaddondialog.cpp:391
+#: src/modules/addon/packaddondialog.cpp:401
+#: src/modules/addon/packaddondialog.cpp:411
+#: src/modules/addon/packaddondialog.cpp:421
+#: src/modules/addon/packaddondialog.cpp:431
+#: src/modules/addon/packaddondialog.cpp:451
+#: src/modules/addon/packaddondialog.cpp:459
+msgid "Export Addon - KVIrc"
+msgstr "Экспорт дополнения - KVIrc"
+
+#: src/modules/addon/addonfunctions.cpp:249
+#: src/modules/addon/addonfunctions.cpp:274
+msgid "Failed to unpack the selected file: %Q"
+msgstr "Не могу распаковать выбранный файл: %Q"
+
+#: src/modules/addon/packaddondialog.cpp:667
+msgid "File Summary"
+msgstr "Краткая сводка о файле"
+
+#: src/modules/addon/packaddondialog.cpp:601
+msgid "Final Information"
+msgstr "Конечная информация"
+
+#: src/modules/addon/packaddondialog.cpp:687
+msgid "Finish"
+msgstr "Готово"
+
+#: src/modules/addon/managementdialog.cpp:148
+msgid "Get More Addons..."
+msgstr "Еще дополнения..."
+
+#: src/modules/addon/addonfunctions.cpp:158
+msgid "Go Back to Package Data"
+msgstr "Вернуться к данным пакета"
+
+#: src/modules/addon/packaddondialog.cpp:674
+msgid ""
+"Here there are the files I found in the directories you provided.\n"
+"If these and the information showed in the previous page are correct, hit "
+"the \"Finish\" button to complete\n"
+"the packaging operations."
+msgstr ""
+"Вот файлы которые я нашёл в указанной вами директории.\n"
+"Если они и показанная на предыдущей странице информация верны, нажмите "
+"кнопку \"Готово\"\n"
+"чтобы завершить операции упаковки."
+
+#: src/modules/addon/packaddondialog.cpp:602
+msgid ""
+"Here there are the information you provided. If these information are "
+"correct, hit the \"Finish\" button to complete the packaging operations."
+msgstr ""
+"Здесь представлена введённая вами информация. Если эта информация верна, "
+"нажмите кнопку \"Готово\" чтобы завершить упаковку."
+
+#: src/modules/addon/packaddondialog.cpp:470
+msgid ""
+"Here you need to provide information about you (the packager) and a short "
+"description of the package you're creating."
+msgstr "Здесь вы должны указать информацию о себе и краткое описание пакета."
+
+#: src/modules/addon/packaddondialog.cpp:564
+msgid "Here you need to provide the path where to save the addon package"
+msgstr "Здесь вам надо выбрать директорию для сохранения пакета дополнения."
+
+#: src/modules/addon/packaddondialog.cpp:537
+msgid "Here you need to select the directory where the addon files are."
+msgstr "Здесь вам надо выбрать директорию, где расположены файлы дополнения."
+
+#: src/modules/addon/packaddondialog.cpp:98
+msgid "Hit the \"Next\" button to begin."
+msgstr "Нажмите \"Далее\" для продолжения."
+
+#: src/modules/addon/packaddondialog.cpp:647
+msgid "Icon File"
+msgstr "Файл иконки"
+
+#: src/modules/addon/managementdialog.cpp:292
+#: src/modules/addon/managementdialog.cpp:306
+msgid "Install Addon - KVIrc"
+msgstr "Установить дополнение - KVIrc"
+
+#: src/modules/addon/addonfunctions.cpp:211
+msgid "Install Addon Pack - KVIrc"
+msgstr "Установить пакет дополнения - KVIrc"
+
+#: src/modules/addon/managementdialog.cpp:142
+msgid "Install Addon Package From Disk"
+msgstr "Установить пакет дополнения с локального диска"
+
+#: src/modules/addon/libkviaddon.cpp:529
+msgid "Internal error: call a head-shrinker"
+msgstr "Внутренняя ошибка: вызов сжимателя заголовка"
+
+#: src/modules/addon/managementdialog.cpp:92
+msgid "Manage Script-Based Addons"
+msgstr "Управление скриптовыми дополнениями"
+
+#: src/modules/addon/packaddondialog.cpp:511
+msgid "Minimum &KVIrc Version:"
+msgstr "Минимальная версия &KVIrc:"
+
+#: src/modules/addon/packaddondialog.cpp:643
+msgid "Minimum KVIrc Version"
+msgstr "Минимальная версия KVIrc"
+
+#: src/modules/addon/libkviaddon.cpp:147
+msgid "Name: %Q"
+msgstr "Имя: %Q"
+
+#: src/modules/addon/managementdialog.cpp:259
+msgid "No"
+msgstr "Нет"
+
+#: src/modules/addon/packaddondialog.cpp:488
+msgid "No spaces allowed, like MyAddon"
+msgstr "Пробелы не допустимы, например, MyAddon"
+
+#: src/modules/addon/addonfunctions.cpp:273
+msgid "One or more files can't be deleted"
+msgstr "Один или несколько файлов не могут быть удалены"
+
+#: src/modules/addon/packaddondialog.cpp:475
+msgid "Package &Author:"
+msgstr "&Автор пакета:"
+
+#: src/modules/addon/packaddondialog.cpp:502
+msgid "Package &Description:"
+msgstr "&Описание пакета:"
+
+#: src/modules/addon/packaddondialog.cpp:484
+msgid "Package &Name:"
+msgstr "Имя &пакета:"
+
+#: src/modules/addon/packaddondialog.cpp:493
+msgid "Package &Version:"
+msgstr "&Версия пакета:"
+
+#: src/modules/addon/packaddondialog.cpp:627
+msgid "Package Author"
+msgstr "Автор пакета"
+
+#: src/modules/addon/packaddondialog.cpp:639
+msgid "Package Description"
+msgstr "Описание пакета"
+
+#: src/modules/addon/packaddondialog.cpp:536
+msgid "Package Files"
+msgstr "Файлы пакета"
+
+#: src/modules/addon/packaddondialog.cpp:469
+msgid "Package Information"
+msgstr "Информация о пакете"
+
+#: src/modules/addon/packaddondialog.cpp:631
+msgid "Package Name"
+msgstr "Имя пакета"
+
+#: src/modules/addon/packaddondialog.cpp:635
+msgid "Package Version"
+msgstr "Версия пакета"
+
+#: src/modules/addon/packaddondialog.cpp:358
+#: src/modules/addon/packaddondialog.cpp:368
+#: src/modules/addon/packaddondialog.cpp:378
+#: src/modules/addon/packaddondialog.cpp:388
+#: src/modules/addon/packaddondialog.cpp:398
+#: src/modules/addon/packaddondialog.cpp:408
+#: src/modules/addon/packaddondialog.cpp:418
+#: src/modules/addon/packaddondialog.cpp:428
+#: src/modules/addon/packaddondialog.cpp:448
+msgid "Packaging failed"
+msgstr "Упаковка завершена неудачно"
+
+#: src/modules/addon/managementdialog.cpp:279
+msgid "Please select the addon installation file"
+msgstr "Пожалуйста, выберите файл установки дополнения"
+
+#: src/modules/addon/packaddondialog.cpp:563
+msgid "Save Package"
+msgstr "Сохранить пакет"
+
+#: src/modules/addon/packaddondialog.cpp:655
+msgid "Save Path"
+msgstr "Путь сохранения"
+
+#: src/modules/addon/packaddondialog.cpp:569
+msgid "Select save path:"
+msgstr "Выберите путь сохранения:"
+
+#: src/modules/addon/packaddondialog.cpp:546
+msgid "Select the icon file:"
+msgstr "Выберите файл иконки:"
+
+#: src/modules/addon/packaddondialog.cpp:542
+msgid "Select the source directory:"
+msgstr "Выберите исходную директорию:"
+
+#: src/modules/addon/addonfunctions.cpp:162
+msgid "Show Details"
+msgstr "Показать подробности"
+
+#: src/modules/addon/managementdialog.cpp:116
+msgid "Show Help"
+msgstr "Показать помощь"
+
+#: src/modules/addon/packaddondialog.cpp:651
+msgid "Source Directory"
+msgstr "Исходная директория"
+
+#: src/modules/addon/addonfunctions.cpp:296
+msgid "Subdirectory"
+msgstr "Подкаталог"
+
+#: src/modules/addon/libkviaddon.cpp:200 src/modules/addon/libkviaddon.cpp:246
+#: src/modules/addon/libkviaddon.cpp:293 src/modules/addon/libkviaddon.cpp:339
+#: src/modules/addon/libkviaddon.cpp:386
+msgid "The addon \"%1\" does not exist"
+msgstr "Дополнение \"%1\" не существует"
+
+#: src/modules/addon/libkviaddon.cpp:240
+msgid "The addon \"%1\" has no configure callback set"
+msgstr "Дополнение \"%1\" не имеет конфигурационных функций"
+
+#: src/modules/addon/libkviaddon.cpp:287
+msgid "The addon \"%1\" has no help callback set"
+msgstr "Действие \"%1\" не имеет помощи"
+
+#: src/modules/addon/libkviaddon.cpp:567
+msgid "The addon \"%Q\" already exists with version %Q which is higher than %Q"
+msgstr "Дополнение \"%Q\" уже установлено версии %Q, которая новее чем %Q"
+
+#: src/modules/addon/packaddondialog.cpp:173
+msgid "The configurations directory (config) does not exist."
+msgstr "Каталог настроек (config) не существует."
+
+#: src/modules/addon/packaddondialog.cpp:180
+msgid "The help directory (help) does not exist."
+msgstr "Каталог справки (help) не существует."
+
+#: src/modules/addon/packaddondialog.cpp:187
+msgid "The initialization script (init.kvs) does not exist."
+msgstr "Скрипт инициализации (init.kvs) не существует."
+
+#: src/modules/addon/packaddondialog.cpp:166
+msgid "The pictures directory (pics) does not exist."
+msgstr "Каталог изображений (pics) не существует."
+
+#: src/modules/addon/packaddondialog.cpp:138
+msgid "The selected directory does not exist."
+msgstr "Заданный каталог не существует."
+
+#: src/modules/addon/addonfunctions.cpp:47
+msgid "The selected file does not seem to be a valid KVIrc addon package"
+msgstr "Выбранный файл не является пакетом дополнения KVIrc"
+
+#: src/modules/addon/addonfunctions.cpp:66
+msgid "The selected file does not seem to be a valid KVIrc package: %Q"
+msgstr "Выбранный файл не является пакетом KVIrc: %Q"
+
+#: src/modules/addon/packaddondialog.cpp:159
+msgid "The sounds directory (sound) does not exist."
+msgstr "Каталог звуков (sound) не существует."
+
+#: src/modules/addon/packaddondialog.cpp:145
+msgid "The sources directory (src) does not exist."
+msgstr "Каталог исходников (src) не существует."
+
+#: src/modules/addon/libkviaddon.cpp:544
+msgid "The specified KVIrc version \"%Q\" is not a valid version string"
+msgstr "Заданная версия KVirc \"%Q\" не является корректной"
+
+#: src/modules/addon/libkviaddon.cpp:538
+msgid "The specified version \"%Q\" is not a valid version string"
+msgstr "Заданная версия \"%Q\" не имеет формата строки версии"
+
+#: src/modules/addon/packaddondialog.cpp:152
+msgid "The translations directory (locale) does not exist."
+msgstr "Каталог переводов (locale) не существует."
+
+#: src/modules/addon/libkviaddon.cpp:550
+msgid ""
+"This KVIrc executable is too old to run this addon (minimum version required "
+"is %Q)"
+msgstr ""
+"Установлен KVIrc слишком старой версии. Минимальная требуемая версия для "
+"этого скрипта %Q"
+
+#: src/modules/addon/packaddondialog.cpp:625
+msgid "This is what I will check for:"
+msgstr "Вот что я буду проверять:"
+
+#: src/modules/addon/packaddondialog.cpp:90
+msgid ""
+"This procedure allows you to export the selected addon to a single package. "
+"It is useful when you want to distribute your addon to the public."
+msgstr ""
+"Эта процедура позволяет вам экспортировать выделенные дополнения в один "
+"пакет. Это очень удобно, если вы хотите распространять ваши дополнения в "
+"интернете."
+
+#: src/modules/addon/libkviaddon.cpp:154
+#, c-format
+msgid "Total: %d addons installed"
+msgstr "Всего установлено %d дополнений"
+
+#: src/modules/addon/libkviaddon.cpp:194 src/modules/addon/libkviaddon.cpp:573
+msgid "Uninstalling existing addon version %Q"
+msgstr "Удаление имеющегося дополнения версии %Q"
+
+#: src/modules/addon/packaddondialog.cpp:497
+msgid "Version in the form x.y[.z], like 1.0 or 2.0.3"
+msgstr "Версия в форме x.y[.z], например, 1.0 или 2.0.3"
+
+#: src/modules/addon/addonfunctions.cpp:153
+msgid "Warning: The addon might be incompatible with this version of KVIrc"
+msgstr ""
+"Предупреждение: дополнение может быть не совместимо с вашей версией KVIrc"
+
+#: src/modules/addon/packaddondialog.cpp:86
+msgid "Welcome"
+msgstr "Добро пожаловать"
+
+#: src/modules/addon/managementdialog.cpp:259
+msgid "Yes"
+msgstr "Да"
+
+#: src/modules/addon/addonfunctions.cpp:215
+msgid "Yes, Proceed"
+msgstr "Да, продолжить"
+
+#: src/modules/addon/packaddondialog.cpp:96
+msgid ""
+"You will be asked to provide some information like the package name, the "
+"version, a description and so on."
+msgstr ""
+"Вас попросят предоставить некоторую информацию, например, имя пакета, его "
+"версия, описание и так далее."
+
+#: src/modules/addon/addonfunctions.cpp:212
+msgid "You're about to install the following addon package"
+msgstr "Вы пытаетесь установить пакет дополнения"
+
+#: src/modules/addon/packaddondialog.cpp:479
+msgid "Your name here"
+msgstr "Ваше имя"
+
