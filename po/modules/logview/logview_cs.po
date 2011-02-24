@@ -1,0 +1,128 @@
+# Czech translation of Kvirc.
+# Copyright (C) 2004 THE Kvirc'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Kvirc package.
+# Dušan Hokův <dusan@mirc.cz>, 2004.
+# , fuzzy
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Kvirc\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-02-22 00:17+0100\n"
+"PO-Revision-Date: 2007-12-05 18:02+0100\n"
+"Last-Translator: Dusan Hokuv <dusan@mirc.cz>\n"
+"Language-Team: Czech <cs@li.org>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/modules/logview/LogViewWindow.cpp:317
+#, fuzzy
+msgid "%1 on %2"
+msgstr "%1 na %2"
+
+#: src/modules/logview/LogViewWindow.cpp:154
+msgid "Apply filter"
+msgstr "Použít filtr"
+
+#: src/modules/logview/libkvilogview.cpp:135
+msgid "Browse &Log Files"
+msgstr "Prohlížet soubory &logů"
+
+#: src/modules/logview/LogViewWindow.cpp:84
+#, fuzzy
+msgid "Cancel"
+msgstr "Kanál"
+
+#: src/modules/logview/LogViewWidget.cpp:70
+msgid "Channel"
+msgstr "Kanál"
+
+#: src/modules/logview/LogViewWidget.cpp:82
+msgid "Console"
+msgstr "Konzole"
+
+#: src/modules/logview/LogViewWindow.cpp:123
+msgid "Contents filter"
+msgstr "Filtr obsahu"
+
+#: src/modules/logview/LogViewWidget.cpp:78
+msgid "DCC Chat"
+msgstr "DCC Chat"
+
+#: src/modules/logview/LogViewWindow.cpp:98
+msgid "Filter"
+msgstr "Filtr"
+
+#: src/modules/logview/LogViewWindow.cpp:89
+#, fuzzy
+msgid "HelpIndex"
+msgstr "Obsah"
+
+#: src/modules/logview/LogViewWindow.cpp:577
+msgid "Log File"
+msgstr "Soubor logů"
+
+#: src/modules/logview/LogViewWindow.cpp:220
+msgid "Log Viewer"
+msgstr "Prohlížeč logů"
+
+#: src/modules/logview/LogViewWindow.cpp:132
+msgid "Log contents mask:"
+msgstr "Maska logu obsahu:"
+
+#: src/modules/logview/LogViewWindow.cpp:126
+msgid "Log name mask:"
+msgstr "Maska názvu logu:"
+
+#: src/modules/logview/LogViewWindow.cpp:146
+msgid "Only newier than"
+msgstr "Pouze novější než"
+
+#: src/modules/logview/LogViewWindow.cpp:138
+msgid "Only older than"
+msgstr "Pouze starší než"
+
+#: src/modules/logview/LogViewWidget.cpp:86
+msgid "Other"
+msgstr "Ostatní"
+
+#: src/modules/logview/LogViewWidget.cpp:74
+msgid "Query"
+msgstr "Query"
+
+#: src/modules/logview/LogViewWindow.cpp:417
+msgid "Remove all these channel/query log files"
+msgstr ""
+
+#: src/modules/logview/LogViewWindow.cpp:418
+msgid "Remove file"
+msgstr "Smazat soubor"
+
+#: src/modules/logview/LogViewWindow.cpp:114
+msgid "Show DCC chat logs"
+msgstr "Zobrazit logy DCC chatu"
+
+#: src/modules/logview/LogViewWindow.cpp:102
+msgid "Show channel logs"
+msgstr "Zobrazit logy kanálu"
+
+#: src/modules/logview/LogViewWindow.cpp:110
+msgid "Show console logs"
+msgstr "Zobrazit logy konzole"
+
+#: src/modules/logview/LogViewWindow.cpp:118
+msgid "Show other logs"
+msgstr "Zobrazit ostatní logy"
+
+#: src/modules/logview/LogViewWindow.cpp:106
+msgid "Show query logs"
+msgstr "Zobrazit query logy"
+
+#~ msgid "Abort filtering"
+#~ msgstr "Přerušit filtrování"
+
+#~ msgid "Filtering files..."
+#~ msgstr "Filtrování souborů..."

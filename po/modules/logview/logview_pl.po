@@ -1,0 +1,129 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: KVIrc 4.0.0 'Insomnia'\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-02-22 00:17+0100\n"
+"PO-Revision-Date: 2010-06-16 11:39+0100\n"
+"Last-Translator: Be Mi <cannabis_ultra@o2.pl>\n"
+"Language-Team: Polska <PL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Translate Toolkit 1.2-beta2\n"
+"Plural-Forms: 3\n"
+"X-Poedit-Language: Polish\n"
+"X-Poedit-Country: POLAND\n"
+
+#: src/modules/logview/LogViewWindow.cpp:317
+#, fuzzy
+msgid "%1 on %2"
+msgstr "%1 na %2"
+
+#: src/modules/logview/LogViewWindow.cpp:154
+msgid "Apply filter"
+msgstr "Zastosuj filtr"
+
+#: src/modules/logview/libkvilogview.cpp:135
+msgid "Browse &Log Files"
+msgstr "Przeglą&daj pliki dziennika"
+
+#: src/modules/logview/LogViewWindow.cpp:84
+#, fuzzy
+msgid "Cancel"
+msgstr "Kanał"
+
+#: src/modules/logview/LogViewWidget.cpp:70
+msgid "Channel"
+msgstr "Kanał"
+
+#: src/modules/logview/LogViewWidget.cpp:82
+msgid "Console"
+msgstr "Konsola"
+
+#: src/modules/logview/LogViewWindow.cpp:123
+msgid "Contents filter"
+msgstr "Filtr zawartości"
+
+#: src/modules/logview/LogViewWidget.cpp:78
+msgid "DCC Chat"
+msgstr "DCC Czat"
+
+#: src/modules/logview/LogViewWindow.cpp:98
+msgid "Filter"
+msgstr "Filtr"
+
+#: src/modules/logview/LogViewWindow.cpp:89
+#, fuzzy
+msgid "HelpIndex"
+msgstr "Indeks"
+
+#: src/modules/logview/LogViewWindow.cpp:577
+msgid "Log File"
+msgstr "Plik dziennika"
+
+#: src/modules/logview/LogViewWindow.cpp:220
+msgid "Log Viewer"
+msgstr "Przeglądarka dziennika"
+
+#: src/modules/logview/LogViewWindow.cpp:132
+msgid "Log contents mask:"
+msgstr "Maska zawartości dziennika:"
+
+#: src/modules/logview/LogViewWindow.cpp:126
+msgid "Log name mask:"
+msgstr "Maska nazwy dziennika:"
+
+#: src/modules/logview/LogViewWindow.cpp:146
+msgid "Only newier than"
+msgstr "Tylko nowsze niż"
+
+#: src/modules/logview/LogViewWindow.cpp:138
+msgid "Only older than"
+msgstr "Tylko starsze niż"
+
+#: src/modules/logview/LogViewWidget.cpp:86
+msgid "Other"
+msgstr "Inne"
+
+#: src/modules/logview/LogViewWidget.cpp:74
+msgid "Query"
+msgstr "Rozmowa"
+
+#: src/modules/logview/LogViewWindow.cpp:417
+msgid "Remove all these channel/query log files"
+msgstr "Usuń wszystkie te pliki dziennika kanału/rozmowy"
+
+#: src/modules/logview/LogViewWindow.cpp:418
+msgid "Remove file"
+msgstr "Usuń plik"
+
+#: src/modules/logview/LogViewWindow.cpp:114
+msgid "Show DCC chat logs"
+msgstr "Pokaż dzienniki czatu DCC"
+
+#: src/modules/logview/LogViewWindow.cpp:102
+msgid "Show channel logs"
+msgstr "Pokaż dzienniki kanałów"
+
+#: src/modules/logview/LogViewWindow.cpp:110
+msgid "Show console logs"
+msgstr "Pokaż dzienniki konsoli"
+
+#: src/modules/logview/LogViewWindow.cpp:118
+msgid "Show other logs"
+msgstr "Pokaż dzienniki innych zdarzeń"
+
+#: src/modules/logview/LogViewWindow.cpp:106
+msgid "Show query logs"
+msgstr "Pokaż dzienniki rozmowy"
+
+#~ msgid "Abort filtering"
+#~ msgstr "Przerwij fitrowanie"
+
+#~ msgid "Filtering files..."
+#~ msgstr "Filtrowanie plików..."

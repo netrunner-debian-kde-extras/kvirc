@@ -1,0 +1,127 @@
+# translation of logview_hr.po to Croatian
+# Copyright (C) 2007
+# This file is distributed under the same license as the KVIrc package.
+#
+# SpeedyGhost <SpeedyGhost@gmail.com>, 2007.
+msgid ""
+msgstr ""
+"Project-Id-Version: logview_hr\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-02-22 00:17+0100\n"
+"PO-Revision-Date: 2007-03-14 01:19+0100\n"
+"Last-Translator: SpeedyGhost <SpeedyGhost@gmail.com>\n"
+"Language-Team: Croatian <hr@li.org>\n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: src/modules/logview/LogViewWindow.cpp:317
+#, fuzzy
+msgid "%1 on %2"
+msgstr "%1 na %2"
+
+#: src/modules/logview/LogViewWindow.cpp:154
+msgid "Apply filter"
+msgstr "Prihvati filter"
+
+#: src/modules/logview/libkvilogview.cpp:135
+msgid "Browse &Log Files"
+msgstr "Pregledaj &Log Datoteke"
+
+#: src/modules/logview/LogViewWindow.cpp:84
+#, fuzzy
+msgid "Cancel"
+msgstr "Sobe"
+
+#: src/modules/logview/LogViewWidget.cpp:70
+msgid "Channel"
+msgstr "Sobe"
+
+#: src/modules/logview/LogViewWidget.cpp:82
+msgid "Console"
+msgstr "Konzole"
+
+#: src/modules/logview/LogViewWindow.cpp:123
+msgid "Contents filter"
+msgstr "Filter sadržaja"
+
+#: src/modules/logview/LogViewWidget.cpp:78
+msgid "DCC Chat"
+msgstr "DCC Razgovori"
+
+#: src/modules/logview/LogViewWindow.cpp:98
+msgid "Filter"
+msgstr "Filter"
+
+#: src/modules/logview/LogViewWindow.cpp:89
+#, fuzzy
+msgid "HelpIndex"
+msgstr "Indeks"
+
+#: src/modules/logview/LogViewWindow.cpp:577
+msgid "Log File"
+msgstr "Log Datoteka"
+
+#: src/modules/logview/LogViewWindow.cpp:220
+msgid "Log Viewer"
+msgstr "Log Preglednik"
+
+#: src/modules/logview/LogViewWindow.cpp:132
+msgid "Log contents mask:"
+msgstr "Maska log sadržaja:"
+
+#: src/modules/logview/LogViewWindow.cpp:126
+msgid "Log name mask:"
+msgstr "Maska log imena:"
+
+#: src/modules/logview/LogViewWindow.cpp:146
+msgid "Only newier than"
+msgstr "Samo novije od"
+
+#: src/modules/logview/LogViewWindow.cpp:138
+msgid "Only older than"
+msgstr "Samo starije od"
+
+#: src/modules/logview/LogViewWidget.cpp:86
+msgid "Other"
+msgstr "Ostalo"
+
+#: src/modules/logview/LogViewWidget.cpp:74
+msgid "Query"
+msgstr "Razgovori"
+
+#: src/modules/logview/LogViewWindow.cpp:417
+msgid "Remove all these channel/query log files"
+msgstr ""
+
+#: src/modules/logview/LogViewWindow.cpp:418
+msgid "Remove file"
+msgstr "Ukloni datoteku"
+
+#: src/modules/logview/LogViewWindow.cpp:114
+msgid "Show DCC chat logs"
+msgstr "Prikaži logove DCC razgovora"
+
+#: src/modules/logview/LogViewWindow.cpp:102
+msgid "Show channel logs"
+msgstr "Prikaži logove soba"
+
+#: src/modules/logview/LogViewWindow.cpp:110
+msgid "Show console logs"
+msgstr "Prikaži logove konzola"
+
+#: src/modules/logview/LogViewWindow.cpp:118
+msgid "Show other logs"
+msgstr "Prikaži ostale logove"
+
+#: src/modules/logview/LogViewWindow.cpp:106
+msgid "Show query logs"
+msgstr "Prikaži logove razgovora"
+
+#~ msgid "Abort filtering"
+#~ msgstr "Prekini filtriranje"
+
+#~ msgid "Filtering files..."
+#~ msgstr "Filtriranje datoteka..."
