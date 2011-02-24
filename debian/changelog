@@ -2,8 +2,11 @@ kvirc (4:4.1.1~svn5507-2) UNRELEASED; urgency=low
 
   The "Sigil of Sleep" release.
 
-  * debian/control: Remove version constraint on pkg-kde-tools B-D (oldest
-    version in the archives is >=0.9).
+  * debian/control:
+    - Remove version constraint on pkg-kde-tools B-D (oldest version in the
+      archives is >=0.9).
+    - Changed Vcs-* links to our Git repository (this change was made because
+      mercurial-buildpackage isn't ready yet).
   * debian/kvirc-data.links: Added symlink for usr/share/pixmaps/kvirc.png, as
     it is the same as the 48x48 hicolor icon.
   * debian/kvirc.install: Added the man pages, as upstream installs them in
