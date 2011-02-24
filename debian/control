@@ -6,7 +6,7 @@ Section: net
 Priority: optional
 Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
 Uploaders: Raúl Sánchez Siles <rasasi78@gmail.com>,
- Kai Wasserbäch <debian@carbon-project.org>,
+ Kai Wasserbäch <curan@debian.org>,
  Mark Purcell <msp@debian.org>
 DM-Upload-Allowed: yes
 Standards-Version: 3.9.1
