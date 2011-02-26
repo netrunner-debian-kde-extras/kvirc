@@ -16,6 +16,7 @@ kvirc (4:4.1.1~svn5507-2) UNRELEASED; urgency=low
     - Changed dh_install invocation to --fail-missing.
     - Added "--parallel" to dh_auto_configure invocation.
     - Removed get-orig-tar target, use gbp-clone/gbp-pull (or plain git).
+  * debian/README.source: Updated for new Git repository.
 
  -- Kai Wasserbäch <curan@debian.org>  Wed, 23 Feb 2011 21:21:29 +0100
 
