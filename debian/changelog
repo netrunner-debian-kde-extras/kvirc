@@ -12,7 +12,9 @@ kvirc (4:4.1.1~svn5507-2) UNRELEASED; urgency=low
   * debian/kvirc.install: Added the man pages, as upstream installs them in
     the correct places now, our dh_installman hack isn't needed anymore.
   * debian/kvirc.manpages: Deleted (see above).
-  * debian/rules: Changed dh_install invocation to --fail-missing.
+  * debian/rules:
+    - Changed dh_install invocation to --fail-missing.
+    - Added "--parallel" to dh_auto_configure invocation.
 
  -- Kai Wasserbäch <curan@debian.org>  Wed, 23 Feb 2011 21:21:29 +0100
 
