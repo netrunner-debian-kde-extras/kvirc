@@ -7,6 +7,8 @@ kvirc (4:4.1.1~svn5507-2) UNRELEASED; urgency=low
       archives is >=0.9).
     - Changed Vcs-* links to our Git repository (this change was made because
       mercurial-buildpackage isn't ready yet).
+    - Remove version requirement for qt4-x11, stable is sufficiently
+      up-to-date.
   * debian/kvirc-data.links: Added symlink for usr/share/pixmaps/kvirc.png, as
     it is the same as the 48x48 hicolor icon.
   * debian/kvirc.install: Added the man pages, as upstream installs them in
