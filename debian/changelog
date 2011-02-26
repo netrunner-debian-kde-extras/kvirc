@@ -18,6 +18,7 @@ kvirc (4:4.1.1~svn5507-2) UNRELEASED; urgency=low
     - Removed get-orig-tar target, use gbp-clone/gbp-pull (or plain git).
   * debian/README.source: Updated for new Git repository.
   * debian/gbp.conf: Added to ensure pristine-tar usage. 
+  * debian/watch: Added git-import-orig invocation.
 
  -- Kai Wasserbäch <curan@debian.org>  Wed, 23 Feb 2011 21:21:29 +0100
 
