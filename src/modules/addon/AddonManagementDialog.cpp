@@ -1,6 +1,6 @@
 //=============================================================================
 //
-//   File : managementdialog.cpp
+//   File : AddonManagementDialog.cpp
 //   Creation date : Fri 08 Apr 2005 14:54:56 by Szymon Stefanek
 //
 //   This file is part of the KVIrc IRC Client distribution
@@ -22,7 +22,7 @@
 //
 //=============================================================================
 
-#include "managementdialog.h"
+#include "AddonManagementDialog.h"
 #include "PackAddonDialog.h"
 #include "AddonFunctions.h"
 
@@ -182,8 +182,9 @@ AddonManagementDialog::AddonManagementDialog(QWidget * p)
 	}
 	resize(g_rectManagementDialogGeometry.width(),
 		g_rectManagementDialogGeometry.height());
-	move(g_rectManagementDialogGeometry.x(),
-		g_rectManagementDialogGeometry.y());
+
+	QRect rect = g_pApp->desktop()->screenGeometry(g_pMainWindow);
+	move(rect.x() + ((rect.width() - g_rectManagementDialogGeometry.width())/2),rect.y() + ((rect.height() - g_rectManagementDialogGeometry.height())/2));
 }
 
 AddonManagementDialog::~AddonManagementDialog()
@@ -317,14 +318,6 @@ void AddonManagementDialog::installScript()
 
 	//m_pListWidget->publicUpdateContents();
 	//m_pListWidget->triggerUpdate();
-}
-
-void AddonManagementDialog::showEvent(QShowEvent * e)
-{
-	QRect rect = g_pApp->desktop()->screenGeometry(g_pApp->desktop()->primaryScreen());
-	move((rect.width() - width())/2,(rect.height() - height())/2);
-
-	QWidget::showEvent(e);
 }
 
 void AddonManagementDialog::closeClicked()
