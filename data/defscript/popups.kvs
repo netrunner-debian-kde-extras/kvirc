@@ -693,19 +693,19 @@ defpopup(channelpopup)
 
 defpopup(channels)
 {
-	item(#KVirc,46)
+	item(#KVIrc,46)
 	{
-		j #KVirc
+		j #KVIrc;
 	}
 
 	item(#MDE,46)
 	{
-		j #MDE
+		j #MDE;
 	}
 
 	item(#kde,46)
 	{
-		j #kde
+		j #kde;
 	}
 }
 
@@ -819,7 +819,7 @@ defpopup(consoletextview)
 				stats o
 			}
 
-			item($tr("t (Connection stats ?)","defscript"),23)
+			item($tr("t (Connection stats?)","defscript"),23)
 			{
 				stats t
 			}
@@ -1395,7 +1395,7 @@ defpopup(windowpopup)
 
 	separator
 
-	extpopup(Logging,logging,119)
+	extpopup($tr("Logging","defscript"),logging,119)
 
 	item($tr("Set window props as default","defscript"), 10) window.savePropertiesAsDefault
 

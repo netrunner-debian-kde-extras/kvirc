@@ -338,7 +338,8 @@ KviBoolOption g_boolOptionsTable[KVI_NUM_BOOL_OPTIONS]=
 	BOOL_OPTION("UseDBusNotifier",false,KviOption_sectFlagConnection),
 	BOOL_OPTION("UseKDENotifier",false,KviOption_sectFlagConnection),
 	BOOL_OPTION("CaseSensitiveHighlighting",false,KviOption_sectFlagIrcView),
-	BOOL_OPTION("MinimizeInTray",false,KviOption_sectFlagFrame | KviOption_resetUpdateGui)
+	BOOL_OPTION("MinimizeInTray",false,KviOption_sectFlagFrame | KviOption_resetUpdateGui),
+	BOOL_OPTION("DisplayNotifierOnPrimaryScreen",true,KviOption_sectFlagFrame)
 };
 
 #define STRING_OPTION(_txt,_val,_flags) KviStringOption(KVI_STRING_OPTIONS_PREFIX _txt,_val,_flags)
@@ -873,7 +874,9 @@ KviMessageTypeSettingsOption g_msgtypeOptionsTable[KVI_NUM_MSGTYPE_OPTIONS]=
 	MSGTYPE_OPTION("MeIrcOp",__tr_no_lookup("Own IRC Op status set"),KviIconManager::MeIrcOp,KVI_MSGTYPE_LEVEL_5),
 	MSGTYPE_OPTION("MeDeIrcOp",__tr_no_lookup("Own IRC Op status unset"),KviIconManager::MeDeIrcOp,KVI_MSGTYPE_LEVEL_5),
 	MSGTYPE_OPTION("Cap",__tr_no_lookup("Extended capability message"),KviIconManager::ServerInfo,KVI_MSGTYPE_LEVEL_1),
-	MSGTYPE_OPTION("ChanUrl",__tr_no_lookup("Channel URL"),KviIconManager::Url,KVI_MSGTYPE_LEVEL_3)
+	MSGTYPE_OPTION("ChanUrl",__tr_no_lookup("Channel URL"),KviIconManager::Url,KVI_MSGTYPE_LEVEL_3),
+	MSGTYPE_OPTION("MemoServ",__tr_no_lookup("MemoServ message"),KviIconManager::MemoServ,KVI_MSGTYPE_LEVEL_1)
+
 };
 
 static const char * options_section_table[KVI_NUM_OPTION_SECT_FLAGS] =

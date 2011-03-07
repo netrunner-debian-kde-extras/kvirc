@@ -1,6 +1,6 @@
 //=============================================================================
 //
-//   File : managementdialog.cpp
+//   File : ThemeManagementDialog.cpp
 //   Creation date : Sat 30 Dec 2006 14:54:56 by Szymon Stefanek
 //
 //   This file is part of the KVIrc IRC Client distribution
@@ -22,7 +22,7 @@
 //
 //=============================================================================
 
-#include "managementdialog.h"
+#include "ThemeManagementDialog.h"
 #include "PackThemeDialog.h"
 #include "SaveThemeDialog.h"
 #include "ThemeFunctions.h"
@@ -51,6 +51,7 @@
 #include <QRegExp>
 #include <QMessageBox>
 #include <QDir>
+#include <QDesktopWidget>
 #include <QStringList>
 #include <QDateTime>
 #include <QFileDialog>
@@ -207,8 +208,9 @@ ThemeManagementDialog::ThemeManagementDialog(QWidget * parent)
 	}
 	resize(g_rectManagementDialogGeometry.width(),
 		g_rectManagementDialogGeometry.height());
-	move(g_rectManagementDialogGeometry.x(),
-		g_rectManagementDialogGeometry.y());
+
+	QRect rect = g_pApp->desktop()->screenGeometry(g_pMainWindow);
+	move(rect.x() + ((rect.width() - g_rectManagementDialogGeometry.width())/2),rect.y() + ((rect.height() - g_rectManagementDialogGeometry.height())/2));
 }
 
 ThemeManagementDialog::~ThemeManagementDialog()

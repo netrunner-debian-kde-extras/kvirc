@@ -26,12 +26,13 @@
 
 #include "RegisteredUserEntryDialog.h"
 #include "RegistrationWizard.h"
-#include "dialog.h"
+#include "RegisteredUsersDialog.h"
 
 #include "KviRegisteredUserDataBase.h"
 #include "KviLocale.h"
 #include "KviIrcMask.h"
 #include "kvi_debug.h"
+#include "KviMainWindow.h"
 #include "KviIconManager.h"
 #include "KviApplication.h"
 #include "KviOptions.h"
@@ -52,6 +53,7 @@
 #include <QImageReader>
 #include <QImage>
 #include <QString>
+#include <QDesktopWidget>
 #include <QComboBox>
 #include <QToolTip>
 #include <QStyle>
@@ -316,14 +318,15 @@ RegisteredUsersDialog::RegisteredUsersDialog(QWidget * par)
 	if(!parent())
 	{
 		if(KVI_OPTION_RECT(KviOption_rectRegisteredUsersDialogGeometry).y() < 5)
-		{
 			KVI_OPTION_RECT(KviOption_rectRegisteredUsersDialogGeometry).setY(5);
-		}
+
 		//setGeometry(KVI_OPTION_RECT(KviOption_rectRegisteredUsersDialogGeometry));
 		resize(KVI_OPTION_RECT(KviOption_rectRegisteredUsersDialogGeometry).width(),
 			KVI_OPTION_RECT(KviOption_rectRegisteredUsersDialogGeometry).height());
-		move(KVI_OPTION_RECT(KviOption_rectRegisteredUsersDialogGeometry).x(),
-			KVI_OPTION_RECT(KviOption_rectRegisteredUsersDialogGeometry).y());
+
+		QRect rect = g_pApp->desktop()->screenGeometry(g_pMainWindow);
+		move(rect.x() + ((rect.width() - KVI_OPTION_RECT(KviOption_rectRegisteredUsersDialogGeometry).width())/2),rect.y() + ((rect.height() - KVI_OPTION_RECT(KviOption_rectRegisteredUsersDialogGeometry).height())/2));
+
 	}
 }
 
