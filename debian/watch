@@ -2,4 +2,4 @@ version=3
 
 opts=pasv,uversionmangle=s/_[Rr][Cc](\d+)/~rc$1/i \
   ftp://ftp.kvirc.de/pub/kvirc/([\d\.]+(?:_rc\d?)?)/source/kvirc-([\d\.]+(?:_rc\d+)?)\.tar\.bz2 \
-  git-import-orig
+  debian git-import-orig
