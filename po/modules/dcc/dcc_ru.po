@@ -9,17 +9,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dcc_ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-27 22:18+0100\n"
+"POT-Creation-Date: 2011-03-17 04:27+0000\n"
 "PO-Revision-Date: 2010-06-14 10:42+0400\n"
 "Last-Translator: Igor Govorov <govorov.igor at gmail.com>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
-"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
 "X-Generator: Lokalize 1.0\n"
-"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: src/modules/dcc/requests.cpp:856
@@ -181,8 +181,8 @@ msgstr ""
 "указать KVIrc чтобы он автоматически принимал входящие аватары установив "
 "опцию <tt>boolAutoAcceptIncomingAvatars</tt> в true.<br>"
 
-#: src/modules/dcc/libkvidcc.cpp:632 src/modules/dcc/requests.cpp:448
-#: src/modules/dcc/requests.cpp:741
+#: src/modules/dcc/requests.cpp:448 src/modules/dcc/requests.cpp:741
+#: src/modules/dcc/libkvidcc.cpp:632
 msgid "<unknown size>"
 msgstr "<неизвестный размер>"
 
@@ -350,10 +350,10 @@ msgstr "Конфигурирование пропускной способнос
 msgid "Connected to %1:%2"
 msgstr "Подключение к%1:%2"
 
+#: src/modules/dcc/DccCanvasWindow.cpp:284
 #: src/modules/dcc/DccVoiceWindow.cpp:911
 #: src/modules/dcc/DccVideoWindow.cpp:926
 #: src/modules/dcc/DccChatWindow.cpp:566
-#: src/modules/dcc/DccCanvasWindow.cpp:284
 msgid "Connected to %Q:%Q"
 msgstr "Подключение к %Q:%Q"
 
@@ -361,10 +361,10 @@ msgstr "Подключение к %Q:%Q"
 msgid "Contacting host %1 on port %2"
 msgstr "Подключение к хосту %1 на порт %2"
 
+#: src/modules/dcc/DccCanvasWindow.cpp:108
 #: src/modules/dcc/DccVoiceWindow.cpp:756
 #: src/modules/dcc/DccVideoWindow.cpp:606
 #: src/modules/dcc/DccChatWindow.cpp:185
-#: src/modules/dcc/DccCanvasWindow.cpp:108
 msgid "Contacting host %Q on port %Q"
 msgstr "Подключение к хосту %Q на порт %Q"
 
@@ -396,9 +396,9 @@ msgstr "Запрос DCC CANVAS"
 msgid "DCC CANVAS request not sent: awaiting manual connections"
 msgstr "DCC CANVAS запрос не отослан: ожидаю ручного соединения"
 
+#: src/modules/dcc/DccCanvasWindow.cpp:279
 #: src/modules/dcc/DccVoiceWindow.cpp:902
 #: src/modules/dcc/DccVideoWindow.cpp:921
-#: src/modules/dcc/DccCanvasWindow.cpp:279
 msgid "DCC Failed: %Q"
 msgstr "Ошибка DCC: %Q"
 
@@ -507,8 +507,8 @@ msgstr "Недействительный RECV запрос: Позиция %1 б
 #: src/modules/dcc/DccFileTransfer.cpp:2115
 msgid "Invalid RESUME request: Invalid file name (got '%1' but should be '%2')"
 msgstr ""
-"Неверный запрос RESUME: Неверное имя файла (получено '%1', должно быть - "
-"'%2')"
+"Неверный запрос RESUME: Неверное имя файла (получено '%1', должно быть - '%"
+"2')"
 
 #: src/modules/dcc/DccFileTransfer.cpp:2138
 msgid "Invalid RESUME request: Position %1 is larger than file size"
@@ -552,10 +552,10 @@ msgstr "Ограничение скорости отправки"
 msgid "Listening on interface %1 port %2"
 msgstr "Прослушивание интерфейса %1 на порту %2"
 
+#: src/modules/dcc/DccCanvasWindow.cpp:84
 #: src/modules/dcc/DccVoiceWindow.cpp:759
 #: src/modules/dcc/DccVideoWindow.cpp:609
 #: src/modules/dcc/DccChatWindow.cpp:187
-#: src/modules/dcc/DccCanvasWindow.cpp:84
 msgid "Listening on interface %Q port %Q"
 msgstr "Прослушивание на интерфейсе %Q порта %Q"
 
@@ -563,10 +563,10 @@ msgstr "Прослушивание на интерфейсе %Q порта %Q"
 msgid "Local end is %1:%2"
 msgstr "Локальное окончание %1:%2"
 
+#: src/modules/dcc/DccCanvasWindow.cpp:286
 #: src/modules/dcc/DccVoiceWindow.cpp:913
 #: src/modules/dcc/DccVideoWindow.cpp:928
 #: src/modules/dcc/DccChatWindow.cpp:568
-#: src/modules/dcc/DccCanvasWindow.cpp:286
 msgid "Local end is %Q:%Q"
 msgstr "Локальное окончание %Q:%Q"
 
@@ -1068,14 +1068,14 @@ msgid "bytes/sec"
 msgstr "байт/сек"
 
 #: src/modules/dcc/DccMarshal.cpp:494 src/modules/dcc/DccMarshal.cpp:524
-#: src/modules/dcc/DccMarshal.cpp:529 src/modules/dcc/libkvidcc.cpp:110
+#: src/modules/dcc/DccMarshal.cpp:529 src/modules/dcc/DccDescriptor.cpp:65
+#: src/modules/dcc/requests.cpp:138 src/modules/dcc/requests.cpp:139
+#: src/modules/dcc/requests.cpp:140 src/modules/dcc/libkvidcc.cpp:110
 #: src/modules/dcc/libkvidcc.cpp:406 src/modules/dcc/libkvidcc.cpp:441
 #: src/modules/dcc/libkvidcc.cpp:640 src/modules/dcc/libkvidcc.cpp:664
 #: src/modules/dcc/libkvidcc.cpp:801 src/modules/dcc/libkvidcc.cpp:803
 #: src/modules/dcc/libkvidcc.cpp:1119 src/modules/dcc/libkvidcc.cpp:1169
 #: src/modules/dcc/libkvidcc.cpp:1197 src/modules/dcc/libkvidcc.cpp:1236
-#: src/modules/dcc/requests.cpp:138 src/modules/dcc/requests.cpp:139
-#: src/modules/dcc/requests.cpp:140 src/modules/dcc/DccDescriptor.cpp:65
 msgid "unknown"
 msgstr "неизвестный"
 

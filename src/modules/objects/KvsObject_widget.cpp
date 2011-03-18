@@ -57,9 +57,6 @@
 #include <QPoint>
 #include <QContextMenuEvent>
 
-#ifdef COMPILE_WEBKIT_SUPPORT
-	#include <QtWebKit/QWebView>
-#endif
 
 KviKvsWidget::KviKvsWidget(KvsObject_widget * object,QWidget * par)
 :QWidget(par), m_pObject(object)
@@ -481,6 +478,7 @@ const char * const widgettypes_tbl[] = {
 		- . [br]
 		- ^ [br]
 
+
 		[/pre]
 		!fn: $mapFromGlobal(<x>,<y>)
 		Translates the global screen coordinate pos to widget coordinates.
@@ -710,9 +708,6 @@ KVSO_BEGIN_REGISTERCLASS(KvsObject_widget,"widget","object")
 	KVSO_REGISTER_STANDARD_NOTHINGRETURN_HANDLER(KvsObject_widget,"shortCutEvent")
 	KVSO_REGISTER_STANDARD_NOTHINGRETURN_HANDLER(KvsObject_widget,"customContextMenuRequestedEvent")
 
-#ifdef COMPILE_WEBKIT_SUPPORT
-	KVSO_REGISTER_HANDLER_BY_NAME(KvsObject_widget,setWebView)
-#endif
 KVSO_END_REGISTERCLASS(KvsObject_widget)
 
 
@@ -720,7 +715,6 @@ KVSO_BEGIN_CONSTRUCTOR(KvsObject_widget,KviKvsObject)
 KVSO_END_CONSTRUCTOR(KvsObject_widget)
 KVSO_BEGIN_DESTRUCTOR(KvsObject_widget)
 emit aboutToDie();
-//	if (webview) delete webview;
 KVSO_END_CONSTRUCTOR(KvsObject_widget)
 
 bool KvsObject_widget::init(KviKvsRunTimeContext *c,KviKvsVariantList *)
@@ -903,7 +897,7 @@ bool KvsObject_widget::eventFilter(QObject *o,QEvent *e)
 				lParams.append(new KviKvsVariant((kvs_int_t)aparam));
 				lParams.append(new KviKvsVariant((kvs_int_t)((QMouseEvent *)e)->pos().x()));
 				lParams.append(new KviKvsVariant((kvs_int_t)((QMouseEvent *)e)->pos().y()));
-				if (!callFunction(this,"mousePressEvent",0,&lParams)) brokenhandler = true; // ignore results of a broken event handler
+				if (!callFunction(this,"mousePressEvent",&oReturnBuffer,&lParams)) brokenhandler = true; // ignore results of a broken event handler
 			}
 			break;
 			case QEvent::MouseButtonRelease:
@@ -917,7 +911,7 @@ bool KvsObject_widget::eventFilter(QObject *o,QEvent *e)
 				lParams.append(new KviKvsVariant((kvs_int_t)aparam));
 				lParams.append(new KviKvsVariant((kvs_int_t)((QMouseEvent *)e)->pos().x()));
 				lParams.append(new KviKvsVariant((kvs_int_t)((QMouseEvent *)e)->pos().y()));
-				if (!callFunction(this,"mouseReleaseEvent",0,&lParams)) brokenhandler = true; // ignore results of a broken event handler
+				if (!callFunction(this,"mouseReleaseEvent",&oReturnBuffer,&lParams)) brokenhandler = true; // ignore results of a broken event handler
 			}
 			break;
 			case QEvent::MouseButtonDblClick:
@@ -986,13 +980,22 @@ bool KvsObject_widget::eventFilter(QObject *o,QEvent *e)
 			break;
 
 		}
-		if (!brokenhandler)
+		if (!brokenhandler){
 			ret = oReturnBuffer.asBoolean();
+			//qDebug ("Propagation %i",ret);
 
 		return ret;
+	     }
+	   }
+	/*if(o->parent())
+	{
+	    qDebug("Propagation to parent");
+	    return KviKvsObject::eventFilter(o->parent(),e);
 	}
-
-	return KviKvsObject::eventFilter(o,e);
+	     else{
+		  qDebug("Propagation to object");*/
+		 return KviKvsObject::eventFilter(o,e);
+	//     }
 }
 
 
@@ -2000,23 +2003,6 @@ KVSO_CLASS_FUNCTION(widget,removeFromStatusBar)
 	return true;
 }
 
-
-
-#ifdef COMPILE_WEBKIT_SUPPORT
-KVSO_CLASS_FUNCTION(widget,setWebView)
-{
-	CHECK_INTERNAL_POINTER(widget())
-	QString szUrl;
-	KVSO_PARAMETERS_BEGIN(c)
-		KVSO_PARAMETER("text",KVS_PT_STRING,0,szUrl)
-	KVSO_PARAMETERS_END(c)
-	m_pWebview = new QWebView(widget());
-	m_pWebview->load(QUrl(szUrl));
-	m_pWebview->show();
-	//if (widget()) g_pMainWindow->statusBar()->removeWidget(widget());
-	return true;
-}
-#endif //COMPILE_WEBKIT_SUPPORT
 
 #ifndef COMPILE_USE_STANDALONE_MOC_SOURCES
 #include "m_KvsObject_widget.moc"

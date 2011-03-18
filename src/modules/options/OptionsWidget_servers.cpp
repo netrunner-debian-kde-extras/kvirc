@@ -1263,8 +1263,16 @@ OptionsWidget_servers::OptionsWidget_servers(QWidget * parent)
 	m_pNetworkDetailsDialog = 0;
 	m_pImportFilter = 0;
 
+	m_pFilterLabel = new QLabel(__tr2qs_ctx("Filter:","options"),this);
+	addWidgetToLayout(m_pFilterLabel,0,0,0,0);
+
+	m_pFilterEdit = new QLineEdit(this);
+	connect(m_pFilterEdit,SIGNAL(textEdited(const QString &)),this,SLOT(filterTextEdited(const QString &)));
+	KviTalToolTip::add(m_pFilterEdit,__tr2qs_ctx("<center>If you are searching for a specific server or network, you can insert its name to filter the servers in the list</center>","options"));
+	addWidgetToLayout(m_pFilterEdit,1,0,1,0);
+
 	m_pTreeWidget = new QTreeWidget(this);
-	addWidgetToLayout(m_pTreeWidget,0,0,0,0);
+	addWidgetToLayout(m_pTreeWidget,0,1,1,1);
 	m_pTreeWidget->setColumnCount(2);
 	QStringList columLabels;
 	columLabels.append(__tr2qs_ctx("Server","options"));
@@ -1295,7 +1303,7 @@ OptionsWidget_servers::OptionsWidget_servers(QWidget * parent)
 
 	KviTalVBox * vbox = new KviTalVBox(this);
 	vbox->setSpacing(0);
-	addWidgetToLayout(vbox,1,0,1,0);
+	addWidgetToLayout(vbox,3,1,3,1);
 
 	m_pNewNetworkButton = new QToolButton(vbox);
 	m_pNewNetworkButton->setIcon(QIcon(*(g_pIconManager->getSmallIcon(KviIconManager::World))));
@@ -1347,7 +1355,7 @@ OptionsWidget_servers::OptionsWidget_servers(QWidget * parent)
 	QFrame * lll = new QFrame(vbox);
 	vbox->setStretchFactor(lll,100);
 
-	KviTalGroupBox *gbox = addGroupBox(0,1,1,1,Qt::Vertical,__tr2qs_ctx("Active Configuration","options"));
+	KviTalGroupBox *gbox = addGroupBox(0,2,3,2,Qt::Vertical,__tr2qs_ctx("Active Configuration","options"));
 	m_pSrvNetLabel = new QLabel(__tr2qs_ctx("Server:","options"),gbox);
 
 	m_pSrvNetEdit = new QLineEdit(gbox);
@@ -1376,7 +1384,7 @@ OptionsWidget_servers::OptionsWidget_servers(QWidget * parent)
 	if(parent->inherits("OptionsWidgetContainer"))
 	{
 		m_pConnectCurrent = new QPushButton(__tr2qs_ctx("Connect &Now","options"),this);
-		addWidgetToLayout(m_pConnectCurrent,0,2,1,2);
+		addWidgetToLayout(m_pConnectCurrent,0,3,3,3);
 		connect(m_pConnectCurrent,SIGNAL(clicked()),this,SLOT(connectCurrentClicked()));
 
 		QPalette pal(QColor(0,0,128));
@@ -1430,8 +1438,8 @@ OptionsWidget_servers::OptionsWidget_servers(QWidget * parent)
 
 	fillServerList();
 
-	layout()->setRowStretch(0,1);
-	layout()->setColumnStretch(0,1);
+	layout()->setRowStretch(1,1);
+	layout()->setColumnStretch(1,1);
 	setMinimumWidth(600);
 }
 
@@ -1585,10 +1593,10 @@ void OptionsWidget_servers::fillServerList()
 		KviPointerList<KviIrcServer> * sl = r->serverList();
 		bool bCurrent = r->name() == g_pServerDataBase->currentNetworkName().toUtf8().data();
 		net->setExpanded(bCurrent);
+	
 		for(KviIrcServer * s = sl->first();s;s = sl->next())
 		{
 			srv = new IrcServerOptionsTreeWidgetItem(net,*(g_pIconManager->getSmallIcon(KviIconManager::Server)),s);
-
 			if((s == r->currentServer()) && bCurrent)
 			{
 				srv->setSelected(true);
@@ -1661,6 +1669,48 @@ void OptionsWidget_servers::serverNetworkEditTextEdited(const QString &)
 		m_pTreeWidget->scrollToItem(m_pLastEditedItem,QTreeWidget::EnsureVisible);
 }
 
+void OptionsWidget_servers::filterTextEdited(const QString &)
+{
+	QString szFilter=m_pFilterEdit->text().trimmed();
+
+	IrcServerOptionsTreeWidgetItem * network;
+	for (int i=0;i<m_pTreeWidget->topLevelItemCount();i++)
+	{
+		network = (IrcServerOptionsTreeWidgetItem *) m_pTreeWidget->topLevelItem(i);
+		if(network->m_pNetworkData->name().contains(szFilter, Qt::CaseInsensitive) || 
+				network->m_pNetworkData->description().contains(szFilter, Qt::CaseInsensitive))
+		{
+			network->setHidden(false);
+			// if the net matches, we always show all its servers
+			IrcServerOptionsTreeWidgetItem * ch;
+			for (int j=0;j<network->childCount();j++)
+			{
+				ch=(IrcServerOptionsTreeWidgetItem *)network->child(j);
+				ch->setHidden(false);
+			}
+		} else {
+			uint uServers=0;
+			
+			IrcServerOptionsTreeWidgetItem * ch;
+			for (int j=0;j<network->childCount();j++)
+			{
+				bool bHidden=true;
+				ch=(IrcServerOptionsTreeWidgetItem *)network->child(j);
+				if(ch->m_pServerData)
+				{
+					if(ch->m_pServerData->hostName().contains(szFilter, Qt::CaseInsensitive) || 
+						ch->m_pServerData->description().contains(szFilter, Qt::CaseInsensitive))
+							bHidden=false;
+				}
+				if(!bHidden)
+					uServers++;
+				ch->setHidden(bHidden);
+			}
+			//if at list one server matches, we show its network
+			network->setHidden(!uServers);
+		}
+	}
+}
 
 void OptionsWidget_servers::saveLastItem()
 {
@@ -1687,6 +1737,7 @@ void OptionsWidget_servers::saveLastItem()
 void OptionsWidget_servers::commit()
 {
 	saveLastItem();
+
 	g_pServerDataBase->clear();
 
 	IrcServerOptionsTreeWidgetItem * network;

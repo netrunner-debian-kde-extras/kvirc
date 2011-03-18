@@ -38,12 +38,14 @@
 #include <QListWidget>
 #include <QItemDelegate>
 #include <QToolButton>
-
+#include "kvi_settings.h"
+#if defined(COMPILE_WEBKIT_SUPPORT) || defined(Q_MOC_RUN)
+#include "WebThemeInterfaceDialog.h"
+#endif
 class QLineEdit;
 class QPushButton;
 class QLabel;
 class KviDynamicToolTip;
-
 
 class ThemeListWidgetItem : public KviTalListWidgetItem
 {
@@ -53,7 +55,7 @@ public:
 public:
 	KviThemeInfo   * m_pThemeInfo;
 public:
-	KviThemeInfo * themeInfo(){ return m_pThemeInfo; };
+	KviThemeInfo * themeInfo(){ return m_pThemeInfo; }
 };
 
 
@@ -67,15 +69,19 @@ protected:
 	static ThemeManagementDialog   * m_pInstance;
 	KviTalIconAndRichTextItemDelegate * m_pItemDelegate;
 	KviTalListWidget    * m_pListWidget;
+	QLabel * m_pCurrentInstalledThemeLabel;
 	KviTalPopupMenu     * m_pContextPopup;
 	QToolButton         * m_pDeleteThemeButton;
 	QToolButton         * m_pPackThemeButton;
+#if defined(COMPILE_WEBKIT_SUPPORT) || defined(Q_MOC_RUN)
+	WebThemeInterfaceDialog *m_pWebThemeInterfaceDialog;
+#endif
 public:
-	static ThemeManagementDialog * instance(){ return m_pInstance; };
+	static ThemeManagementDialog * instance(){ return m_pInstance; }
 	static void display(bool bTopLevel);
 	static void cleanup();
 protected:
-	void fillThemeBox(const QString &szDir);
+	void fillThemeBox(bool bBuiltin);
 	bool hasSelectedItems();
 	virtual void closeEvent(QCloseEvent * e);
 protected slots:
@@ -92,6 +98,7 @@ protected slots:
 	void contextMenuRequested(const QPoint & pos);
 	//void tipRequest(KviDynamicToolTip *pTip,const QPoint &pnt);
 	void tipRequest(QListWidgetItem *item,const QPoint &pnt);
+	void webThemeInterfaceDialogDestroyed();
 };
 
 #endif //!_MANAGEMENTDIALOG_H_

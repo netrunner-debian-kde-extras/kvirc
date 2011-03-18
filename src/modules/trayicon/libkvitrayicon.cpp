@@ -54,6 +54,7 @@
 
 #if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
 	#define ICON_SIZE 16
+	#include <Windows.h>
 #else
 	#define ICON_SIZE 22
 #endif
@@ -185,6 +186,7 @@ bool TrayIcon::event(QEvent *e)
 		KviWindowListBase * t = m_pFrm->windowListWidget();
 
 		QString line;
+		bool first = true;
 
 		for(KviWindowListItem * b = t->firstItem();b;b = t->nextItem())
 		{
@@ -196,6 +198,9 @@ bool TrayIcon::event(QEvent *e)
 					line = b->kviWindow()->lastMessageText();
 					if(!line.isEmpty())
 					{
+						if(!first)tmp += "<br><br>\n";
+						else first = false;
+
 						line.replace(QChar('&'),"&amp;");
 						line.replace(QChar('<'),"&lt;");
 						line.replace(QChar('>'),"&gt;");
@@ -203,7 +208,6 @@ bool TrayIcon::event(QEvent *e)
 						tmp += b->kviWindow()->plainTextCaption();
 						tmp += "</b><br>";
 						tmp += line;
-						tmp += "<br><br>\n";
 					}
 				}
 			}
@@ -359,6 +363,10 @@ void TrayIcon::toggleParentFrame()
 			qDebug("- window wasn't maximized so calling plain show()");
 			m_pFrm->show();
 		}
+#if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
+		// raise it
+		SetForegroundWindow((HWND)m_pFrm->winId());
+#endif
 	} else if(!m_pFrm->isVisible())
 	{
 		qDebug("- frame is not visible");
@@ -371,6 +379,10 @@ void TrayIcon::toggleParentFrame()
 			qDebug("- window wasn't maximized so calling plain show()");
 			m_pFrm->show();
 		}
+#if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
+		// raise it
+		SetForegroundWindow((HWND)m_pFrm->winId());
+#endif
 	} else {
 		qDebug("- frame is visible: maximized state=%d, hiding",m_pFrm->isMaximized());
 		KVI_OPTION_BOOL(KviOption_boolFrameIsMaximized) = m_pFrm->isMaximized();

@@ -21,7 +21,13 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 //=============================================================================
+#include "kvi_settings.h"
 
+#if defined(COMPILE_WEBKIT_SUPPORT) && (QT_VERSION >= 0x040600)
+	#include "WebThemeInterfaceDialog.h"
+#endif
+
+#include <QVBoxLayout>
 #include "ThemeManagementDialog.h"
 #include "PackThemeDialog.h"
 #include "SaveThemeDialog.h"
@@ -67,6 +73,9 @@
 
 extern QRect g_rectManagementDialogGeometry;
 
+#define BUILTIN_THEMES 1
+
+#define USER_DEFINED_THEMES 0
 
 ThemeListWidgetItem::ThemeListWidgetItem(KviTalListWidget * box,KviThemeInfo * inf)
 : KviTalListWidgetItem(box)
@@ -110,20 +119,23 @@ ThemeManagementDialog * ThemeManagementDialog::m_pInstance = 0;
 ThemeManagementDialog::ThemeManagementDialog(QWidget * parent)
 : QWidget(parent)
 {
-	m_pItemDelegate=0;
+	m_pItemDelegate = NULL;
+#ifdef COMPILE_WEBKIT_SUPPORT
+	m_pWebThemeInterfaceDialog = NULL;
+#endif
 	setObjectName("theme_options_widget");
 	setWindowTitle(__tr2qs_ctx("Manage Themes - KVIrc","theme"));
 	setWindowIcon(*(g_pIconManager->getSmallIcon(KviIconManager::Theme)));
 
 	m_pInstance = this;
 
-	QGridLayout * g = new QGridLayout(this);
-
+	//QGridLayout * g = new QGridLayout(this);
+	QVBoxLayout * vBox = new QVBoxLayout(this);
 	KviTalHBox *hb = new KviTalHBox(this);
 	hb->setMargin(1);
 	hb->setSpacing(1);
-	g->addWidget(hb,0,0);
-
+	//g->addWidget(hb,0,0);
+	vBox->addWidget(hb);
 	QToolButton * tb;
 	QFrame * sep;
 
@@ -175,18 +187,41 @@ ThemeManagementDialog::ThemeManagementDialog(QWidget * parent)
 	m_pItemDelegate->setDefaultIcon(g_pIconManager->getBigIcon(QString(KVI_BIGICON_THEME)));
 	m_pListWidget->setItemDelegate(m_pItemDelegate);
 	m_pListWidget->setMinimumHeight(400);
-	m_pListWidget->setMinimumWidth(400);
+	m_pListWidget->setMinimumWidth(420);
 
 	m_pListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	m_pListWidget->setSortingEnabled(true);
 	connect(m_pListWidget,SIGNAL(itemDoubleClicked(QListWidgetItem *)),this,SLOT(applyTheme(QListWidgetItem *)));
+
 
 	//FIXME tooltip
 	//connect(m_pListWidget,SIGNAL(tipRequest(QListWidgetItem *,const QPoint &)),this,SLOT(tipRequest(QListWidgetItem *,const QPoint &)));
 	connect(m_pListWidget,SIGNAL(customContextMenuRequested(const QPoint &)),
 		this,SLOT(contextMenuRequested(const QPoint &)));
 	connect(m_pListWidget,SIGNAL(itemSelectionChanged()),this,SLOT(enableDisableButtons()));
-	g->addWidget(m_pListWidget,1,0);
+
+	sep = new QFrame(this);
+	sep->setFrameStyle(QFrame::HLine | QFrame::Sunken);
+	sep->setMinimumWidth(300);
+	sep->setMinimumHeight(8);
+	vBox->addWidget(sep);
+
+	//g->addWidget(sep,2,0);
+
+	m_pCurrentInstalledThemeLabel = new QLabel(this);
+	m_pCurrentInstalledThemeLabel->setText(__tr2qs_ctx("<b><u>Current Installed Theme:</u> ","theme")+KVI_OPTION_STRING(KviOption_stringIconThemeSubdir)+"</b>");
+//	g->addWidget(pLabel,2,0);
+	vBox->addWidget(m_pCurrentInstalledThemeLabel);
+
+	sep = new QFrame(this);
+	sep->setFrameStyle(QFrame::HLine | QFrame::Sunken);
+	sep->setMinimumWidth(300);
+
+//	g->addWidget(sep,3,0);
+	vBox->addWidget(sep);
+
+//	g->addWidget(m_pListWidget,4,0);
+	vBox->addWidget(m_pListWidget);
 
 //	KviDynamicToolTip * tip = new KviDynamicToolTip(m_pListWidget);
 //	connect(tip,SIGNAL(tipRequest(KviDynamicToolTip *,const QPoint &)),this,SLOT(tipRequest(KviDynamicToolTip *,const QPoint &)));
@@ -194,11 +229,12 @@ ThemeManagementDialog::ThemeManagementDialog(QWidget * parent)
 	QPushButton * b = new QPushButton(__tr2qs("Close"),this);
 	b->setMaximumSize(b->sizeHint().width(),b->sizeHint().height());
 	connect(b,SIGNAL(clicked()),this,SLOT(closeClicked()));
-	g->addWidget(b,2,0);
+//	g->addWidget(b,5,0);
+	vBox->addWidget(b);
 
-	g->setMargin(1);
-	g->setSpacing(1);
-	g->setAlignment(b,Qt::AlignRight);
+//	g->setMargin(1);
+//	g->setSpacing(1);
+	vBox->setAlignment(b,Qt::AlignRight);
 	fillThemeBox();
 	m_pContextPopup = new KviTalPopupMenu(this);
 
@@ -218,6 +254,13 @@ ThemeManagementDialog::~ThemeManagementDialog()
 	if (m_pItemDelegate) delete m_pItemDelegate;
 	g_rectManagementDialogGeometry = QRect(pos().x(),pos().y(),size().width(),size().height());
 	m_pInstance = 0;
+#ifdef COMPILE_WEBKIT_SUPPORT
+	if(m_pWebThemeInterfaceDialog)
+	{
+		delete m_pWebThemeInterfaceDialog;
+		m_pWebThemeInterfaceDialog = NULL;
+	}
+#endif //COMPILE_WEBKIT_SUPPORT
 }
 
 void ThemeManagementDialog::closeClicked()
@@ -303,11 +346,11 @@ void ThemeManagementDialog::applyCurrentTheme()
 		__tr2qs_ctx("Do you wish to apply theme \"%Q\" (version %Q)?","theme"),
 		&(it->themeInfo()->name()),&(it->themeInfo()->version())))
 	{
-		QString szPath = it->themeInfo()->absoluteDirectory();
+		QString szPath = it->themeInfo()->dirName();
 		if(szPath.isEmpty())return;
 
 		KviThemeInfo out;
-		if(!KviTheme::load(szPath,out))
+		if(!KviTheme::load(szPath,out,it->themeInfo()->isBuiltin()))
 		{
 			QString szErr = out.lastError();
 			QString szMsg = QString(__tr2qs_ctx("Failed to apply the specified theme: %1","theme")).arg(szErr);
@@ -315,6 +358,7 @@ void ThemeManagementDialog::applyCurrentTheme()
 				QMessageBox::Ok,QMessageBox::NoButton,QMessageBox::NoButton);
 
 		}
+		else m_pCurrentInstalledThemeLabel->setText(__tr2qs_ctx("<b><u>Current Installed Theme:</u> ","theme")+KVI_OPTION_STRING(KviOption_stringIconThemeSubdir)+"</b>");
 		m_pItemDelegate->setDefaultIcon(g_pIconManager->getBigIcon(QString(KVI_BIGICON_THEME)));
 	}
 }
@@ -327,7 +371,9 @@ void ThemeManagementDialog::deleteTheme()
 			if(!KviMessageBox::yesNo(__tr2qs_ctx("Delete Theme - KVIrc","theme"),
 				__tr2qs_ctx("Do you really wish to delete theme \"%Q\" (version %Q)?","theme"),
 					&(((ThemeListWidgetItem *)itemsSelected.at(i))->themeInfo()->name()),&(((ThemeListWidgetItem *)itemsSelected.at(i))->themeInfo()->version())))goto jump_out;
-			KviFileUtils::deleteDir(((ThemeListWidgetItem *)itemsSelected.at(i))->themeInfo()->absoluteDirectory());
+			QString szThemePath;
+			((ThemeListWidgetItem *)itemsSelected.at(i))->themeInfo()->getCompleteDirPath(szThemePath);
+			KviFileUtils::deleteDir(szThemePath);
 	}
 jump_out:
 	fillThemeBox();
@@ -350,9 +396,28 @@ void ThemeManagementDialog::installFromFile()
 
 void ThemeManagementDialog::getMoreThemes()
 {
-	if(!g_pMainWindow)return;
+#ifdef COMPILE_WEBKIT_SUPPORT
+	if(m_pWebThemeInterfaceDialog)
+	{
+		m_pWebThemeInterfaceDialog->show();
+	} else {
+		m_pWebThemeInterfaceDialog = new WebThemeInterfaceDialog();
+		QObject::connect(m_pWebThemeInterfaceDialog,SIGNAL(destroyed()),this,SLOT(webThemeInterfaceDialogDestroyed()));
+		m_pWebThemeInterfaceDialog->show();
+	}
+#else
+	if(!g_pMainWindow)
+		return;
 	g_pMainWindow->executeInternalCommand(KVI_INTERNALCOMMAND_OPENURL_KVIRC_THEMES);
+#endif
 }
+
+void ThemeManagementDialog::webThemeInterfaceDialogDestroyed()
+{
+	m_pWebThemeInterfaceDialog = NULL;
+	fillThemeBox();
+}
+
 
 void ThemeManagementDialog::saveCurrentTheme()
 {
@@ -362,26 +427,20 @@ void ThemeManagementDialog::saveCurrentTheme()
 	fillThemeBox();
 }
 
-void ThemeManagementDialog::fillThemeBox(const QString &szDir)
+void ThemeManagementDialog::fillThemeBox(bool bBuiltin)
 {
-	QDir d(szDir);
+	QStringList slThemes;
+	KviTheme::installedThemes(slThemes,bBuiltin);
 
-	QStringList sl = d.entryList(QDir::Dirs);
-
-	for(QStringList::Iterator it = sl.begin();it != sl.end();++it)
+	for(int i=0;i<slThemes.count();i++)
 	{
-		if(*it == ".")continue;
-		if(*it == "..")continue;
-
-		QString szTest = szDir;
-		szTest += KVI_PATH_SEPARATOR_CHAR;
-		szTest += *it;
-
 		KviThemeInfo * inf = new KviThemeInfo();
-		if(inf->loadFromDirectory(szTest))
+		if(inf->load(slThemes.at(i),bBuiltin))
 		{
-			inf->setSubdirectory(*it);
-			new ThemeListWidgetItem(m_pListWidget,inf);
+			inf->setSubdirectory(slThemes.at(i));
+			ThemeListWidgetItem *it=new ThemeListWidgetItem(m_pListWidget,inf);
+			QPixmap pixmap=inf->smallScreenshot();
+			    if(!pixmap.isNull()) it->setIcon(pixmap.scaled(32,32));
 		} else {
 			delete inf;
 		}
@@ -392,11 +451,8 @@ void ThemeManagementDialog::fillThemeBox()
 {
 	m_pListWidget->clear();
 
-	QString szDir;
-	g_pApp->getGlobalKvircDirectory(szDir,KviApplication::Themes);
-	fillThemeBox(szDir);
-	g_pApp->getLocalKvircDirectory(szDir,KviApplication::Themes);
-	fillThemeBox(szDir);
+	fillThemeBox(BUILTIN_THEMES);
+	fillThemeBox(USER_DEFINED_THEMES);
 
 	enableDisableButtons();
 }

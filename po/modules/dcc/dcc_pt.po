@@ -4,20 +4,20 @@
 #
 # Zé <mmodem00@gmail.com>, 2004-2007, 2010.
 # Zé <mmodem00@gmal.com>, 2010.
-# Zé <ze@mandriva.org>, 2010.
+# Zé <ze@mandriva.org>, 2010, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: kvirc_dcc \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-27 22:18+0100\n"
-"PO-Revision-Date: 2010-08-29 13:46+0100\n"
+"POT-Creation-Date: 2011-03-17 04:27+0000\n"
+"PO-Revision-Date: 2011-03-17 05:02+0000\n"
 "Last-Translator: Zé <ze@mandriva.org>\n"
 "Language-Team: Portuguese <>\n"
-"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.1\n"
+"Language: pt\n"
+"X-Generator: Lokalize 1.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/modules/dcc/requests.cpp:856
@@ -135,8 +135,8 @@ msgid ""
 "b><br>"
 msgstr ""
 "<b>%1 [%2@%3]</b> pede uma <br><b>Conexão Directa ao Cliente</b> em modo "
-"<b>VIDEO</b>. <br>O destino da conexão será a máquina <b>%4</b> no porto <b>"
-"%5</b><br>"
+"<b>VIDEO</b>. <br>O destino da conexão será a máquina <b>%4</b> no porto <b>%"
+"5</b><br>"
 
 #: src/modules/dcc/DccBroker.cpp:347
 msgid ""
@@ -145,8 +145,8 @@ msgid ""
 "b><br>"
 msgstr ""
 "<b>%1 [%2@%3]</b> pede uma <br><b>Conexão Directa ao Cliente</b> em modo "
-"<b>VOZ</b>. <br>O destino da conexão será a máquina <b>%4</b> no porto <b>"
-"%5</b><br>"
+"<b>VOZ</b>. <br>O destino da conexão será a máquina <b>%4</b> no porto <b>%"
+"5</b><br>"
 
 #: src/modules/dcc/DccBroker.cpp:588
 msgid ""
@@ -183,8 +183,8 @@ msgstr ""
 "recebidos ao definir a opção <tt>boolAutoAcceptIncomingAvatars</tt>para "
 "verdadeiro (true).<br>"
 
-#: src/modules/dcc/libkvidcc.cpp:632 src/modules/dcc/requests.cpp:448
-#: src/modules/dcc/requests.cpp:741
+#: src/modules/dcc/requests.cpp:448 src/modules/dcc/requests.cpp:741
+#: src/modules/dcc/libkvidcc.cpp:632
 msgid "<unknown size>"
 msgstr "<tamanho desconhecido>"
 
@@ -292,21 +292,19 @@ msgid "Can't open file %Q for reading"
 msgstr "Não é possível abrir o ficheiro %Q para leitura"
 
 #: src/modules/dcc/requests.cpp:542
-#, fuzzy
 msgid ""
 "Can't proceed with DCC RECV: Transfer not initiated for file %1 on port %2"
 msgstr ""
 "Não é possível prosseguir com o DCC RECV: Transferência não iniciada para o "
-"ficheiro %1 no porto %2"
+"ficheiro %1 na porta %2"
 
 #: src/modules/dcc/requests.cpp:578
-#, fuzzy
 msgid ""
 "Can't proceed with DCC SEND: Transfer not initiated for file %1 on port %2, "
 "or invalid resume size"
 msgstr ""
 "Não é possível prosseguir com o DCC SEND: Transferência não iniciada para o "
-"ficheiro %1 no porto %2, ou tamanho de resumo inválido"
+"ficheiro %1 na porta %2, ou tamanho de resumo inválido"
 
 #: src/modules/dcc/DccUtils.cpp:124
 msgid "Can't retrieve a suitable local IPV4 address"
@@ -336,7 +334,6 @@ msgid "Choose Files to Send - KVIrc"
 msgstr "Escolher Ficheiros para Enviar - KVIrc"
 
 #: src/modules/dcc/requests.cpp:101
-#, fuzzy
 msgid "Concurrent transfer limit reached (%1 of %2 transfers running)"
 msgstr ""
 "Limite de transferências concorrentes alcançado (%1 de %2 transferências a "
@@ -354,10 +351,10 @@ msgstr "Configurar largura de banda para transferência DCC %1"
 msgid "Connected to %1:%2"
 msgstr "Ligado a %1:%2"
 
+#: src/modules/dcc/DccCanvasWindow.cpp:284
 #: src/modules/dcc/DccVoiceWindow.cpp:911
 #: src/modules/dcc/DccVideoWindow.cpp:926
 #: src/modules/dcc/DccChatWindow.cpp:566
-#: src/modules/dcc/DccCanvasWindow.cpp:284
 msgid "Connected to %Q:%Q"
 msgstr "Ligado a %Q:%Q"
 
@@ -365,10 +362,10 @@ msgstr "Ligado a %Q:%Q"
 msgid "Contacting host %1 on port %2"
 msgstr "A contactar a máquina %1 no porto %2"
 
+#: src/modules/dcc/DccCanvasWindow.cpp:108
 #: src/modules/dcc/DccVoiceWindow.cpp:756
 #: src/modules/dcc/DccVideoWindow.cpp:606
 #: src/modules/dcc/DccChatWindow.cpp:185
-#: src/modules/dcc/DccCanvasWindow.cpp:108
 msgid "Contacting host %Q on port %Q"
 msgstr "A contactar a máquina %Q no porto %Q"
 
@@ -400,9 +397,9 @@ msgstr "Pedido DCC CANVAS"
 msgid "DCC CANVAS request not sent: awaiting manual connections"
 msgstr "Pedido DCC CANVAS não enviado: a aguardar ligações manuais"
 
+#: src/modules/dcc/DccCanvasWindow.cpp:279
 #: src/modules/dcc/DccVoiceWindow.cpp:902
 #: src/modules/dcc/DccVideoWindow.cpp:921
-#: src/modules/dcc/DccCanvasWindow.cpp:279
 msgid "DCC Failed: %Q"
 msgstr "DCC Falhado: %Q"
 
@@ -451,7 +448,7 @@ msgstr "ERRO: %Q"
 
 #: src/modules/dcc/DccBroker.cpp:848
 msgid "File %s exists, auto-renaming to %Q"
-msgstr "O ficheiro %s existe, a auto-renomear para %Q"
+msgstr "O ficheiro %s existe, auto-renomear para %Q"
 
 #: src/modules/dcc/DccDialog.cpp:165
 msgid "File Already Exists - KVIrc"
@@ -466,7 +463,7 @@ msgid ""
 "Half duplex soundcard detected, you will not be able to talk and listen at "
 "the same time"
 msgstr ""
-"Placa de som de meio duplex detectada, não poderá falar e ouvir ao mesmo "
+"Placa de som de meio-duplex detectada, não poderá falar e ouvir ao mesmo "
 "tempo"
 
 #: src/modules/dcc/requests.cpp:84
@@ -479,12 +476,12 @@ msgstr "A ignorar e a notificar a falha"
 
 #: src/modules/dcc/DccVoiceWindow.cpp:654
 msgid "Input buffer"
-msgstr "'Buffer' de entrada"
+msgstr "Janela de entrada"
 
 #: src/modules/dcc/DccVoiceWindow.cpp:877
 #, c-format
 msgid "Input buffer: %d bytes"
-msgstr "'Buffer' de entrada: %d bytes"
+msgstr "Janela de entrada: %d bytes"
 
 #: src/modules/dcc/DccVideoWindow.cpp:472
 msgid "Input:"
@@ -495,17 +492,14 @@ msgid "Internal error in RESUME request"
 msgstr "Erro interno no pedido RESUMIR"
 
 #: src/modules/dcc/requests.cpp:195
-#, fuzzy
 msgid "Invalid IP address %1"
 msgstr "Endereço IP inválido %1"
 
 #: src/modules/dcc/requests.cpp:175
-#, fuzzy
 msgid "Invalid IP address in old format %1"
-msgstr "Endereço IP inválido em formato antigo %1"
+msgstr "Endereço IP inválido no formato antigo %1"
 
 #: src/modules/dcc/requests.cpp:640
-#, fuzzy
 msgid "Invalid RECV request: Position %1 is larger than file size"
 msgstr "Pedido RECV inválido: A posição %1 é maior que o tamanho do ficheiro"
 
@@ -529,12 +523,10 @@ msgid "Invalid codec specified, defaulting to 'adpcm'"
 msgstr "Codificador inválido especificado, a predefinir para 'adpcm'"
 
 #: src/modules/dcc/requests.cpp:159
-#, fuzzy
 msgid "Invalid port number %1"
-msgstr "Número de porto inválido %1"
+msgstr "Número de porta inválido %1"
 
 #: src/modules/dcc/requests.cpp:567
-#, fuzzy
 msgid "Invalid resume position argument '%1'"
 msgstr "Argumento de posição de resumo inválido '%1'"
 
@@ -558,10 +550,10 @@ msgstr "Limitar a largura de banda de envio para"
 msgid "Listening on interface %1 port %2"
 msgstr "A escutar no interface %1 no porto %2"
 
+#: src/modules/dcc/DccCanvasWindow.cpp:84
 #: src/modules/dcc/DccVoiceWindow.cpp:759
 #: src/modules/dcc/DccVideoWindow.cpp:609
 #: src/modules/dcc/DccChatWindow.cpp:187
-#: src/modules/dcc/DccCanvasWindow.cpp:84
 msgid "Listening on interface %Q port %Q"
 msgstr "A escutar no interface %Q no porto %Q"
 
@@ -569,10 +561,10 @@ msgstr "A escutar no interface %Q no porto %Q"
 msgid "Local end is %1:%2"
 msgstr "O fim local é %1:%2"
 
+#: src/modules/dcc/DccCanvasWindow.cpp:286
 #: src/modules/dcc/DccVoiceWindow.cpp:913
 #: src/modules/dcc/DccVideoWindow.cpp:928
 #: src/modules/dcc/DccChatWindow.cpp:568
-#: src/modules/dcc/DccCanvasWindow.cpp:286
 msgid "Local end is %Q:%Q"
 msgstr "O fim local é %Q:%Q"
 
@@ -582,10 +574,10 @@ msgid "Low-level transport connection established"
 msgstr "Conexão de transporte de baixo-nível estabelecida"
 
 #: src/modules/dcc/requests.cpp:856
-#, fuzzy
 msgid "No file offer named '%1' (with size %2) available for %3 [%4@%5]"
 msgstr ""
-"Nenhum ficheiro com o nome '%1' (com tamanho %2) disponível para %3 [%4@%5]"
+"Nenhum ficheiro oferecido com o nome '%1' (com tamanho %2) disponível para %"
+"3 [%4@%5]"
 
 #: src/modules/dcc/requests.cpp:780 src/modules/dcc/requests.cpp:924
 msgid "No suitable interface to listen on, trying to continue anyway..."
@@ -608,12 +600,12 @@ msgstr ""
 
 #: src/modules/dcc/DccVoiceWindow.cpp:656
 msgid "Output buffer"
-msgstr "'Buffer' de saída"
+msgstr "Janela de saída"
 
 #: src/modules/dcc/DccVoiceWindow.cpp:879
 #, c-format
 msgid "Output buffer: %d bytes"
-msgstr "'Buffer' de saída: %d bytes"
+msgstr "Janela de saída: %d bytes"
 
 #: src/modules/dcc/DccDialog.cpp:149
 msgid "Over&write"
@@ -689,7 +681,6 @@ msgid "Setting up the connection"
 msgstr "A configurar a conexão"
 
 #: src/modules/dcc/requests.cpp:116
-#, fuzzy
 msgid "Slot limit reached (%1 slots of %2)"
 msgstr "Limite de encaixes alcançado (%1 encaixes de %2)"
 
@@ -707,7 +698,6 @@ msgid "Starting Secure Socket Layer handshake"
 msgstr "A iniciar negociação Secure Socket Layer"
 
 #: src/modules/dcc/DccFileTransfer.cpp:1006
-#, fuzzy
 msgid "TRANSFER %1"
 msgstr "TRANSFERIR %1"
 
@@ -797,8 +787,8 @@ msgid ""
 "The crypto engine was not able to encrypt the current message (%Q): %Q, no "
 "data was sent to the remote end"
 msgstr ""
-"O motor de encriptação não foi capaz de encriptar a mensagem actual (%Q): "
-"%Q, nenhuns dados enviados para o lado remoto"
+"O motor de encriptação não foi capaz de encriptar a mensagem actual (%Q): %"
+"Q, nenhuns dados enviados para o lado remoto"
 
 #: src/modules/dcc/libkvidcc.cpp:1640 src/modules/dcc/libkvidcc.cpp:2605
 #: src/modules/dcc/libkvidcc.cpp:2625
@@ -970,33 +960,28 @@ msgid "Transferring data"
 msgstr "A transferir dados"
 
 #: src/modules/dcc/libkvidcc.cpp:2795
-#, fuzzy
 msgid "Unable to get SSL information: DCC session is not using SSL"
 msgstr "Não é possível obter informações SSL: a sessão DCC não está a usar SSL"
 
 #: src/modules/dcc/libkvidcc.cpp:2808
-#, fuzzy
 msgid "Unable to get SSL information: DCC session not initialized yet"
 msgstr ""
-"Não é possível obter informações SSL: sessão DCC ainda não inicializada"
+"Não é possível obter informações SSL: a sessão DCC ainda não foi iniciada"
 
 #: src/modules/dcc/libkvidcc.cpp:2825
-#, fuzzy
 msgid "Unable to get SSL information: No peer certificate available"
 msgstr ""
 "Não é possível obter informações SSL: nenhum ponto certificado disponível"
 
 #: src/modules/dcc/libkvidcc.cpp:2816
-#, fuzzy
 msgid "Unable to get SSL information: SSL non initialized yet in DCC session"
 msgstr ""
-"Não é possível obter informações SSL: SSL ainda não inicializado na sessão "
+"Não é possível obter informações SSL: o SSL ainda não foi iniciado na sessão "
 "DCC"
 
 #: src/modules/dcc/libkvidcc.cpp:2833
-#, fuzzy
 msgid "Unable to get SSL information: query not recognized"
-msgstr "Não é possível obter informações SSL: pesquisa não reconhecida"
+msgstr "Não é possível obter informações SSL: consulta não reconhecida"
 
 #: src/modules/dcc/libkvidcc.cpp:128
 msgid "Unable to get address of interface %Q"
@@ -1007,7 +992,6 @@ msgid "Unable to process the above request: %Q, %Q"
 msgstr "Não é possível processar o pedido acima: %Q, %Q"
 
 #: src/modules/dcc/requests.cpp:1228
-#, fuzzy
 msgid "Unknown DCC type '%1'"
 msgstr "Tipo de DCC desconhecido '%1'"
 
@@ -1052,7 +1036,7 @@ msgid ""
 msgstr ""
 "AVISO: falha ao verificar as capacidades duplex da placa de som. Se esta "
 "placa de som é meio duplex, use a opção DCC VOICE para forçar o algoritmo "
-"half-duplex"
+"meio-duplex"
 
 #: src/modules/dcc/DccVoiceWindow.cpp:210
 #, c-format
@@ -1093,14 +1077,14 @@ msgid "bytes/sec"
 msgstr "bytes/segundo"
 
 #: src/modules/dcc/DccMarshal.cpp:494 src/modules/dcc/DccMarshal.cpp:524
-#: src/modules/dcc/DccMarshal.cpp:529 src/modules/dcc/libkvidcc.cpp:110
+#: src/modules/dcc/DccMarshal.cpp:529 src/modules/dcc/DccDescriptor.cpp:65
+#: src/modules/dcc/requests.cpp:138 src/modules/dcc/requests.cpp:139
+#: src/modules/dcc/requests.cpp:140 src/modules/dcc/libkvidcc.cpp:110
 #: src/modules/dcc/libkvidcc.cpp:406 src/modules/dcc/libkvidcc.cpp:441
 #: src/modules/dcc/libkvidcc.cpp:640 src/modules/dcc/libkvidcc.cpp:664
 #: src/modules/dcc/libkvidcc.cpp:801 src/modules/dcc/libkvidcc.cpp:803
 #: src/modules/dcc/libkvidcc.cpp:1119 src/modules/dcc/libkvidcc.cpp:1169
 #: src/modules/dcc/libkvidcc.cpp:1197 src/modules/dcc/libkvidcc.cpp:1236
-#: src/modules/dcc/requests.cpp:138 src/modules/dcc/requests.cpp:139
-#: src/modules/dcc/requests.cpp:140 src/modules/dcc/DccDescriptor.cpp:65
 msgid "unknown"
 msgstr "desconhecido"
 

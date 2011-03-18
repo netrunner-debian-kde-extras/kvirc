@@ -2,11 +2,12 @@
 # In this file, there are all files which have to be documented. #
 #                                                                #
 # Documenting these files involves two steps:                    #
-# 1. port the files to the Hungarian Notation                    #
-#    http://en.wikipedia.org/wiki/Hungarian_notation             #
-# 2. adding Doxygen documentation using its special comments to  #
-#    complete the milestone "Code cleanups and documentation"    #
-#    https://svn.kvirc.de/kvirc/roadmap                          #
+# 1. port the files to the Hungarian Notation:                   #
+#    see http://en.wikipedia.org/wiki/Hungarian_notation         #
+# 2. add Doxygen documentation using its special comments        #
+#                                                                #
+# These steps will complete the milestone "Code cleanups and     #
+# documentation": see https://svn.kvirc.de/kvirc/roadmap         #
 #                                                                #
 # Legend:                                                        #
 # The first column refers to step 1, the second one to step 2    #
@@ -662,6 +663,7 @@
   KviCustomToolBar.h
   KviDebugWindow.cpp
   KviDebugWindow.h
+  KviDockExtension.h 
   KviDynamicToolTip.cpp
   KviDynamicToolTip.h
   KviFileDialog.cpp
@@ -740,6 +742,8 @@
   KviTreeWindowList.h
   KviUserListView.cpp
   KviUserListView.h
+  KviWebPackageManagementDialog.cpp
+  KviWebPackageManagementDialog.h
 ++KviWindow.cpp
 +-KviWindow.h
   KviWindowListBase.cpp
@@ -779,11 +783,11 @@
 
   AddonFunctions.cpp
   AddonFunctions.h
+  AddonManagementDialog.cpp
+  AddonManagementDialog.h
   PackAddonDialog.cpp
   PackAddonDialog.h
   libkviaddon.cpp
-  managementdialog.cpp
-  managementdialog.h
 
 
 #######################
@@ -1180,6 +1184,8 @@
   KvsObject_treeWidgetItem.h
   KvsObject_vBox.cpp
   KvsObject_vBox.h
+  KvsObject_webView.cpp
+  KvsObject_webView.h
   KvsObject_widget.cpp
   KvsObject_widget.h
   KvsObject_window.cpp
@@ -1200,6 +1206,8 @@
 # modules/options #
 ###################
 
+  OptionsDialog.cpp
+  OptionsDialog.h
 ++OptionsInstanceManager.cpp
 + OptionsInstanceManager.h
   OptionsWidgetContainer.cpp
@@ -1282,8 +1290,6 @@
   OptionsWidget_userList.h
   OptionsWidget_windowList.cpp
   OptionsWidget_windowList.h
-  dialog.cpp
-  dialog.h
   libkvioptions.cpp
 
 
@@ -1365,10 +1371,10 @@
 
   RegisteredUserEntryDialog.cpp
   RegisteredUserEntryDialog.h
+  RegisteredUsersDialog.cpp
+  RegisteredUsersDialog.h
   RegistrationWizard.cpp
   RegistrationWizard.h
-  dialog.cpp
-  dialog.h
   libkvireguser.cpp
 
 
@@ -1499,9 +1505,11 @@
   SaveThemeDialog.h
   ThemeFunctions.cpp
   ThemeFunctions.h
+  ThemeManagementDialog.cpp
+  ThemeManagementDialog.h
+  WebThemeInterfaceDialog.cpp
+  WebThemeInterfaceDialog.h
   libkvitheme.cpp
-  managementdialog.cpp
-  managementdialog.h
 
 
 ###############

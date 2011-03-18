@@ -6,14 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-27 22:18+0100\n"
+"POT-Creation-Date: 2011-03-17 04:27+0000\n"
 "PO-Revision-Date: 2011-01-20 11:47+0200\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "X-Generator: Lokalize 1.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -146,26 +146,25 @@ msgstr "-w: enviar el notice a todos los propietarios del canal"
 #: data/defscript/popups.kvs:1134
 #: data/defscript/popups.kvs:1275
 msgid "/WHO ?s"
-msgstr ""
+msgstr "/WHO ?s"
 
 #: data/defscript/popups.kvs:500
 #: data/defscript/popups.kvs:1124
 #: data/defscript/popups.kvs:1265
 msgid "/WHOIS ?s"
-msgstr ""
+msgstr "/WHOIS ?s"
 
 #: data/defscript/popups.kvs:490
 #: data/defscript/popups.kvs:1115
 #: data/defscript/popups.kvs:1256
-#, fuzzy
 msgid "/WHOIS ?s (idle time)"
-msgstr "tiempo de inactividad"
+msgstr "/WHOIS ?s (tiempo de inactividad)"
 
 #: data/defscript/popups.kvs:505
 #: data/defscript/popups.kvs:1129
 #: data/defscript/popups.kvs:1270
 msgid "/WHOWAS ?s"
-msgstr ""
+msgstr "/WHOWAS ?s"
 
 #: data/defscript/popups.kvs:395
 msgid "Add to Notify"
@@ -412,6 +411,7 @@ msgstr "Loguear a..."
 #: data/defscript/events.kvs:68
 #: data/defscript/events.kvs:76
 #: data/defscript/events.kvs:84
+#: data/defscript/popups.kvs:1398
 msgid "Logging"
 msgstr "Logueando a"
 
@@ -774,7 +774,8 @@ msgid "reason"
 msgstr "razón"
 
 #: data/defscript/popups.kvs:822
-msgid "t (Connection stats ?)"
+#, fuzzy
+msgid "t (Connection stats?)"
 msgstr "t (¿Estadísticas de conexión?)"
 
 #: data/defscript/popups.kvs:827

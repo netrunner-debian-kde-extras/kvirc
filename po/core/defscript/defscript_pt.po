@@ -6,14 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-27 22:18+0100\n"
-"PO-Revision-Date: 2011-01-20 23:43+0000\n"
+"POT-Creation-Date: 2011-03-17 04:27+0000\n"
+"PO-Revision-Date: 2011-03-14 03:08+0000\n"
 "Last-Translator: Zé <ze@mandriva.org>\n"
 "Language-Team: Portuguese <>\n"
-"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: utf-8\n"
+"Language: pt\n"
 "X-Generator: Lokalize 1.2\n"
 "Plural-Forms: 2\n"
 
@@ -146,26 +146,25 @@ msgstr "-w: envia uma noticia para todos os donos do canal"
 #: data/defscript/popups.kvs:1134
 #: data/defscript/popups.kvs:1275
 msgid "/WHO ?s"
-msgstr ""
+msgstr "/WHO ?s"
 
 #: data/defscript/popups.kvs:500
 #: data/defscript/popups.kvs:1124
 #: data/defscript/popups.kvs:1265
 msgid "/WHOIS ?s"
-msgstr ""
+msgstr "/WHOIS ?s"
 
 #: data/defscript/popups.kvs:490
 #: data/defscript/popups.kvs:1115
 #: data/defscript/popups.kvs:1256
-#, fuzzy
 msgid "/WHOIS ?s (idle time)"
-msgstr "tempo inactivo"
+msgstr "/WHOIS ?s (tempo inactivo)"
 
 #: data/defscript/popups.kvs:505
 #: data/defscript/popups.kvs:1129
 #: data/defscript/popups.kvs:1270
 msgid "/WHOWAS ?s"
-msgstr ""
+msgstr "/WHOWAS ?s"
 
 #: data/defscript/popups.kvs:395
 msgid "Add to Notify"
@@ -279,7 +278,7 @@ msgstr "R&emover Voz"
 #: data/defscript/popups.kvs:517
 #: data/defscript/popups.kvs:1141
 msgid "DNS for"
-msgstr "DNS para"
+msgstr "DNS de"
 
 #: data/defscript/popups.kvs:987
 msgid "Default"
@@ -412,6 +411,7 @@ msgstr "Registar Para..."
 #: data/defscript/events.kvs:68
 #: data/defscript/events.kvs:76
 #: data/defscript/events.kvs:84
+#: data/defscript/popups.kvs:1398
 msgid "Logging"
 msgstr "Registo"
 
@@ -422,7 +422,7 @@ msgstr "A registar para"
 #: data/defscript/popups.kvs:522
 #: data/defscript/popups.kvs:1146
 msgid "Mask for"
-msgstr "Máscara para"
+msgstr "Máscara de"
 
 #: data/defscript/popups.kvs:1389
 msgid "Maximize"
@@ -529,7 +529,7 @@ msgstr "Conversa Segura com"
 
 #: data/defscript/popups.kvs:966
 msgid "Secure Reverse Send to"
-msgstr "Envio Reverso Seguro para"
+msgstr "Envio Seguro Reverso para"
 
 #: data/defscript/popups.kvs:956
 msgid "Secure send to"
@@ -558,11 +558,11 @@ msgstr "Iniciar Destacamento (Local)"
 
 #: data/defscript/popups.kvs:1437
 msgid "Stop Auto-Joining Channel on Network '?s'"
-msgstr "Parar de Auto-Entrar no Canal ou Rede '?s'"
+msgstr "Parar Auto-Entrar no Canal ou Rede '?s'"
 
 #: data/defscript/popups.kvs:1424
 msgid "Stop Auto-Joining Channel on Server '?s'"
-msgstr "Parar de Auto-Entrar no Canal ou Servidor '?s'"
+msgstr "Parar Auto-Entrar no Canal ou Servidor '?s'"
 
 #: data/defscript/popups.kvs:67
 msgid "Stop Highlighting"
@@ -579,7 +579,7 @@ msgstr "Parar Registo"
 
 #: data/defscript/popups.kvs:978
 msgid "TDCC Reverse Send to"
-msgstr "Envio Reverso TDCC para"
+msgstr "Envio TDCC Reverso para"
 
 #: data/defscript/popups.kvs:973
 msgid "TDCC Send to"
@@ -608,7 +608,7 @@ msgstr "Traceroute para "
 
 #: data/defscript/popups.kvs:1530
 msgid "Traceroute6 to "
-msgstr "Traceroute6 para"
+msgstr "Traceroute6 para "
 
 #: data/defscript/aliases.kvs:116
 msgid "Type /gnotice for help"
@@ -704,7 +704,7 @@ msgstr "Não está conectado a um servidor"
 msgid ""
 "[Installer] Error: the first argument of copyFiles must be a source directory"
 msgstr ""
-"Erro do [Instalador]: o primeiro argumento de copyFiles tem que ser um "
+"[Instalador] Erro: o primeiro argumento de copyFiles tem que ser um "
 "directório de origem"
 
 #: data/defscript/classes.kvs:24
@@ -712,15 +712,15 @@ msgid ""
 "[Installer] Error: the second argument of copyFiles must be a file name or "
 "file regexp"
 msgstr ""
-"Erro do [Instalador]: o segundo argumento de copyFiles tem que ser um nome "
-"de ficheiro ou uma expressão regular"
+"[Instalador] Erro: o segundo argumento de copyFiles tem que ser um nome de "
+"ficheiro ou uma expressão regular"
 
 #: data/defscript/classes.kvs:30
 msgid ""
 "[Installer] Error: the third argument of copyFiles must be a destination "
 "directory"
 msgstr ""
-"Erro do [Instalador]: o terceiro argumento de copyFiles tem que ter um "
+"[Instalador] Erro: o terceiro argumento de copyFiles tem que ser um "
 "directório de destino"
 
 #: data/defscript/aliases.kvs:100
@@ -774,7 +774,7 @@ msgid "reason"
 msgstr "razão"
 
 #: data/defscript/popups.kvs:822
-msgid "t (Connection stats ?)"
+msgid "t (Connection stats?)"
 msgstr "t (Estatísticas da conexão?)"
 
 #: data/defscript/popups.kvs:827
