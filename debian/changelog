@@ -1,3 +1,9 @@
+kvirc (4:4.1.1~svn5639-1) UNRELEASED; urgency=low
+
+  * Synced to upstream's SVN revision 5639.
+
+ -- Kai Wasserbäch <curan@debian.org>  Fri, 18 Mar 2011 18:22:46 +0100
+
 kvirc (4:4.1.1~svn5551-1) unstable; urgency=low
 
   The "Sigil of Sleep" release.
