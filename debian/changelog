@@ -1,5 +1,7 @@
 kvirc (4:4.1.1~svn5639-1) UNRELEASED; urgency=low
 
+  The "Sleeper Agent" release.
+
   * Synced to upstream's SVN revision 5639.
   * debian/control: Added libqtwebkit-dev (QWebView is no longer shipped in
     libqt4-dev).
