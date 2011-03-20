@@ -15,3 +15,9 @@ QT4_WRAP_CPP(kvimediaplayer_MOC_SRCS ${kvimediaplayer_MOC_HDRS})
 
 SET(kvi_module_name kvimediaplayer)
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/module.rules.txt)
+
+IF(WIN32)
+	ADD_LIBRARY(gen_kvirc MODULE winamp.cpp)
+	SET_TARGET_PROPERTIES(gen_kvirc PROPERTIES PREFIX "" LINK_FLAGS -static-libgcc COMPILE_FLAGS -static-libgcc)
+	INSTALL(TARGETS gen_kvirc LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/modules)
+ENDIF()

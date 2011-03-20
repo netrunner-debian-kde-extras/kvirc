@@ -17,6 +17,10 @@ SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 # Minimum cmake version
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4)
 
+if(POLICY CMP0017)
+	cmake_policy(SET CMP0017 NEW)
+endif(POLICY CMP0017)
+
 # Check modules first in local dir
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
@@ -25,7 +29,7 @@ SET(PACKAGE "kvirc")
 SET(NICENAME "KVIrc")
 SET(VERSION_MAJOR "4")
 SET(VERSION_BRANCH "4.0")
-SET(VERSION_RELEASE "4.0.2")
+SET(VERSION_RELEASE "4.0.4")
 
 STRING(REGEX MATCH "[0-9]+$" VERSION_MINOR ${VERSION_BRANCH})
 
@@ -156,7 +160,7 @@ IF(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES RelWithDebInfo OR 
 ENDIF()
 
 OPTION(WANT_STRIP "Strip binaries (discard symbols from object files)" OFF)
-	
+
 IF(WANT_ENV_FLAGS)
 	SET(CMAKE_BUILD_TYPE Undefined)
 	SET(CMAKE_STATUS_DEBUG_SUPPORT "Environment-driven")
@@ -476,14 +480,15 @@ IF(UNIX)
 		FIND_PACKAGE(X11)
 		IF(X11_FOUND)
 			SET(COMPILE_X11_SUPPORT 1)
-			CHECK_INCLUDE_FILE(X11/extensions/scrnsaver.h CMAKE_HAVE_X11_SCRNSAVER_H)
-			IF(CMAKE_HAVE_X11_SCRNSAVER_H)
+			IF(X11_Xscreensaver_FOUND)
 				SET(COMPILE_XSS_SUPPORT 1)
 				SET(CMAKE_STATUS_X11_SUPPORT "Yes, with scrnsaverproto")
+				INCLUDE_DIRECTORIES(${X11_Xscreensaver_INCLUDE_PATH})
+				LIST(APPEND LIBS ${X11_Xscreensaver_LIB})
 			ELSE()
 				SET(CMAKE_STATUS_X11_SUPPORT "Yes")
 			ENDIF()
-			
+
 			INCLUDE_DIRECTORIES(${X11_INCLUDE_DIR})
 			LIST(APPEND LIBS ${X11_LIBRARIES})
 			# Seems like ${X11_LIBRARIES} doesn't add -lXrender, which is needed
@@ -1010,7 +1015,7 @@ IF(WANT_NO_EMBEDDED_CODE)
 	MESSAGE(STATUS "WANT_NO_EMBEDDED_CODE activated.")
 	FIND_PACKAGE(PkgConfig)
 
-	# for every os/distribution 
+	# for every os/distribution
 	pkg_check_modules(CRYPTOPP cryptopp>=5.6.0)
 
 	# for Debian and derivates

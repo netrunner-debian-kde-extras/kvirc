@@ -112,6 +112,7 @@ KviChannel::KviChannel(KviFrame * lpFrm, KviConsole * lpConsole, const QString &
 	m_pButtonBox->setMargin(0);
 
 	m_pTopSplitter = new KviTalSplitter(Qt::Horizontal,m_pButtonBox);
+	m_pTopSplitter->setChildrenCollapsible(false);
 
 	m_pButtonBox->setStretchFactor(m_pTopSplitter,1);
 
@@ -136,6 +137,8 @@ KviChannel::KviChannel(KviFrame * lpFrm, KviConsole * lpConsole, const QString &
 	
 	// Spitted vertially on the left
 	m_pVertSplitter = new KviTalSplitter(Qt::Vertical,m_pSplitter);
+	m_pVertSplitter->setChildrenCollapsible(false);
+
 	// With the IRC view over
 	m_pIrcView = new KviIrcView(m_pVertSplitter,lpFrm,this);
 	m_pIrcView->setObjectName(szName);
@@ -649,8 +652,8 @@ void KviChannel::addHighlightedUser(const QString & szNick)
 {
 	if(!m_pUserListView->findEntry(szNick) || m_pTmpHighLighted->contains(szNick,Qt::CaseInsensitive))
 		return;
-	else
-   		m_pTmpHighLighted->append(szNick);
+
+	m_pTmpHighLighted->append(szNick);
 }
 
 void KviChannel::removeHighlightedUser(const QString & szNick)
@@ -1119,13 +1122,13 @@ void KviChannel::ownMessage(const QString & szBuffer)
 #ifdef COMPILE_CRYPT_SUPPORT
 	if(cryptSessionInfo())
 	{
-		if(cryptSessionInfo()->bDoEncrypt)
+		if(cryptSessionInfo()->m_bDoEncrypt)
 		{
 			if(*d != KVI_TEXT_CRYPTESCAPE)
 			{
 				KviStr encrypted;
-				cryptSessionInfo()->pEngine->setMaxEncryptLen(maxMsgLen);
-				switch(cryptSessionInfo()->pEngine->encrypt(d,encrypted))
+				cryptSessionInfo()->m_pEngine->setMaxEncryptLen(maxMsgLen);
+				switch(cryptSessionInfo()->m_pEngine->encrypt(d,encrypted))
 				{
 					case KviCryptEngine::Encrypted:
 						if(!connection()->sendFmtData("PRIVMSG %s :%s",szName.data(),encrypted.ptr()))
@@ -1145,7 +1148,7 @@ void KviChannel::ownMessage(const QString & szBuffer)
 					break;
 					default: // also case KviCryptEngine::EncryptError
 					{
-						QString szEngineError = cryptSessionInfo()->pEngine->lastError();
+						QString szEngineError = cryptSessionInfo()->m_pEngine->lastError();
 						output(KVI_OUT_SYSTEMERROR,
 							__tr2qs("The crypto engine was unable to encrypt the current message (%Q): %Q, no data sent to the server"),
 							&szBuffer,&szEngineError);
