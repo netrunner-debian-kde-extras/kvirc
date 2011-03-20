@@ -1,5 +1,10 @@
-kvirc (4:4.0.4~rc1-1) UNRELEASED; urgency=low
+kvirc (4:4.0.4-1) stable-proposed-updates; urgency=low
 
+  * New upstream bugfix release, including fixes for:
+    - crashes,
+    - visual problems with Gnome,
+    - some regressions, and
+    - translation updates.
   * debian/control:
     - Switched Vcs-* links to our new Git.
     - Changed my e-mail address.
@@ -7,7 +12,7 @@ kvirc (4:4.0.4~rc1-1) UNRELEASED; urgency=low
     independent of the upstream symlink.
   * debian/kvirc.manpages: Added French manpage.
 
- -- Kai Wasserbäch <curan@debian.org>  Thu, 24 Feb 2011 18:45:28 +0100
+ -- Kai Wasserbäch <curan@debian.org>  Sun, 20 Mar 2011 15:25:45 +0100
 
 kvirc (4:4.0.2-1) unstable; urgency=low
 
