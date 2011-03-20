@@ -73,6 +73,7 @@
 #include "kvi_useridentity.h"
 #include "kvi_ircview.h"
 #include "kvi_animatedpixmapcache.h"
+#include "kvi_env.h"
 
 #ifndef COMPILE_NO_IPC
 	#include "kvi_ipc.h"
@@ -94,7 +95,7 @@
 #include <QTextCodec>
 #include <QMetaObject>
 #include <QTextDocument>
-
+#include <QCleanlooksStyle>
 /*
 HACK These 2 hacks are defined because X11 defines Unsorted and None
 which conflicts with QDir and KviApp::KvircSubdir
@@ -181,6 +182,13 @@ KviApp::KviApp(int &argc,char ** argv)
 	setOrganizationDomain("kvirc.net");
 	setOrganizationName("KVIrc");
 
+#ifdef COMPILE_ON_MAC
+	// Disable the native menubar on MacOSX as in Qt 4.6 it's quite buggy and
+	// *very* often crashes in QMenuBar::macUpdateMenuBar()->QAction::isVisible().
+	// FIXME: Check it with later Qt versions
+	kvi_setenv("QT_MAC_NO_NATIVE_MENUBAR","1");
+#endif //COMPILE_ON_MAC
+
 	// Ok...everything begins here
 	g_pApp                  = this;
 	m_szConfigFile          = QString();
@@ -199,7 +207,15 @@ KviApp::KviApp(int &argc,char ** argv)
 	kvi_socket_flushTrafficCounters();
 #if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
 	m_bPortable = KviFileUtils::fileExists(g_pApp->applicationDirPath()+KVI_PATH_SEPARATOR_CHAR+"portable");
+	//workaround for #957
+	QApplication::setEffectEnabled(Qt::UI_FadeMenu, FALSE);
 #endif
+	// workaround for gtk+ style forcing a crappy white background (ticket #777, #964, #1010, ..) 
+	if(QString("QGtkStyle").compare(qApp->style()->metaObject()->className())==0) 
+	{
+		setStyle(new QCleanlooksStyle());
+		setPalette(style()->standardPalette());
+	}
 }
 
 void KviApp::setup()
@@ -272,7 +288,11 @@ void KviApp::setup()
 	// Make sure that the C strings are translated to utf8
 	// This is a fallback solution anyway: we should use the appropriate
 	// encoding every time.
-	QTextCodec::setCodecForCStrings(KviLocale::codecForName("UTF-8"));
+	QTextCodec * pUTF8Codec = KviLocale::codecForName("UTF-8");
+	if(pUTF8Codec)
+		QTextCodec::setCodecForCStrings(pUTF8Codec);
+	else
+		debug("Aaargh... have no UTF-8 codec?");
 
 	QString tmp;
 /*
@@ -1199,6 +1219,8 @@ void KviApp::triggerUpdateGui()
 void KviApp::updateGui()
 {
 	m_bUpdateGuiPending = false;
+	// enforce our "icon in popups" option
+	setAttribute(Qt::AA_DontShowIconsInMenus, !KVI_OPTION_BOOL(KviOption_boolShowIconsInPopupMenus));
 	g_pFrame->applyOptions();
 }
 

@@ -66,8 +66,8 @@ void KviRequestQueue::dequeueChannel(KviChannel * pChan)
 
 void KviRequestQueue::clearAll()
 {
-	m_channels.clear();
 	m_timer.stop();
+	m_channels.clear();
 	m_curType = Mode;
 }
 
@@ -152,6 +152,8 @@ void KviRequestQueue::timerSlot()
 			default:
 				// we're at the end of the list
 				m_channels.dequeue();
+				pChan->checkChannelSync();
+				m_curType = Mode;
 				if(m_channels.isEmpty())
 				{
 					m_timer.stop();
@@ -159,7 +161,6 @@ void KviRequestQueue::timerSlot()
 				}
 				pChan = m_channels.head();
 				encodedChan = pChan->connection()->encodeText(pChan->target());
-				m_curType = Mode;
 			case Mode:
 				if(!pChan->connection()->sendFmtData("MODE %s",encodedChan.data()))
 				{

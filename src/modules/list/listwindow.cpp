@@ -66,8 +66,8 @@ KviChannelTreeWidgetItemData::~KviChannelTreeWidgetItemData()
 }
 
 
-KviChannelTreeWidgetItem::KviChannelTreeWidgetItem(QTreeWidget * v,KviChannelTreeWidgetItemData * pData)
-: QTreeWidgetItem(v), m_pData(pData)
+KviChannelTreeWidgetItem::KviChannelTreeWidgetItem(KviChannelTreeWidgetItemData * pData)
+: QTreeWidgetItem(), m_pData(pData)
 {
 }
 
@@ -101,7 +101,7 @@ bool KviChannelTreeWidgetItem::operator<(const QTreeWidgetItem & other) const
 	{
 		case 0:
 			//channel
-			return m_pData->m_szChan < ((KviChannelTreeWidgetItem*)&other)->itemData()->m_szChan.toUpper();
+			return m_pData->m_szChan.toUpper() < ((KviChannelTreeWidgetItem*)&other)->itemData()->m_szChan.toUpper();
 			break;
 		case 1:
 			//users
@@ -515,10 +515,11 @@ void KviListWindow::processData(KviIrcMessage * pMsg)
 
 void KviListWindow::flush()
 {
-	m_pTreeWidget->setUpdatesEnabled(true); /* for v_scroolbar */
+	m_pTreeWidget->setUpdatesEnabled(false); /* for v_scroolbar */
 	while(KviChannelTreeWidgetItemData * d = m_pItemList->first())
 	{
-		(void)new KviChannelTreeWidgetItem(m_pTreeWidget,d);
+		m_pTreeWidget->addTopLevelItem(new KviChannelTreeWidgetItem(d)); 
+
 		m_pItemList->removeFirst();
 	}
 	m_pTreeWidget->setUpdatesEnabled(true);

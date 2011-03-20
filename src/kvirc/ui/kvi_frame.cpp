@@ -97,8 +97,12 @@ KviFrame::KviFrame()
 	setAttribute(Qt::WA_TranslucentBackground);
 	//disable this flag that gets enabled by qt when using Qt::WA_TranslucentBackground
 	setAttribute(Qt::WA_NoSystemBackground, false);
+#if !(defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW) || defined(COMPILE_KDE_SUPPORT))
+	// Under windows, the icon is builtin; under kde, KApplication sets it for us
+	// We try to avois this as much as possible, since it forces the use of the low-res 16x16 icon
 	setWindowIcon(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_KVIRC)));
-	
+#endif
+
 	m_pWinList  = new KviPointerList<KviWindow>;
 	setWindowTitle(KVI_DEFAULT_FRAME_CAPTION);
 	m_pWinList->setAutoDelete(false);
@@ -112,6 +116,7 @@ KviFrame::KviFrame()
 
 	m_pSplitter = new QSplitter(Qt::Horizontal,this);
 	m_pSplitter->setObjectName("main_frame_splitter");
+	m_pSplitter->setChildrenCollapsible(false);
 
 	setCentralWidget(m_pSplitter);
 
@@ -768,6 +773,7 @@ void KviFrame::closeEvent(QCloseEvent *e)
 		if(dockExtension())
 		{
 			e->ignore();
+			KVI_OPTION_BOOL(KviOption_boolFrameIsMaximized) = isMaximized();
 			QTimer::singleShot( 0, this, SLOT(hide()) );
 		}
 		return;

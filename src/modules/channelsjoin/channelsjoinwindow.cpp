@@ -69,7 +69,7 @@ KviChannelsJoinWindow::KviChannelsJoinWindow(QWidget * par, const char * name)
 	m_pTreeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 	g->addWidget(m_pTreeWidget,0,0,1,2);
 	connect(m_pTreeWidget,SIGNAL(itemClicked(QTreeWidgetItem *,int)),this,SLOT(itemClicked(QTreeWidgetItem *,int)));
-	connect(m_pTreeWidget,SIGNAL(itemActivated(QTreeWidgetItem *,int)),this,SLOT(itemDoubleClicked(QTreeWidgetItem *,int)));
+	connect(m_pTreeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem *,int)),this,SLOT(itemDoubleClicked(QTreeWidgetItem *,int)));
 
 
 	m_pGroupBox = new KviTalGroupBox(Qt::Horizontal,__tr2qs("Channel" ),this);
@@ -176,7 +176,6 @@ void KviChannelsJoinWindow::fillListView()
 			QTreeWidgetItem * chld = new QTreeWidgetItem(par);
 			chld->setText(0,it.key());
 			chld->setIcon(0,*(g_pIconManager->getSmallIcon(KVI_SMALLICON_CHANNEL)));
-			++it;
 		}
 	}
 
@@ -242,7 +241,7 @@ void KviChannelsJoinWindow::itemClicked(QTreeWidgetItem * it, int)
 {
 	if(!it)
 		return;
-	if(!it->parent())
+	if(it->childCount())
 		return;
 
 	QString szTmp = it->text(0);
@@ -254,7 +253,7 @@ void KviChannelsJoinWindow::itemDoubleClicked(QTreeWidgetItem * it, int)
 {
 	if(!it)
 		return;
-	if(!it->parent())
+	if(it->childCount())
 		return;
 
 	QString szTmp = it->text(0);
