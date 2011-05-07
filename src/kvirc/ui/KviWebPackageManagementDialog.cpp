@@ -50,8 +50,8 @@
 #include <QFtp>
 #include <QProgressBar>
 #include <QDir>
-#include <QtWebKit/QWebView>
-#include <QtWebKit/QWebFrame>
+#include <QWebView>
+#include <QWebFrame>
 #include <QWebElement>
 #include <QUrl>
 #include <QShowEvent>
@@ -140,25 +140,24 @@ void KviWebPackageManagementDialog::slotLoadFinished(bool bOk)
 	// search for all item_entry div
 	QWebElementCollection elementscollection=pFrame->documentElement().findAll("div.item_entry");
 
-
 	// if this is null something is wrong
 	if(elementscollection.count())
 	{  
 		foreach(QWebElement element,elementscollection)
 		{
 			// web element 'title'
-			QWebElement eTitle=element.findFirst("span.item_name");
+			QWebElement eId=element.findFirst("span.item_id");
 			// string title
-			QString szTitle=eTitle.toPlainText();
+			QString szId=eId.toPlainText();
 			// number version
 			QString szVersion=element.findFirst("span.item_version").toPlainText();
 			//QString t=szLocalThemesPath+szTitle+"-"+szVersion;
 			// is the theme installed?
 
-			if(packageIsInstalled(szTitle,szVersion))
+			if(packageIsInstalled(szId,szVersion))
 			{
 				// yeah: change the background color for highlight the item
-				element.findFirst("div.item_id").setStyleProperty("background","none repeat scroll 0 0 #3cd543");
+				element.findFirst("div.item_identification").setStyleProperty("background","none repeat scroll 0 0 #3cd543");
 				// then change the 'install' text into 'uninstall'
 				QWebElement eDownload=element.findFirst("a.item_download_link");
 				eDownload.setPlainText("Uninstall");

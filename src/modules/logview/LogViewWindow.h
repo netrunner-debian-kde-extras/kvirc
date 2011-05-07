@@ -1,5 +1,5 @@
-#ifndef _LOGVIEWMDIWINDOW_H_
-#define _LOGVIEWMDIWINDOW_H_
+#ifndef _LOGVIEWWINDOW_H_
+#define _LOGVIEWWINDOW_H_
 //=============================================================================
 //
 //   File : LogViewWindow.h
@@ -8,6 +8,7 @@
 //   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2002 Juanjo Alvarez
 //   Copyright (C) 2002-2010 Szymon Stefanek (pragma at kvirc dot net)
+//   Copyright (C) 2011 Elvio Basello (hellvis69 at gmail dot com)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -25,129 +26,109 @@
 //
 //=============================================================================
 
+#include "LogFile.h"
+
 #include "kvi_settings.h"
 #include "KviWindow.h"
 #include "KviModuleExtension.h"
 #include "KviTalVBox.h"
-#include <QTreeWidget>
 #include "KviPointerList.h"
 
-#include <QTabWidget>
-#include <QDateTime>
-#include <QCheckBox>
+#include <QTreeWidget>
 
+class KviLogViewWidget;
+class LogListViewItem;
+class LogListViewItemFolder;
 class QProgressBar;
 class QStringList;
 class QLineEdit;
 class QDateEdit;
-class KviLogViewWidget;
-class LogListViewItem;
-class LogListViewItemFolder;
-
-class LogFile {
-
-public:
-
-	enum KviLogTypes {
-		Channel,
-		Console,
-		Query,
-		DccChat,
-		Other
-	};
-
-	LogFile(const QString& name);
-
-	const QString & fileName() const { return m_szFilename; };
-	const QString & name() const { return m_szName; };
-	const QString & network() const { return m_szNetwork; };
-	const QDate   & date() const { return m_date; };
-
-	void getText(QString & text,const QString& logDir);
-
-	KviLogTypes type() const { return m_type; };
-private:
-	KviLogTypes  m_type;
-	QString      m_szFilename;
-	bool         m_bCompressed;
-	QString      m_szName;
-	QString      m_szNetwork;
-	QDate        m_date;
-};
+class QTabWidget;
+class QCheckBox;
 
 class LogViewListView : public QTreeWidget
 {
 	Q_OBJECT
 public:
-	LogViewListView(QWidget*);
+	LogViewListView(QWidget *);
 	~LogViewListView(){};
 protected:
-	void mousePressEvent (QMouseEvent *e);
+	void mousePressEvent(QMouseEvent * pEvent);
 signals:
-	void rightButtonPressed(QTreeWidgetItem *,QPoint);
+	void rightButtonPressed(QTreeWidgetItem *, QPoint);
 };
 
 class LogViewWindow : public KviWindow, public KviModuleExtension
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-	LogViewWindow(KviModuleExtensionDescriptor * d,KviMainWindow * lpFrm);
+	LogViewWindow(KviModuleExtensionDescriptor * pDesc, KviMainWindow * pMain);
 	~LogViewWindow();
 protected:
 	KviPointerList<LogFile> m_logList;
 
-	LogViewListView     * m_pListView;
+	LogViewListView       * m_pListView;
 
 	// Type filter
-	QCheckBox          * m_pShowChannelsCheck;
-	QCheckBox          * m_pShowQueryesCheck;
-	QCheckBox          * m_pShowConsolesCheck;
-	QCheckBox          * m_pShowOtherCheck;
-	QCheckBox          * m_pShowDccChatCheck;
+	QCheckBox             * m_pShowChannelsCheck;
+	QCheckBox             * m_pShowQueryesCheck;
+	QCheckBox             * m_pShowConsolesCheck;
+	QCheckBox             * m_pShowOtherCheck;
+	QCheckBox             * m_pShowDccChatCheck;
 
 	// Content filter
-	QLineEdit          * m_pFileNameMask;
-	QLineEdit          * m_pContentsMask;
+	QLineEdit             * m_pFileNameMask;
+	QLineEdit             * m_pContentsMask;
 
 	// Date/time mask
-	QCheckBox          * m_pEnableFromFilter;
-	QCheckBox          * m_pEnableToFilter;
-	QDateEdit          * m_pFromDateEdit;
-	QDateEdit          * m_pToDateEdit;
+	QCheckBox             * m_pEnableFromFilter;
+	QCheckBox             * m_pEnableToFilter;
+	QDateEdit             * m_pFromDateEdit;
+	QDateEdit             * m_pToDateEdit;
 
-	QStringList        * m_pFileNames;
-	QString              m_szLogDirectory;
-	QTabWidget         * m_pTabWidget;
-	KviTalVBox         * m_pIndexTab;
-	KviTalVBox         * m_pLeftLayout;
-	QWidget            * m_pSearchTab;
-	QPushButton        * m_pFilterButton;
-	QPushButton        * m_pCancelButton;
-	KviTalHBox         * m_pBottomLayout;
-	QProgressBar       * m_pProgressBar;
-	LogListViewItem * m_pLastCategory;
-	LogListViewItemFolder *m_pLastGroupItem;
-	QString              m_szLastGroup;
-	bool                 m_bAborted;
-	QTimer             * m_pTimer;
+	QStringList           * m_pFileNames;
+	QTabWidget            * m_pTabWidget;
+	KviTalVBox            * m_pIndexTab;
+	KviTalVBox            * m_pLeftLayout;
+	QWidget               * m_pSearchTab;
+	QPushButton           * m_pFilterButton;
+	QPushButton           * m_pCancelButton;
+	KviTalHBox            * m_pBottomLayout;
+	QProgressBar          * m_pProgressBar;
+	LogListViewItem       * m_pLastCategory;
+	LogListViewItemFolder * m_pLastGroupItem;
+	QString                 m_szLastGroup;
+	bool                    m_bAborted;
+	QTimer                * m_pTimer;
+	KviTalPopupMenu       * m_pExportLogPopup;
+public:
+	/**
+	* \brief Exports the log and creates the file in the selected format
+	* \param pLog The log file associated to the item selected in the popup
+	* \param iId The id of the item in the popup
+	* \param pszFile The buffer where to store the exported log name
+	* \return void
+	*/
+	void createLog(LogFile * pLog, int iId, QString * pszFile = 0);
 protected:
-	void recurseDirectory(const QString& sDir);
-
+	void recurseDirectory(const QString & szDir);
 	void setupItemList();
+
 	virtual QPixmap * myIconPtr();
-	virtual void resizeEvent(QResizeEvent *e);
-	virtual void keyPressEvent(QKeyEvent *e);
+	virtual void resizeEvent(QResizeEvent * pEvent);
+	virtual void keyPressEvent(QKeyEvent * pEvent);
 	virtual void fillCaptionBuffers();
 	virtual void die();
 	virtual QSize sizeHint() const;
 protected slots:
-	void rightButtonClicked ( QTreeWidgetItem *, const QPoint &);
-	void itemSelected(QTreeWidgetItem * it, QTreeWidgetItem *);
+	void rightButtonClicked(QTreeWidgetItem *, const QPoint &);
+	void itemSelected(QTreeWidgetItem * pItem, QTreeWidgetItem *);
 	void deleteCurrent();
 	void applyFilter();
 	void abortFilter();
 	void cacheFileList();
 	void filterNext();
+	void exportLog(int iId);
 };
 
-#endif //_LOGVIEWMDIWINDOW_H_
+#endif //_LOGVIEWWINDOW_H_

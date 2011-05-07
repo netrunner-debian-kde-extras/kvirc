@@ -5,6 +5,7 @@
 //
 //   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2001-2010 Szymon Stefanek (pragma at kvirc dot net)
+//   Copyright (C) 2011 Elvio Basello (hellvis69 at gmail dot com)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -22,12 +23,13 @@
 //
 //==============================================================================
 
-#include "KviModule.h"
+#include "../logview/LogFile.h"
+
 #include "KviWindow.h"
-#include "KviApplication.h"
 #include "KviLocale.h"
 #include "KviIrcView.h"
-
+#include "KviModule.h"
+#include "KviModuleManager.h"
 
 //#warning "log.stats"
 //#warning "log.compress (gzip -r the log directory)"
@@ -82,8 +84,6 @@
 		[fnc]$log.file[/fnc],
 		[doc:window_naming_conventions]window naming conventions documentation[/doc]
 */
-
-
 static bool log_kvs_cmd_start(KviKvsModuleCommandCall * c)
 {
 	QString szFile;
@@ -100,27 +100,24 @@ static bool log_kvs_cmd_start(KviKvsModuleCommandCall * c)
 			pWnd = g_pApp->findWindow(szWindow);
 			if(!pWnd)
 			{
-				c->warning(__tr2qs("Window %Q not found"),&szWindow);
+				c->warning(__tr2qs_ctx("Window '%1' not found","log").arg(szWindow));
 				return true;
 			}
-
 		} else {
-			c->warning(__tr2qs("Missing window id after the 'w' switch"));
+			c->warning(__tr2qs_ctx("Missing window id after the 'w' switch","log"));
 			return true;
 		}
 	}
 
 	if(pWnd->view())
 	{
-
 		if(szFile.isEmpty())
-		{
 			pWnd->getDefaultLogFileName(szFile);
-		}
+
 		if(!pWnd->view()->startLogging(szFile,c->hasSwitch('p',"log-buffer")))
-			c->warning(__tr2qs("Can't log to file %Q"),&szFile);
+			c->warning(__tr2qs_ctx("Can't log to file '%1'","log").arg(szFile));
 	} else {
-		c->warning(__tr2qs("This window has no logging capabilities"));
+		c->warning(__tr2qs_ctx("This window has no logging capabilities","log"));
 		return true;
 	}
 	return true;
@@ -146,7 +143,6 @@ static bool log_kvs_cmd_start(KviKvsModuleCommandCall * c)
 		[cmd]log.start[/cmd],
 		[doc:window_naming_conventions]window naming conventions documentation[/doc]
 */
-
 static bool log_kvs_cmd_stop(KviKvsModuleCommandCall * c)
 {
 	KviWindow * pWnd = c->window();
@@ -158,17 +154,17 @@ static bool log_kvs_cmd_stop(KviKvsModuleCommandCall * c)
 			pWnd = g_pApp->findWindow(szWindow);
 			if(!pWnd)
 			{
-				c->warning(__tr2qs("Window %Q not found"),&szWindow);
+				c->warning(__tr2qs_ctx("Window '%1' not found","log").arg(szWindow));
 				return true;
 			}
-
 		} else {
-			c->warning(__tr2qs("Missing window id after the 'w' switch"));
+			c->warning(__tr2qs_ctx("Missing window id after the 'w' switch","log"));
 			return true;
 		}
 	}
 
-	if(pWnd->view()) pWnd->view()->stopLogging();
+	if(pWnd->view())
+		pWnd->view()->stopLogging();
 	return true;
 }
 
@@ -197,7 +193,6 @@ static bool log_kvs_cmd_stop(KviKvsModuleCommandCall * c)
 		[cmd]log.stop[/cmd],
 		[doc:window_naming_conventions]window naming conventions documentation[/doc]
 */
-
 static bool log_kvs_cmd_flush(KviKvsModuleCommandCall * c)
 {
 	KviWindow * pWnd = c->window();
@@ -209,17 +204,17 @@ static bool log_kvs_cmd_flush(KviKvsModuleCommandCall * c)
 			pWnd = g_pApp->findWindow(szWindow);
 			if(!pWnd)
 			{
-				c->warning(__tr2qs("Window %Q not found"),&szWindow);
+				c->warning(__tr2qs_ctx("Window '%1' not found","log").arg(szWindow));
 				return true;
 			}
-
 		} else {
-			c->warning(__tr2qs("Missing window id after the 'w' switch"));
+			c->warning(__tr2qs_ctx("Missing window id after the 'w' switch","log"));
 			return true;
 		}
 	}
 
-	if(pWnd->view()) pWnd->view()->flushLog();
+	if(pWnd->view())
+		pWnd->view()->flushLog();
 	return true;
 }
 
@@ -252,29 +247,85 @@ static bool log_kvs_cmd_flush(KviKvsModuleCommandCall * c)
 		[cmd]log.stop[/cmd],
 		[doc:window_naming_conventions]window naming conventions documentation[/doc]
 */
-
 static bool log_kvs_fnc_file(KviKvsModuleFunctionCall * c)
 {
-	QString szWindow;
-	QString buffer;
+	QString szWindow, szBuffer;
+
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("window id",KVS_PT_STRING,KVS_PF_OPTIONAL,szWindow)
 	KVSM_PARAMETERS_END(c)
 
-	KviWindow * wnd = c->window();
+	KviWindow * pWnd = c->window();
 
 	if(!szWindow.isEmpty())
 	{
-		wnd = g_pApp->findWindow(szWindow);
-		if(!wnd)
+		pWnd = g_pApp->findWindow(szWindow);
+		if(!pWnd)
 		{
-			c->warning(__tr2qs("Window with id '%Q' not found, returning empty string"),&szWindow);
+			c->warning(__tr2qs_ctx("Window with id '%1' not found, returning empty string","log").arg(szWindow));
 			return true;
 		}
 	}
 
-	if(wnd->view())wnd->view()->getLogFileName(buffer);
-	c->returnValue()->setString(buffer);
+	if(pWnd->view())
+		pWnd->view()->getLogFileName(szBuffer);
+	c->returnValue()->setString(szBuffer);
+	return true;
+}
+
+/*
+	@doc: log.export
+	@type:
+		function
+	@title:
+		$log.export
+	@short:
+		Exports the specified log to the given format and returns the filename
+	@syntax:
+		<string> $log.export(<filename:string>[,<type:string>])
+	@description:
+		Exports the log file named <filename> to the format passed as <type>.[br]
+		<filename> has to be a valid path, or given using [fnc]$log.file[/fnc] function.[br]
+		If no <type> is passed, plain text will be used.
+	@example:
+		[example]
+		[cmd]echo[/cmd] $log.export([fnc]$log.file[/fnc],"html")
+		[/example]
+	@seealso:
+		[cmd]log.start[/cmd],
+		[cmd]log.stop[/cmd]
+*/
+static bool log_kvs_fnc_export(KviKvsModuleFunctionCall * c)
+{
+	QString szFile, szType;
+
+	KVSM_PARAMETERS_BEGIN(c)
+		KVSM_PARAMETER("filename",KVS_PT_NONEMPTYSTRING,0,szFile)
+		KVSM_PARAMETER("type",KVS_PT_STRING,KVS_PF_OPTIONAL,szType)
+	KVSM_PARAMETERS_END(c)
+
+	if(szType.isEmpty())
+		szType = "txt";
+
+	KviModule * m = g_pModuleManager->getModule("logview");
+	if(!m)
+	{
+		c->error(__tr2qs_ctx("Failed to load logview module, aborting","log"));
+		return false;
+	}
+
+	LogFileData log;
+	log.szName = szFile;
+	log.szType = szType;
+
+	if(!m->ctrl("logview::export",(void *)&log))
+	{
+		c->error(__tr2qs_ctx("Failed to export the log '%1'","log").arg(szFile));
+		return false;
+	}
+
+	c->returnValue()->setString(log.szFile);
+
 	return true;
 }
 
@@ -285,6 +336,7 @@ static bool log_module_init(KviModule * m)
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"flush",log_kvs_cmd_flush);
 
 	KVSM_REGISTER_FUNCTION(m,"file",log_kvs_fnc_file);
+	KVSM_REGISTER_FUNCTION(m,"export",log_kvs_fnc_export);
 	return true;
 }
 

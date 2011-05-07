@@ -2064,9 +2064,9 @@ void KviIrcView::showToolsPopup()
 	m_pToolsPopup->clear();
 
 	if(m_pToolWidget)
-		m_pToolsPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Search)),__tr2qs("Hide Find Window"),this,SLOT(toggleToolWidget()));
+		m_pToolsPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Search)),__tr2qs("Hide Filter"),this,SLOT(toggleToolWidget()));
 	else
-		m_pToolsPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Search)),__tr2qs("Show Find Window"),this,SLOT(toggleToolWidget()));
+		m_pToolsPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Search)),__tr2qs("Show Filter"),this,SLOT(toggleToolWidget()));
 
 	m_pToolsPopup->insertSeparator();
 	m_pToolsPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Plus)),__tr2qs("Zoom In"),this,SLOT(increaseFontSize()));
@@ -2362,7 +2362,8 @@ do_pPrev:
 KviIrcViewLine * KviIrcView::getVisibleLineAt(int yPos)
 {
 	KviIrcViewLine * l = m_pCurLine;
-	int iTop = height() + m_iFontDescent - KVI_IRCVIEW_VERTICAL_BORDER;
+	int toolWidgetHeight = m_pToolWidget ? m_pToolWidget->sizeHint().height() : 0;
+	int iTop = height() + m_iFontDescent - KVI_IRCVIEW_VERTICAL_BORDER - toolWidgetHeight;
 
 	while(iTop > yPos)
 	{
@@ -2387,7 +2388,8 @@ int KviIrcView::getVisibleCharIndexAt(KviIrcViewLine *, int xPos, int yPos)
 	 */
 
 	KviIrcViewLine * l = m_pCurLine;
-	int iTop = height() + m_iFontDescent - KVI_IRCVIEW_VERTICAL_BORDER;
+	int toolWidgetHeight = m_pToolWidget ? m_pToolWidget->sizeHint().height() : 0;
+	int iTop = height() + m_iFontDescent - KVI_IRCVIEW_VERTICAL_BORDER - toolWidgetHeight;
 
 	// our current line begins after the mouse position... go on
 	while(iTop > yPos)

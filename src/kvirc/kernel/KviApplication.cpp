@@ -86,6 +86,7 @@
 #include "KviTalPopupMenu.h"
 #include "KviQueryWindow.h"
 
+
 #ifndef COMPILE_NO_IPC
 	#include "KviIpcSentinel.h"
 #endif
@@ -230,7 +231,6 @@ KviApplication::KviApplication(int &argc,char ** argv)
 		setStyle(new QCleanlooksStyle());
 		setPalette(style()->standardPalette());
 	}
-
 }
 
 void KviApplication::setup()
@@ -303,7 +303,7 @@ void KviApplication::setup()
 	// Make sure that the C strings are translated to utf8
 	// This is a fallback solution anyway: we should use the appropriate
 	// encoding every time.
-	QTextCodec * pUTF8Codec = KviLocale::codecForName("UTF-8");
+	QTextCodec * pUTF8Codec = KviLocale::instance()->codecForName("UTF-8");
 	if(pUTF8Codec)
 		QTextCodec::setCodecForCStrings(pUTF8Codec);
 	else
@@ -364,6 +364,9 @@ void KviApplication::setup()
 #ifdef COMPILE_PSEUDO_TRANSPARENCY
 	updatePseudoTransparency();
 #endif
+
+	// enforce our "icon in popups" option - this is done also in each updateGui() call
+	setAttribute(Qt::AA_DontShowIconsInMenus, !KVI_OPTION_BOOL(KviOption_boolShowIconsInPopupMenus));
 
 	KVI_SPLASH_SET_PROGRESS(48)
 
@@ -693,7 +696,7 @@ KviApplication::~KviApplication()
 	WSACleanup();
 #endif
 
-	KviLocale::done(this);
+	KviLocale::done();
 
 	// goodbye cruel world...
 }
@@ -949,14 +952,14 @@ QTextCodec * KviApplication::defaultTextCodec()
 	QTextCodec * pCodec = 0;
 	if(!KVI_OPTION_STRING(KviOption_stringDefaultTextEncoding).isEmpty())
 	{
-		pCodec = KviLocale::codecForName(KVI_OPTION_STRING(KviOption_stringDefaultTextEncoding).toLatin1());
+		pCodec = KviLocale::instance()->codecForName(KVI_OPTION_STRING(KviOption_stringDefaultTextEncoding).toLatin1());
 		if(pCodec)
 			return pCodec;
 	}
 	pCodec = QTextCodec::codecForLocale();
 	if(pCodec)
 		return pCodec;
-	pCodec = KviLocale::codecForName("UTF-8");
+	pCodec = KviLocale::instance()->codecForName("UTF-8");
 	if(!pCodec)
 		qDebug("KviApplication::defaultTextCodec(): cannot find a suitable text codec for locale :/");
 	return pCodec;
@@ -967,14 +970,14 @@ QTextCodec * KviApplication::defaultSrvCodec()
 	QTextCodec * pCodec = 0;
 	if(!KVI_OPTION_STRING(KviOption_stringDefaultSrvEncoding).isEmpty())
 	{
-		pCodec = KviLocale::codecForName(KVI_OPTION_STRING(KviOption_stringDefaultSrvEncoding).toLatin1());
+		pCodec = KviLocale::instance()->codecForName(KVI_OPTION_STRING(KviOption_stringDefaultSrvEncoding).toLatin1());
 		if(pCodec)
 			return pCodec;
 	}
 	pCodec = QTextCodec::codecForLocale();
 	if(pCodec)
 		return pCodec;
-	pCodec = KviLocale::codecForName("UTF-8");
+	pCodec = KviLocale::instance()->codecForName("UTF-8");
 	if(!pCodec)
 		qDebug("KviApplication::defaultSrcCodec(): cannot find a suitable text codec for locale :/");
 	return pCodec;
@@ -1384,11 +1387,28 @@ void KviApplication::createGlobalBackgrounds(QPixmap * pix)
 		delete g_pShadedParentGlobalDesktopBackground;
 	if(g_pShadedChildGlobalDesktopBackground)
 		delete g_pShadedChildGlobalDesktopBackground;
-	g_pShadedParentGlobalDesktopBackground = new QPixmap();
-	g_pShadedChildGlobalDesktopBackground = new QPixmap();
-	QImage img = pix->toImage();
+	g_pShadedParentGlobalDesktopBackground = new QPixmap(pix->width(),pix->height());
+	g_pShadedChildGlobalDesktopBackground = new QPixmap(pix->width(),pix->height());
+	QPainter p;
+	p.begin(g_pShadedParentGlobalDesktopBackground);;
+	p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+	if(KVI_OPTION_UINT(KviOption_uintGlobalTransparencyParentFadeFactor)>100)
+		KVI_OPTION_UINT(KviOption_uintGlobalTransparencyParentFadeFactor) = 100;
+	p.setOpacity((float)((float)KVI_OPTION_UINT(KviOption_uintGlobalTransparencyParentFadeFactor) / (float)100));
+	p.fillRect(0,0,pix->width(),pix->height(),QBrush(KVI_OPTION_COLOR(KviOption_colorGlobalTransparencyFade)));
+	p.end();
+
+	p.begin(g_pShadedChildGlobalDesktopBackground);
+	p.drawPixmap(0,0,*pix);
+	p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+	if(KVI_OPTION_UINT(KviOption_uintGlobalTransparencyChildFadeFactor)>100)
+		KVI_OPTION_UINT(KviOption_uintGlobalTransparencyChildFadeFactor) = 100;
+	p.setOpacity((float)((float)KVI_OPTION_UINT(KviOption_uintGlobalTransparencyChildFadeFactor) / (float)100));
+	p.fillRect(0,0,pix->width(),pix->height(),QBrush(KVI_OPTION_COLOR(KviOption_colorGlobalTransparencyFade)));
+	p.end();
+
 	// play with the fade factors
-	KVI_OPTION_UINT(KviOption_uintGlobalTransparencyParentFadeFactor) %= 100;
+	/*
 	if(KVI_OPTION_UINT(KviOption_uintGlobalTransparencyParentFadeFactor) > 0)
 	{
 		*g_pShadedParentGlobalDesktopBackground = QPixmap::fromImage(
@@ -1403,7 +1423,7 @@ void KviApplication::createGlobalBackgrounds(QPixmap * pix)
 			kimageeffect_fade(img,
 				(float)((float)KVI_OPTION_UINT(KviOption_uintGlobalTransparencyChildFadeFactor) / (float)100),
 				KVI_OPTION_COLOR(KviOption_colorGlobalTransparencyFade)));
-	}
+	}*/
 	if(g_pMainWindow)
 		g_pMainWindow->updatePseudoTransparency();
 }

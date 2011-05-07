@@ -42,7 +42,7 @@
 #include <QDirIterator>
 #include <QDateTime>
 #include <QBuffer>
-
+#include <QFile>
 
 PackAddonDialog::PackAddonDialog(QWidget * pParent)
 : QWizard(pParent)
@@ -133,10 +133,10 @@ void PackAddonDialog::accept()
 	QWizard::accept();
 }
 
-bool PackAddonDialog::checkDirTree(QString * pszError, QString * pszWarning)
+bool PackAddonDialog::checkDirTree(QString * pszError)
 {
-	if(pszError) *pszError = "";
-	if(pszWarning) *pszWarning = "";
+	if(pszError)
+		*pszError = "";
 
 	QDir addon(m_szDirPath);
 	if(!addon.exists())
@@ -272,23 +272,15 @@ bool PackAddonDialog::packAddon()
 	m_szSavePath = field("packageSavePath").toString();
 
 	// Check the addon tree
-	QString szError, szWarning;
+	QString szError;
 	
-	if(!checkDirTree(&szError,&szWarning))
+	if(!checkDirTree(&szError))
 	{
 		QMessageBox::critical(this,
 			__tr2qs_ctx("Addon Packaging Error","addon"),
 			szError,QMessageBox::Ok,QMessageBox::NoButton,QMessageBox::NoButton
 		);
 		return false;
-	}
-	
-	if(szWarning != "")
-	{
-		QMessageBox::warning(this,
-			__tr2qs_ctx("Addon Packaging Warning","addon"),
-			szWarning,QMessageBox::Ok,QMessageBox::NoButton,QMessageBox::NoButton
-		);
 	}
 	
 	// Raise the files summary dialog
@@ -379,6 +371,12 @@ bool PackAddonDialog::packAddon()
 		m_szSavePath += KVI_FILEEXTENSION_ADDONPACKAGE;
 	}
 
+	if(QFile::exists(m_szSavePath))
+	{
+		if(QMessageBox::question(this,__tr2qs_ctx("Export Addon - KVIrc","addon"),__tr2qs_ctx("File %1 already exists. Do you want to overwrite it?","addon").arg(m_szSavePath),QMessageBox::Yes,QMessageBox::No) == QMessageBox::No)
+			return false;
+	}
+
 	if(!pw.pack(m_szSavePath))
 	{
 		szTmp = __tr2qs_ctx("Packaging failed","addon");
@@ -389,7 +387,7 @@ bool PackAddonDialog::packAddon()
 	}
 
 
-	QMessageBox::information(this,__tr2qs_ctx("Export Addon - KVIrc","addon"),__tr2qs("Package saved successfully in ") + m_szSavePath,QMessageBox::Ok,QMessageBox::NoButton,QMessageBox::NoButton);
+	QMessageBox::information(this,__tr2qs_ctx("Export Addon - KVIrc","addon"),__tr2qs_ctx("Package saved successfully in %1","addon").arg(m_szSavePath),QMessageBox::Ok,QMessageBox::NoButton,QMessageBox::NoButton);
 
 	return true;
 }
@@ -662,3 +660,4 @@ void PackAddonSummaryFilesWidget::showEvent(QShowEvent *)
 
 	m_pFiles->setPlainText(list.join("\n"));
 }
+

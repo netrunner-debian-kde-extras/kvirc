@@ -28,49 +28,48 @@
 #include "LogViewWindow.h"
 
 #include "KviWindow.h"
-#include "KviScriptEditor.h"
-#include <QTreeWidget>
 
-class KviScriptEditor;
+#include <QTreeWidget>
 
 class LogListViewItem : public QTreeWidgetItem
 {
 public:
-	LogListViewItem(QTreeWidgetItem * par, LogFile::KviLogTypes type, LogFile * fileData);
-	LogListViewItem(QTreeWidget * par, LogFile::KviLogTypes type, LogFile * fileData);
-	~LogListViewItem() {};
+	LogListViewItem(QTreeWidgetItem * pPar, LogFile::Type eType, LogFile * pLog);
+	LogListViewItem(QTreeWidget * pPar, LogFile::Type eType, LogFile * pLog);
+	~LogListViewItem(){};
 public:
-	LogFile::KviLogTypes m_type;
-	LogFile*             m_pFileData;
+	LogFile::Type   m_eType;
+	LogFile       * m_pFileData;
+public:
+	LogFile * log(){ return m_pFileData; };
 	virtual QString fileName() const { return QString(); };
 };
 
 class LogListViewItemFolder : public LogListViewItem
 {
 public:
-	LogListViewItemFolder(QTreeWidgetItem * par, const QString& label);
-	~LogListViewItemFolder() {};
+	LogListViewItemFolder(QTreeWidgetItem * pPar, const QString & szLabel);
+	~LogListViewItemFolder(){};
 public:
 };
 
 class LogListViewItemType : public LogListViewItem
 {
 public:
-	LogListViewItemType(QTreeWidget * par, LogFile::KviLogTypes type);
-	~LogListViewItemType() {};
+	LogListViewItemType(QTreeWidget * pPar, LogFile::Type eType);
+	~LogListViewItemType(){};
 };
-
 
 class LogListViewLog : public LogListViewItem
 {
 public:
-	LogListViewLog(QTreeWidgetItem * par, LogFile::KviLogTypes type, LogFile * fileData);
-	~LogListViewLog() {};
+	LogListViewLog(QTreeWidgetItem * pPar, LogFile::Type eType, LogFile * pLog);
+	~LogListViewLog(){};
 	virtual QString fileName() const { return m_pFileData->fileName(); };
 protected:
-	bool operator<(const QTreeWidgetItem &other)const
+	bool operator<(const QTreeWidgetItem & other) const
 	{
-		return m_pFileData->date() < ((LogListViewLog*)&other)->m_pFileData->date();
+		return m_pFileData->date() < ((LogListViewLog *)&other)->m_pFileData->date();
 	}
 };
 

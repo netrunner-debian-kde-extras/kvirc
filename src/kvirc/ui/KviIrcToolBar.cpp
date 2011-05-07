@@ -54,18 +54,16 @@
 	extern QPixmap * g_pShadedChildGlobalDesktopBackground;
 #endif
 
-static QPixmap                                  * g_pIccMemBuffer               = 0;
 static KviPointerList<KviToolBarGraphicalApplet>    * g_pToolBarGraphicalAppletList = 0;
 
 KviToolBarGraphicalApplet::KviToolBarGraphicalApplet(QWidget * par,const char * name)
-: QToolButton(par)
+: QWidget(par)
 {
 	setObjectName(name);
 	if(!g_pToolBarGraphicalAppletList)
 	{
 		g_pToolBarGraphicalAppletList = new KviPointerList<KviToolBarGraphicalApplet>();
 		g_pToolBarGraphicalAppletList->setAutoDelete(false);
-		g_pIccMemBuffer = new QPixmap(1,1);
 	}
 
 	g_pToolBarGraphicalAppletList->append(this);
@@ -74,59 +72,39 @@ KviToolBarGraphicalApplet::KviToolBarGraphicalApplet(QWidget * par,const char * 
 	setMouseTracking(true);
 	m_bResizeMode = false;
 
-	m_sizeHint = QSize(180,32);
-	m_bSizeLoaded = false;
-}
+	setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
-unsigned int KviToolBarGraphicalApplet::loadAppletWidth()
-{
+	setMinimumWidth(32);
+	setMaximumWidth(480);
+
 	if(KVI_OPTION_UINT(KviOption_uintIrcContextAppletWidth) < 32)
 		KVI_OPTION_UINT(KviOption_uintIrcContextAppletWidth) = 32;
-	return KVI_OPTION_UINT(KviOption_uintIrcContextAppletWidth);
+
+	resize(KVI_OPTION_UINT(KviOption_uintIrcContextAppletWidth), 
+	       KVI_OPTION_UINT(KviOption_uintToolBarIconSize));
 }
 
-void KviToolBarGraphicalApplet::saveAppletWidth(unsigned int uWidth)
+KviToolBarGraphicalApplet::~KviToolBarGraphicalApplet()
 {
-	KVI_OPTION_UINT(KviOption_uintIrcContextAppletWidth) = uWidth;
-}
+	KVI_OPTION_UINT(KviOption_uintIrcContextAppletWidth) = width();
 
-void KviToolBarGraphicalApplet::setupSizeHint()
-{
-	m_sizeHint = QSize(loadAppletWidth(),22);
-	m_bSizeLoaded = true;
+	g_pToolBarGraphicalAppletList->removeRef(this);
+	if(g_pToolBarGraphicalAppletList->isEmpty())
+	{
+		delete g_pToolBarGraphicalAppletList;
+		g_pToolBarGraphicalAppletList = 0;
+	}
 }
-
-QSize KviToolBarGraphicalApplet::sizeHint() const
-{
-	// forget constness :(
-	KviToolBarGraphicalApplet * that = (KviToolBarGraphicalApplet *)this;
-	if(!m_bSizeLoaded)that->setupSizeHint();
-	return m_sizeHint;
-}
-
-/*
-toolbar.define(default)
-{
-	applet(thisandthat);
-	applet(thisandthat);
-	applet(thisandthat);
-	applet(thisandthat);
-}
-*/
-
 
 void KviToolBarGraphicalApplet::mouseMoveEvent(QMouseEvent * e)
 {
-	if(e->modifiers() & Qt::LeftButton)
+	if(e->buttons() & Qt::LeftButton)
 	{
 		if(m_bResizeMode)
 		{
 			int w = e->pos().x();
-			if(w < 32)w = 32;
-			if(w > 480)w = 480;
-			m_sizeHint = QSize(w,22);
 			resize(w,height());
-			g_pApp->postEvent(parentWidget(),new QEvent(QEvent::LayoutRequest));
+			updateGeometry();
 		}
 	} else {
 		if(e->pos().x() > width() - 4)
@@ -149,41 +127,11 @@ void KviToolBarGraphicalApplet::mouseReleaseEvent(QMouseEvent *)
 	m_bResizeMode = false;
 }
 
-
-KviToolBarGraphicalApplet::~KviToolBarGraphicalApplet()
-{
-	saveAppletWidth(m_sizeHint.width());
-	g_pToolBarGraphicalAppletList->removeRef(this);
-	if(g_pToolBarGraphicalAppletList->isEmpty())
-	{
-		delete g_pToolBarGraphicalAppletList;
-		g_pToolBarGraphicalAppletList = 0;
-		delete g_pIccMemBuffer;
-		g_pIccMemBuffer = 0;
-	} else {
-		// resize the mem buffer to match the maximum width / height of the applets
-		resizeMemBuffer();
-	}
-}
-
-void KviToolBarGraphicalApplet::resizeMemBuffer()
-{
-	int uMaxW = 0;
-	int uMaxH = 0;
-	for(KviToolBarGraphicalApplet * a = g_pToolBarGraphicalAppletList->first();a;a = g_pToolBarGraphicalAppletList->next())
-	{
-		if(uMaxW < a->width())uMaxW = a->width();
-		if(uMaxH < a->height())uMaxH = a->height();
-	}
-	delete g_pIccMemBuffer;
-	g_pIccMemBuffer=new QPixmap(uMaxW,uMaxH);
-}
-
-void KviToolBarGraphicalApplet::paintEvent(QPaintEvent *e)
+void KviToolBarGraphicalApplet::paintEvent(QPaintEvent *)
 {
 	if(!isVisible())return;
 
-	QPainter pa(g_pIccMemBuffer);
+	QPainter pa(this);
 
 #ifdef COMPILE_PSEUDO_TRANSPARENCY
 	if(KVI_OPTION_BOOL(KviOption_boolUseCompositingForTransparency) && g_pApp->supportsCompositing())
@@ -220,33 +168,17 @@ void KviToolBarGraphicalApplet::paintEvent(QPaintEvent *e)
 	pa.setPen(palette().light().color());
 	pa.drawLine(1,height() - 1,width() - 1,height() - 1);
 	pa.drawLine(width() - 1,1,width() - 1,height());
+}
 
-	QPainter qt4SucksBecauseItNeedsAnAdditionalQPainter(this);
-	qt4SucksBecauseItNeedsAnAdditionalQPainter.drawPixmap(e->rect().left(),e->rect().top(),e->rect().width(),e->rect().height(),*g_pIccMemBuffer,e->rect().left(),e->rect().top(),e->rect().width(),e->rect().height());
+QSize KviToolBarGraphicalApplet::sizeHint() const
+{
+	return QSize(width(), KVI_OPTION_UINT(KviOption_uintToolBarIconSize));
 }
 
 void KviToolBarGraphicalApplet::drawContents(QPainter *)
 {
 	// nothing here
 }
-
-void KviToolBarGraphicalApplet::resizeEvent(QResizeEvent *)
-{
-	unsigned int uBufferW = g_pIccMemBuffer->width();
-	unsigned int uBufferH = g_pIccMemBuffer->height();
-	unsigned int uW = width();
-	unsigned int uH = height();
-	if((uBufferW != uW) || (uBufferH != uH))
-	{
-		if((uBufferW < uW) && (uBufferH < uH)){
-				delete g_pIccMemBuffer;
-				g_pIccMemBuffer=new QPixmap(uW,uH);
-			//			g_pIccMemBuffer->resize(uW,uH);
-		}
-		else resizeMemBuffer();
-	}
-}
-
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -335,14 +267,6 @@ void KviIrcContextDisplay::tipRequest(KviDynamicToolTip * tip,const QPoint &)
 	tip->tip(rect(),txt);
 }
 
-
-/*
-QSize KviIrcContextDisplay::sizeHint() const
-{
-	return QSize(160,22);
-}
-*/
-
 #define KVI_APPLETIRCCONTEXTINDICATORWIDTH 12
 
 void KviIrcContextDisplay::drawContents(QPainter * p)
@@ -421,7 +345,7 @@ void KviIrcContextDisplay::drawContents(QPainter * p)
 
 		p->setClipping(false);
 
-		QColor base = palette().background().color();
+		QColor base = palette().window().color();
 		QColor cntx = KVI_OPTION_ICCOLOR(c->context()->id() % KVI_NUM_ICCOLOR_OPTIONS);
 		base.setRgb((base.red() + cntx.red()) >> 1,(base.green() + cntx.green()) >> 1,
 			(base.blue() + cntx.blue()) >> 1);

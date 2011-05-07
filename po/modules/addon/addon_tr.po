@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kvirc_tr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-17 04:27+0000\n"
+"POT-Creation-Date: 2011-04-02 03:05+0200\n"
 "PO-Revision-Date: 2011-02-11 00:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Poedit-Language: Turkish\n"
 "X-Poedit-Country: TURKEY\n"
@@ -52,7 +52,7 @@ msgstr "Addon kayıt çalışıyor \"%Q\" sürüm %Q ile"
 msgid "Author"
 msgstr "Yazar"
 
-#: src/modules/addon/PackAddonDialog.cpp:623
+#: src/modules/addon/PackAddonDialog.cpp:629
 msgid "Cancel"
 msgstr "İptal et"
 
@@ -64,15 +64,15 @@ msgstr "Yazmak için dosya açılamıyor."
 msgid "Cannot write to the file descriptor."
 msgstr "Dosyaya tanıtıcısı yazılamıyor."
 
-#: src/modules/addon/AddonManagementDialog.cpp:170
+#: src/modules/addon/AddonManagementDialog.cpp:184
 msgid "Close"
 msgstr "Kapat"
 
-#: src/modules/addon/AddonManagementDialog.cpp:110
+#: src/modules/addon/AddonManagementDialog.cpp:124
 msgid "Configure Addon..."
 msgstr "Addon Düzenle..."
 
-#: src/modules/addon/AddonManagementDialog.cpp:259
+#: src/modules/addon/AddonManagementDialog.cpp:277
 msgid "Confirm addon uninstallation"
 msgstr "Addon/Eklenti Kaldırma Onay"
 
@@ -80,7 +80,7 @@ msgstr "Addon/Eklenti Kaldırma Onay"
 msgid "Create Addon Package - KVIrc"
 msgstr "Oluştur Eklenti/Addon Paketi - KVIrc"
 
-#: src/modules/addon/AddonManagementDialog.cpp:132
+#: src/modules/addon/AddonManagementDialog.cpp:146
 msgid "Create an Addon as a Distributable Package"
 msgstr "Bir Addonu Dağıtılabilir Paket Yapınız"
 
@@ -92,7 +92,7 @@ msgstr "De düzenlendi"
 msgid "Created with"
 msgstr "Ile düzenlendi"
 
-#: src/modules/addon/AddonManagementDialog.cpp:122
+#: src/modules/addon/AddonManagementDialog.cpp:136
 msgid "Delete Selected Addons"
 msgstr "Seçilen Addonları Sil"
 
@@ -104,7 +104,7 @@ msgstr "Açıklama: %Q"
 msgid "Do Not Install"
 msgstr "Yükleme"
 
-#: src/modules/addon/AddonManagementDialog.cpp:254
+#: src/modules/addon/AddonManagementDialog.cpp:272
 msgid "Do you really want to uninstall the addon \"%1\" ?"
 msgstr "Addon \"%1\"'i gerçekten kaldırmak istiyor musunuz ?"
 
@@ -112,19 +112,20 @@ msgstr "Addon \"%1\"'i gerçekten kaldırmak istiyor musunuz ?"
 msgid "Do you want to proceed with the installation ?"
 msgstr "Yüklemede ilerlemek ister misiniz?"
 
-#: src/modules/addon/libkviaddon.cpp:661
+#: src/modules/addon/libkviaddon.cpp:662
 msgid "Empty file list"
 msgstr "Boş dosya listesi"
 
-#: src/modules/addon/libkviaddon.cpp:808
+#: src/modules/addon/libkviaddon.cpp:809
 msgid "Error installing addon package: %Q"
 msgstr "Addon paketi yükleme hatası: %Q"
 
 #: src/modules/addon/PackAddonDialog.cpp:337
 #: src/modules/addon/PackAddonDialog.cpp:352
 #: src/modules/addon/PackAddonDialog.cpp:365
-#: src/modules/addon/PackAddonDialog.cpp:387
-#: src/modules/addon/PackAddonDialog.cpp:392
+#: src/modules/addon/PackAddonDialog.cpp:384
+#: src/modules/addon/PackAddonDialog.cpp:393
+#: src/modules/addon/PackAddonDialog.cpp:398
 msgid "Export Addon - KVIrc"
 msgstr "Dışa Çıkar Addon - KVIrc"
 
@@ -136,23 +137,27 @@ msgstr "Dizin '%1' silinemedi"
 msgid "Failed to unpack the selected file: %1"
 msgstr "Seçilen doyanın açılması işlemi başarısız : %1"
 
-#: src/modules/addon/PackAddonDialog.cpp:607
+#: src/modules/addon/PackAddonDialog.cpp:384
+msgid "File %1 already exists. Do you want to overwrite it?"
+msgstr ""
+
+#: src/modules/addon/PackAddonDialog.cpp:613
 msgid "File Summary"
 msgstr "Dosya özeti"
 
-#: src/modules/addon/PackAddonDialog.cpp:541
+#: src/modules/addon/PackAddonDialog.cpp:547
 msgid "Final Information"
 msgstr "Son bilgi"
 
-#: src/modules/addon/PackAddonDialog.cpp:627
+#: src/modules/addon/PackAddonDialog.cpp:633
 msgid "Finish"
 msgstr "Bitir"
 
-#: src/modules/addon/AddonManagementDialog.cpp:148
+#: src/modules/addon/AddonManagementDialog.cpp:162
 msgid "Get More Addons..."
 msgstr "Daha Fazla Addon Al..."
 
-#: src/modules/addon/PackAddonDialog.cpp:614
+#: src/modules/addon/PackAddonDialog.cpp:620
 msgid ""
 "Here there are the files I found in the directories you provided.\n"
 "If these and the information showed in the previous page are correct, hit "
@@ -163,7 +168,7 @@ msgstr ""
 "Bunlar ve bilgiler önceki sayfada verilenler ile uyumlu ise, \"Bitir\" "
 "butonu ile paketleme işlemlerini tamamlayınız."
 
-#: src/modules/addon/PackAddonDialog.cpp:542
+#: src/modules/addon/PackAddonDialog.cpp:548
 msgid ""
 "Here there are the information you provided. If these information are "
 "correct, hit the \"Finish\" button to complete the packaging operations."
@@ -171,7 +176,7 @@ msgstr ""
 "Öngördüğünüz bilgiler bunlardır. Eğer bu bilgiler doğruysa, \"Bitir\" tuşuna "
 "basıp paketleme işlemini tamamlayınız."
 
-#: src/modules/addon/PackAddonDialog.cpp:403
+#: src/modules/addon/PackAddonDialog.cpp:409
 msgid ""
 "Here you need to provide information about you (the packager) and a short "
 "description of the package you're creating."
@@ -179,11 +184,11 @@ msgstr ""
 "Burada hakkınızda (paket yapımcısı) bilgiler ile paket hakkında kısa bir "
 "açıklama yapmalısınız."
 
-#: src/modules/addon/PackAddonDialog.cpp:497
+#: src/modules/addon/PackAddonDialog.cpp:503
 msgid "Here you need to provide the path where to save the addon package"
 msgstr "Burada addon paketini kayıt etmek için bir yer seçiniz"
 
-#: src/modules/addon/PackAddonDialog.cpp:470
+#: src/modules/addon/PackAddonDialog.cpp:476
 msgid "Here you need to select the directory where the addon files are."
 msgstr "Burada eklenti/addon dosyaları için dizin seçmeniz gerekir."
 
@@ -191,12 +196,12 @@ msgstr "Burada eklenti/addon dosyaları için dizin seçmeniz gerekir."
 msgid "Hit the \"Next\" button to begin."
 msgstr "Başlamak için \"Sonraki\" tıklayınız."
 
-#: src/modules/addon/PackAddonDialog.cpp:587
+#: src/modules/addon/PackAddonDialog.cpp:593
 msgid "Icon File"
 msgstr "Simge dosyası"
 
-#: src/modules/addon/AddonManagementDialog.cpp:294
-#: src/modules/addon/AddonManagementDialog.cpp:308
+#: src/modules/addon/AddonManagementDialog.cpp:318
+#: src/modules/addon/AddonManagementDialog.cpp:332
 msgid "Install Addon - KVIrc"
 msgstr "Yükle Addon - KVIrc"
 
@@ -204,11 +209,11 @@ msgstr "Yükle Addon - KVIrc"
 msgid "Install Addon Pack - KVIrc"
 msgstr "Addon paket yükleyin - KVırc"
 
-#: src/modules/addon/AddonManagementDialog.cpp:142
+#: src/modules/addon/AddonManagementDialog.cpp:156
 msgid "Install Addon Package From Disk"
 msgstr "Diskten Addon Paketi Yükleyin"
 
-#: src/modules/addon/libkviaddon.cpp:750
+#: src/modules/addon/libkviaddon.cpp:751
 msgid "Installing file '%1' into '%2'"
 msgstr "Dosya %1', '%2' e yükleniyor"
 
@@ -216,15 +221,19 @@ msgstr "Dosya %1', '%2' e yükleniyor"
 msgid "Internal error: call a head-shrinker"
 msgstr "İç Hata: head-shrinker çağrılmalı"
 
-#: src/modules/addon/AddonManagementDialog.cpp:92
+#: src/modules/addon/WebAddonInterfaceDialog.cpp:43
+msgid "KVIrc : Download Addons"
+msgstr ""
+
+#: src/modules/addon/AddonManagementDialog.cpp:102
 msgid "Manage Script-Based Addons"
 msgstr "Addonları Yönet"
 
-#: src/modules/addon/PackAddonDialog.cpp:444
+#: src/modules/addon/PackAddonDialog.cpp:450
 msgid "Minimum &KVIrc Version:"
 msgstr "Asgari &KVIrc Sürüm:"
 
-#: src/modules/addon/PackAddonDialog.cpp:583
+#: src/modules/addon/PackAddonDialog.cpp:589
 msgid "Minimum KVIrc Version"
 msgstr "En düşük KVIrc sürümü"
 
@@ -232,104 +241,108 @@ msgstr "En düşük KVIrc sürümü"
 msgid "Name: %Q"
 msgstr "İsim: %Q"
 
-#: src/modules/addon/AddonManagementDialog.cpp:260
+#: src/modules/addon/AddonManagementDialog.cpp:278
 msgid "No"
 msgstr "Hayır"
 
-#: src/modules/addon/PackAddonDialog.cpp:421
+#: src/modules/addon/PackAddonDialog.cpp:427
 msgid "No spaces allowed, like MyAddon"
 msgstr "Boşluk olmamalı, örnek: Myaddon"
 
-#: src/modules/addon/PackAddonDialog.cpp:408
+#: src/modules/addon/PackAddonDialog.cpp:414
 msgid "Package &Author:"
 msgstr "Paket &Yazar:"
 
-#: src/modules/addon/PackAddonDialog.cpp:435
+#: src/modules/addon/PackAddonDialog.cpp:441
 msgid "Package &Description:"
 msgstr "Paket &Açıklama:"
 
-#: src/modules/addon/PackAddonDialog.cpp:417
+#: src/modules/addon/PackAddonDialog.cpp:423
 msgid "Package &Name:"
 msgstr "Paket &Adı:"
 
-#: src/modules/addon/PackAddonDialog.cpp:426
+#: src/modules/addon/PackAddonDialog.cpp:432
 msgid "Package &Version:"
 msgstr "Paket &Sürüm:"
 
-#: src/modules/addon/PackAddonDialog.cpp:567
+#: src/modules/addon/PackAddonDialog.cpp:573
 msgid "Package Author"
 msgstr "Paket Yazarı"
 
-#: src/modules/addon/PackAddonDialog.cpp:579
+#: src/modules/addon/PackAddonDialog.cpp:585
 msgid "Package Description"
 msgstr "Paket tanımı"
 
-#: src/modules/addon/PackAddonDialog.cpp:469
+#: src/modules/addon/PackAddonDialog.cpp:475
 msgid "Package Files"
 msgstr "Paket dosyaları"
 
-#: src/modules/addon/PackAddonDialog.cpp:402
+#: src/modules/addon/PackAddonDialog.cpp:408
 msgid "Package Information"
 msgstr "Paket bilgisi"
 
-#: src/modules/addon/PackAddonDialog.cpp:571
+#: src/modules/addon/PackAddonDialog.cpp:577
 msgid "Package Name"
 msgstr "Paket ismi"
 
-#: src/modules/addon/PackAddonDialog.cpp:575
+#: src/modules/addon/PackAddonDialog.cpp:581
 msgid "Package Version"
 msgstr "Paket Sürümü"
+
+#: src/modules/addon/PackAddonDialog.cpp:398
+msgid "Package saved successfully in %1"
+msgstr ""
 
 #: src/modules/addon/PackAddonDialog.cpp:334
 #: src/modules/addon/PackAddonDialog.cpp:349
 #: src/modules/addon/PackAddonDialog.cpp:362
-#: src/modules/addon/PackAddonDialog.cpp:384
+#: src/modules/addon/PackAddonDialog.cpp:390
 msgid "Packaging failed"
 msgstr "Paketleme işlemi başarısız"
 
-#: src/modules/addon/AddonManagementDialog.cpp:281
+#: src/modules/addon/AddonManagementDialog.cpp:305
 msgid "Please select the addon installation file"
 msgstr "Addon yükleme dosyasını seçiniz"
 
-#: src/modules/addon/PackAddonDialog.cpp:496
+#: src/modules/addon/PackAddonDialog.cpp:502
 msgid "Save Package"
 msgstr "Paketi kaydet"
 
-#: src/modules/addon/PackAddonDialog.cpp:595
+#: src/modules/addon/PackAddonDialog.cpp:601
 msgid "Save Path"
 msgstr "Kayıt Yolu"
 
-#: src/modules/addon/PackAddonDialog.cpp:504
+#: src/modules/addon/PackAddonDialog.cpp:510
 msgid "Select save path:"
 msgstr "Kayıtlı yolu seç:"
 
-#: src/modules/addon/PackAddonDialog.cpp:479
+#: src/modules/addon/PackAddonDialog.cpp:485
 msgid "Select the icon file:"
 msgstr "Simge dosyasını seç:"
 
-#: src/modules/addon/PackAddonDialog.cpp:475
+#: src/modules/addon/PackAddonDialog.cpp:481
 msgid "Select the source directory:"
 msgstr "Kynak dizini seç"
 
-#: src/modules/addon/AddonManagementDialog.cpp:116
+#: src/modules/addon/AddonManagementDialog.cpp:130
 msgid "Show Help"
 msgstr "Yardımı Göster"
 
-#: src/modules/addon/libkviaddon.cpp:692 src/modules/addon/libkviaddon.cpp:715
+#: src/modules/addon/libkviaddon.cpp:693 src/modules/addon/libkviaddon.cpp:716
 msgid "Skipping inexistant entry '%1'"
 msgstr "Mevcut giriş atlanıyor '%1'"
 
-#: src/modules/addon/libkviaddon.cpp:724
+#: src/modules/addon/libkviaddon.cpp:725
 msgid "Skipping invalid entry '%1'"
 msgstr "Geçersiz giriş atlanıyor '%1'"
 
-#: src/modules/addon/PackAddonDialog.cpp:591
+#: src/modules/addon/PackAddonDialog.cpp:597
 msgid "Source Directory"
 msgstr "Kaynak dizin"
 
 #: src/modules/addon/libkviaddon.cpp:200 src/modules/addon/libkviaddon.cpp:246
 #: src/modules/addon/libkviaddon.cpp:293 src/modules/addon/libkviaddon.cpp:339
-#: src/modules/addon/libkviaddon.cpp:386 src/modules/addon/libkviaddon.cpp:648
+#: src/modules/addon/libkviaddon.cpp:386 src/modules/addon/libkviaddon.cpp:649
 msgid "The addon \"%1\" does not exist"
 msgstr "Addon \"%1\"  mevcut değil"
 
@@ -345,15 +358,15 @@ msgstr "Addon \"%1\" yardım geri getirme seti yok"
 msgid "The addon \"%Q\" already exists with version %Q which is higher than %Q"
 msgstr "Bu addon \"%Q\" zaten %Q sürümü ile mecvut ve %Q'den daha yenidir"
 
-#: src/modules/addon/libkviaddon.cpp:690
+#: src/modules/addon/libkviaddon.cpp:691
 msgid "The directory '%1' doesn't exist"
 msgstr "Dizin '%1' mevcut değil"
 
-#: src/modules/addon/libkviaddon.cpp:722
+#: src/modules/addon/libkviaddon.cpp:723
 msgid "The entry '%1' is not a file"
 msgstr "Giriş '%1' bir dosya değil"
 
-#: src/modules/addon/libkviaddon.cpp:713
+#: src/modules/addon/libkviaddon.cpp:714
 msgid "The file '%1' doesn't exist"
 msgstr "Dosya '%1' mevcut değil"
 
@@ -386,11 +399,11 @@ msgstr "KVIrc sürümü \"%Q\" geçerli bir sürüm dizesi değil"
 msgid "The specified version \"%Q\" is not a valid version string"
 msgstr "Sürüm \"%Q\" geçerli bir sürüm dizesi değil"
 
-#: src/modules/addon/libkviaddon.cpp:653
+#: src/modules/addon/libkviaddon.cpp:654
 msgid "The target path can't be empty"
 msgstr "Hedef yol boşaltılamaz"
 
-#: src/modules/addon/libkviaddon.cpp:656
+#: src/modules/addon/libkviaddon.cpp:657
 msgid "The target path can't contain .."
 msgstr "Hedef yol içeremez .."
 
@@ -400,7 +413,7 @@ msgid ""
 "is %Q)"
 msgstr "KVIrc sürümünüz bu addon için çok eski (gerekli asgari sürümü %Q)"
 
-#: src/modules/addon/PackAddonDialog.cpp:565
+#: src/modules/addon/PackAddonDialog.cpp:571
 msgid "This is what I will check for:"
 msgstr "Kontrol edilecek olan:"
 
@@ -421,7 +434,7 @@ msgstr "Toplam: %d addon yüklendi"
 msgid "Uninstalling existing addon version %Q"
 msgstr "Mevcut olan addon sürümü siliniyor %Q"
 
-#: src/modules/addon/PackAddonDialog.cpp:430
+#: src/modules/addon/PackAddonDialog.cpp:436
 msgid "Version in the form x.y[.z], like 1.0 or 2.0.3"
 msgstr "Sürümü şeklinde x.y içinde [. z], örneğin 1.0 veya 2.0.3"
 
@@ -433,7 +446,7 @@ msgstr "Uyarı: Addon KVIrc nin bu versiyonuyla uyuşmuyor olablilir"
 msgid "Welcome"
 msgstr "Hoş Geldiniz"
 
-#: src/modules/addon/AddonManagementDialog.cpp:260
+#: src/modules/addon/AddonManagementDialog.cpp:278
 msgid "Yes"
 msgstr "Evet"
 
@@ -451,7 +464,7 @@ msgstr "Paket adı, sürüm, açıklama gibi bazı bilgiler vermeniz istenecekti
 msgid "You're about to install the following addon package"
 msgstr "Addon paketi yüklemek üzeresiniz"
 
-#: src/modules/addon/PackAddonDialog.cpp:412
+#: src/modules/addon/PackAddonDialog.cpp:418
 msgid "Your name here"
 msgstr "İsminiz buraya"
 

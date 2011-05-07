@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-17 04:27+0000\n"
+"POT-Creation-Date: 2011-04-02 06:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -780,6 +780,18 @@ msgstr ""
 
 #: src/modules/classeditor/ClassEditorWindow.cpp:2080
 msgid "&Rename"
+msgstr ""
+
+#: src/modules/codetester/CodeTesterWindow.cpp:57
+msgid "&Execute"
+msgstr ""
+
+#: src/modules/codetester/CodeTesterWindow.cpp:61
+msgid "Params:"
+msgstr ""
+
+#: src/modules/codetester/CodeTesterWindow.cpp:109
+msgid "Script Tester"
 msgstr ""
 
 #: src/modules/editor/ScriptEditorImplementation.cpp:255

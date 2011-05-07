@@ -150,6 +150,12 @@ protected:
 	virtual void clearOutputQueue(bool bPrivateMessagesOnly);
 
 	/**
+	* \brief Returns the current size of the output queue.
+	* \return unsigned int
+	*/
+	unsigned int outputQueueSize();
+
+	/**
 	* \brief Aborts any connection or attempt
 	* \return void
 	*/

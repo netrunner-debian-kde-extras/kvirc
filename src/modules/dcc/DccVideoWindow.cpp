@@ -69,17 +69,21 @@ extern DccBroker * g_pDccBroker;
 
 bool kvi_dcc_video_is_valid_codec(const char * codecName)
 {
-	if(kvi_strEqualCI("sjpeg",codecName))return true;
+	if(kvi_strEqualCI("sjpeg",codecName))
+		return true;
 #ifndef COMPILE_DISABLE_OGG_THEORA
-	if(kvi_strEqualCI("theora",codecName))return true;
+	if(kvi_strEqualCI("theora",codecName))
+		return true;
 #endif
 	return false;
 }
 
-static DccVideoCodec * kvi_dcc_video_get_codec(const char *codecName)
+static DccVideoCodec * kvi_dcc_video_get_codec(const char * codecName)
 {
+	Q_UNUSED(codecName);
 #ifndef COMPILE_DISABLE_OGG_THEORA
-	if(kvi_strEqualCI("theora",codecName))return new DccVideoTheoraCodec();
+	if(kvi_strEqualCI("theora",codecName))
+		return new DccVideoTheoraCodec();
 #endif
 	return new DccVideoSJpegCodec();
 }
@@ -97,12 +101,10 @@ DccVideoThread::DccVideoThread(KviWindow * wnd,kvi_socket_t fd,KviDccVideoThread
 	if(!g_pVideoDevicePool)
 	{
 		g_pVideoDevicePool = Kopete::AV::VideoDevicePool::self();
-		g_pVideoDevicePool->open();
-		g_pVideoDevicePool->setSize(320, 240);
+		if (EXIT_SUCCESS != g_pVideoDevicePool->open()) return;
+		g_pVideoDevicePool->setImageSize(320, 240);
 	}
 	g_iVideoDevicePoolInstances++;
-	//ensure capturing
-	g_pVideoDevicePool->startCapturing();
 #endif
 	startRecording();
 	startPlaying();
@@ -187,8 +189,10 @@ bool DccVideoThread::videoStep()
 	if(m_bRecording)
 	{
 		//grab the image, compress using the codec
-		g_pVideoDevicePool->getFrame();
-		g_pVideoDevicePool->getImage(&m_outImage);
+		if(g_pVideoDevicePool->getFrame() == EXIT_FAILURE)
+			return true;
+		if(g_pVideoDevicePool->getImage(&m_outImage) == EXIT_FAILURE)
+			return true;
 		if(m_outImage.numBytes() > 0)
 		{
 			m_videoOutSignalBuffer.append((const unsigned char*) m_outImage.bits(), m_outImage.numBytes());
@@ -307,8 +311,8 @@ void DccVideoThread::restartRecording(int iDevice, int iInput, int)
 		g_pVideoDevicePool = Kopete::AV::VideoDevicePool::self();
 
 	g_pVideoDevicePool->stopCapturing();
-	g_pVideoDevicePool->open(iDevice);
-	g_pVideoDevicePool->setSize(320, 240);
+	if (EXIT_SUCCESS != g_pVideoDevicePool->open(iDevice)) return;
+	g_pVideoDevicePool->setImageSize(320, 240);
 	if(iInput >= 0)
 		g_pVideoDevicePool->selectInput(iInput);
 	g_pVideoDevicePool->startCapturing();
@@ -323,7 +327,10 @@ void DccVideoThread::startRecording()
 	//qDebug("Start recording");
 	if(m_bRecording)return; // already started
 
-//	qDebug("Posting event");
+	//ensure capturing
+	g_pVideoDevicePool->startCapturing();
+
+	qDebug("Posting event");
 	KviThreadDataEvent<int> * e = new KviThreadDataEvent<int>(KVI_DCC_THREAD_EVENT_ACTION);
 	e->setData(new int(KVI_DCC_VIDEO_THREAD_ACTION_START_RECORDING));
 	postEvent(DccThread::parent(),e);
@@ -335,7 +342,7 @@ void DccVideoThread::startRecording()
 void DccVideoThread::stopRecording()
 {
 #ifndef COMPILE_DISABLE_DCC_VIDEO
-	//qDebug("Stop recording");
+	qDebug("Stop recording");
 	if(!m_bRecording)return; // already stopped
 
 	KviThreadDataEvent<int> * e = new KviThreadDataEvent<int>(KVI_DCC_THREAD_EVENT_ACTION);
@@ -349,7 +356,7 @@ void DccVideoThread::stopRecording()
 void DccVideoThread::startPlaying()
 {
 #ifndef COMPILE_DISABLE_DCC_VIDEO
-	//qDebug("Start playing");
+	qDebug("Start playing");
 	if(m_bPlaying)return;
 
 	KviThreadDataEvent<int> * e = new KviThreadDataEvent<int>(KVI_DCC_THREAD_EVENT_ACTION);
@@ -363,7 +370,7 @@ void DccVideoThread::startPlaying()
 void DccVideoThread::stopPlaying()
 {
 #ifndef COMPILE_DISABLE_DCC_VIDEO
-	//qDebug("Stop playing");
+	qDebug("Stop playing");
 	if(!m_bPlaying)return;
 
 	KviThreadDataEvent<int> * e = new KviThreadDataEvent<int>(KVI_DCC_THREAD_EVENT_ACTION);
@@ -375,7 +382,7 @@ void DccVideoThread::stopPlaying()
 
 void DccVideoThread::run()
 {
-// qDebug("DccVideoThread::run()");
+qDebug("DccVideoThread::run()");
 #ifndef COMPILE_DISABLE_DCC_VIDEO
 	for(;;)
 	{
@@ -422,21 +429,26 @@ DccVideoWindow::DccVideoWindow(KviMainWindow *pFrm,DccDescriptor * dcc,const cha
 	m_pSlaveThread = 0;
 	m_pszTarget = 0;
 
-	m_pLayout = new QGridLayout(this);
-
 	m_pButtonBox = new KviTalHBox(this);
 
-	m_pLabel = new KviThemedLabel(m_pButtonBox, this, "dcc_chat_label");
+	m_pLabel = new KviThemedLabel(m_pButtonBox, this, "dcc_video_label");
 	m_pLabel->setText(name);
 	m_pButtonBox->setStretchFactor(m_pLabel,1);
 
-	m_pButtonContainer= new KviTalHBox(m_pButtonBox);
-	createTextEncodingButton(m_pButtonContainer);
+	createTextEncodingButton(m_pButtonBox);
 
 #ifdef COMPILE_CRYPT_SUPPORT
-	createCryptControllerButton(m_pButtonContainer);
+	createCryptControllerButton(m_pButtonBox);
 #endif
-	m_pLayout->addWidget(m_pButtonBox, 0, 0, 1, 3);
+
+	// Central splitter
+	m_pSplitter = new KviTalSplitter(Qt::Horizontal,this);
+	m_pSplitter->setObjectName("dcc_video_splitter");
+	m_pSplitter->setChildrenCollapsible(false);
+
+	m_pContainerWidget = new QWidget(m_pSplitter);
+	m_pLayout = new QGridLayout(m_pContainerWidget);
+	m_pContainerWidget->setLayout(m_pLayout);
 
 	m_pIrcView  = new KviIrcView(this,pFrm,this);
 	connect(m_pIrcView,SIGNAL(rightClicked()),this,SLOT(textViewRightClicked()));
@@ -483,10 +495,7 @@ DccVideoWindow::DccVideoWindow(KviMainWindow *pFrm,DccDescriptor * dcc,const cha
 	m_pLayout->addWidget(m_pCStandards, 6, 2, 1, 1);
 
 	m_pLayout->addWidget(m_pIrcView, 7, 0, 1, 3);
-	m_pLayout->addWidget(m_pInput, 8, 0, 1, 3);
 	m_pLayout->setRowStretch(7,1);
-
-	setLayout(m_pLayout);
 
 	if(KVI_OPTION_BOOL(KviOption_boolAutoLogDccChat))m_pIrcView->startLogging();
 
@@ -564,6 +573,22 @@ DccVideoWindow::~DccVideoWindow()
 		delete m_pszTarget;
 		m_pszTarget = 0;
 	}
+}
+
+void DccVideoWindow::resizeEvent(QResizeEvent *)
+{
+	int iHeight = m_pInput->heightHint();
+	int iHeight2 = m_pButtonBox->sizeHint().height();
+	m_pButtonBox->setGeometry(0,0,width(),iHeight2);
+	m_pSplitter->setGeometry(0,iHeight2,width(),height() - (iHeight + iHeight2));
+	m_pInput->setGeometry(0,height() - iHeight, width(),iHeight);
+}
+
+QSize DccVideoWindow::sizeHint() const
+{
+	QSize ret(m_pSplitter->sizeHint().width(),
+		m_pContainerWidget->sizeHint().height() + m_pButtonBox->sizeHint().height());
+	return ret;
 }
 
 void DccVideoWindow::textViewRightClicked()
@@ -997,11 +1022,13 @@ void DccVideoWindow::deviceRegistered(const QString &)
 	g_pVideoDevicePool->fillInputQComboBox(m_pCInputs);
 	g_pVideoDevicePool->fillStandardQComboBox(m_pCStandards);
 
-	// update the mVideoImageLabel to show the camera frames
-	g_pVideoDevicePool->open();
-	g_pVideoDevicePool->setSize(320, 240);
-	g_pVideoDevicePool->startCapturing();
-
+	if (g_pVideoDevicePool->size() < 2) // otherwise we are already capturing
+	{
+		// update the mVideoImageLabel to show the camera frames
+		if (EXIT_SUCCESS != g_pVideoDevicePool->open()) return;
+		g_pVideoDevicePool->setImageSize(320, 240);
+		g_pVideoDevicePool->startCapturing();
+	}
 // 	setVideoInputParameters();
 
 // 	if ( g_pVideoDevicePool->hasDevices() )
@@ -1023,8 +1050,9 @@ void DccVideoWindow::deviceUnregistered(const QString & )
 
 void DccVideoWindow::videoInputChanged(int )
 {
-	if(m_pSlaveThread)
-		m_pSlaveThread->restartRecording(m_pCDevices->currentIndex(), m_pCInputs->currentIndex(), m_pCStandards->currentIndex());
+//	FIXME this currently leads to a segfault
+// 	if(m_pSlaveThread)
+// 		m_pSlaveThread->restartRecording(m_pCDevices->currentIndex(), m_pCInputs->currentIndex(), m_pCStandards->currentIndex());
 }
 
 #ifndef COMPILE_USE_STANDALONE_MOC_SOURCES

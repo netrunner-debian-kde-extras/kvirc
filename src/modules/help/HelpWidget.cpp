@@ -47,11 +47,7 @@ extern KviPointerList<HelpWidget> * g_pHelpWidgetList;
 #ifdef COMPILE_WEBKIT_SUPPORT
 #include <QtWebKit/QWebView>
 
-#if QT_VERSION >= 0x040600
-	#define HIGHLIGHT_FLAGS QWebPage::HighlightAllOccurrences
-#else
-	#define HIGHLIGHT_FLAGS 0
-#endif
+#define HIGHLIGHT_FLAGS QWebPage::HighlightAllOccurrences
 
 HelpWidget::HelpWidget(QWidget * par,KviMainWindow *,bool bIsStandalone)
 : QWidget(par)
@@ -73,28 +69,15 @@ HelpWidget::HelpWidget(QWidget * par,KviMainWindow *,bool bIsStandalone)
 	pHighlightLabel->setText(__tr2qs("Highlight: "));
 	m_pToolBar->addWidget(pHighlightLabel);
 
-
 	m_pFindText = new QLineEdit();
 	m_pToolBar->addWidget(m_pFindText);
 	connect(m_pFindText,SIGNAL(textChanged(const QString )),this,SLOT(slotTextChanged(const QString)));
 
 	connect(m_pTextBrowser,SIGNAL(loadFinished(bool)),this,SLOT(slotLoadFinished(bool)));
 
-	m_pBtnResetFind = new QToolButton();
-	m_pBtnResetFind->setIcon(*g_pIconManager->getImage("41"));
-	m_pToolBar->addWidget(m_pBtnResetFind);
-	connect(m_pBtnResetFind ,SIGNAL(clicked()),this,SLOT(slotResetFind()));
-
-
-	m_pBtnFindPrev = new QToolButton();
-	m_pBtnFindPrev->setIcon(*g_pIconManager->getImage("40"));
-	m_pToolBar->addWidget(m_pBtnFindPrev);
-	connect(m_pBtnFindPrev,SIGNAL(clicked()),this,SLOT(slotFindPrev()));
-
-	m_pBtnFindNext = new QToolButton();
-	m_pBtnFindNext->setIcon(*g_pIconManager->getImage("39"));
-	m_pToolBar->addWidget(m_pBtnFindNext);
-	connect(m_pBtnFindNext,SIGNAL(clicked()),this,SLOT(slotFindNext()));
+	m_pToolBar->addAction(*g_pIconManager->getSmallIcon(KviIconManager::Unrecognized), __tr2qs("Reset"), this, SLOT(slotResetFind()));
+	m_pToolBar->addAction(*g_pIconManager->getSmallIcon(KviIconManager::Part), __tr2qs("Find previous"), this, SLOT(slotFindPrev()));
+	m_pToolBar->addAction(*g_pIconManager->getSmallIcon(KviIconManager::Join), __tr2qs("Find next"), this, SLOT(slotFindNext()));
 
 	m_pTextBrowser->setObjectName("text_browser");
 	m_pTextBrowser->setStyleSheet("QTextBrowser { background-color:white; color:black; }");
@@ -103,32 +86,18 @@ HelpWidget::HelpWidget(QWidget * par,KviMainWindow *,bool bIsStandalone)
 	pBrowsingLabel->setText(__tr2qs("Browsing: "));
 	m_pToolBar->addWidget(pBrowsingLabel);
 
-	m_pBtnIndex = new QToolButton();
-	m_pBtnIndex->setIcon(*g_pIconManager->getBigIcon(KVI_BIGICON_HELPINDEX));
-
-	connect(m_pBtnIndex,SIGNAL(clicked()),this,SLOT(showIndex()));
-	m_pToolBar->addWidget(m_pBtnIndex);
+	m_pToolBar->addAction(*g_pIconManager->getBigIcon(KVI_BIGICON_HELPINDEX), __tr2qs("Show index"), this, SLOT(showIndex()));
 
 	m_pToolBar->addAction(m_pTextBrowser->pageAction(QWebPage::Back));
 	m_pToolBar->addAction(m_pTextBrowser->pageAction(QWebPage::Forward));
 
-	m_pBtnZoomIn = new QToolButton();
-	m_pBtnZoomIn->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::Plus)));
-	m_pToolBar->addWidget(m_pBtnZoomIn);
+	m_pToolBar->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Plus)), __tr2qs("Zoom in"), this, SLOT(slotZoomIn()));
+	m_pToolBar->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Minus)), __tr2qs("Zoom out"), this, SLOT(slotZoomOut()));
 
-	connect(m_pBtnZoomIn,SIGNAL(clicked()),this,SLOT(slotZoomIn()));
-
-	m_pBtnZoomOut = new QToolButton();
-	m_pBtnZoomOut->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::Minus)));
-	m_pToolBar->addWidget(m_pBtnZoomOut);
-
-	connect(m_pBtnZoomOut,SIGNAL(clicked()),this,SLOT(slotZoomOut()));
 	if(bIsStandalone)
 	{
-		QToolButton * b = new QToolButton();
-		m_pToolBar->addWidget(b);
-		b->setIcon(*g_pIconManager->getBigIcon(KVI_BIGICON_HELPCLOSE));
-		connect(b,SIGNAL(clicked()),this,SLOT(doClose()));
+		setAttribute(Qt::WA_DeleteOnClose);
+		m_pToolBar->addAction(*g_pIconManager->getBigIcon(KVI_BIGICON_HELPCLOSE), __tr2qs("Close"), this, SLOT(close()));
 	}
 
 }
@@ -209,9 +178,10 @@ HelpWidget::HelpWidget(QWidget * par,KviMainWindow *,bool bIsStandalone)
 
 	if(bIsStandalone)
 	{
+		setAttribute(Qt::WA_DeleteOnClose);
 		QToolButton * b = new QToolButton(m_pToolBar);
 		b->setIcon(*g_pIconManager->getBigIcon(KVI_BIGICON_HELPCLOSE));
-		connect(b,SIGNAL(clicked()),this,SLOT(doClose()));
+		connect(b,SIGNAL(clicked()),this,SLOT(close()));
 	}
 
 	m_pToolBar->setStretchFactor(pSpacer,1);
@@ -246,20 +216,6 @@ void HelpWidget::resizeEvent(QResizeEvent *)
 	if(hght < 40)hght = 40;
 	m_pToolBar->setGeometry(0,0,width(),hght);
 	m_pTextBrowser->setGeometry(0,hght,width(),height() - hght);
-}
-
-void HelpWidget::doClose()
-{
-	// hack needed to workaround "QToolBar::emulateButtonClicked()"
-	// that refers to the "this" pointer after this slot has been
-	// called (from the "too-small-toolbar-for-all-items-popup")
-	QTimer::singleShot(0,this,SLOT(suicide()));
-}
-
-void HelpWidget::suicide()
-{
-	// goodbye cruel wolrd
-	delete this;
 }
 
 QSize HelpWidget::sizeHint() const
