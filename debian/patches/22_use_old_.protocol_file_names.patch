@@ -21,6 +21,6 @@ Forwarded: not-needed
 +          )
 +	INSTALL(FILES _irc6.protocol
 +          DESTINATION ${SERVICES_INSTALL_DIR}
-+          REMAME irc6.protocol
++          RENAME irc6.protocol
 +          )
  ENDIF(KDE4_FOUND)
