@@ -10,6 +10,8 @@ kvirc (4:4.1.1~svn5829-1) UNRELEASED; urgency=low
     - 10_fix_desktop_entry.patch: Refreshed.
     - 22_use_old_.protocol_file_names.patch: Added, sort of reverts upstream's
       r5756.
+  * debian/kvirc-data.install: Updated for correct .protocol file
+    installation.
 
  -- Kai Wasserbäch <curan@debian.org>  Sat, 07 May 2011 15:21:20 +0200
 

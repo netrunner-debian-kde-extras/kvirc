@@ -12,4 +12,4 @@ usr/share/kvirc/*/themes/
 usr/share/mime/packages/kvirc.xml
 usr/share/kde4/apps/kvirc/kvirc.notifyrc
 usr/share/kvirc/*/audio/
-data/protocols/*.protocol usr/share/services
+usr/share/kde4/services/*.protocol
