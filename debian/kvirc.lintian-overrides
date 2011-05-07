@@ -1,7 +1,7 @@
 #The file is in the kvirc-data on which kvirc depends.
-kvirc: menu-icon-missing /usr/share/pixmaps/kvirc32x32.xpm
+kvirc: menu-icon-missing usr/share/pixmaps/kvirc32x32.xpm
 #Library just used for kvirc.
 kvirc: package-name-doesnt-match-sonames libkvilib4
 kvirc: no-symbols-control-file usr/lib/libkvilib.so.4.1.1
 # false positive
-kvirc: spelling-error-in-binary ./usr/lib/kvirc/4.1/modules/libkvilanguage.so ment meant
+kvirc: spelling-error-in-binary usr/lib/kvirc/4.1/modules/libkvilanguage.so ment meant

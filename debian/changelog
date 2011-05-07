@@ -12,6 +12,7 @@ kvirc (4:4.1.1~svn5829-1) UNRELEASED; urgency=low
       r5756.
   * debian/kvirc-data.install: Updated for correct .protocol file
     installation.
+  * debian/kvirc.lintian-overrides: Updated to match Lintian's current output.
 
  -- Kai Wasserbäch <curan@debian.org>  Sat, 07 May 2011 15:21:20 +0200
 
