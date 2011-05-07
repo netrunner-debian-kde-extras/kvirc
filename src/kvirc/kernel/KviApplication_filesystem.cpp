@@ -66,13 +66,15 @@ void KviApplication::getGlobalKvircDirectory(QString &szData,KvircSubdir dir,con
 			szData.append("help");
 			{
 				// Localized help
-				QString tmp(KviLocale::localeName().ptr());
+				QString tmp(KviLocale::instance()->localeName().ptr());
 				tmp.prepend(KVI_PATH_SEPARATOR_CHAR);
 				tmp.prepend(szData);
-				if(KviFileUtils::directoryExists(tmp))szData = tmp;
+				if(KviFileUtils::directoryExists(tmp))
+					szData = tmp;
 				else {
 					tmp = szData; KviQString::appendFormatted(tmp,"%sen",KVI_PATH_SEPARATOR);
-					if(KviFileUtils::directoryExists(tmp))szData = tmp;
+					if(KviFileUtils::directoryExists(tmp))
+						szData = tmp;
 				}
 			}
 		break;
@@ -164,7 +166,7 @@ void KviApplication::getLocalKvircDirectory(QString &szData,KvircSubdir dir,cons
 			szData.append("help");
 			{
 				// Localized help
-				QString tmp = KviLocale::localeName().ptr();
+				QString tmp = KviLocale::instance()->localeName().ptr();
 				tmp.prepend(KVI_PATH_SEPARATOR_CHAR);
 				tmp.prepend(szData);
 				if(KviFileUtils::directoryExists(tmp))szData = tmp;
@@ -433,7 +435,6 @@ bool KviApplication::findImage(QString &szRetPath,const QString &filename)
 		QString szTmp = KVI_OPTION_STRING(KviOption_stringIconThemeSubdir);
 		szTmp.append(KVI_PATH_SEPARATOR_CHAR);
 		szTmp.append(filename);
-
 		getLocalKvircDirectory(szRetPath,KviApplication::Themes,szTmp);
 		if(KviFileUtils::fileExists(szRetPath))return true;
 

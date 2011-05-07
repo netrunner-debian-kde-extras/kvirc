@@ -95,6 +95,7 @@ protected:
 	static int                g_iInputFontCharWidth[256];
 	static QFontMetrics     * g_pLastFontMetrics;
 	static int                g_iInputInstances;
+	static int                g_iCachedHeight;
 	QString                   m_szTextBuffer;
 	int                       m_iCursorPosition;
 	int                       m_iFirstVisibleChar;
@@ -262,12 +263,6 @@ public:
 	int heightHint() const;
 
 	/**
-	* \brief Returns the size of the editor
-	* \return QSize
-	*/
-	virtual QSize sizeHint() const;
-
-	/**
 	* \brief Sets the text in the input line
 	* \param szText The text to set
 	* \return void
@@ -298,7 +293,7 @@ public:
 	* \brief Applies the options and update
 	* \return void
 	*/
-	void applyOptions();
+	void applyOptions(bool bRefreshCachedMetrics=true);
 
 	/**
 	* \brief Sets the maximum buffer size
@@ -557,6 +552,7 @@ private:
 			KviInputEditor::g_iInputFontCharWidth[u] = g_pLastFontMetrics->width(QChar(u));
 		}
 
+		g_iCachedHeight = g_pLastFontMetrics->height() + 2*(KVI_INPUT_MARGIN + KVI_INPUT_PADDING + KVI_INPUT_XTRAPADDING);
 		return g_pLastFontMetrics;
 	}
 

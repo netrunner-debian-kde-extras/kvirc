@@ -96,31 +96,23 @@ static bool theme_kvs_cmd_apply(KviKvsModuleCommandCall * c)
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("package_name",KVS_PT_STRING,0,szThemePackFile)
 	KVSM_PARAMETERS_END(c)
-	QString szDir;
-	g_pApp->getLocalKvircDirectory(szDir,KviApplication::Themes);
-	szDir += KVI_PATH_SEPARATOR_CHAR;
-	szDir += szThemePackFile;
 	KviThemeInfo * themeInfo = new KviThemeInfo();
-	if(themeInfo->load(szDir))
+	if(themeInfo->load(szThemePackFile))
 	{
 		themeInfo->setSubdirectory(szThemePackFile);
 		if(KviMessageBox::yesNo(__tr2qs_ctx("Apply theme - KVIrc","theme"),
 		__tr2qs_ctx("Do you wish to apply theme \"%Q\" (version %Q)?","theme"),
 		&(themeInfo->name()),&(themeInfo->version())))
 		{
-			QString szPath;
-			themeInfo->getCompleteDirPath(szPath);
-			if(szPath.isEmpty())return true;
-
 			KviThemeInfo out;
-
-			if(!KviTheme::load(szPath,out))
+			if(!KviTheme::load(szThemePackFile,out))
 			{
 				QString szErr = out.lastError();
 				QString szMsg = QString(__tr2qs_ctx("Failed to apply the specified theme: %1","theme")).arg(szErr);
 				QMessageBox::critical(0,__tr2qs_ctx("Apply theme - KVIrc","theme"),szMsg,
 				QMessageBox::Ok,QMessageBox::NoButton,QMessageBox::NoButton);
 			}
+			return true;
 		}
 	}
 	c->warning(__tr2qs_ctx("The theme package '%Q' does not exist","theme"),&szThemePackFile);
@@ -133,11 +125,11 @@ static bool theme_kvs_cmd_apply(KviKvsModuleCommandCall * c)
 	@title:
 		theme.info
 	@short:
-		Return info about a theme.
+		Return info about an user defined theme.
 	@syntax:
 		<themes_list:string> $theme.info(<theme_name:string>)
 	@description:
-		Returns as hash the info about a theme.
+		Returns as hash the info about an user definded theme.
 		Hash keys are: name, version, author, description.
 */
 static bool theme_kvs_fnc_info(KviKvsModuleFunctionCall * c)
@@ -147,12 +139,8 @@ static bool theme_kvs_fnc_info(KviKvsModuleFunctionCall * c)
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("package_name",KVS_PT_STRING,0,szThemePackFile)
 	KVSM_PARAMETERS_END(c)
-	QString szDir;
-	g_pApp->getLocalKvircDirectory(szDir,KviApplication::Themes);
-	szDir += KVI_PATH_SEPARATOR_CHAR;
-	szDir += szThemePackFile;
 	KviThemeInfo * themeInfo = new KviThemeInfo();
-	if(themeInfo->load(szDir))
+	if(themeInfo->load(szThemePackFile))
 	{
 		KviKvsHash *pHash=new KviKvsHash();
 		KviKvsVariant *name=new KviKvsVariant(themeInfo->name());

@@ -37,6 +37,13 @@
 #include <QTextCodec>
 #include <QByteArray>
 
+#if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
+#include <windows.h>
+#else
+#include <sys/statvfs.h>
+#endif
+
+
 #if defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_CRYPTOPP_SUPPORT)
 	// The current implementation
 	#include <openssl/evp.h>
@@ -977,17 +984,17 @@ static bool file_kvs_fnc_readBytes(KviKvsModuleFunctionCall * c)
 	@description:
 		Reads lines from the specified file and returns them as an array of strings.
 		The lines are assumed to be separated by linefeed characters (which are NOT returned).
-		Eventual terminating carriage return characters at the end of the line are stripped.
+		Eventual terminating carriage return and line feed characters at the end of the line are stripped.
 		If <startline> is specified, then all the lines with indexes lower that <startline> are
-		discarded. If <count> is specified then a maximum of <count> lines is returned.
-		If <count> is not specified then all the lines until the end are read.
+		discarded. If <count> is specified then at most this number of lines are returned,
+		otherwise the entire file is returned.
 		The <filename> is adjusted according to the system that KVIrc is running on.[br]
 		Flags are actually limited to the single letter 'l'. By default the file
-		is decoded from the ut8 characters set. If 'l' is present the the file
-		is decoded by using the local 8 bit character set instead.
-		WARNING: Always check the size of the file you're going to read: it is not
+		is decoded from the utf-8 character set, however if 'l' is present then the file
+		is decoded by the local 8 bit character set instead.
+		WARNING: Always check the size of the file you're going to read - it is not
 		a good idea attempting to read a 700 MiB binary file with this function since
-		it will probably sit down your system and exhaust your virtual memory.
+		it will probably hang your system and exhaust your virtual memory.
 	@examples:
 		[example]
 			echo $file.readLines(/proc/cpuinfo)
@@ -1379,6 +1386,53 @@ static bool file_kvs_fnc_extractfilename(KviKvsModuleFunctionCall * c)
 }
 
 /*
+	@doc:	file.diskspace
+	@type:
+		function
+	@title:
+		$file.diskspace
+	@short:
+		Return the available diskspace.
+	@syntax:
+		<hash> $file.diskspace([dirpath:string])
+	@description:
+		Returns as hash, with 'freespace' and 'totalspace' as key, the free diskspace in bytes.[br]
+		Without optional dirpath parameter will be returned the current device's disk space (i.e. the disk on which KVIrc has been started).[br]
+*/
+static bool file_kvs_fnc_diskSpace(KviKvsModuleFunctionCall * c)
+{
+	QString szPath;
+	KVSM_PARAMETERS_BEGIN(c)
+		KVSM_PARAMETER("dir_path",KVS_PT_STRING,KVS_PF_OPTIONAL,szPath)
+	KVSM_PARAMETERS_END(c)
+	if (szPath.isEmpty()) szPath=".";
+	const char *path = szPath.toUtf8().data();
+	long long int fTotal;
+	long long int fFree;
+	// this for win
+	#if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
+	    ULARGE_INTEGER free,total;
+	    GetDiskFreeSpaceExA( (LPCTSTR)path , NULL , &total , &free );
+	    fFree = free.QuadPart;
+	    fTotal =total.QuadPart;
+	#else
+	    // this one for linux and macos
+	    struct statvfs stFileSystem;
+	    statvfs(path,&stFileSystem);
+	    fFree = stFileSystem.f_bavail*stFileSystem.f_bsize;
+	    fTotal = stFileSystem.f_blocks*stFileSystem.f_bsize;
+	#endif
+	KviKvsHash * pHash = new KviKvsHash();
+	pHash->set("freespace",new KviKvsVariant((kvs_int_t) fFree));
+	pHash->set("totalspace",new KviKvsVariant((kvs_int_t) fTotal));
+	c->returnValue()->setHash(pHash);
+	return true;
+}
+
+
+
+
+/*
 	@doc: file.digest
 	@type:
 		function
@@ -1538,6 +1592,8 @@ static bool file_module_init(KviModule * m)
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"write",file_kvs_cmd_write);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"writeBytes",file_kvs_cmd_writeBytes);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"writeLines",file_kvs_cmd_writeLines);
+
+	KVSM_REGISTER_FUNCTION(m,"diskspace",file_kvs_fnc_diskSpace);
 
 	KVSM_REGISTER_FUNCTION(m,"allsizes",file_kvs_fnc_allSizes);
 	KVSM_REGISTER_FUNCTION(m,"cwd",file_kvs_fnc_cwd);

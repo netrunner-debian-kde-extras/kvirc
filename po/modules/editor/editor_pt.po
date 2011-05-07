@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: editor_pt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-17 04:27+0000\n"
-"PO-Revision-Date: 2011-03-17 04:59+0000\n"
+"POT-Creation-Date: 2011-04-02 06:01+0100\n"
+"PO-Revision-Date: 2011-05-03 07:13+0100\n"
 "Last-Translator: Zé <ze@mandriva.org>\n"
 "Language-Team: Portuguese <>\n"
 "MIME-Version: 1.0\n"
@@ -106,6 +106,10 @@ msgstr "&Desactivar Manipulador"
 msgid "&Enable Handler"
 msgstr "&Activar Manipulador"
 
+#: src/modules/codetester/CodeTesterWindow.cpp:57
+msgid "&Execute"
+msgstr "&Executar"
+
 #: src/modules/eventeditor/EventEditorWindow.cpp:104
 #: src/modules/popupeditor/PopupEditorWindow.cpp:1047
 #: src/modules/raweditor/RawEditorWindow.cpp:100
@@ -183,9 +187,9 @@ msgid ""
 "order to decide if this entry has to be shown.<br>An empty condition "
 "evaluates to true.</center>"
 msgstr ""
-"<center><b>Condição booliana</b><br>Será avaliada ao chamar o menu "
-"(popup), para decidir se esta entrada deve ser mostrada.<br>Uma condição "
-"vazia avalia para verdadeiro.</center>"
+"<center><b>Condição booliana</b><br>Será avaliada ao chamar o menu (popup), "
+"para decidir se esta entrada deve ser mostrada.<br>Uma condição vazia avalia "
+"para verdadeiro.</center>"
 
 #: src/modules/popupeditor/PopupEditorWindow.cpp:261
 msgid ""
@@ -193,9 +197,9 @@ msgid ""
 "popup menus. The popup menu with the specified name will be looked up at "
 "menu setup time.</center>"
 msgstr ""
-"<center><b>Nome de menu externo</b><br>Isto permite juntar os menus "
-"'popup' definidos externamente. O menu 'popup' com o nome indicado será "
-"procurado quando configurar o menu.</center>"
+"<center><b>Nome de menu externo</b><br>Isto permite juntar os menus 'popup' "
+"definidos externamente. O menu 'popup' com o nome indicado será procurado "
+"quando configurar o menu.</center>"
 
 #: src/modules/popupeditor/PopupEditorWindow.cpp:252
 msgid ""
@@ -784,7 +788,7 @@ msgstr "Rótulo:"
 
 #: src/modules/editor/ScriptEditorImplementation.cpp:1008
 msgid "Load Script File - KVIrc"
-msgstr "Carregar Ficheiro de Script - KVIrc"
+msgstr "Carregar Ficheiro de 'Script' - KVIrc"
 
 #: src/modules/toolbareditor/CustomizeToolBarsDialog.cpp:266
 msgid "Manually"
@@ -1023,6 +1027,10 @@ msgstr "Substituir Alias Actual"
 msgid "OverWrite Current Popup"
 msgstr "Substituir Menu Actual"
 
+#: src/modules/codetester/CodeTesterWindow.cpp:61
+msgid "Params:"
+msgstr "Parâmetros:"
+
 #: src/modules/popupeditor/PopupEditorWindow.cpp:441
 msgid "Paste Above"
 msgstr "Colar Acima"
@@ -1054,12 +1062,12 @@ msgstr "Por favor indique o nome para o novo nomedeespaço"
 
 #: src/modules/aliaseditor/AliasEditorWindow.cpp:430
 msgid "Please enter the new name for the alias"
-msgstr "Por favor indique o novo nome para a alias"
+msgstr "Por favor indique o novo nome"
 
 #: src/modules/aliaseditor/AliasEditorWindow.cpp:432
 #: src/modules/classeditor/ClassEditorWindow.cpp:677
 msgid "Please enter the new name for the namespace"
-msgstr "Por favor indique o novo nome para o nomedeespaço"
+msgstr "Por favor indique o novo nome"
 
 #: src/modules/classeditor/ClassEditorWindow.cpp:2045
 msgid "Please enter the optional reminder string for the member function:"
@@ -1085,7 +1093,7 @@ msgstr ""
 msgid ""
 "Please note that all the children classes/functions will be deleted too."
 msgstr ""
-"Por favor note que todas as classes/funções filhos serão apagados também."
+"Por favor note que todas as classes/funções filhas serão apagadas também."
 
 #: src/modules/aliaseditor/AliasEditorWindow.cpp:930
 msgid "Please note that all the children items will be deleted too."
@@ -1146,7 +1154,7 @@ msgstr "Re&mover Manipulador"
 
 #: src/modules/popupeditor/PopupEditorWindow.cpp:1154
 msgid "Re&move Popup"
-msgstr "Re&mover 'Popup'"
+msgstr "Re&mover Menu"
 
 #: src/modules/classeditor/ClassEditorWindow.cpp:822
 msgid "Reminder text."
@@ -1193,6 +1201,10 @@ msgstr "Linha: %1 Coluna: %2"
 #: src/modules/editor/ScriptEditorImplementation.cpp:933
 msgid "Save Failed - KVIrc"
 msgstr "Gravação Falhada - KVIrc"
+
+#: src/modules/codetester/CodeTesterWindow.cpp:109
+msgid "Script Tester"
+msgstr "Testar 'Script'"
 
 #: src/modules/popupeditor/PopupEditorWindow.cpp:90
 msgid "Separator"
@@ -1320,7 +1332,7 @@ msgstr "Tipo"
 
 #: src/modules/classeditor/ClassEditorWindow.cpp:1674
 msgid "Unable to compile class: "
-msgstr "Incapaz de compilar classe: "
+msgstr "Não é possível compilar a classe: "
 
 #: src/modules/actioneditor/ActionEditor.cpp:726
 msgid "Unable to write to the actions file."
@@ -1345,7 +1357,7 @@ msgstr "Não é possível escrever para o ficheiro de eventos."
 
 #: src/modules/popupeditor/PopupEditorWindow.cpp:1195
 msgid "Unable to write to the popup file."
-msgstr "Não é possível escrever para o ficheiro de 'popup'."
+msgstr "Não é possível escrever para o ficheiro de menus."
 
 #: src/modules/raweditor/RawEditorWindow.cpp:426
 msgid "Unable to write to the raw event file."
@@ -1376,7 +1388,7 @@ msgid ""
 "Visible short description for this action.<br>This string will be displayed "
 "to the user so it is a good idea to use $tr() here"
 msgstr ""
-"Descrição breve visível para esta acção.<br>Esta 'string' será mostrada ao "
+"Descrição breve visível para esta acção.<br>Este texto será mostrado ao "
 "utilizador como tal é boa ideia usar $tr() aqui"
 
 #: src/modules/editor/ScriptEditorImplementation.cpp:1063

@@ -230,10 +230,18 @@ public:
 	bool getLocalHostIp(QString & szIp, bool bIPv6);
 	
 	/**
-	* Clears the output queue
+	* \brief Clears the output queue
+	* \param bPrivateMessagesOnly Whether to clear only private messages
+	* \return void
 	*/
 	void clearOutputQueue(bool bPrivateMessagesOnly);
-	
+
+	/**
+	* \brief Returns the current size of the output queue.
+	* \return unsigned int
+	*/
+	unsigned int outputQueueSize();
+
 protected:
 
 #ifdef COMPILE_SSL_SUPPORT

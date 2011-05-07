@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: editor_it\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-17 04:27+0000\n"
+"POT-Creation-Date: 2011-04-02 06:01+0100\n"
 "PO-Revision-Date: 2011-01-10 19:21+0100\n"
 "Last-Translator: Elvio Basello <hell at hellvis69 dot netsons dot org>\n"
 "Language-Team: Italian <kde-i18n-it@kde.org>\n"
@@ -107,6 +107,10 @@ msgstr "&Disabilita Gestore"
 #: src/modules/raweditor/RawEditorWindow.cpp:156
 msgid "&Enable Handler"
 msgstr "Abilita Gestore"
+
+#: src/modules/codetester/CodeTesterWindow.cpp:57
+msgid "&Execute"
+msgstr ""
 
 #: src/modules/eventeditor/EventEditorWindow.cpp:104
 #: src/modules/popupeditor/PopupEditorWindow.cpp:1047
@@ -1026,6 +1030,10 @@ msgstr "Sovrascivi l'alias corrente"
 msgid "OverWrite Current Popup"
 msgstr "Sovrascivi Popup Corrente"
 
+#: src/modules/codetester/CodeTesterWindow.cpp:61
+msgid "Params:"
+msgstr ""
+
 #: src/modules/popupeditor/PopupEditorWindow.cpp:441
 msgid "Paste Above"
 msgstr "Incolla Sopra"
@@ -1196,6 +1204,10 @@ msgstr "Riga: %1 Colonna: %2"
 #: src/modules/editor/ScriptEditorImplementation.cpp:933
 msgid "Save Failed - KVIrc"
 msgstr "Impossibile Salvare - KVIrc"
+
+#: src/modules/codetester/CodeTesterWindow.cpp:109
+msgid "Script Tester"
+msgstr ""
 
 #: src/modules/popupeditor/PopupEditorWindow.cpp:90
 msgid "Separator"

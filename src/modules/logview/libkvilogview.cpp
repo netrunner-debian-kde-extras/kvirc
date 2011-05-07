@@ -1,10 +1,11 @@
 //=============================================================================
 //
 //   File : libkvilogview.cpp
-//   Creation date : Sun Feb 10 2000 23:25:10 CEST by Juanjo �varez
+//   Creation date : Sun Feb 10 2000 23:25:10 CEST by Juanjo Alvarez
 //
 //   This file is part of the KVIrc irc client distribution
 //   Copyright (C) 2000-2010 Szymon Stefanek (pragma at kvirc dot net)
+//   Copyright (C) 2011 Elvio Basello (hellvis69 at gmail dot com)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -32,8 +33,8 @@
 #include "KviLocale.h"
 #include "KviApplication.h"
 
-static QRect                 g_rectLogViewGeometry;
-LogViewWindow        * g_pLogViewWindow = 0;
+static QRect    g_rectLogViewGeometry;
+LogViewWindow * g_pLogViewWindow = 0;
 
 #define LOGVIEW_MODULE_EXTENSION_NAME "Log viewer extension"
 
@@ -56,11 +57,6 @@ LogViewWindow        * g_pLogViewWindow = 0;
 		Opens a window that allows visual browsing of the logs
 		stored on disk.
 */
-
-// ============================================
-// Module stuff
-// ============================================
-
 static bool logview_kvs_cmd_open(KviKvsModuleCommandCall * c)
 {
 	KviModuleExtensionDescriptor * d = c->module()->findExtensionDescriptor("tool",LOGVIEW_MODULE_EXTENSION_NAME);
@@ -74,7 +70,7 @@ static bool logview_kvs_cmd_open(KviKvsModuleCommandCall * c)
 
 		d->allocate(c->window(),&dict,0);
 	} else {
-		c->warning("Ops.. internal error");
+		c->warning(__tr2qs_ctx("Ops.. internal error","log"));
 	}
 	return true;
 }
@@ -93,16 +89,15 @@ static KviModuleExtension * logview_extension_alloc(KviModuleExtensionAllocStruc
 				if(v->isValid())
 				{
 					if(v->type() == QVariant::Bool)
-					{
 						bCreateMinimized = v->toBool();
-					}
 				}
 			}
 		}
 
 		g_pLogViewWindow = new LogViewWindow(s->pDescriptor,g_pMainWindow);
 		g_pMainWindow->addWindow(g_pLogViewWindow,!bCreateMinimized);
-		if(bCreateMinimized)g_pLogViewWindow->minimize();
+		if(bCreateMinimized)
+			g_pLogViewWindow->minimize();
 		return g_pLogViewWindow;
 	}
 
@@ -118,7 +113,8 @@ static KviModuleExtension * logview_extension_alloc(KviModuleExtensionAllocStruc
 		}
 	}
 
-	if(!bNoRaise)g_pLogViewWindow->delayedAutoRaise();
+	if(!bNoRaise)
+		g_pLogViewWindow->delayedAutoRaise();
 	return g_pLogViewWindow;
 }
 
@@ -128,14 +124,13 @@ static bool logview_module_init(KviModule * m)
 
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"open",logview_kvs_cmd_open);
 
-
-
 	KviModuleExtensionDescriptor * d = m->registerExtension("tool",
-							LOGVIEW_MODULE_EXTENSION_NAME,
-							__tr2qs_ctx("Browse &Log Files","logview"),
-							logview_extension_alloc);
+		LOGVIEW_MODULE_EXTENSION_NAME,
+		__tr2qs_ctx("Browse Log Files","log"),
+		logview_extension_alloc);
 
-	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::Log)));
+	if(d)
+		d->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::Log)));
 
 	return true;
 }
@@ -153,19 +148,34 @@ static bool logview_module_can_unload(KviModule *)
 	return (!g_pLogViewWindow);
 }
 
+static bool logview_module_ctrl(KviModule *, const char * pcOperation, void * pParam)
+{
+	if(!kvi_strEqualCI("logview::export",pcOperation))
+		return false;
 
-// ============================================
-// module definition structure
-// ============================================
+	LogFileData * pData = (LogFileData *)pParam;
+	if(!pData)
+		return false;
+
+	LogFile * pLog = new LogFile(pData->szName);
+	int iId = LogFile::PlainText;
+	if(pData->szType == "html")
+		iId = LogFile::HTML;
+
+	g_pLogViewWindow->createLog(pLog,iId,&(pData->szFile));
+
+	return true;
+}
 
 KVIRC_MODULE(
 	"KVIrc Log Viewer Widget",
 	"4.0.0",
-	"Juanjo Alvarez <juanjux@yahoo.es>",
+	"Copyright (C) 2000 Juanjo Alvarez <juanjux@yahoo.es>\n" \
+	"	2011 Elvio Basello (hellvis69 at gmail dot com)",
 	"A structured log file viewer",
 	logview_module_init,
 	logview_module_can_unload,
-	0,
+	logview_module_ctrl,
 	logview_module_cleanup,
 	"logview"
 )

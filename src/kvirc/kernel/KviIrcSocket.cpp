@@ -182,6 +182,22 @@ void KviIrcSocket::clearOutputQueue(bool bPrivateMessagesOnly)
 		queue_removeAllMessages();
 }
 
+unsigned int KviIrcSocket::outputQueueSize()
+{
+	KviIrcSocketMsgEntry * pMsg = m_pSendQueueTail;
+	if(!pMsg)
+		return 0;
+
+	unsigned int uCount = 0;
+
+	do {
+		uCount++;
+		pMsg = pMsg->next_ptr;
+	} while(pMsg);
+
+	return uCount;
+}
+
 
 void KviIrcSocket::outputSSLMessage(const QString & szMsg)
 {
@@ -1210,7 +1226,7 @@ void KviIrcSocket::proxyHandleHttpFinalReply(const char * pcBuffer, int)
 	KviCString szTmp = pcBuffer;
 	// FIXME: #warning "We could even show the proxy output here...!"
 	szTmp.cutFromFirst('\n');
-	szTmp.trimmed();
+	szTmp.trim();
 
 	if(kvi_strEqualCIN(szTmp.ptr(),"HTTP",4))
 	{

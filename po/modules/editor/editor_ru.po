@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: editor_ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-17 04:27+0000\n"
+"POT-Creation-Date: 2011-04-02 06:01+0100\n"
 "PO-Revision-Date: 2010-06-14 10:48+0400\n"
 "Last-Translator: Igor Govorov <govorov.igor at gmail.com>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -108,6 +108,10 @@ msgstr "Отключить обработчик"
 #: src/modules/raweditor/RawEditorWindow.cpp:156
 msgid "&Enable Handler"
 msgstr "Включить обработчик"
+
+#: src/modules/codetester/CodeTesterWindow.cpp:57
+msgid "&Execute"
+msgstr ""
 
 #: src/modules/eventeditor/EventEditorWindow.cpp:104
 #: src/modules/popupeditor/PopupEditorWindow.cpp:1047
@@ -1034,6 +1038,10 @@ msgstr "Переписать текущий алиас"
 msgid "OverWrite Current Popup"
 msgstr "Переписать текущий алиас"
 
+#: src/modules/codetester/CodeTesterWindow.cpp:61
+msgid "Params:"
+msgstr ""
+
 #: src/modules/popupeditor/PopupEditorWindow.cpp:441
 msgid "Paste Above"
 msgstr "Вставить выше"
@@ -1206,6 +1214,10 @@ msgstr "Строк: %1 Столбцов:%2"
 #: src/modules/editor/ScriptEditorImplementation.cpp:933
 msgid "Save Failed - KVIrc"
 msgstr "Ошибка при сохранении - KVIrc"
+
+#: src/modules/codetester/CodeTesterWindow.cpp:109
+msgid "Script Tester"
+msgstr ""
 
 #: src/modules/popupeditor/PopupEditorWindow.cpp:90
 msgid "Separator"

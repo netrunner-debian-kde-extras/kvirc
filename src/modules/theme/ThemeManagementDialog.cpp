@@ -23,7 +23,7 @@
 //=============================================================================
 #include "kvi_settings.h"
 
-#if defined(COMPILE_WEBKIT_SUPPORT) && (QT_VERSION >= 0x040600)
+#if defined(COMPILE_WEBKIT_SUPPORT)
 	#include "WebThemeInterfaceDialog.h"
 #endif
 
@@ -414,7 +414,9 @@ void ThemeManagementDialog::getMoreThemes()
 
 void ThemeManagementDialog::webThemeInterfaceDialogDestroyed()
 {
+#ifdef COMPILE_WEBKIT_SUPPORT
 	m_pWebThemeInterfaceDialog = NULL;
+#endif
 	fillThemeBox();
 }
 

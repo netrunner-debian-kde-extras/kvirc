@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: addon_ja\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-17 04:27+0000\n"
+"POT-Creation-Date: 2011-04-02 03:05+0200\n"
 "PO-Revision-Date: 2010-07-24 23:55+0900\n"
 "Last-Translator: Tadashi Jokagi <elf@elf.no-ip.org>\n"
 "Language-Team: Japanese <elf@elf.no-ip.org>\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja\n"
 
 #: src/modules/addon/libkviaddon.cpp:146
 msgid "%cAddon id %Q, version %Q%c"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "Author"
 msgstr "作成者"
 
-#: src/modules/addon/PackAddonDialog.cpp:623
+#: src/modules/addon/PackAddonDialog.cpp:629
 msgid "Cancel"
 msgstr "取り消し"
 
@@ -61,15 +61,15 @@ msgstr "書き込み用にファイルを開けませんでした。"
 msgid "Cannot write to the file descriptor."
 msgstr "ファイルの詳細を書き込めませんでした。"
 
-#: src/modules/addon/AddonManagementDialog.cpp:170
+#: src/modules/addon/AddonManagementDialog.cpp:184
 msgid "Close"
 msgstr "閉じる"
 
-#: src/modules/addon/AddonManagementDialog.cpp:110
+#: src/modules/addon/AddonManagementDialog.cpp:124
 msgid "Configure Addon..."
 msgstr "アドオンの設定..."
 
-#: src/modules/addon/AddonManagementDialog.cpp:259
+#: src/modules/addon/AddonManagementDialog.cpp:277
 msgid "Confirm addon uninstallation"
 msgstr "アドオンの削除確認"
 
@@ -77,7 +77,7 @@ msgstr "アドオンの削除確認"
 msgid "Create Addon Package - KVIrc"
 msgstr "アドオン パッケージを作成する - KVIrc"
 
-#: src/modules/addon/AddonManagementDialog.cpp:132
+#: src/modules/addon/AddonManagementDialog.cpp:146
 msgid "Create an Addon as a Distributable Package"
 msgstr "配布用パッケージとしてアドオンの作成"
 
@@ -89,7 +89,7 @@ msgstr ""
 msgid "Created with"
 msgstr ""
 
-#: src/modules/addon/AddonManagementDialog.cpp:122
+#: src/modules/addon/AddonManagementDialog.cpp:136
 msgid "Delete Selected Addons"
 msgstr "選択したアドオンの削除"
 
@@ -101,7 +101,7 @@ msgstr "説明: %Q"
 msgid "Do Not Install"
 msgstr "インストールしない"
 
-#: src/modules/addon/AddonManagementDialog.cpp:254
+#: src/modules/addon/AddonManagementDialog.cpp:272
 msgid "Do you really want to uninstall the addon \"%1\" ?"
 msgstr "本当にアドオン「%1」を削除しますか?"
 
@@ -109,19 +109,20 @@ msgstr "本当にアドオン「%1」を削除しますか?"
 msgid "Do you want to proceed with the installation ?"
 msgstr ""
 
-#: src/modules/addon/libkviaddon.cpp:661
+#: src/modules/addon/libkviaddon.cpp:662
 msgid "Empty file list"
 msgstr ""
 
-#: src/modules/addon/libkviaddon.cpp:808
+#: src/modules/addon/libkviaddon.cpp:809
 msgid "Error installing addon package: %Q"
 msgstr ""
 
 #: src/modules/addon/PackAddonDialog.cpp:337
 #: src/modules/addon/PackAddonDialog.cpp:352
 #: src/modules/addon/PackAddonDialog.cpp:365
-#: src/modules/addon/PackAddonDialog.cpp:387
-#: src/modules/addon/PackAddonDialog.cpp:392
+#: src/modules/addon/PackAddonDialog.cpp:384
+#: src/modules/addon/PackAddonDialog.cpp:393
+#: src/modules/addon/PackAddonDialog.cpp:398
 msgid "Export Addon - KVIrc"
 msgstr "アドオンをエクスポートする - KVIrc"
 
@@ -133,23 +134,27 @@ msgstr ""
 msgid "Failed to unpack the selected file: %1"
 msgstr ""
 
-#: src/modules/addon/PackAddonDialog.cpp:607
+#: src/modules/addon/PackAddonDialog.cpp:384
+msgid "File %1 already exists. Do you want to overwrite it?"
+msgstr ""
+
+#: src/modules/addon/PackAddonDialog.cpp:613
 msgid "File Summary"
 msgstr "ファイルの要約"
 
-#: src/modules/addon/PackAddonDialog.cpp:541
+#: src/modules/addon/PackAddonDialog.cpp:547
 msgid "Final Information"
 msgstr "最終情報"
 
-#: src/modules/addon/PackAddonDialog.cpp:627
+#: src/modules/addon/PackAddonDialog.cpp:633
 msgid "Finish"
 msgstr "完了"
 
-#: src/modules/addon/AddonManagementDialog.cpp:148
+#: src/modules/addon/AddonManagementDialog.cpp:162
 msgid "Get More Addons..."
 msgstr "さらにアドオンを取得する..."
 
-#: src/modules/addon/PackAddonDialog.cpp:614
+#: src/modules/addon/PackAddonDialog.cpp:620
 msgid ""
 "Here there are the files I found in the directories you provided.\n"
 "If these and the information showed in the previous page are correct, hit "
@@ -157,23 +162,23 @@ msgid ""
 "the packaging operations."
 msgstr ""
 
-#: src/modules/addon/PackAddonDialog.cpp:542
+#: src/modules/addon/PackAddonDialog.cpp:548
 msgid ""
 "Here there are the information you provided. If these information are "
 "correct, hit the \"Finish\" button to complete the packaging operations."
 msgstr ""
 
-#: src/modules/addon/PackAddonDialog.cpp:403
+#: src/modules/addon/PackAddonDialog.cpp:409
 msgid ""
 "Here you need to provide information about you (the packager) and a short "
 "description of the package you're creating."
 msgstr ""
 
-#: src/modules/addon/PackAddonDialog.cpp:497
+#: src/modules/addon/PackAddonDialog.cpp:503
 msgid "Here you need to provide the path where to save the addon package"
 msgstr ""
 
-#: src/modules/addon/PackAddonDialog.cpp:470
+#: src/modules/addon/PackAddonDialog.cpp:476
 msgid "Here you need to select the directory where the addon files are."
 msgstr ""
 
@@ -181,12 +186,12 @@ msgstr ""
 msgid "Hit the \"Next\" button to begin."
 msgstr "「次へ」のボタンを押すと開始します。"
 
-#: src/modules/addon/PackAddonDialog.cpp:587
+#: src/modules/addon/PackAddonDialog.cpp:593
 msgid "Icon File"
 msgstr "アイコン用ファイル"
 
-#: src/modules/addon/AddonManagementDialog.cpp:294
-#: src/modules/addon/AddonManagementDialog.cpp:308
+#: src/modules/addon/AddonManagementDialog.cpp:318
+#: src/modules/addon/AddonManagementDialog.cpp:332
 msgid "Install Addon - KVIrc"
 msgstr "アドオンをインストールする - KVIrc"
 
@@ -194,11 +199,11 @@ msgstr "アドオンをインストールする - KVIrc"
 msgid "Install Addon Pack - KVIrc"
 msgstr "アドオン パックをインストールする - KVIrc"
 
-#: src/modules/addon/AddonManagementDialog.cpp:142
+#: src/modules/addon/AddonManagementDialog.cpp:156
 msgid "Install Addon Package From Disk"
 msgstr "ディスクからアドオン パッケージのインストール"
 
-#: src/modules/addon/libkviaddon.cpp:750
+#: src/modules/addon/libkviaddon.cpp:751
 msgid "Installing file '%1' into '%2'"
 msgstr ""
 
@@ -206,15 +211,19 @@ msgstr ""
 msgid "Internal error: call a head-shrinker"
 msgstr ""
 
-#: src/modules/addon/AddonManagementDialog.cpp:92
+#: src/modules/addon/WebAddonInterfaceDialog.cpp:43
+msgid "KVIrc : Download Addons"
+msgstr ""
+
+#: src/modules/addon/AddonManagementDialog.cpp:102
 msgid "Manage Script-Based Addons"
 msgstr "スクリプト ベースのアドオンを管理する"
 
-#: src/modules/addon/PackAddonDialog.cpp:444
+#: src/modules/addon/PackAddonDialog.cpp:450
 msgid "Minimum &KVIrc Version:"
 msgstr "最低限の KVIrc のバージョン(&K):"
 
-#: src/modules/addon/PackAddonDialog.cpp:583
+#: src/modules/addon/PackAddonDialog.cpp:589
 msgid "Minimum KVIrc Version"
 msgstr "最低限の KVIrc のバージョン"
 
@@ -222,104 +231,108 @@ msgstr "最低限の KVIrc のバージョン"
 msgid "Name: %Q"
 msgstr "名前: %Q"
 
-#: src/modules/addon/AddonManagementDialog.cpp:260
+#: src/modules/addon/AddonManagementDialog.cpp:278
 msgid "No"
 msgstr "いいえ"
 
-#: src/modules/addon/PackAddonDialog.cpp:421
+#: src/modules/addon/PackAddonDialog.cpp:427
 msgid "No spaces allowed, like MyAddon"
 msgstr "空白は許可されていません。たとえば MyAddon"
 
-#: src/modules/addon/PackAddonDialog.cpp:408
+#: src/modules/addon/PackAddonDialog.cpp:414
 msgid "Package &Author:"
 msgstr "パッケージの作成者(&A):"
 
-#: src/modules/addon/PackAddonDialog.cpp:435
+#: src/modules/addon/PackAddonDialog.cpp:441
 msgid "Package &Description:"
 msgstr "パッケージの詳細(&D):"
 
-#: src/modules/addon/PackAddonDialog.cpp:417
+#: src/modules/addon/PackAddonDialog.cpp:423
 msgid "Package &Name:"
 msgstr "パッケージの名前(&N)"
 
-#: src/modules/addon/PackAddonDialog.cpp:426
+#: src/modules/addon/PackAddonDialog.cpp:432
 msgid "Package &Version:"
 msgstr "パッケージのバージョン(&V):"
 
-#: src/modules/addon/PackAddonDialog.cpp:567
+#: src/modules/addon/PackAddonDialog.cpp:573
 msgid "Package Author"
 msgstr "パッケージの作成者"
 
-#: src/modules/addon/PackAddonDialog.cpp:579
+#: src/modules/addon/PackAddonDialog.cpp:585
 msgid "Package Description"
 msgstr "パッケージの説明"
 
-#: src/modules/addon/PackAddonDialog.cpp:469
+#: src/modules/addon/PackAddonDialog.cpp:475
 msgid "Package Files"
 msgstr "パッケージのファイル"
 
-#: src/modules/addon/PackAddonDialog.cpp:402
+#: src/modules/addon/PackAddonDialog.cpp:408
 msgid "Package Information"
 msgstr "パッケージ情報"
 
-#: src/modules/addon/PackAddonDialog.cpp:571
+#: src/modules/addon/PackAddonDialog.cpp:577
 msgid "Package Name"
 msgstr "パッケージの名前"
 
-#: src/modules/addon/PackAddonDialog.cpp:575
+#: src/modules/addon/PackAddonDialog.cpp:581
 msgid "Package Version"
 msgstr "パッケージのバージョン"
+
+#: src/modules/addon/PackAddonDialog.cpp:398
+msgid "Package saved successfully in %1"
+msgstr ""
 
 #: src/modules/addon/PackAddonDialog.cpp:334
 #: src/modules/addon/PackAddonDialog.cpp:349
 #: src/modules/addon/PackAddonDialog.cpp:362
-#: src/modules/addon/PackAddonDialog.cpp:384
+#: src/modules/addon/PackAddonDialog.cpp:390
 msgid "Packaging failed"
 msgstr "パッケージ作成の失敗"
 
-#: src/modules/addon/AddonManagementDialog.cpp:281
+#: src/modules/addon/AddonManagementDialog.cpp:305
 msgid "Please select the addon installation file"
 msgstr "インストールするアドオンのファイルを選択してください"
 
-#: src/modules/addon/PackAddonDialog.cpp:496
+#: src/modules/addon/PackAddonDialog.cpp:502
 msgid "Save Package"
 msgstr "パッケージの保存"
 
-#: src/modules/addon/PackAddonDialog.cpp:595
+#: src/modules/addon/PackAddonDialog.cpp:601
 msgid "Save Path"
 msgstr "保存パス"
 
-#: src/modules/addon/PackAddonDialog.cpp:504
+#: src/modules/addon/PackAddonDialog.cpp:510
 msgid "Select save path:"
 msgstr "保存パスの選択:"
 
-#: src/modules/addon/PackAddonDialog.cpp:479
+#: src/modules/addon/PackAddonDialog.cpp:485
 msgid "Select the icon file:"
 msgstr "アイコン用ファイルの選択"
 
-#: src/modules/addon/PackAddonDialog.cpp:475
+#: src/modules/addon/PackAddonDialog.cpp:481
 msgid "Select the source directory:"
 msgstr "ソース用ディレクトリーの選択"
 
-#: src/modules/addon/AddonManagementDialog.cpp:116
+#: src/modules/addon/AddonManagementDialog.cpp:130
 msgid "Show Help"
 msgstr "ヘルプの表示"
 
-#: src/modules/addon/libkviaddon.cpp:692 src/modules/addon/libkviaddon.cpp:715
+#: src/modules/addon/libkviaddon.cpp:693 src/modules/addon/libkviaddon.cpp:716
 msgid "Skipping inexistant entry '%1'"
 msgstr ""
 
-#: src/modules/addon/libkviaddon.cpp:724
+#: src/modules/addon/libkviaddon.cpp:725
 msgid "Skipping invalid entry '%1'"
 msgstr ""
 
-#: src/modules/addon/PackAddonDialog.cpp:591
+#: src/modules/addon/PackAddonDialog.cpp:597
 msgid "Source Directory"
 msgstr "ソース用ディレクトリー"
 
 #: src/modules/addon/libkviaddon.cpp:200 src/modules/addon/libkviaddon.cpp:246
 #: src/modules/addon/libkviaddon.cpp:293 src/modules/addon/libkviaddon.cpp:339
-#: src/modules/addon/libkviaddon.cpp:386 src/modules/addon/libkviaddon.cpp:648
+#: src/modules/addon/libkviaddon.cpp:386 src/modules/addon/libkviaddon.cpp:649
 msgid "The addon \"%1\" does not exist"
 msgstr "アドオン「%1」が存在しません。"
 
@@ -335,15 +348,15 @@ msgstr ""
 msgid "The addon \"%Q\" already exists with version %Q which is higher than %Q"
 msgstr ""
 
-#: src/modules/addon/libkviaddon.cpp:690
+#: src/modules/addon/libkviaddon.cpp:691
 msgid "The directory '%1' doesn't exist"
 msgstr ""
 
-#: src/modules/addon/libkviaddon.cpp:722
+#: src/modules/addon/libkviaddon.cpp:723
 msgid "The entry '%1' is not a file"
 msgstr ""
 
-#: src/modules/addon/libkviaddon.cpp:713
+#: src/modules/addon/libkviaddon.cpp:714
 #, fuzzy
 msgid "The file '%1' doesn't exist"
 msgstr "アドオン「%1」が存在しません。"
@@ -377,11 +390,11 @@ msgstr ""
 msgid "The specified version \"%Q\" is not a valid version string"
 msgstr ""
 
-#: src/modules/addon/libkviaddon.cpp:653
+#: src/modules/addon/libkviaddon.cpp:654
 msgid "The target path can't be empty"
 msgstr ""
 
-#: src/modules/addon/libkviaddon.cpp:656
+#: src/modules/addon/libkviaddon.cpp:657
 msgid "The target path can't contain .."
 msgstr ""
 
@@ -391,7 +404,7 @@ msgid ""
 "is %Q)"
 msgstr ""
 
-#: src/modules/addon/PackAddonDialog.cpp:565
+#: src/modules/addon/PackAddonDialog.cpp:571
 msgid "This is what I will check for:"
 msgstr ""
 
@@ -410,7 +423,7 @@ msgstr "合計: %d 個のアドオンをインストールしました"
 msgid "Uninstalling existing addon version %Q"
 msgstr "存在するアドオンのバージョン %Q を削除しています "
 
-#: src/modules/addon/PackAddonDialog.cpp:430
+#: src/modules/addon/PackAddonDialog.cpp:436
 msgid "Version in the form x.y[.z], like 1.0 or 2.0.3"
 msgstr ""
 
@@ -422,7 +435,7 @@ msgstr ""
 msgid "Welcome"
 msgstr "ようこそ"
 
-#: src/modules/addon/AddonManagementDialog.cpp:260
+#: src/modules/addon/AddonManagementDialog.cpp:278
 msgid "Yes"
 msgstr "はい"
 
@@ -440,7 +453,7 @@ msgstr ""
 msgid "You're about to install the following addon package"
 msgstr ""
 
-#: src/modules/addon/PackAddonDialog.cpp:412
+#: src/modules/addon/PackAddonDialog.cpp:418
 msgid "Your name here"
 msgstr "ここに名前"
 
