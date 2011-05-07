@@ -9,7 +9,7 @@ Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
 Uploaders: Raúl Sánchez Siles <rasasi78@gmail.com>,
  Kai Wasserbäch <curan@debian.org>,
  Mark Purcell <msp@debian.org>
-Standards-Version: 3.9.1
+Standards-Version: 3.9.2
 Vcs-Git: git://git.debian.org/pkg-kde/kde-extras/kvirc.git
 Vcs-Browser: http://git.debian.org/?p=pkg-kde/kde-extras/kvirc.git
 Homepage: http://www.kvirc.de/

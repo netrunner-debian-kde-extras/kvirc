@@ -1,6 +1,8 @@
 kvirc (4:4.1.1~svn5639-2) UNRELEASED; urgency=low
 
   * debian/gbp.conf: Ensure tags get signed.
+  * debian/control: Bumped Standards-Version to 3.9.2, no further changes
+    needed.
 
  -- Kai Wasserbäch <curan@debian.org>  Sat, 07 May 2011 15:21:20 +0200
 
