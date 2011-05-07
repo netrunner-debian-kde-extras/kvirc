@@ -1,4 +1,4 @@
-kvirc (4:4.1.1~svn5829-1) UNRELEASED; urgency=low
+kvirc (4:4.1.1~svn5829-1) unstable; urgency=low
 
   The "Sleeping Potion" release.
 
@@ -14,7 +14,7 @@ kvirc (4:4.1.1~svn5829-1) UNRELEASED; urgency=low
     installation.
   * debian/kvirc.lintian-overrides: Updated to match Lintian's current output.
 
- -- Kai Wasserbäch <curan@debian.org>  Sat, 07 May 2011 15:21:20 +0200
+ -- Kai Wasserbäch <curan@debian.org>  Sat, 07 May 2011 16:59:40 +0200
 
 kvirc (4:4.1.1~svn5639-1) unstable; urgency=low
 
