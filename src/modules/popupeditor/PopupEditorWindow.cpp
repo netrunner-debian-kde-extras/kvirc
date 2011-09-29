@@ -258,7 +258,7 @@ SinglePopupEditor::SinglePopupEditor(QWidget * par)
 
 	m_pExtNameEditor = new QLineEdit(this);
 	m_pExtNameEditor->setToolTip(
-		__tr2qs_ctx("<center><b>External menu name</b><br>This allows to nest externally defined popup menus. The popup menu with the specified name will be looked up at menu setup time.</center>","editor"));
+		__tr2qs_ctx("<center><b>External menu name</b><br>This allows one to nest externally defined popup menus. The popup menu with the specified name will be looked up at menu setup time.</center>","editor"));
 	g->addWidget(m_pExtNameEditor,5,1,1,2);
 
 	l = new QLabel(__tr2qs_ctx("Item Id:","editor"),this);
@@ -731,46 +731,46 @@ void SinglePopupEditor::saveLastSelectedItem()
 
 void SinglePopupEditor::addItemToMenu(KviKvsPopupMenu * p,PopupTreeWidgetItem *it)
 {
-	it->m_szId.trimmed();
+	it->m_szId = it->m_szId.trimmed();
 	switch(it->m_type)
 	{
 		case PopupTreeWidgetItem::Prologue:
-			it->m_szCode.trimmed();
+			it->m_szCode = it->m_szCode.trimmed();
 			p->addPrologue(it->m_szId,it->m_szCode);
 		break;
 		case PopupTreeWidgetItem::Epilogue:
-			it->m_szCode.trimmed();
+			it->m_szCode = it->m_szCode.trimmed();
 			p->addEpilogue(it->m_szId,it->m_szCode);
 		break;
 		case PopupTreeWidgetItem::Separator:
-			it->m_szCondition.trimmed();
+			it->m_szCondition = it->m_szCondition.trimmed();
 			p->addSeparator(it->m_szId,it->m_szCondition);
 		break;
 		case PopupTreeWidgetItem::Label:
-			it->m_szText.trimmed();
-			it->m_szCondition.trimmed();
-			it->m_szIcon.trimmed();
+			it->m_szText = it->m_szText.trimmed();
+			it->m_szCondition = it->m_szCondition.trimmed();
+			it->m_szIcon = it->m_szIcon.trimmed();
 			p->addLabel(it->m_szId,it->m_szText,it->m_szIcon,it->m_szCondition);
 		break;
 		case PopupTreeWidgetItem::Item:
-			it->m_szText.trimmed();
-			it->m_szIcon.trimmed();
-			it->m_szCondition.trimmed();
-			it->m_szCode.trimmed();
+			it->m_szText = it->m_szText.trimmed();
+			it->m_szIcon = it->m_szIcon.trimmed();
+			it->m_szCondition = it->m_szCondition.trimmed();
+			it->m_szCode = it->m_szCode.trimmed();
 			p->addItem(it->m_szId,it->m_szCode,it->m_szText,it->m_szIcon,it->m_szCondition);
 		break;
 		case PopupTreeWidgetItem::ExtMenu:
-			it->m_szText.trimmed();
-			it->m_szIcon.trimmed();
-			it->m_szCondition.trimmed();
-			it->m_szCode.trimmed();// <-- this is the ext name in fact
+			it->m_szText = it->m_szText.trimmed();
+			it->m_szIcon = it->m_szIcon.trimmed();
+			it->m_szCondition = it->m_szCondition.trimmed();
+			it->m_szCode = it->m_szCode.trimmed();// <-- this is the ext name in fact
 			p->addExtPopup(it->m_szId,it->m_szCode,it->m_szText,it->m_szIcon,it->m_szCondition);
 		break;
 		case PopupTreeWidgetItem::Menu:
 		{
-			it->m_szText.trimmed();
-			it->m_szIcon.trimmed();
-			it->m_szCondition.trimmed();
+			it->m_szText = it->m_szText.trimmed();
+			it->m_szIcon = it->m_szIcon.trimmed();
+			it->m_szCondition = it->m_szCondition.trimmed();
 			KviKvsPopupMenu * menu = p->addPopup(it->m_szId,it->m_szText,it->m_szIcon,it->m_szCondition);
 			int count= it->childCount();
 			for(int i=0; i<count; i++)
@@ -788,8 +788,7 @@ KviKvsPopupMenu * SinglePopupEditor::getMenu()
 {
 	saveLastSelectedItem();
 
-	QString tmp = m_pNameEditor->text();
-	tmp.trimmed();
+	QString tmp = m_pNameEditor->text().trimmed();
 
 	KviKvsPopupMenu * p = new KviKvsPopupMenu(tmp);
 
@@ -1227,7 +1226,8 @@ void PopupEditorWidget::exportPopups(bool bSelectedOnly)
 			out += "\n";
 		}
 	}
-	if (!count && bSelectedOnly==false) return;
+	if (!count && !bSelectedOnly)
+		return;
 
 	QString szName = QDir::homePath();
 	if(!szName.endsWith(QString(KVI_PATH_SEPARATOR)))szName += KVI_PATH_SEPARATOR;

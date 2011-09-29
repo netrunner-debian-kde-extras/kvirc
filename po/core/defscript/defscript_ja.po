@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: defscript_ja\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 03:05+0200\n"
+"POT-Creation-Date: 2011-05-29 17:59+0200\n"
 "PO-Revision-Date: 2010-07-25 01:51+0900\n"
 "Last-Translator: Tadashi Jokagi <elf@elf.no-ip.org>\n"
 "Language-Team: Japanese <elf@elf.no-ip.org>\n"
@@ -407,10 +407,10 @@ msgstr "標準ファイルに記録"
 msgid "Log To..."
 msgstr ""
 
+#: data/defscript/popups.kvs:1401
 #: data/defscript/events.kvs:68
 #: data/defscript/events.kvs:76
 #: data/defscript/events.kvs:84
-#: data/defscript/popups.kvs:1401
 #, fuzzy
 msgid "Logging"
 msgstr "記録なし"

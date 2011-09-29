@@ -64,6 +64,7 @@
 #include <QAbstractItemView>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
+#include <QShortcut>
 
 #define LVI_ICON_SIZE 32
 #define LVI_BORDER 4
@@ -313,6 +314,8 @@ RegisteredUsersDialog::RegisteredUsersDialog(QWidget * par)
 	connect(m_pListView,SIGNAL(itemSelectionChanged()),this,SLOT(selectionChanged()));
 	connect(m_pListView,SIGNAL(rightButtonPressed(QTreeWidgetItem *, QPoint)),this,SLOT(rightButtonPressed(QTreeWidgetItem *, QPoint)));
 
+	new QShortcut(Qt::Key_Escape, this, SLOT(cancelClicked()));
+
 	fillList();
 
 	if(!parent())
@@ -522,10 +525,11 @@ void RegisteredUsersDialog::fillList()
 		if(u->group().isEmpty())
 			u->setGroup(__tr2qs_ctx("Default","register"));
 		if(groupItems.find(u->group()))
+		{
 			item = new RegisteredUsersDialogItem(groupItems.find(u->group()),u);
-		else if(groupItems.find(__tr2qs_ctx("Default","register")))
+		} else if(groupItems.find(__tr2qs_ctx("Default","register"))) {
 			item = new RegisteredUsersDialogItem(groupItems.find(__tr2qs_ctx("Default","register")),u);
-		else { //should never be called
+		} else { //should never be called
 			KviRegisteredUserGroup* pGroup = g_pLocalRegisteredUserDataBase->addGroup(__tr2qs_ctx("Default","register"));
 			RegisteredUsersGroupItem* pCur = new RegisteredUsersGroupItem(m_pListView,pGroup);
 			groupItems.insert(__tr2qs_ctx("Default","register"),pCur);

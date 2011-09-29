@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: KVIrc 4.0.0 'Insomnia'\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 03:05+0200\n"
+"POT-Creation-Date: 2011-05-29 17:59+0200\n"
 "PO-Revision-Date: 2010-04-09 19:53+0100\n"
 "Last-Translator: Be Mi <cannabis_ultra@o2.pl>\n"
 "Language-Team: Polska <PL@li.org>\n"
@@ -36,9 +36,10 @@ msgstr ""
 msgid "Acquire Screenshot - KVIrc"
 msgstr "Zdobądz zrzut ekranu - KVIrc"
 
+#: src/modules/theme/libkvitheme.cpp:103
+#: src/modules/theme/libkvitheme.cpp:112
 #: src/modules/theme/ThemeManagementDialog.cpp:345
 #: src/modules/theme/ThemeManagementDialog.cpp:357
-#: src/modules/theme/libkvitheme.cpp:107 src/modules/theme/libkvitheme.cpp:121
 msgid "Apply theme - KVIrc"
 msgstr "Zastosuj motyw - KVIrc"
 
@@ -47,7 +48,7 @@ msgstr "Zastosuj motyw - KVIrc"
 msgid "Author"
 msgstr "Autor"
 
-#: src/modules/theme/libkvitheme.cpp:233
+#: src/modules/theme/libkvitheme.cpp:221
 msgid "Choose a file to save the screenshot to"
 msgstr ""
 
@@ -86,8 +87,8 @@ msgstr "Czy napewno chcesz usunąć motyw \"%Q\" (wersja %Q)?"
 msgid "Do you want to proceed with the installation ?"
 msgstr "Czy chcesz kontynuować z instalacją ?"
 
+#: src/modules/theme/libkvitheme.cpp:104
 #: src/modules/theme/ThemeManagementDialog.cpp:346
-#: src/modules/theme/libkvitheme.cpp:108
 msgid "Do you wish to apply theme \"%Q\" (version %Q)?"
 msgstr ""
 
@@ -95,7 +96,7 @@ msgstr ""
 msgid "Error installing theme package: %Q"
 msgstr ""
 
-#: src/modules/theme/libkvitheme.cpp:248
+#: src/modules/theme/libkvitheme.cpp:236
 msgid "Error making screenshot"
 msgstr ""
 
@@ -112,8 +113,8 @@ msgstr ""
 msgid "Export Theme - KVIrc"
 msgstr "Eksportuj motyw - KVIrc"
 
+#: src/modules/theme/libkvitheme.cpp:111
 #: src/modules/theme/ThemeManagementDialog.cpp:356
-#: src/modules/theme/libkvitheme.cpp:120
 msgid "Failed to apply the specified theme: %1"
 msgstr ""
 
@@ -279,7 +280,8 @@ msgstr ""
 msgid "The selected file does not seem to be a valid KVIrc theme package"
 msgstr ""
 
-#: src/modules/theme/libkvitheme.cpp:126 src/modules/theme/libkvitheme.cpp:169
+#: src/modules/theme/libkvitheme.cpp:118
+#: src/modules/theme/libkvitheme.cpp:157
 msgid "The theme package '%Q' does not exist"
 msgstr ""
 

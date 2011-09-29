@@ -117,12 +117,6 @@ void KviUserListEntry::detachAvatarData()
 	if(!m_pAvatarPixmap)
 		return;
 
-	m_pAvatarPixmap->stop();
-	//FIXME these checks did not work since these are m_pAvatarPixmap's SIGNALs
-// 	if (receivers(SIGNAL(frameChanged())) > 0)
-	QObject::disconnect(m_pAvatarPixmap,SIGNAL(frameChanged()),this,SLOT(avatarFrameChanged()));
-// 	if (receivers(SIGNAL(destroyed())) > 0)
-	QObject::disconnect(m_pAvatarPixmap,SIGNAL(destroyed()),this,SLOT(avatarDestroyed()));
 	m_pAvatarPixmap = NULL;
 }
 
@@ -138,24 +132,21 @@ void KviUserListEntry::updateAvatarData()
 	if(!pAv)
 		return;
 
-	if(pAv)
+	if(
+		KVI_OPTION_BOOL(KviOption_boolScaleAvatars) &&
+		(
+			(!KVI_OPTION_BOOL(KviOption_boolDoNotUpscaleAvatars)) ||
+			((unsigned int)pAv->size().width() > KVI_OPTION_UINT(KviOption_uintAvatarScaleWidth)) ||
+			((unsigned int)pAv->size().height() > KVI_OPTION_UINT(KviOption_uintAvatarScaleHeight))
+		)
+	)
 	{
-		if(
-				KVI_OPTION_BOOL(KviOption_boolScaleAvatars) &&
-				(
-					(!KVI_OPTION_BOOL(KviOption_boolDoNotUpscaleAvatars)) ||
-					((unsigned int)pAv->size().width() > KVI_OPTION_UINT(KviOption_uintAvatarScaleWidth)) ||
-					((unsigned int)pAv->size().height() > KVI_OPTION_UINT(KviOption_uintAvatarScaleHeight))
-				)
-			)
-		{
-			m_pAvatarPixmap = pAv->forSize(
-					KVI_OPTION_UINT(KviOption_uintAvatarScaleWidth),
-					KVI_OPTION_UINT(KviOption_uintAvatarScaleHeight)
-				);
-		} else {
-			m_pAvatarPixmap = pAv->animatedPixmap();
-		}
+		m_pAvatarPixmap = pAv->forSize(
+				KVI_OPTION_UINT(KviOption_uintAvatarScaleWidth),
+				KVI_OPTION_UINT(KviOption_uintAvatarScaleHeight)
+			);
+	} else {
+		m_pAvatarPixmap = pAv->animatedPixmap();
 	}
 
 	if(!m_pAvatarPixmap)
@@ -369,7 +360,7 @@ void KviUserListView::applyOptions()
 	}
 	updateScrollBarRange();
 	m_pUsersLabel->setFont(KVI_OPTION_FONT(KviOption_fontUserListView));
-	setMinimumWidth(100);
+	setMinimumWidth(22);
 	resizeEvent(0); // this will call update() too
 	repaint();
 }
@@ -1580,13 +1571,15 @@ void KviUserListView::maybeTip(KviUserListToolTip * pTip, const QPoint & pnt)
 				switch(KVI_OPTION_UINT(KviOption_uintOutputDatetimeFormat))
 				{
 					case 0:
-						szTmp = date.toString();
+						// this is the equivalent to an empty date.toString() call, but it's needed
+						// to ensure qt4 will use the default() locale and not the system() one
+						szTmp = QLocale().toString(date, "ddd MMM d hh:mm:ss yyyy");
 						break;
 					case 1:
 						szTmp = date.toString(Qt::ISODate);
 						break;
 					case 2:
-						szTmp = date.toString(Qt::SystemLocaleDate);
+						szTmp = date.toString(Qt::SystemLocaleShortDate);
 						break;
 				}
 

@@ -30,9 +30,9 @@
 #include "kvi_debug.h"
 #include "KviLocale.h"
 #include "KviControlCodes.h"
-#include "KviTimeUtils.h"
 #include "UglyBase64.h"
-
+#include "InitVectorEngine.h"
+	
 //#warning "Other engines: mircStrip koi2win colorizer lamerizer etc.."
 
 /*
@@ -55,7 +55,7 @@
 		actually out of the possibilities of a common "hacker".[br]
 		My implementation allows the usage of 128, 192 and 256 bit keys
 		on 128 bit data blocks. The encrypted binary data buffer is then converted
-		into an ascii-string by using the base64 conversion or hex-digit-string rappresentation.
+		into an ascii-string by using the base64 conversion or hex-digit-string representation.
 		The six engines are the six possible combinations of the key lengths and ascii-string
 		conversions.
 */
@@ -118,25 +118,48 @@
 			}
 		}
 
+		KviCString szTmpEncryptKey = KviCString(encKey,encKeyLen);
+		KviCString szTmpDecryptKey = KviCString(decKey,decKeyLen);
+		
+		m_bEncryptMode = CBC; // default mode
+		m_bDecryptMode = CBC; // default mode
+
+		if(kvi_strEqualCIN("ecb:",szTmpEncryptKey.ptr(),4) && (szTmpEncryptKey.len() > 4))
+		{
+			szTmpEncryptKey.cutLeft(4);
+			m_bEncryptMode = ECB;
+		} else if(kvi_strEqualCIN("old:",szTmpEncryptKey.ptr(),4) && (szTmpEncryptKey.len() > 4)) {
+			szTmpEncryptKey.cutLeft(4);
+			m_bEncryptMode = OldCBC;
+		} else if(kvi_strEqualCIN("cbc:",szTmpEncryptKey.ptr(),4) && (szTmpEncryptKey.len() > 4)) {
+			szTmpEncryptKey.cutLeft(4);
+		}
+
+		if(kvi_strEqualCIN("ecb:",szTmpDecryptKey.ptr(),4) && (szTmpDecryptKey.len() > 4))
+		{
+			szTmpDecryptKey.cutLeft(4);
+			m_bDecryptMode = ECB;
+		} else if(kvi_strEqualCIN("old:",szTmpDecryptKey.ptr(),4) && (szTmpDecryptKey.len() > 4)) {
+			szTmpDecryptKey.cutLeft(4);
+			m_bDecryptMode = OldCBC;
+		} else if(kvi_strEqualCIN("cbc:",szTmpDecryptKey.ptr(),4) && (szTmpDecryptKey.len() > 4)) {
+			szTmpDecryptKey.cutLeft(4);
+		}
+
 		int defLen = getKeyLen();
 
-		char * encryptKey = (char *)KviMemory::allocate(defLen);
-		char * decryptKey = (char *)KviMemory::allocate(defLen);
-
-		if(encKeyLen > defLen)encKeyLen = defLen;
-		KviMemory::move(encryptKey,encKey,encKeyLen);
-		if(encKeyLen < defLen)KviMemory::set(encryptKey + encKeyLen,'0',defLen - encKeyLen);
-
-		if(decKeyLen > defLen)decKeyLen = defLen;
-		KviMemory::move(decryptKey,decKey,decKeyLen);
-		if(decKeyLen < defLen)KviMemory::set(decryptKey + decKeyLen,'0',defLen - decKeyLen);
+		szTmpEncryptKey.padRight(defLen);
+		szTmpDecryptKey.padRight(defLen);
 
 		m_pEncryptCipher = new Rijndael();
-		int retVal = m_pEncryptCipher->init(Rijndael::CBC,Rijndael::Encrypt,(unsigned char *)encryptKey,getKeyLenId());
-		KviMemory::free(encryptKey);
+
+		int retVal = m_pEncryptCipher->init(
+			(m_bEncryptMode == ECB) ? Rijndael::ECB : Rijndael::CBC,
+			Rijndael::Encrypt,
+			(unsigned char *)szTmpEncryptKey.ptr(),
+			getKeyLenId());
 		if(retVal != RIJNDAEL_SUCCESS)
 		{
-			KviMemory::free(decryptKey);
 			delete m_pEncryptCipher;
 			m_pEncryptCipher = 0;
 			setLastErrorFromRijndaelErrorCode(retVal);
@@ -144,8 +167,11 @@
 		}
 
 		m_pDecryptCipher = new Rijndael();
-		retVal = m_pDecryptCipher->init(Rijndael::CBC,Rijndael::Decrypt,(unsigned char *)decryptKey,getKeyLenId());
-		KviMemory::free(decryptKey);
+		retVal = m_pDecryptCipher->init(
+			(m_bEncryptMode == ECB) ? Rijndael::ECB : Rijndael::CBC,
+			Rijndael::Decrypt,
+			(unsigned char *)szTmpDecryptKey.ptr(),
+			getKeyLenId());
 		if(retVal != RIJNDAEL_SUCCESS)
 		{
 			delete m_pEncryptCipher;
@@ -183,14 +209,30 @@
 			return KviCryptEngine::EncryptError;
 		}
 		int len = (int)kvi_strLen(plainText);
-		char * buf = (char *)KviMemory::allocate(len + 16);
+		char * buf = (char *)KviMemory::allocate(len + 16); // needed for the eventual padding
+		unsigned char * iv = 0;
+		if(m_bEncryptMode == CBC)
+		{
+			iv = (unsigned char *)KviMemory::allocate(MAX_IV_SIZE);
+			InitVectorEngine::fillRandomIV(iv, MAX_IV_SIZE);
+		}
 
-		int retVal = m_pEncryptCipher->padEncrypt((const unsigned char *)plainText,len,(unsigned char *)buf);
+		int retVal = m_pEncryptCipher->padEncrypt((const unsigned char *)plainText,len,(unsigned char *)buf, iv);
 		if(retVal < 0)
 		{
 			KviMemory::free(buf);
 			setLastErrorFromRijndaelErrorCode(retVal);
 			return KviCryptEngine::EncryptError;
+		}
+
+		if(m_bEncryptMode == CBC)
+		{
+			// prepend the iv to the cyphered text
+			buf = (char*) KviMemory::reallocate(buf, retVal + MAX_IV_SIZE);
+			KviMemory::move(buf + MAX_IV_SIZE, buf, retVal);
+			KviMemory::move(buf, iv, MAX_IV_SIZE);
+			KviMemory::free(iv);
+			retVal+=MAX_IV_SIZE;
 		}
 
 		if(!binaryToAscii(buf,retVal,outBuffer))
@@ -240,9 +282,20 @@
 		if(!asciiToBinary(inBuffer,&len,&binary))return KviCryptEngine::DecryptError;
 
 		char * buf = (char *)KviMemory::allocate(len + 1);
+		unsigned char * iv = 0;
+		if(m_bEncryptMode == CBC)
+		{
+			// extract the IV from the cyphered string
+			len-=MAX_IV_SIZE;
+			iv = (unsigned char *)KviMemory::allocate(MAX_IV_SIZE);
+			KviMemory::move(iv, binary, MAX_IV_SIZE);
+			KviMemory::move(binary, binary + MAX_IV_SIZE, len);
+			binary = (char*) KviMemory::reallocate(binary, len);
+		}
 
-		int retVal = m_pDecryptCipher->padDecrypt((const unsigned char *)binary,len,(unsigned char *)buf);
+		int retVal = m_pDecryptCipher->padDecrypt((const unsigned char *)binary,len,(unsigned char *)buf, iv);
 		KviMemory::free(binary);
+		KviMemory::free(iv);
 
 		if(retVal < 0)
 		{
@@ -385,14 +438,30 @@
 		}
 		m_szEncryptKey = KviCString(encKey,encKeyLen);
 		m_szDecryptKey = KviCString(decKey,decKeyLen);
-		if(kvi_strEqualCIN("cbc:",m_szEncryptKey.ptr(),4) && (m_szEncryptKey.len() > 4))
-			m_szEncryptKey.cutLeft(4);
-		else
+		
+		m_bEncryptCBC = true;
+		m_bDecryptCBC = true;
+
+		if((kvi_strEqualCIN("ecb:",m_szEncryptKey.ptr(),4) ||
+			kvi_strEqualCIN("old:",m_szEncryptKey.ptr(),4))
+			&& (m_szEncryptKey.len() > 4))
+		{
 			m_bEncryptCBC = false;
-		if(kvi_strEqualCIN("cbc:",m_szDecryptKey.ptr(),4) && (m_szDecryptKey.len() > 4))
-			m_szDecryptKey.cutLeft(4);
-		else
+			m_szEncryptKey.cutLeft(4);
+		} else if(kvi_strEqualCIN("cbc:",m_szEncryptKey.ptr(),4) && (m_szEncryptKey.len() > 4)) {
+			m_szEncryptKey.cutLeft(4);
+		}
+
+		if((kvi_strEqualCIN("ecb:",m_szDecryptKey.ptr(),4) ||
+			kvi_strEqualCIN("old:",m_szDecryptKey.ptr(),4))
+			&& (m_szDecryptKey.len() > 4))
+		{
 			m_bDecryptCBC = false;
+			m_szDecryptKey.cutLeft(4);
+		} else if(kvi_strEqualCIN("cbc:",m_szDecryptKey.ptr(),4) && (m_szDecryptKey.len() > 4)) {
+			m_szDecryptKey.cutLeft(4);
+		}
+
 		return true;
 	}
 
@@ -474,7 +543,7 @@
 		if(plain.len() % 8)
 		{
 			int oldL = plain.len();
-			plain.setLength(plain.len() + (8 - (plain.len() % 8)));
+			plain.setLen(plain.len() + (8 - (plain.len() % 8)));
 			char * padB = plain.ptr() + oldL;
 			char * padE = plain.ptr() + plain.len();
 			while(padB < padE)*padB++ = 0;
@@ -499,7 +568,7 @@
 		int len;
 		UglyBase64::decode(encoded, &buf, &len);
 
-		plain.setLength(len);
+		plain.setLen(len);
 		BlowFish bf((unsigned char *)m_szDecryptKey.ptr(),m_szDecryptKey.len());
 		bf.ResetChain();
 		bf.Decrypt(buf,(unsigned char *)plain.ptr(),len,BlowFish::ECB);
@@ -515,7 +584,7 @@
 		if(plain.len() % 8)
 		{
 			int oldL = plain.len();
-			plain.setLength(plain.len() + (8 - (plain.len() % 8)));
+			plain.setLen(plain.len() + (8 - (plain.len() % 8)));
 			char * padB = plain.ptr() + oldL;
 			char * padE = plain.ptr() + plain.len();
 			while(padB < padE)*padB++ = 0;
@@ -524,18 +593,7 @@
 		int ll = plain.len() + 8;
 		unsigned char * in = (unsigned char *)KviMemory::allocate(ll);
 
-		// choose an IV
-		static bool bDidInit = false;
-
-		int t = (int)kvi_unixTime();
-
-		if(!bDidInit)
-		{
-			srand(t);
-			bDidInit = true;
-		}
-
-		for(int i=0;i<8;i++)in[i] = (unsigned char)(rand() % 256);
+		InitVectorEngine::fillRandomIV(in, 8);
 
 		KviMemory::copy(in+8,plain.ptr(),plain.len());
 
@@ -577,7 +635,7 @@
 			return false;
 		}
 
-		plain.setLength(len);
+		plain.setLen(len);
 		BlowFish bf((unsigned char *)m_szDecryptKey.ptr(),m_szDecryptKey.len());
 		bf.ResetChain();
 		bf.Decrypt((unsigned char *)tmpBuf,(unsigned char *)plain.ptr(),len,BlowFish::CBC);
@@ -608,17 +666,14 @@ static bool rijndael_module_init(KviModule * m)
 	g_pEngineList = new KviPointerList<KviCryptEngine>;
 	g_pEngineList->setAutoDelete(false);
 
-	QString szFormat = __tr2qs("Cryptographic engine based on the\n" \
-		"Advanced Encryption Standard (AES)\n" \
-		"algorithm called Rijndael.\n" \
-		"The text is first encrypted with rijndael\n" \
-		"and then converted to %1 notation.\n" \
-		"The keys used are %2 bit long and will be padded\n" \
-		"with zeros if you provide shorter ones.\n" \
-		"If only one key is provided, this engine\n" \
-		"will use it for both encrypting and decrypting.\n" \
-		"See the rijndael module documentation\n" \
-		"for more info on the algorithm used.\n");
+	QString szFormat = __tr2qs("Cryptographic engine based on the Advanced Encryption Standard (AES) algorithm called Rijndael. " \
+		"<br/>The text is first encrypted with rijndael and then converted to %1 notation. " \
+		"The keys used are %2 bit long and will be padded with zeros if you provide shorter ones. " \
+		"If only one key is provided, this engine will use it for both encrypting and decrypting. " \
+		"See the rijndael module documentation for more info on the algorithm used. " \
+		"<br/>This engine works in CBC mode by default: other modes are considered INSECURE and should be avoided. " \
+		"The old pseudo-CBC mode used in KVIrc &lt; 4.2 is still available prefixing your key(s) with \"old:\"; " \
+		"if you want to use ECB mode you must prefix your key(s) with \"ecb:\".");
 
 	// FIXME: Maybe convert this repeated code to a function eh ?
 
@@ -686,24 +741,17 @@ static bool rijndael_module_init(KviModule * m)
 	d = new KviCryptEngineDescription;
 	d->m_szName = "Mircryption";
 	d->m_szAuthor = "Szymon Stefanek";
-	d->m_szDescription = __tr2qs("Popular cryptographic engine based on the\n" \
-		"old Blowfish encryption algorithm.\n" \
-		"The text is first encrypted with Blowfish \n" \
-		"and then converted to base64 notation.\n" \
-		"The keys used have variable length and\n" \
-		"are specified as character strings.\n" \
-		"You can specify keys long up to 56 bytes (448 bits).\n" \
-		"If only one key is provided, this engine\n" \
-		"will use it for both encrypting and decrypting.\n" \
-		"This engine works in ECB mode by default:\n" \
-		"if you want to use CBC mode you must prefix\n" \
-		"your key(s) with \"cbc:\".\n");
+	d->m_szDescription = __tr2qs("Popular cryptographic engine based on the Blowfish encryption algorithm. " \
+		"<br/>The text is first encrypted with Blowfish and then converted to base64 notation. " \
+		"The keys used have variable length and are specified as character strings." \
+		"You can specify keys long up to 56 bytes (448 bits). " \
+		"If only one key is provided, this engine will use it for both encrypting and decrypting. " \
+		"<br/>This engine works in CBC mode by default: if you want to use the old and INSECURE ECB mode you must prefix your key(s) with \"ecb:\" or \"old:\".");
 	d->m_iFlags = KviCryptEngine::CanEncrypt | KviCryptEngine::CanDecrypt |
 		KviCryptEngine::WantEncryptKey | KviCryptEngine::WantDecryptKey;
 	d->m_allocFunc = allocMircryptionEngine;
 	d->m_deallocFunc = deallocRijndaelCryptEngine;
 	m->registerCryptEngine(d);
-
 
 	return true;
 #else
@@ -740,7 +788,8 @@ static bool rijndael_module_can_unload(KviModule *)
 KVIRC_MODULE(
 	"Rijndael crypt engine",
 	"4.0.0",
-	"Szymon Stefanek <pragma at kvirc dot net>",
+	"Szymon Stefanek <pragma at kvirc dot net>\n" \
+	"Fabio Bas <ctrlaltca at gmail dot com>",
 	"Exports the rijndael crypt engine",
 	rijndael_module_init,
 	rijndael_module_can_unload,

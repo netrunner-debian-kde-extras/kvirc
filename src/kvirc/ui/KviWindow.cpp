@@ -559,19 +559,20 @@ void KviWindow::getDefaultLogFileName(QString & szBuffer)
 	QString szDate;
 	QDate date(QDate::currentDate());
 
-	switch(KVI_OPTION_UINT(KviOption_uintOutputDatetimeFormat))
+	switch(KVI_OPTION_UINT(KviOption_uintOutputDatetimeFormat)) 
 	{
 		case 1:
 			szDate = date.toString(Qt::ISODate);
 			break;
 		case 2:
-			szDate = date.toString(Qt::SystemLocaleDate);
+			szDate = date.toString(Qt::SystemLocaleShortDate);
 			break;
 		case 0:
 		default:
 			szDate = date.toString("yyyy.MM.dd");
 			break;
 	}
+	szDate.replace(KVI_PATH_SEPARATOR_CHAR, '-');
 
 	QString szBase;
 	getBaseLogFileName(szBase);
@@ -752,16 +753,16 @@ void KviWindow::createSystemTextEncodingPopup()
 				g_pMdiWindowSystemTextEncodingCurrentAction->setChecked(true);
 				g_pMdiWindowSystemTextEncodingCurrentAction->setVisible(true);
 				g_pMdiWindowSystemTextEncodingCurrentAction->setData(i);
-			} else {
-				QMenu * pMenu = pDesc->bSmart ? (pDesc->bSendUtf8 ? 
-					pPopupSmartUtf8[pDesc->uGroup] : 
-					pPopupSmart[pDesc->uGroup]
-				) : pPopupStandard[pDesc->uGroup];
-			
-				QAction * pAction = pMenu->addAction(szTmp);
-				pAction->setData(i);
-				g_pMdiWindowSystemTextEncodingActionGroup->addAction(pAction);
 			}
+			
+			QMenu * pMenu = pDesc->bSmart ? (pDesc->bSendUtf8 ? 
+				pPopupSmartUtf8[pDesc->uGroup] : 
+				pPopupSmart[pDesc->uGroup]
+			) : pPopupStandard[pDesc->uGroup];
+		
+			QAction * pAction = pMenu->addAction(szTmp);
+			pAction->setData(i);
+			g_pMdiWindowSystemTextEncodingActionGroup->addAction(pAction);
 
 			pDesc = KviLocale::instance()->encodingDescription(++i);
 		}

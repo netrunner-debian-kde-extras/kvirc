@@ -26,6 +26,7 @@
 #include "kvi_out.h"
 #include "KviChannelWindow.h"
 #include "KviConsoleWindow.h"
+#include "KviIrcNetwork.h"
 #include "KviIconManager.h"
 #include "KviIrcView.h"
 #include "KviInput.h"
@@ -129,6 +130,10 @@ KviChannelWindow::KviChannelWindow(KviMainWindow * lpFrm, KviConsoleWindow * lpC
 	// Spitted vertially on the left
 	m_pVertSplitter = new KviTalSplitter(Qt::Vertical,m_pSplitter);
 	m_pVertSplitter->setChildrenCollapsible(false);
+
+	QSizePolicy oPolicy = m_pVertSplitter->sizePolicy();
+	oPolicy.setHorizontalPolicy(QSizePolicy::Expanding);
+	m_pVertSplitter->setSizePolicy(oPolicy);
 
 	// With the IRC view over
 	m_pIrcView = new KviIrcView(m_pVertSplitter,lpFrm,this);
@@ -337,13 +342,16 @@ void KviChannelWindow::getConfigGroupName(QString & szBuffer)
 {
 	szBuffer = windowName();
 
-//TODO it would be nice to save per-network channel settings, so that the settings of two channels
-//with the same name but of different networks gets different config entries.
-// 	if(connection())
-// 	{
-// 		szBuffer.append("@");
-// 		szBuffer.append(connection()->currentNetworkName());
-// 	}
+	// save per-network channel settings, so that the settings of two channels
+	// with the same name but of different networks gets different config entries.
+	if(connection() && connection()->target() && 
+		connection()->target() && 
+		connection()->target()->network())
+	{
+		szBuffer.append("@");
+		// don't use the actual network name, because it could change during the connection
+		szBuffer.append(connection()->target()->network()->name());
+	}
 }
 
 void KviChannelWindow::saveProperties(KviConfigurationFile * pCfg)
@@ -353,12 +361,15 @@ void KviChannelWindow::saveProperties(KviConfigurationFile * pCfg)
 	QList<int> sizes;
 	sizes << m_pIrcView->width() << m_pUserListView->width();
 	pCfg->writeEntry("Splitter",sizes);
+	int iTimeStamp= pCfg->readIntEntry("EntryTimestamp", 0);
+	qDebug("window %s, group %s, view %d==%d, ulist %d==%d timestamp %d",
+		m_szName.toUtf8().data(), pCfg->group().toUtf8().data(),
+		m_pIrcView->width(), sizes.at(0), m_pUserListView->width(), sizes.at(1), iTimeStamp);
 	pCfg->writeEntry("VertSplitter",m_pMessageView ? m_pVertSplitter->sizes() : m_VertSplitterSizesList);
 	pCfg->writeEntry("PrivateBackground",m_privateBackground);
 	pCfg->writeEntry("DoubleView",m_pMessageView ? true : false);
 
-	if(m_pUserListView)
-		pCfg->writeEntry("UserListHidden",m_pUserListView->isHidden());
+	pCfg->writeEntry("UserListHidden",m_pUserListView->isHidden());
 	pCfg->writeEntry("ToolButtonsHidden",buttonContainer()->isHidden());
 }
 
@@ -366,18 +377,19 @@ void KviChannelWindow::loadProperties(KviConfigurationFile * pCfg)
 {
 	int iWidth = width();
 	QList<int> def;
-	def.append((iWidth * 75) / 100);
-	def.append((iWidth * 15) / 100);
-	def.append((iWidth * 10) / 100);
+	def.append((iWidth * 82) / 100);
+	def.append((iWidth * 18) / 100);
 	m_pTopSplitter->setSizes(pCfg->readIntListEntry("TopSplitter",def));
+	
+	//this is an hack to simulate qt3's ResizeMode = Stretch
+	for(int iWidget=0; iWidget<m_pTopSplitter->count(); iWidget++)
+		m_pTopSplitter->setStretchFactor(iWidget,1);
+
 	def.clear();
 	def.append((iWidth * 75) / 100);
 	def.append((iWidth * 25) / 100);
 	QList<int> sizes = pCfg->readIntListEntry("Splitter",def);
 	m_pSplitter->setSizes(sizes);
-	m_pIrcView->resize(sizes.at(0), m_pIrcView->height());
-	m_pUserListView->resize(sizes.at(1), m_pUserListView->height());
-	m_pSplitter->setStretchFactor(0,0);
 	m_pSplitter->setStretchFactor(0,1);
 
 	def.clear();
@@ -400,6 +412,7 @@ void KviChannelWindow::loadProperties(KviConfigurationFile * pCfg)
 	{
 		bool bHidden = pCfg->readBoolEntry("UserListHidden",0);
 		m_pUserListView->setHidden(bHidden);
+		m_pListViewButton->setChecked(!bHidden);
 		resizeEvent(0);
 	}
 
@@ -428,6 +441,11 @@ void KviChannelWindow::showDoubleView(bool bShow)
 
 		m_pMessageView = new KviIrcView(m_pVertSplitter,m_pFrm,this);
 		m_pVertSplitter->setSizes(m_VertSplitterSizesList);
+
+		//this is an hack to simulate qt3's ResizeMode = Stretch
+		for(int iWidget=0; iWidget<m_pVertSplitter->count(); iWidget++)
+			m_pVertSplitter->setStretchFactor(iWidget,1);
+
 		//setFocusHandler(m_pInput,m_pMessageView); //socket it!
 		if(!(m_pDoubleViewButton->isChecked()))
 			m_pDoubleViewButton->setChecked(true);
@@ -566,48 +584,65 @@ void KviChannelWindow::toggleListModeEditor()
 
 void KviChannelWindow::removeMasks(KviMaskEditor * pEditor, KviPointerList<KviMaskEntry> * pList)
 {
-	QString szMasks, szFlags;
-	int uCount = 0;
-	int iModesPerLine = 3; // a good default
+	if(!connection())
+		return;
+
+	QString szMasks;
+	QByteArray szFlags;
+	QByteArray szTarget = connection()->encodeText(m_szName);
+
+	int iMaxModeChangesPerLine = 3; // a good default
 	KviIrcConnectionServerInfo * pServerInfo = serverInfo();
 	if(pServerInfo)
 	{
-		iModesPerLine = pServerInfo->maxModeChanges();
-		if(iModesPerLine < 1)
-			iModesPerLine = 1;
+		iMaxModeChangesPerLine = pServerInfo->maxModeChanges();
+		if(iMaxModeChangesPerLine < 1)
+			iMaxModeChangesPerLine = 1;
 	}
+
+	int iCurModeChangesPerLine = iMaxModeChangesPerLine;
+	
+	// Calculate the max number of available characters in a MODE command
+	// 512 (max) - 2 (cr, lf) - 4 (MODE) - 3 (spaces) - 1 (plus/minus)
+	// since we already know the channel name, take it in account, too
+
+	const int iMaxCharsPerLine = 502 - szTarget.size();
+	int iCurCharsPerLine = iMaxCharsPerLine;
 
 	for(KviMaskEntry * pEntry = pList->first(); pEntry; pEntry = pList->next())
 	{
+		szFlags += pEditor->flag();
+		iCurCharsPerLine--;
+
 		if(!szMasks.isEmpty())
-			szMasks.append(' ');
-
-		szMasks.append(pEntry->szMask);
-		szFlags.append(pEditor->flag());
-		uCount++;
-
-		if(uCount == iModesPerLine)
 		{
-			if(connection())
-			{
-				QByteArray szName = connection()->encodeText(m_szName);
-				connection()->sendFmtData("MODE %s -%s %s",szName.data(),szFlags.toUtf8().data(),connection()->encodeText(szMasks).data());
-			}
+			szMasks += " ";
+			iCurCharsPerLine--;
+		}
+			
+		szMasks += pEntry->szMask;
+		iCurCharsPerLine-=pEntry->szMask.size();
 
+		iCurModeChangesPerLine--;
+		if(iCurModeChangesPerLine < 0 || iCurCharsPerLine < 0)
+		{
+			connection()->sendFmtData("MODE %s -%s %s",szTarget.data(),szFlags.data(),connection()->encodeText(szMasks).data());
+				
+			// move back the iterator by one position
+			// WARNING: this could lead to an infinite loop if a single specified mode
+			// change is longer than iMaxCharsPerLine
+			pEntry = pList->prev();
+
+			// reset cycle variables
+			iCurCharsPerLine = iMaxCharsPerLine;
+			iCurModeChangesPerLine = iMaxModeChangesPerLine;
 			szFlags = "";
 			szMasks = "";
-			uCount = 0;
 		}
 	}
 
-	if(!szMasks.isEmpty())
-	{
-		if(connection())
-		{
-			QByteArray szName = connection()->encodeText(m_szName);
-			connection()->sendFmtData("MODE %s -%s %s",szName.data(),szFlags.toUtf8().data(),connection()->encodeText(szMasks).data());
-		}
-	}
+	if(iCurModeChangesPerLine != iMaxModeChangesPerLine)
+		connection()->sendFmtData("MODE %s -%s %s",szTarget.data(),szFlags.data(),connection()->encodeText(szMasks).data());
 }
 
 QPixmap * KviChannelWindow::myIconPtr()

@@ -27,7 +27,6 @@
 
 #cmakedefine COMPILE_CRYPT_SUPPORT 1
 #cmakedefine COMPILE_SSL_SUPPORT 1
-#cmakedefine COMPILE_CRYPTOPP_SUPPORT 1
 #cmakedefine COMPILE_X11_SUPPORT 1
 #cmakedefine COMPILE_XSS_SUPPORT 1
 #cmakedefine COMPILE_IPV6_SUPPORT 1
@@ -75,6 +74,7 @@
 
 #define KVIRC_VERSION_RELEASE "${CMAKE_KVIRC_VERSION_RELEASE}"
 #define KVIRC_VERSION_BRANCH "${CMAKE_KVIRC_VERSION_BRANCH}"
+#define KVIRC_VERSION_CODENAME "${CMAKE_KVIRC_VERSION_CODENAME}"
 
 // KVIrc detects the modules directory on macs/win32 by itself
 // this seems to be used on linux only

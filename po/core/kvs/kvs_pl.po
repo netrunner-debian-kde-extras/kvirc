@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kvirc 4.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 03:05+0200\n"
+"POT-Creation-Date: 2011-05-29 17:59+0200\n"
 "PO-Revision-Date: 2011-03-30 00:49+0100\n"
 "Last-Translator: B M <penteljapan@o2.pl>\n"
 "Language-Team: pl <pl@li.org>\n"
@@ -206,14 +206,14 @@ msgid ""
 "that class first"
 msgstr ""
 
-#: src/kvirc/kvs/tree/KviKvsTreeNodeExpression.cpp:499
-#: src/kvirc/kvs/tree/KviKvsTreeNodeExpression.cpp:507
-#: src/kvirc/kvs/tree/KviKvsTreeNodeExpression.cpp:527
-#: src/kvirc/kvs/tree/KviKvsTreeNodeExpression.cpp:535
 #: src/kvirc/kvs/tree/KviKvsTreeNodeOperation.cpp:329
 #: src/kvirc/kvs/tree/KviKvsTreeNodeOperation.cpp:341
 #: src/kvirc/kvs/tree/KviKvsTreeNodeOperation.cpp:412
 #: src/kvirc/kvs/tree/KviKvsTreeNodeOperation.cpp:424
+#: src/kvirc/kvs/tree/KviKvsTreeNodeExpression.cpp:499
+#: src/kvirc/kvs/tree/KviKvsTreeNodeExpression.cpp:507
+#: src/kvirc/kvs/tree/KviKvsTreeNodeExpression.cpp:527
+#: src/kvirc/kvs/tree/KviKvsTreeNodeExpression.cpp:535
 msgid "Division by zero"
 msgstr ""
 
@@ -489,7 +489,7 @@ msgstr ""
 msgid "It's not allowed to return values in the constructor"
 msgstr ""
 
-#: src/kvirc/kvs/KviKvsCoreFunctions_gl.cpp:249
+#: src/kvirc/kvs/KviKvsCoreFunctions_gl.cpp:313
 msgid "Lag meter was not enabled"
 msgstr ""
 
@@ -574,8 +574,8 @@ msgstr ""
 msgid "Missing timer name"
 msgstr ""
 
-#: src/kvirc/kvs/tree/KviKvsTreeNodeModuleCallbackCommand.cpp:68
 #: src/kvirc/kvs/tree/KviKvsTreeNodeModuleSimpleCommand.cpp:67
+#: src/kvirc/kvs/tree/KviKvsTreeNodeModuleCallbackCommand.cpp:68
 msgid "Module command call failed: can't load the module '%Q': %Q"
 msgstr ""
 
@@ -657,16 +657,16 @@ msgstr ""
 msgid "No such IRC context (%u)"
 msgstr ""
 
+#: src/kvirc/kvs/KviKvsCoreFunctions_gl.cpp:689
+#: src/kvirc/kvs/KviKvsCoreFunctions_gl.cpp:697
 #: src/kvirc/kvs/KviKvsCoreCallbackCommands.cpp:535
 #: src/kvirc/kvs/KviKvsCoreCallbackCommands.cpp:543
 #: src/kvirc/kvs/KviKvsCoreSimpleCommands_af.cpp:1469
 #: src/kvirc/kvs/KviKvsCoreSimpleCommands_af.cpp:1477
-#: src/kvirc/kvs/KviKvsCoreFunctions_gl.cpp:567
-#: src/kvirc/kvs/KviKvsCoreFunctions_gl.cpp:575
 msgid "No such event (%Q)"
 msgstr ""
 
-#: src/kvirc/kvs/KviKvsCoreFunctions_gl.cpp:583
+#: src/kvirc/kvs/KviKvsCoreFunctions_gl.cpp:705
 msgid "No such event handler (%Q) for event %Q"
 msgstr ""
 
@@ -834,7 +834,7 @@ msgstr ""
 #: src/kvirc/kvs/parser/KviKvsParser_specialCommands.cpp:1224
 #: src/kvirc/kvs/parser/KviKvsParser_specialCommands.cpp:1234
 msgid ""
-"The 'foreach' command expects a writeable iteration variable as first "
+"The 'foreach' command expects a writable iteration variable as first "
 "parameter"
 msgstr ""
 
@@ -1490,7 +1490,8 @@ msgstr ""
 msgid "[KVS]%c Runtime Error: %Q"
 msgstr ""
 
-#: src/kvirc/kvs/KviKvsReport.cpp:188 src/kvirc/kvs/KviKvsReport.cpp:196
+#: src/kvirc/kvs/KviKvsReport.cpp:188
+#: src/kvirc/kvs/KviKvsReport.cpp:196
 msgid "[KVS]%c Warning: %Q"
 msgstr "[KVS]%c Ostrzeżenie: %Q"
 
@@ -1516,8 +1517,8 @@ msgstr ""
 msgid "found type %Q where type '%s' was expected"
 msgstr ""
 
-#: src/kvirc/kvs/parser/KviKvsParser.cpp:95
 #: src/kvirc/kvs/KviKvsRunTimeContext.cpp:116
+#: src/kvirc/kvs/parser/KviKvsParser.cpp:95
 msgid "line %1, near character %2"
 msgstr ""
 

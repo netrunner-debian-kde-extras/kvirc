@@ -291,57 +291,74 @@
 	{
 		KviCString szEncryptKey;
 		KviCString szDecryptKey;
-
-		char * pcEncKey = 0;
-		char * pcDecKey = 0;
-		int iEncKeyLen = 0;
-		int iDecKeyLen = 0;
+		KviCString szEncKey = "";
+		KviCString szDecKey = "";
 
 		if(m_pEnableEncrypt->isChecked())
 		{
+			bool bEcb=false, bOld=false;
 			szEncryptKey = m_pEncryptKeyEdit->text();
+			if(kvi_strEqualCIN("ecb:",szEncryptKey.ptr(),4) && (szEncryptKey.len() > 4))
+			{
+				szEncryptKey.cutLeft(4);
+				bEcb=true;
+			} else if(kvi_strEqualCIN("old:",szEncryptKey.ptr(),4) && (szEncryptKey.len() > 4)) {
+				szEncryptKey.cutLeft(4);
+				bOld=true;
+			} else if(kvi_strEqualCIN("cbc:",szEncryptKey.ptr(),4)) {
+				szEncryptKey.cutLeft(4);
+			}
+
 			if(m_pEncryptHexKeyCheck->isChecked())
 			{
 				char * pcTmpKey;
-				iEncKeyLen = szEncryptKey.hexToBuffer(&pcTmpKey,false);
-				if(iEncKeyLen > 0)
+				if(szEncryptKey.hexToBuffer(&pcTmpKey,false))
 				{
-					pcEncKey = (char *)KviMemory::allocate(iEncKeyLen);
-					KviMemory::move(pcEncKey,pcTmpKey,iEncKeyLen);
+					szEncKey = pcTmpKey;
 					KviCString::freeBuffer(pcTmpKey);
 				}
 			} else {
-				pcEncKey = (char *)KviMemory::allocate(szEncryptKey.len());
-				KviMemory::move(pcEncKey,szEncryptKey.ptr(),szEncryptKey.len());
-				iEncKeyLen = szEncryptKey.len();
+				szEncKey = szEncryptKey;
 			}
+			if(bEcb)
+				szEncKey.prepend("ecb:");
+			else if(bOld)
+				szEncKey.prepend("old:");
 		}
 
 		if(m_pEnableDecrypt->isChecked())
 		{
+			bool bEcb=false, bOld=false;
 			szDecryptKey = m_pDecryptKeyEdit->text();
+			if(kvi_strEqualCIN("ecb:",szDecryptKey.ptr(),4) && (szDecryptKey.len() > 4))
+			{
+				szDecryptKey.cutLeft(4);
+				bEcb=true;
+			} else if(kvi_strEqualCIN("old:",szDecryptKey.ptr(),4) && (szDecryptKey.len() > 4)) {
+				szDecryptKey.cutLeft(4);
+				bOld=true;
+			} else if(kvi_strEqualCIN("cbc:",szDecryptKey.ptr(),4)) {
+				szDecryptKey.cutLeft(4);
+			}
+
 			if(m_pDecryptHexKeyCheck->isChecked())
 			{
 				char * pcTmpKey;
-				iDecKeyLen = szDecryptKey.hexToBuffer(&pcTmpKey,false);
-				if(iDecKeyLen > 0)
+				if(szDecryptKey.hexToBuffer(&pcTmpKey,false))
 				{
-					pcDecKey = (char *)KviMemory::allocate(iDecKeyLen);
-					KviMemory::move(pcDecKey,pcTmpKey,iDecKeyLen);
+					szDecKey = pcTmpKey;
 					KviCString::freeBuffer(pcTmpKey);
 				}
 			} else {
-				pcDecKey = (char *)KviMemory::allocate(szDecryptKey.len());
-				KviMemory::move(pcDecKey,szDecryptKey.ptr(),szDecryptKey.len());
-				iDecKeyLen = szDecryptKey.len();
+				szDecKey = szDecryptKey;
 			}
+			if(bEcb)
+				szDecKey.prepend("ecb:");
+			else if(bOld)
+				szDecKey.prepend("old:");
 		}
-
-		bool bRet = pEngine->init(pcEncKey,iEncKeyLen,pcDecKey,iDecKeyLen);
-		if(pcEncKey)
-			KviMemory::free(pcEncKey);
-		if(pcDecKey)
-			KviMemory::free(pcDecKey);
+		
+		bool bRet = pEngine->init(szEncKey.ptr(),szEncKey.len(),szDecKey.ptr(),szDecKey.len());
 
 		return bRet;
 	}

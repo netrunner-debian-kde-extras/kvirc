@@ -60,7 +60,7 @@
 #include "KviKvsEventTriggers.h"
 #include "KviTalPopupMenu.h"
 #include "KviTextIconManager.h"
-#include "kvi_shortcuts.h"
+#include "KviShortcut.h"
 
 #define _WANT_OPTION_FLAGS_
 #include "KviOptions.h"
@@ -243,6 +243,7 @@ KviMainWindow::~KviMainWindow()
 		closeWindow(m_pWinList->first());
 
 	delete m_pWinList;
+	delete m_pAccellerators;
 
 	g_pMainWindow = 0;
 
@@ -301,14 +302,15 @@ KviMexToolBar * KviMainWindow::moduleExtensionToolBar(int extensionId)
 
 void KviMainWindow::installAccelerators()
 {
-	new QShortcut(QKeySequence(KVI_SHORTCUTS_WIN_PREV),this,SLOT(switchToPrevWindow()),0,Qt::ApplicationShortcut);
-	new QShortcut(QKeySequence(KVI_SHORTCUTS_WIN_NEXT),this,SLOT(switchToNextWindow()),0,Qt::ApplicationShortcut);
-	new QShortcut(QKeySequence(KVI_SHORTCUTS_WIN_PREV_CONTEXT),this,SLOT(switchToPrevWindowInContext()),0,Qt::ApplicationShortcut);
-	new QShortcut(QKeySequence(KVI_SHORTCUTS_WIN_NEXT_CONTEXT),this,SLOT(switchToNextWindowInContext()),0,Qt::ApplicationShortcut);
-	new QShortcut(QKeySequence(KVI_SHORTCUTS_WIN_PREV_HIGHLIGHT),this,SLOT(switchToPrevHighlightedWindow()),0,Qt::ApplicationShortcut);
-	new QShortcut(QKeySequence(KVI_SHORTCUTS_WIN_NEXT_HIGHLIGHT),this,SLOT(switchToNextHighlightedWindow()),0,Qt::ApplicationShortcut);
-	new QShortcut(QKeySequence(KVI_SHORTCUTS_WIN_MAXIMIZE),this,SLOT(maximizeWindow()),0,Qt::ApplicationShortcut);
-	new QShortcut(QKeySequence(KVI_SHORTCUTS_WIN_MINIMIZE),this,SLOT(minimizeWindow()),0,Qt::ApplicationShortcut);
+	m_pAccellerators = new KviPointerList<QShortcut>;
+	m_pAccellerators->append(KviShortcut::create(KVI_SHORTCUTS_WIN_PREV,this,SLOT(switchToPrevWindow()),0,Qt::ApplicationShortcut));
+	m_pAccellerators->append(KviShortcut::create(KVI_SHORTCUTS_WIN_NEXT,this,SLOT(switchToNextWindow()),0,Qt::ApplicationShortcut));
+	m_pAccellerators->append(KviShortcut::create(KVI_SHORTCUTS_WIN_PREV_CONTEXT,this,SLOT(switchToPrevWindowInContext()),0,Qt::ApplicationShortcut));
+	m_pAccellerators->append(KviShortcut::create(KVI_SHORTCUTS_WIN_NEXT_CONTEXT,this,SLOT(switchToNextWindowInContext()),0,Qt::ApplicationShortcut));
+	m_pAccellerators->append(KviShortcut::create(KVI_SHORTCUTS_WIN_PREV_HIGHLIGHT,this,SLOT(switchToPrevHighlightedWindow()),0,Qt::ApplicationShortcut));
+	m_pAccellerators->append(KviShortcut::create(KVI_SHORTCUTS_WIN_NEXT_HIGHLIGHT,this,SLOT(switchToNextHighlightedWindow()),0,Qt::ApplicationShortcut));
+	m_pAccellerators->append(KviShortcut::create(KVI_SHORTCUTS_WIN_MAXIMIZE,this,SLOT(maximizeWindow()),0,Qt::ApplicationShortcut));
+	m_pAccellerators->append(KviShortcut::create(KVI_SHORTCUTS_WIN_MINIMIZE,this,SLOT(minimizeWindow()),0,Qt::ApplicationShortcut));
 
 	static int accel_table[] = {
 		Qt::Key_1 + Qt::ControlModifier,       // script accels...
@@ -338,8 +340,21 @@ void KviMainWindow::installAccelerators()
 	int i=0, keys=0;
 	while((keys = accel_table[i]))
 	{
-		new QShortcut(QKeySequence(keys),this,SLOT(accelActivated()),SLOT(accelActivated()),Qt::ApplicationShortcut);
+		m_pAccellerators->append(KviShortcut::create(keys,this,SLOT(accelActivated()),SLOT(accelActivated()),Qt::ApplicationShortcut));
 		i++;
+	}
+}
+
+void KviMainWindow::freeAccelleratorKeySequence(QString & key)
+{
+	QKeySequence kS(key);
+	for(QShortcut * pS = m_pAccellerators->first();pS;pS = m_pAccellerators->next())
+	{
+		if(pS->key() == kS)
+		{
+			m_pAccellerators->removeRef(pS);
+			return;
+		}
 	}
 }
 
@@ -499,6 +514,11 @@ void KviMainWindow::addWindow(KviWindow *wnd,bool bShow)
 
 	if(g_pWinPropertiesConfig->hasGroup(group))
 	{
+		g_pWinPropertiesConfig->setGroup(group);
+	} else if(wnd->type() == KviWindow::Channel && 
+		g_pWinPropertiesConfig->hasGroup(group = wnd->windowName())
+	) {
+		// try to load pre-4.2 channel settings
 		g_pWinPropertiesConfig->setGroup(group);
 	} else {
 		bGroupSettings = true;
@@ -897,6 +917,19 @@ void KviMainWindow::updatePseudoTransparency()
 #ifdef COMPILE_PSEUDO_TRANSPARENCY
 	uint uOpacity = KVI_OPTION_UINT(KviOption_uintGlobalWindowOpacityPercent) < 50 ? 50 : KVI_OPTION_UINT(KviOption_uintGlobalWindowOpacityPercent);
 	setWindowOpacity((float) uOpacity / 100);
+	#if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
+		#ifndef Q_WS_EX_LAYERED
+			#define Q_WS_EX_LAYERED WS_EX_LAYERED
+		#endif
+	if(uOpacity < 100)
+	{
+        SetWindowLong(effectiveWinId(), GWL_EXSTYLE,
+			GetWindowLong(effectiveWinId(), GWL_EXSTYLE) | Q_WS_EX_LAYERED);
+    } else {
+        SetWindowLong(effectiveWinId(), GWL_EXSTYLE,
+            GetWindowLong(effectiveWinId(), GWL_EXSTYLE) & ~Q_WS_EX_LAYERED);
+    }
+	#endif
 	if(g_pShadedParentGlobalDesktopBackground)m_pMdi->viewport()->update();
 
 	if(g_pShadedChildGlobalDesktopBackground)

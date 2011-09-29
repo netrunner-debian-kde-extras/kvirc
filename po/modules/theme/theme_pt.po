@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kvirc_theme \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 03:05+0200\n"
+"POT-Creation-Date: 2011-05-29 17:59+0200\n"
 "PO-Revision-Date: 2011-03-27 09:12+0100\n"
 "Last-Translator: Zé <ze@mandriva.org>\n"
 "Language-Team: Portuguese <>\n"
@@ -35,9 +35,10 @@ msgstr "<b><u>Tema Actualmente Instalado:</u> "
 msgid "Acquire Screenshot - KVIrc"
 msgstr "Adquirir Captura de Ecrã - KVIrc"
 
+#: src/modules/theme/libkvitheme.cpp:103
+#: src/modules/theme/libkvitheme.cpp:112
 #: src/modules/theme/ThemeManagementDialog.cpp:345
 #: src/modules/theme/ThemeManagementDialog.cpp:357
-#: src/modules/theme/libkvitheme.cpp:107 src/modules/theme/libkvitheme.cpp:121
 msgid "Apply theme - KVIrc"
 msgstr "Aplicar tema - KVIrc"
 
@@ -46,7 +47,7 @@ msgstr "Aplicar tema - KVIrc"
 msgid "Author"
 msgstr "Autor"
 
-#: src/modules/theme/libkvitheme.cpp:233
+#: src/modules/theme/libkvitheme.cpp:221
 msgid "Choose a file to save the screenshot to"
 msgstr "Escolha um ficheiro para gravar a captura de ecrã"
 
@@ -85,8 +86,8 @@ msgstr "Deseja realmente apagar o tema \"%Q\" (versão %Q)?"
 msgid "Do you want to proceed with the installation ?"
 msgstr "Deseja prosseguir com a instalação ?"
 
+#: src/modules/theme/libkvitheme.cpp:104
 #: src/modules/theme/ThemeManagementDialog.cpp:346
-#: src/modules/theme/libkvitheme.cpp:108
 msgid "Do you wish to apply theme \"%Q\" (version %Q)?"
 msgstr "Deseja aplicar o tema \"%Q\" (versão %Q)?"
 
@@ -94,7 +95,7 @@ msgstr "Deseja aplicar o tema \"%Q\" (versão %Q)?"
 msgid "Error installing theme package: %Q"
 msgstr "Erro ao instalar o pacote de tema: %Q"
 
-#: src/modules/theme/libkvitheme.cpp:248
+#: src/modules/theme/libkvitheme.cpp:236
 msgid "Error making screenshot"
 msgstr "Erro ao criar a captura de ecrã"
 
@@ -111,8 +112,8 @@ msgstr "Exportar Temas Seleccionados para um Pacote de Distribuição"
 msgid "Export Theme - KVIrc"
 msgstr "Exportar Tema - KVIrc"
 
+#: src/modules/theme/libkvitheme.cpp:111
 #: src/modules/theme/ThemeManagementDialog.cpp:356
-#: src/modules/theme/libkvitheme.cpp:120
 msgid "Failed to apply the specified theme: %1"
 msgstr "Falha ao aplicar o tema especificado: %1"
 
@@ -294,7 +295,8 @@ msgstr "O ficheiro seleccionado não parece ser um pacote KVIrc válido: %1"
 msgid "The selected file does not seem to be a valid KVIrc theme package"
 msgstr "O ficheiro seleccionado não parece ser um pacote de tema KVIrc válido"
 
-#: src/modules/theme/libkvitheme.cpp:126 src/modules/theme/libkvitheme.cpp:169
+#: src/modules/theme/libkvitheme.cpp:118
+#: src/modules/theme/libkvitheme.cpp:157
 msgid "The theme package '%Q' does not exist"
 msgstr "O pacote do tema '%Q' não existe"
 

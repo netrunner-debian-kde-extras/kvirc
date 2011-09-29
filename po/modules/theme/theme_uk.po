@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: theme_ua\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 03:05+0200\n"
+"POT-Creation-Date: 2011-05-29 17:59+0200\n"
 "PO-Revision-Date: 2007-12-19 15:00+0200\n"
 "Last-Translator: Belyaev Stanislav <belyaev-st@yandex.ru>\n"
 "Language-Team: Ukrainian\n"
@@ -34,9 +34,10 @@ msgstr ""
 msgid "Acquire Screenshot - KVIrc"
 msgstr "Зробити скріншот - KVIrc"
 
+#: src/modules/theme/libkvitheme.cpp:103
+#: src/modules/theme/libkvitheme.cpp:112
 #: src/modules/theme/ThemeManagementDialog.cpp:345
 #: src/modules/theme/ThemeManagementDialog.cpp:357
-#: src/modules/theme/libkvitheme.cpp:107 src/modules/theme/libkvitheme.cpp:121
 msgid "Apply theme - KVIrc"
 msgstr "Застосувати тему - KVIrc"
 
@@ -45,7 +46,7 @@ msgstr "Застосувати тему - KVIrc"
 msgid "Author"
 msgstr "Автор"
 
-#: src/modules/theme/libkvitheme.cpp:233
+#: src/modules/theme/libkvitheme.cpp:221
 msgid "Choose a file to save the screenshot to"
 msgstr "Виберіть файл для збереження скріншота."
 
@@ -84,8 +85,8 @@ msgstr "Ви дійсно хочете видалити \"%Q\" (версії %Q)
 msgid "Do you want to proceed with the installation ?"
 msgstr "Ви хочете продовжити установку?"
 
+#: src/modules/theme/libkvitheme.cpp:104
 #: src/modules/theme/ThemeManagementDialog.cpp:346
-#: src/modules/theme/libkvitheme.cpp:108
 msgid "Do you wish to apply theme \"%Q\" (version %Q)?"
 msgstr "Ви дійсно хочете застосувати тему \"%Q\" (версії %Q)?"
 
@@ -93,7 +94,7 @@ msgstr "Ви дійсно хочете застосувати тему \"%Q\" (�
 msgid "Error installing theme package: %Q"
 msgstr "Не можу встановити пакет теми: %Q"
 
-#: src/modules/theme/libkvitheme.cpp:248
+#: src/modules/theme/libkvitheme.cpp:236
 msgid "Error making screenshot"
 msgstr "Не можу зробити скріншот."
 
@@ -110,8 +111,8 @@ msgstr "Експортувати обрані теми в пакет для по
 msgid "Export Theme - KVIrc"
 msgstr "Експорт теми - KVIrc"
 
+#: src/modules/theme/libkvitheme.cpp:111
 #: src/modules/theme/ThemeManagementDialog.cpp:356
-#: src/modules/theme/libkvitheme.cpp:120
 #, fuzzy
 msgid "Failed to apply the specified theme: %1"
 msgstr "Не можу застосувати обрану тему: %1"
@@ -292,7 +293,8 @@ msgstr "Обраний файл не є пакетом теми KVIrc : %1"
 msgid "The selected file does not seem to be a valid KVIrc theme package"
 msgstr "Обрані файли не є пакетами теми KVIrc"
 
-#: src/modules/theme/libkvitheme.cpp:126 src/modules/theme/libkvitheme.cpp:169
+#: src/modules/theme/libkvitheme.cpp:118
+#: src/modules/theme/libkvitheme.cpp:157
 msgid "The theme package '%Q' does not exist"
 msgstr ""
 

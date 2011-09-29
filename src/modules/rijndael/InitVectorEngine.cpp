@@ -1,11 +1,10 @@
-//{{NO_DEPENDENCIES}}
 //=============================================================================
 //
-//   File : resource.h
-//   Creation date : Unknown by Szymon Stefanek
+//   File : InitVectorEngine.cpp
+//   Creation date : Sun Feb 6 2011 22:25:10 CEST by Fabio Bas
 //
-//   This toolbar is part of the KVirc irc client distribution
-//   Copyright (C) 2009 Szymon Stefanek (pragma at kvirc dot net)
+//   This file is part of the KVIrc irc client distribution
+//   Copyright (C) 2011 Fabio Bas (ctrlaltca at gmail dot com)
 //
 //   This program is FREE software. You can redistribute it and/or
 //   modify it under the terms of the GNU General Public License
@@ -23,20 +22,27 @@
 //
 //=============================================================================
 
-//
-#define IDD_ICON1                       100
-#define IDD_ICON2                       101
-#define IDD_ICON3                       102
-#define IDD_ICON4                       103
-#define IDD_ICON5                       104
+#include "InitVectorEngine.h"
 
-// Next default values for new objects
-//
-#ifdef APSTUDIO_INVOKED
-#ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        101
-#define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1000
-#define _APS_NEXT_SYMED_VALUE           101
-#endif
-#endif
+#include <stdlib.h>
+#include "KviTimeUtils.h"
+
+namespace InitVectorEngine
+{
+
+	bool bDidInit = false;
+
+	int fillRandomIV(unsigned char * pIn, int iLen)
+	{
+		if(!bDidInit)
+		{
+			srand((int)kvi_unixTime());
+			bDidInit = true;
+		}
+
+		for(int i=0;i<iLen;i++)
+			pIn[i] = (unsigned char)(rand() % 256);
+		
+		return iLen;
+	}
+};

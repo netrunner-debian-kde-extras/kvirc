@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: theme_it\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 03:05+0200\n"
-"PO-Revision-Date: 2011-03-18 17:17+0100\n"
+"POT-Creation-Date: 2011-05-29 17:59+0200\n"
+"PO-Revision-Date: 2011-05-29 18:18+0200\n"
 "Last-Translator: Elvio Basello <hell at hellvis69 dot netsons dot org>\n"
 "Language-Team: Italian <kde-i18n-it@kde.org>\n"
 "Language: it\n"
@@ -31,15 +31,16 @@ msgstr "Elimina Tema"
 #: src/modules/theme/ThemeManagementDialog.cpp:212
 #: src/modules/theme/ThemeManagementDialog.cpp:361
 msgid "<b><u>Current Installed Theme:</u> "
-msgstr ""
+msgstr "<b><u>Tema Installato:</u>"
 
 #: src/modules/theme/SaveThemeDialog.cpp:224
 msgid "Acquire Screenshot - KVIrc"
 msgstr "Acquisisci Screenshot - KVIrc"
 
+#: src/modules/theme/libkvitheme.cpp:103
+#: src/modules/theme/libkvitheme.cpp:112
 #: src/modules/theme/ThemeManagementDialog.cpp:345
 #: src/modules/theme/ThemeManagementDialog.cpp:357
-#: src/modules/theme/libkvitheme.cpp:107 src/modules/theme/libkvitheme.cpp:121
 msgid "Apply theme - KVIrc"
 msgstr "Applica tema - KVIrc"
 
@@ -48,7 +49,7 @@ msgstr "Applica tema - KVIrc"
 msgid "Author"
 msgstr "Autore"
 
-#: src/modules/theme/libkvitheme.cpp:233
+#: src/modules/theme/libkvitheme.cpp:221
 msgid "Choose a file to save the screenshot to"
 msgstr "Scegli un file per salvare lo screenshot"
 
@@ -87,8 +88,8 @@ msgstr "Sei sicuro di voler cancellare il tema \"%Q\" (versione %Q)?"
 msgid "Do you want to proceed with the installation ?"
 msgstr "Vuoi procedere con l'installazione?"
 
+#: src/modules/theme/libkvitheme.cpp:104
 #: src/modules/theme/ThemeManagementDialog.cpp:346
-#: src/modules/theme/libkvitheme.cpp:108
 msgid "Do you wish to apply theme \"%Q\" (version %Q)?"
 msgstr "Vuoi applicare il tema \"%Q\" (versione %Q)?"
 
@@ -96,7 +97,7 @@ msgstr "Vuoi applicare il tema \"%Q\" (versione %Q)?"
 msgid "Error installing theme package: %Q"
 msgstr "Errore durante l'installazione del tema: %Q"
 
-#: src/modules/theme/libkvitheme.cpp:248
+#: src/modules/theme/libkvitheme.cpp:236
 msgid "Error making screenshot"
 msgstr "Errore nella creazione dello screenshot"
 
@@ -113,8 +114,8 @@ msgstr "Esporta Temi Selezionati in Pacchetti Distribuibili"
 msgid "Export Theme - KVIrc"
 msgstr "Esporta Tema - KVIrc"
 
+#: src/modules/theme/libkvitheme.cpp:111
 #: src/modules/theme/ThemeManagementDialog.cpp:356
-#: src/modules/theme/libkvitheme.cpp:120
 msgid "Failed to apply the specified theme: %1"
 msgstr "Applicazione del tema specificato fallita: %1"
 
@@ -219,7 +220,7 @@ msgstr "Installa Tema Da Disco"
 
 #: src/modules/theme/WebThemeInterfaceDialog.cpp:42
 msgid "KVIrc : Download Themes"
-msgstr ""
+msgstr "KVIrc : Scarica Temi"
 
 #: src/modules/theme/SaveThemeDialog.cpp:173
 msgid "Make Screenshot Now"
@@ -296,7 +297,8 @@ msgid "The selected file does not seem to be a valid KVIrc theme package"
 msgstr ""
 "Il file selezionato non sembra essere un valido pacchetto tema per KVIrc"
 
-#: src/modules/theme/libkvitheme.cpp:126 src/modules/theme/libkvitheme.cpp:169
+#: src/modules/theme/libkvitheme.cpp:118
+#: src/modules/theme/libkvitheme.cpp:157
 msgid "The theme package '%Q' does not exist"
 msgstr "Il pacchetto tema '%Q' non esiste"
 

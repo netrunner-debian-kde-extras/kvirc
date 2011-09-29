@@ -250,13 +250,15 @@ bool SaveThemeDialog::saveTheme()
 	switch(KVI_OPTION_UINT(KviOption_uintOutputDatetimeFormat))
 	{
 		case 0:
-			szTmp = date.toString();
+			// this is the equivalent to an empty date.toString() call, but it's needed
+			// to ensure qt4 will use the default() locale and not the system() one
+			szTmp = QLocale().toString(date, "ddd MMM d hh:mm:ss yyyy");
 			break;
 		case 1:
 			szTmp = date.toString(Qt::ISODate);
 			break;
 		case 2:
-			szTmp = date.toString(Qt::SystemLocaleDate);
+			szTmp = date.toString(Qt::SystemLocaleShortDate);
 			break;
 	}
 	
@@ -301,10 +303,7 @@ bool SaveThemeDialog::saveTheme()
 		}
 	}
 
-	QString szMsg = __tr2qs_ctx("Theme saved successfully to ","theme");
-	QString szThemePath;
-	sto.getCompleteDirPath(szThemePath);
-	szMsg += szThemePath;
+	QString szMsg = __tr2qs_ctx("Theme saved successfully to %1","theme").arg(szAbsDir);
 
 	QMessageBox::information(this,__tr2qs_ctx("Save Theme - KVIrc","theme"),szMsg,QMessageBox::Ok,
 		QMessageBox::NoButton,QMessageBox::NoButton);

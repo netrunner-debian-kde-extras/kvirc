@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: options_ua\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 03:05+0200\n"
+"POT-Creation-Date: 2011-05-29 17:59+0200\n"
 "PO-Revision-Date: 2007-12-19 15:00+0200\n"
 "Last-Translator: Belyaev Stanislav <belyaev-st@yandex.ru>\n"
 "Language-Team:  Ukrainian\n"
@@ -22,8 +22,8 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1:2);\n"
 "10<=4 && (n%100<10 || n%100>=20) ? 1:2);\n"
 
-#: src/modules/options/OptionsWidget_avatar.cpp:72
 #: src/modules/options/OptionsWidget_dcc.cpp:285
+#: src/modules/options/OptionsWidget_avatar.cpp:72
 msgid " bytes"
 msgstr " байт"
 
@@ -42,12 +42,12 @@ msgstr " рядків"
 msgid " min"
 msgstr " хвилин"
 
-#: src/modules/options/OptionsWidget_ircView.cpp:157
-#: src/modules/options/OptionsWidget_ircView.cpp:159
 #: src/modules/options/OptionsWidget_lag.cpp:45
 #: src/modules/options/OptionsWidget_lag.cpp:56
-#: src/modules/options/OptionsWidget_dcc.cpp:276
+#: src/modules/options/OptionsWidget_ircView.cpp:157
+#: src/modules/options/OptionsWidget_ircView.cpp:159
 #: src/modules/options/OptionsWidget_connection.cpp:155
+#: src/modules/options/OptionsWidget_dcc.cpp:276
 msgid " msec"
 msgstr " мсек"
 
@@ -60,12 +60,12 @@ msgstr " рядків"
 msgid " requests"
 msgstr " запитів"
 
-#: src/modules/options/OptionsWidget_avatar.cpp:96
-#: src/modules/options/OptionsWidget_dcc.cpp:140
 #: src/modules/options/OptionsWidget_channel.cpp:121
-#: src/modules/options/OptionsWidget_ctcpFloodProtection.cpp:92
 #: src/modules/options/OptionsWidget_connection.cpp:85
 #: src/modules/options/OptionsWidget_connection.cpp:153
+#: src/modules/options/OptionsWidget_dcc.cpp:140
+#: src/modules/options/OptionsWidget_avatar.cpp:96
+#: src/modules/options/OptionsWidget_ctcpFloodProtection.cpp:92
 msgid " sec"
 msgstr " сек"
 
@@ -101,10 +101,10 @@ msgstr "&Новий Проксі"
 msgid "&New Server"
 msgstr "&Новий сервер"
 
-#: src/modules/options/OptionsWidgetContainer.cpp:101
 #: src/modules/options/OptionsDialog.cpp:230
 #: src/modules/options/OptionsWidget_identity.cpp:234
 #: src/modules/options/OptionsWidget_servers.cpp:383
+#: src/modules/options/OptionsWidgetContainer.cpp:101
 msgid "&OK"
 msgstr "&Ok"
 
@@ -1097,8 +1097,8 @@ msgstr ""
 "це тільки якщо ваша DCC передача зупиняється після сталого з'єднання й "
 "ніяких даних не передаються</center>"
 
-#: src/modules/options/OptionsWidget_dcc.cpp:331
 #: src/modules/options/OptionsWidget_query.cpp:82
+#: src/modules/options/OptionsWidget_dcc.cpp:331
 msgid ""
 "<center>This option causes a small notifier window to pop up in the low "
 "right corner of the screen when a new message is received and the KVIrc "
@@ -1664,7 +1664,7 @@ msgstr ""
 "<p><b>Зауваження:</b><br>Список повідомлень використає настроювання "
 "\"Зареєстрованих Користувачів\".</p>"
 
-#: src/modules/options/OptionsWidget_connection.cpp:252
+#: src/modules/options/OptionsWidget_connection.cpp:256
 msgid ""
 "<p><b>Warning:</b><br>This is a <b>non RFC 1413 compliant</b> ident daemon "
 "that implements only a limited subset of the Identification Protocol "
@@ -1674,7 +1674,7 @@ msgstr ""
 "ідентифікації й забезпечує тільки частина специфікації Протоколу "
 "Ідентифікації. Якщо можливо, установите реальний демон ідентифікації</p>"
 
-#: src/modules/options/OptionsWidget_connection.cpp:257
+#: src/modules/options/OptionsWidget_connection.cpp:261
 msgid ""
 "<p><b>Warning:</b><br>This is a <b>non RFC 1413 compliant</b> ident daemon "
 "that implements only a limited subset of the Identification Protocol "
@@ -1731,12 +1731,12 @@ msgstr "Активний високо-контрастний передній п
 msgid "Active High-Contrast Foreground (Secondary)"
 msgstr "Активний високо-контрастний передній план (вторинний)"
 
-#: src/modules/options/OptionsWidget_connection.cpp:204
+#: src/modules/options/OptionsWidget_connection.cpp:208
 #, fuzzy
 msgid "Active window"
 msgstr "Показувати в активному вікні"
 
-#: src/modules/options/OptionsWidget_textIcons.cpp:90
+#: src/modules/options/OptionsWidget_textIcons.cpp:94
 msgid "Add"
 msgstr "Додати"
 
@@ -1751,12 +1751,12 @@ msgid "Add Rule"
 msgstr "Додати правило"
 
 #: src/modules/options/OptionsWidget_servers.cpp:1005
-#: src/modules/options/OptionsWidget_identity.h:202
-#: src/modules/options/OptionsWidget_channel.h:64
 #: src/modules/options/OptionsWidget_connection.h:46
-#: src/modules/options/OptionsWidget_irc.h:57
 #: src/modules/options/OptionsWidget_dcc.h:59
 #: src/modules/options/OptionsWidget_dcc.h:103
+#: src/modules/options/OptionsWidget_irc.h:57
+#: src/modules/options/OptionsWidget_channel.h:64
+#: src/modules/options/OptionsWidget_identity.h:202
 msgid "Advanced"
 msgstr "Додатково"
 
@@ -1973,8 +1973,8 @@ msgstr "Відійшов:"
 
 #: src/modules/options/OptionsWidget_theme.cpp:164
 #: src/modules/options/OptionsWidget_theme.cpp:184
-#: src/modules/options/OptionsWidget_userList.h:46
 #: src/modules/options/OptionsWidget_windowList.h:79
+#: src/modules/options/OptionsWidget_userList.h:46
 msgid "Background"
 msgstr "Тло"
 
@@ -2004,9 +2004,9 @@ msgstr "Кольори тла:"
 msgid "Background image"
 msgstr "Фонове зображення"
 
+#: src/modules/options/OptionsWidget_ircView.cpp:54
 #: src/modules/options/OptionsWidget_userList.cpp:131
 #: src/modules/options/OptionsWidget_windowList.cpp:123
-#: src/modules/options/OptionsWidget_ircView.cpp:54
 msgid "Background image:"
 msgstr "Фонове зображення:"
 
@@ -2030,11 +2030,11 @@ msgstr "Використати адресу для IPv6 з'єднань:"
 msgid "Blend color:"
 msgstr "Підміли цвет, що:"
 
+#: src/modules/options/OptionsWidget_ircView.cpp:71
 #: src/modules/options/OptionsWidget_userList.cpp:148
 #: src/modules/options/OptionsWidget_notifier.cpp:61
 #: src/modules/options/OptionsWidget_windowList.cpp:140
 #: src/modules/options/OptionsWidget_input.cpp:63
-#: src/modules/options/OptionsWidget_ircView.cpp:71
 msgid "Bottom"
 msgstr "Знизу"
 
@@ -2062,17 +2062,19 @@ msgstr "CTCP відповіді"
 msgid "Cache IP address"
 msgstr "Кеширувати IP адреса"
 
-#: src/modules/options/OptionsWidgetContainer.cpp:109
-#: src/modules/options/OptionsDialog.cpp:245
 #: src/modules/options/OptionsWidget_nickserv.cpp:128
+#: src/modules/options/OptionsDialog.cpp:245
 #: src/modules/options/OptionsWidget_identity.cpp:96
 #: src/modules/options/OptionsWidget_identity.cpp:239
 #: src/modules/options/OptionsWidget_identity.cpp:952
 #: src/modules/options/OptionsWidget_servers.cpp:389
 #: src/modules/options/OptionsWidget_servers.cpp:1015
+#: src/modules/options/OptionsWidgetContainer.cpp:109
 msgid "Cancel"
 msgstr "О&тмена"
 
+#: src/modules/options/OptionsWidget_ircView.cpp:67
+#: src/modules/options/OptionsWidget_ircView.cpp:72
 #: src/modules/options/OptionsWidget_userList.cpp:144
 #: src/modules/options/OptionsWidget_userList.cpp:149
 #: src/modules/options/OptionsWidget_notifier.cpp:57
@@ -2081,8 +2083,6 @@ msgstr "О&тмена"
 #: src/modules/options/OptionsWidget_windowList.cpp:141
 #: src/modules/options/OptionsWidget_input.cpp:59
 #: src/modules/options/OptionsWidget_input.cpp:64
-#: src/modules/options/OptionsWidget_ircView.cpp:67
-#: src/modules/options/OptionsWidget_ircView.cpp:72
 msgid "Center"
 msgstr "По центрі"
 
@@ -2186,13 +2186,13 @@ msgstr "Очистити список"
 msgid "Close in tray"
 msgstr "Згортатись в трей при закритті вікна"
 
-#: src/modules/options/OptionsWidgetContainer.cpp:102
 #: src/modules/options/OptionsDialog.cpp:232
+#: src/modules/options/OptionsWidgetContainer.cpp:102
 msgid "Close this dialog, accepting all changes."
 msgstr "Закрити цей діалог, застосувавши всі зміни."
 
-#: src/modules/options/OptionsWidgetContainer.cpp:110
 #: src/modules/options/OptionsDialog.cpp:247
+#: src/modules/options/OptionsWidgetContainer.cpp:110
 msgid "Close this dialog, discarding all changes."
 msgstr "Закрити цей діалог, забувши про всі зміни."
 
@@ -2210,8 +2210,8 @@ msgstr "Застосувати всі зміни негайно."
 
 #: src/modules/options/OptionsWidget_notify.cpp:41
 #: src/modules/options/OptionsWidget_lag.cpp:43
+#: src/modules/options/OptionsWidget_connection.cpp:225
 #: src/modules/options/OptionsWidget_proxy.cpp:107
-#: src/modules/options/OptionsWidget_connection.cpp:221
 msgid "Configuration"
 msgstr "Конфігурація"
 
@@ -2240,7 +2240,7 @@ msgstr "Підключатися до цього сервера при стар�
 msgid "Connection"
 msgstr "З'єднання"
 
-#: src/modules/options/OptionsWidget_connection.cpp:205
+#: src/modules/options/OptionsWidget_connection.cpp:209
 #, fuzzy
 msgid "Console"
 msgstr "Вікна терміналів"
@@ -2340,7 +2340,7 @@ msgstr "Кодування тексту за замовчуванням:"
 msgid "Delay between attempts:"
 msgstr "Затримка між спробами:"
 
-#: src/modules/options/OptionsWidget_textIcons.cpp:94
+#: src/modules/options/OptionsWidget_textIcons.cpp:98
 msgid "Delete"
 msgstr "Видалити"
 
@@ -2406,7 +2406,7 @@ msgstr "Не масштабувати аватар якщо він менше з
 msgid "Do not send /WHO request"
 msgstr "Не посилати запити /WHO"
 
-#: src/modules/options/OptionsWidget_connection.cpp:206
+#: src/modules/options/OptionsWidget_connection.cpp:210
 #, fuzzy
 msgid "Do not show any identd messages"
 msgstr "Не офарблювати повідомлення користувачів"
@@ -2505,11 +2505,16 @@ msgstr "Включити визначення затримок"
 msgid "Enable default away message"
 msgstr "Повідомлення в режимі Відійшов за замовчуванням:"
 
-#: src/modules/options/OptionsWidget_connection.cpp:196
+#: src/modules/options/OptionsWidget_connection.cpp:197
+#, fuzzy
+msgid "Enable ident service"
+msgstr "Сервіс ідентифікації"
+
+#: src/modules/options/OptionsWidget_connection.cpp:199
 msgid "Enable ident service (bad practice on UNIX!)"
 msgstr "Включити сервіс ідентифікації (не рекомендується на UNIX!)"
 
-#: src/modules/options/OptionsWidget_connection.cpp:223
+#: src/modules/options/OptionsWidget_connection.cpp:227
 msgid "Enable ident service only while connecting to server"
 msgstr "Включити ident сервіс тільки на час підключення до сервера"
 
@@ -2531,7 +2536,7 @@ msgstr "Відключити мерехтіння вікна извещател�
 msgid "Enable notifier window flashing"
 msgstr "Відключити мерехтіння вікна извещателя"
 
-#: src/modules/options/OptionsWidget_connection.cpp:236
+#: src/modules/options/OptionsWidget_connection.cpp:240
 msgid "Enable service for IPv6"
 msgstr "Включити сервіс для IPv6"
 
@@ -2630,8 +2635,8 @@ msgstr ""
 msgid "Failed to start the download"
 msgstr "Не вдалося запустити завантаження"
 
-#: src/modules/options/OptionsWidget_userList.h:103
 #: src/modules/options/OptionsWidget_windowList.h:98
+#: src/modules/options/OptionsWidget_userList.h:103
 #: src/modules/options/OptionsWidget_ircView.h:70
 msgid "Features"
 msgstr "Можливості"
@@ -2676,15 +2681,15 @@ msgstr "Захист від флуда"
 
 #: src/modules/options/OptionsWidget_notifier.cpp:38
 #: src/modules/options/OptionsWidget_input.cpp:38
-#: src/modules/options/OptionsWidget_topicLabel.cpp:36
 #: src/modules/options/OptionsWidget_theme.cpp:182
+#: src/modules/options/OptionsWidget_topicLabel.cpp:36
 msgid "Font"
 msgstr "Шрифт"
 
+#: src/modules/options/OptionsWidget_ircView.cpp:51
 #: src/modules/options/OptionsWidget_userList.cpp:52
 #: src/modules/options/OptionsWidget_windowList.cpp:85
 #: src/modules/options/OptionsWidget_windowList.cpp:244
-#: src/modules/options/OptionsWidget_ircView.cpp:51
 msgid "Font:"
 msgstr "Шрифт:"
 
@@ -2704,8 +2709,8 @@ msgstr "Форсувати негайний вихід"
 msgid "Force language:"
 msgstr "Примусово вказати мова програми за замовчуванням:"
 
-#: src/modules/options/OptionsWidget_userList.h:67
 #: src/modules/options/OptionsWidget_windowList.h:64
+#: src/modules/options/OptionsWidget_userList.h:67
 msgid "Foreground"
 msgstr "Передній план"
 
@@ -2725,12 +2730,12 @@ msgstr "Стать:"
 
 #: src/modules/options/OptionsWidget_message.cpp:70
 #: src/modules/options/OptionsWidget_servers.cpp:259
-#: src/modules/options/OptionsWidget_identity.h:153
-#: src/modules/options/OptionsWidget_channel.h:52
-#: src/modules/options/OptionsWidget_theme.h:33
-#: src/modules/options/OptionsWidget_irc.h:43
 #: src/modules/options/OptionsWidget_dcc.h:46
 #: src/modules/options/OptionsWidget_dcc.h:89
+#: src/modules/options/OptionsWidget_irc.h:43
+#: src/modules/options/OptionsWidget_channel.h:52
+#: src/modules/options/OptionsWidget_theme.h:33
+#: src/modules/options/OptionsWidget_identity.h:153
 msgid "General"
 msgstr "Загальні"
 
@@ -2848,10 +2853,10 @@ msgstr ""
 msgid "Horizontal Alignment:"
 msgstr "Горизонтальне розташування:"
 
+#: src/modules/options/OptionsWidget_ircView.cpp:56
 #: src/modules/options/OptionsWidget_notifier.cpp:46
 #: src/modules/options/OptionsWidget_windowList.cpp:125
 #: src/modules/options/OptionsWidget_input.cpp:48
-#: src/modules/options/OptionsWidget_ircView.cpp:56
 msgid "Horizontal align:"
 msgstr "Горизонтальне розташування:"
 
@@ -2868,16 +2873,16 @@ msgstr ""
 msgid "ID3 tags' encoding"
 msgstr "Кодування ID3 тегів"
 
-#: src/modules/options/OptionsWidget_proxy.cpp:116
 #: src/modules/options/OptionsWidget_servers.cpp:670
+#: src/modules/options/OptionsWidget_proxy.cpp:116
 msgid "IP address:"
 msgstr "IP адреса:"
 
-#: src/modules/options/OptionsWidget_connection.cpp:245
+#: src/modules/options/OptionsWidget_connection.cpp:249
 msgid "IP stack treats IPv4 as part of IPv6 namespace"
 msgstr "Обробляти IPv4 як частина простору імен IPv6"
 
-#: src/modules/options/OptionsWidget_connection.cpp:235
+#: src/modules/options/OptionsWidget_connection.cpp:239
 msgid "IPv6 Settings"
 msgstr "Властивості IPv6"
 
@@ -2910,7 +2915,7 @@ msgstr "Id:"
 msgid "Ident Service"
 msgstr "Сервіс ідентифікації"
 
-#: src/modules/options/OptionsWidget_connection.cpp:226
+#: src/modules/options/OptionsWidget_connection.cpp:230
 msgid "Ident username:"
 msgstr "Ідентифікаційне ім'я:"
 
@@ -2920,8 +2925,8 @@ msgstr "Ідентифікаційне ім'я:"
 msgid "Identify Command"
 msgstr "Команда ідентифікації"
 
-#: src/modules/options/OptionsWidget_interfaceFeatures.cpp:61
 #: src/modules/options/OptionsWidget_servers.cpp:647
+#: src/modules/options/OptionsWidget_interfaceFeatures.cpp:61
 #: src/modules/options/OptionsWidget_identity.h:137
 msgid "Identity"
 msgstr "Ідентифікація"
@@ -2999,9 +3004,9 @@ msgstr "Невидимий (+i)"
 msgid "Invite messages"
 msgstr "Повідомлення про запрошення"
 
-#: src/modules/options/OptionsWidget_interfaceFeatures.cpp:63
 #: src/modules/options/OptionsWidget_servers.cpp:277
 #: src/modules/options/OptionsWidget_servers.cpp:848
+#: src/modules/options/OptionsWidget_interfaceFeatures.cpp:63
 msgid "Join Channels"
 msgstr "Входити на канали"
 
@@ -3052,11 +3057,11 @@ msgstr "Мова"
 msgid "Languages:"
 msgstr "Мови:"
 
+#: src/modules/options/OptionsWidget_ircView.cpp:65
 #: src/modules/options/OptionsWidget_userList.cpp:142
 #: src/modules/options/OptionsWidget_notifier.cpp:55
 #: src/modules/options/OptionsWidget_windowList.cpp:134
 #: src/modules/options/OptionsWidget_input.cpp:57
-#: src/modules/options/OptionsWidget_ircView.cpp:65
 msgid "Left"
 msgstr "Ліворуч"
 
@@ -3596,14 +3601,18 @@ msgstr "Таймаут скидання вихідних даних:"
 msgid "Output"
 msgstr "Висновок"
 
-#: src/modules/options/OptionsWidget_connection.cpp:202
+#: src/modules/options/OptionsWidget_connection.cpp:206
 #, fuzzy
 msgid "Output identd messages to:"
 msgstr "При виході з мережі:"
 
-#: src/modules/options/OptionsWidget_ircOutput.cpp:43
-#: src/modules/options/OptionsWidget_connection.cpp:199
+#: src/modules/options/OptionsWidget_connection.cpp:203
 msgid "Output verbosity"
+msgstr "Багатослівність висновку"
+
+#: src/modules/options/OptionsWidget_ircOutput.cpp:43
+#, fuzzy
+msgid "Output verbosity:"
 msgstr "Багатослівність висновку"
 
 #: src/modules/options/OptionsWidget_ctcpFloodProtection.cpp:104
@@ -3634,9 +3643,9 @@ msgstr "Затемненность батьківських вікон:"
 msgid "Part message:"
 msgstr "При виході з каналу"
 
-#: src/modules/options/OptionsWidget_proxy.cpp:120
 #: src/modules/options/OptionsWidget_servers.cpp:152
 #: src/modules/options/OptionsWidget_servers.cpp:571
+#: src/modules/options/OptionsWidget_proxy.cpp:120
 msgid "Password:"
 msgstr "Пароль:"
 
@@ -3706,8 +3715,8 @@ msgstr "Спливаюче вікно извещателя, коли корис�
 msgid "Popup the notifier window on highlighted messages"
 msgstr "Спливаюче вікно извещателя для подсвечиваємих повідомлень"
 
-#: src/modules/options/OptionsWidget_proxy.cpp:114
 #: src/modules/options/OptionsWidget_servers.cpp:656
+#: src/modules/options/OptionsWidget_proxy.cpp:114
 msgid "Port:"
 msgstr "Порт:"
 
@@ -3977,7 +3986,7 @@ msgstr "Запросити CTCP"
 msgid "Request missing avatars"
 msgstr "Запитувати відсутні аватари"
 
-#: src/modules/options/OptionsWidget_textIcons.cpp:98
+#: src/modules/options/OptionsWidget_textIcons.cpp:102
 msgid "Restore"
 msgstr ""
 
@@ -3985,11 +3994,11 @@ msgstr ""
 msgid "Restrict alert"
 msgstr "Обмежити попередження"
 
+#: src/modules/options/OptionsWidget_ircView.cpp:66
 #: src/modules/options/OptionsWidget_userList.cpp:143
 #: src/modules/options/OptionsWidget_notifier.cpp:56
 #: src/modules/options/OptionsWidget_windowList.cpp:135
 #: src/modules/options/OptionsWidget_input.cpp:58
-#: src/modules/options/OptionsWidget_ircView.cpp:66
 msgid "Right"
 msgstr "Праворуч"
 
@@ -4135,7 +4144,7 @@ msgstr "Сервер:"
 msgid "Servers"
 msgstr "Список серверів"
 
-#: src/modules/options/OptionsWidget_connection.cpp:230
+#: src/modules/options/OptionsWidget_connection.cpp:234
 msgid "Service port:"
 msgstr "Порт сервісу:"
 
@@ -4344,7 +4353,7 @@ msgstr "Текст"
 msgid "Text Encoding:"
 msgstr "Кодування:"
 
-#: src/modules/options/OptionsWidget_textIcons.h:36
+#: src/modules/options/OptionsWidget_textIcons.h:37
 msgid "Text icons"
 msgstr "Текстові іконки"
 
@@ -4461,9 +4470,9 @@ msgstr ""
 #: src/modules/options/OptionsWidget_notifier.cpp:146
 #, fuzzy
 msgid ""
-"This is an option for the impatient: it allows to forcibly and permanently "
-"disable the notifier window. Please note that if this option is not "
-"activated then the notifier will NOT popup even if all the other options "
+"This is an option for the impatient: it allows one to forcibly and "
+"permanently disable the notifier window. Please note that if this option is "
+"not activated then the notifier will NOT popup even if all the other options "
 "around specify to use it in response to particular events. Also note that "
 "this option will make all the /notifier.* commands fail silently."
 msgstr ""
@@ -4580,7 +4589,7 @@ msgstr ""
 "Цей розділ містить основні клієнтські настроювання,<br><p>такі як<b> звук, "
 "файли медіа, URL оброблювачі </b> і т.д...</p>"
 
-#: src/modules/options/OptionsWidget_textIcons.cpp:84
+#: src/modules/options/OptionsWidget_textIcons.cpp:88
 msgid ""
 "This table contains the text icon associations.<br>KVirc will use them to "
 "display the CTRL+I escape sequences and eventually the emoticons."
@@ -4588,6 +4597,8 @@ msgstr ""
 "Ця таблиця містить текстові іконки<br>KVirc will use them to display the CTRL"
 "+I escape sequences and eventually the emoticons."
 
+#: src/modules/options/OptionsWidget_ircView.cpp:64
+#: src/modules/options/OptionsWidget_ircView.cpp:69
 #: src/modules/options/OptionsWidget_userList.cpp:141
 #: src/modules/options/OptionsWidget_userList.cpp:146
 #: src/modules/options/OptionsWidget_notifier.cpp:54
@@ -4596,8 +4607,6 @@ msgstr ""
 #: src/modules/options/OptionsWidget_windowList.cpp:138
 #: src/modules/options/OptionsWidget_input.cpp:56
 #: src/modules/options/OptionsWidget_input.cpp:61
-#: src/modules/options/OptionsWidget_ircView.cpp:64
-#: src/modules/options/OptionsWidget_ircView.cpp:69
 msgid "Tile"
 msgstr "Замістити"
 
@@ -4630,11 +4639,11 @@ msgstr "Апплети панелі інструментів"
 msgid "Tools"
 msgstr "Інструменти"
 
+#: src/modules/options/OptionsWidget_ircView.cpp:70
 #: src/modules/options/OptionsWidget_userList.cpp:147
 #: src/modules/options/OptionsWidget_notifier.cpp:60
 #: src/modules/options/OptionsWidget_windowList.cpp:139
 #: src/modules/options/OptionsWidget_input.cpp:62
-#: src/modules/options/OptionsWidget_ircView.cpp:70
 msgid "Top"
 msgstr "Зверху"
 
@@ -4715,15 +4724,15 @@ msgstr "Використати \"broken bouncer hack\" для визначенн
 msgid "Use \"smart\" notify list manager"
 msgstr "Використати \"розумний\" менеджер списку повідомлень"
 
-#: src/modules/options/OptionsWidget_proxy.cpp:130
 #: src/modules/options/OptionsWidget_servers.cpp:721
+#: src/modules/options/OptionsWidget_proxy.cpp:130
 msgid "Use IPv6 protocol"
 msgstr "Використати IPv6 протокол"
 
-#: src/modules/options/OptionsWidget_sound.cpp:101
-#: src/modules/options/OptionsWidget_sound.cpp:126
 #: src/modules/options/OptionsWidget_textEncoding.cpp:51
 #: src/modules/options/OptionsWidget_textEncoding.cpp:59
+#: src/modules/options/OptionsWidget_sound.cpp:101
+#: src/modules/options/OptionsWidget_sound.cpp:126
 msgid "Use Language Encoding"
 msgstr "Використати кодування мови"
 
@@ -4912,11 +4921,11 @@ msgstr "Список користувачів"
 msgid "Username"
 msgstr "Ім'я користувача:"
 
-#: src/modules/options/OptionsWidget_proxy.cpp:118
 #: src/modules/options/OptionsWidget_identity.cpp:317
 #: src/modules/options/OptionsWidget_identity.cpp:932
 #: src/modules/options/OptionsWidget_servers.cpp:141
 #: src/modules/options/OptionsWidget_servers.cpp:559
+#: src/modules/options/OptionsWidget_proxy.cpp:118
 msgid "Username:"
 msgstr "Ім'я користувача:"
 
@@ -4936,10 +4945,10 @@ msgstr "Багатослівність висновку"
 msgid "Vertical Alignment:"
 msgstr "Вертикальне розташування:"
 
+#: src/modules/options/OptionsWidget_ircView.cpp:60
 #: src/modules/options/OptionsWidget_notifier.cpp:50
 #: src/modules/options/OptionsWidget_windowList.cpp:129
 #: src/modules/options/OptionsWidget_input.cpp:52
-#: src/modules/options/OptionsWidget_ircView.cpp:60
 msgid "Vertical align:"
 msgstr "Вертикальне розташування:"
 
@@ -5114,7 +5123,7 @@ msgstr "збереження,висновок"
 msgid "scripting,kvs,debug"
 msgstr "скріптінг,kvs,налагодження"
 
-#: src/modules/options/OptionsWidget_textIcons.h:38
+#: src/modules/options/OptionsWidget_textIcons.h:39
 msgid "smileys,emoticons"
 msgstr "смайли, іконки"
 
@@ -5126,13 +5135,13 @@ msgstr "звуки,події"
 msgid "sound,xmms,audio,play,amarok"
 msgstr "звук,xmms,аудіо,програвати,amarok"
 
-#: src/modules/options/OptionsWidget_theme.h:34
 #: src/modules/options/OptionsWidget_windowList.h:36
 #: src/modules/options/OptionsWidget_windowList.h:50
 #: src/modules/options/OptionsWidget_windowList.h:66
 #: src/modules/options/OptionsWidget_windowList.h:81
 #: src/modules/options/OptionsWidget_windowList.h:100
 #: src/modules/options/OptionsWidget_windowList.h:115
+#: src/modules/options/OptionsWidget_theme.h:34
 msgid "theme"
 msgstr "тема"
 
@@ -5145,14 +5154,14 @@ msgstr "тема, тло"
 msgid "theme,colors,messages,output"
 msgstr "тема,кольори,повідомлення,висновок"
 
-#: src/modules/options/OptionsWidget_message.h:41
 #: src/modules/options/OptionsWidget_ircView.h:37
 #: src/modules/options/OptionsWidget_ircView.h:51
+#: src/modules/options/OptionsWidget_message.h:41
 msgid "theme,colors,output"
 msgstr "тема,кольори,висновок"
 
-#: src/modules/options/OptionsWidget_notifier.h:34
 #: src/modules/options/OptionsWidget_input.h:34
+#: src/modules/options/OptionsWidget_notifier.h:34
 msgid "theme,colors,text"
 msgstr "тема,кольори,текст"
 
@@ -5200,7 +5209,7 @@ msgstr "час,Оцінка часу"
 msgid "tray,TRAYICON"
 msgstr ""
 
-#: src/modules/options/OptionsWidget_textIcons.cpp:238
+#: src/modules/options/OptionsWidget_textIcons.cpp:256
 msgid "unnamed"
 msgstr "без імені"
 

@@ -40,11 +40,75 @@
 #include "KviKvsEventManager.h"
 #include "KviKvsEventHandler.h"
 #include "KviLagMeter.h"
-
+#include "KviIrcUserEntry.h"
 #include <QRegExp>
 
 namespace KviKvsCoreFunctions
 {
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+	@doc:	gender
+	@type:
+		function
+	@title:
+		$gender
+	@short:
+		Returns the gender of the specified user
+	@syntax:
+		<string> $gender(<nickname:string>)
+	@description:
+		Returns the gender, or 'unknown' if not setted from remote user, of the specified IRC user IF it is known.[br]
+		The gender is known if [fnc]$isWellKnown[/fnc] returns 1.[br]
+		The gender is generally known if the user is on a channel with you
+		or has an open query with you.[br]
+		Detailed explaination:[br]
+		KVIrc has an internal database of users that are currently
+		visible by *this client*: this includes users on open channels
+		and queries.[br] The other IRC users are NOT in the database:
+		this means that KVIrc knows NOTHING about them and can't return
+		any information immediately. In this case this function will return
+		an EMPTY string.[br]
+		If a user is in the database, at least his nickname is known.[br]
+		The username and hostname are known only if the server provides that information
+		spontaneously or after a KVIrc request.[br]
+		KVIrc requests user information for all the users in open queries
+		and channels. This information takes some time to be retrieved,
+		in this interval of time KVIrc knows only the user's nickname.
+		This function will return the string "*" in this case.[br]
+	@seealso:
+		[fnc]$isWellKnown[/fnc], [fnc]$hostname[/fnc], [fnc]$realname[/fnc], [cmd]$username[/cmd]
+*/
+
+KVSCF(gender)
+{
+	QString szNick;
+
+	KVSCF_PARAMETERS_BEGIN
+		KVSCF_PARAMETER("nick",KVS_PT_NONEMPTYSTRING,0,szNick)
+	KVSCF_PARAMETERS_END
+
+	if(KVSCF_pContext->window()->console())
+	{
+		if(KVSCF_pContext->window()->console()->isConnected())
+		{
+			KviIrcUserEntry * e = KVSCF_pContext->window()->connection()->userDataBase()->find(szNick);
+			if(e)
+			{
+				QString szGender;
+				if(e->gender()==KviIrcUserEntry::Male) szGender = "male";
+				else if(e->gender()==KviIrcUserEntry::Female) szGender = "female";
+				else szGender = "unknown";
+				KVSCF_pRetBuffer->setString(szGender);
+				return true;
+			}
+		}
+	}
+
+	KVSCF_pRetBuffer->setNothing();
+	return true;
+}
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	/*
@@ -233,7 +297,7 @@ namespace KviKvsCoreFunctions
 	@short:
 		Returns the lag on the current server
 	@syntax:
-		<integer> lag
+		<integer> $lag
 	@description:
 		This function returns the lag in the current server, in milliseconds.[br]
 	*/
@@ -267,11 +331,11 @@ namespace KviKvsCoreFunctions
 			<float> $hptimestamp
 		@description:
 			Returns a high precision timestamp as a floaint point value.
-			The timestamp rappresent the number of seconds elapsed since
+			The timestamp represents the number of seconds elapsed since
 			a certain moment in the past. The number of seconds
 			contains a "high precision" fractional part. The "certain moment" definition
 			depends on the platform KVIrc is executed. This means that
-			this timestamp is totally useless to rappresent a time value
+			this timestamp is totally useless to represent a time value
 			but is useful to compute time intervals with sub-second precision.
 		@examples:
 			[example]
@@ -445,6 +509,64 @@ namespace KviKvsCoreFunctions
 		return true;
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////
+
+	/*
+		@doc:	isbot
+		@type:
+			function
+		@title:
+			$isbot
+		@short:
+			Returns 1 if the user is a bot. Otherwise return 0.
+		@syntax:
+			<string> $isbot(<nickname:string>)
+		@description:
+			Returns 1 if the user is a bot. Otherwise return 0.[br]
+			This info  is known if [fnc]$isWellKnown[/fnc] returns 1.[br]
+			This info is generally known if the user is on a channel with you
+			or has an open query with you.[br]
+			Detailed explaination:[br]
+			KVIrc has an internal database of users that are currently
+			visible by *this client*: this includes users on open channels
+			and queries.[br] The other IRC users are NOT in the database:
+			this means that KVIrc knows NOTHING about them and can't return
+			any information immediately. In this case this function will return
+			an EMPTY string.[br]
+			If a user is in the database, at least his nickname is known.[br]
+			The username and hostname are known only if the server provides that information
+			spontaneously or after a KVIrc request.[br]
+			KVIrc requests user information for all the users in open queries
+			and channels. This information takes some time to be retrieved,
+			in this interval of time KVIrc knows only the user's nickname.
+			This function will return the string "*" in this case.[br]
+		@seealso:
+			[fnc]$isWellKnown[/fnc], [fnc]$hostname[/fnc], [fnc]$realname[/fnc], [cmd]$username[/cmd]
+	*/
+
+	KVSCF(isBot)
+	{
+		QString szNick;
+
+		KVSCF_PARAMETERS_BEGIN
+			KVSCF_PARAMETER("nick",KVS_PT_NONEMPTYSTRING,0,szNick)
+		KVSCF_PARAMETERS_END
+
+		if(KVSCF_pContext->window()->console())
+		{
+			if(KVSCF_pContext->window()->console()->isConnected())
+			{
+				KviIrcUserEntry * e = KVSCF_pContext->window()->connection()->userDataBase()->find(szNick);
+				if(e)
+				{
+					KVSCF_pRetBuffer->setBoolean(e->isBot());
+					return true;
+				}
+			}
+		}
+		KVSCF_pRetBuffer->setNothing();
+		return true;
+	}
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	/*
@@ -484,7 +606,7 @@ namespace KviKvsCoreFunctions
 		@syntax:
 			<boolean> $isMainWindowMinimized()
 		@description:
-			Returns true if main KVirc window is minimized and false otherwise.
+			Returns true if main KVIrc window is minimized and false otherwise.
 	*/
 
 	KVSCF(isMainWindowMinimized)
@@ -541,7 +663,7 @@ namespace KviKvsCoreFunctions
 		@syntax:
 			<boolean> $isEventEnabled(<event_name:string>,<handler_name:string>)
 		@description:
-			Returns 1 if the event handler enabled
+			Returns 1 if the event handler is enabled.
 	*/
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -596,7 +718,7 @@ namespace KviKvsCoreFunctions
 		@syntax:
 			<boolean> $isNumeric(<data:variant>)
 		@short:
-			Finds whether a variable contains a rappresentation of a number
+			Finds whether a variable contains a representation of a number
 		@description:
 			Returns 1 if the <data> is an integer or a real number, 0 otherwise.
 	*/
@@ -661,7 +783,7 @@ namespace KviKvsCoreFunctions
 		@syntax:
 			<boolean> $istimer(<name:string>)
 		@description:
-			Returns 1 if the timer named <name> is actually running, else 0
+			Returns 1 if the timer named <name> is actually running, 0 otherwise.
 		@seealso:
 			[cmd]timer[/cmd], [cmd]killtimer[/cmd]
 	*/
@@ -821,11 +943,11 @@ namespace KviKvsCoreFunctions
 		@syntax:
 			<string> $lang([<type:string>])
 		@description:
-			Returns the short name of currently used language
+			Returns the short name of currently used language.[br]
 			Type <type> should be one of: [br]
-			"full"  - returns full locale name, such as ru_RU.UTF-8 (default)
-			"lang"  - return language name, such as "ru_RU"
-			"short" - returns only language group such as "ru"
+			"full"  - returns full locale name, such as ru_RU.UTF-8 (default).[br]
+			"lang"  - return language name, such as "ru_RU".[br]
+			"short" - returns only language group such as "ru".[br]
 	*/
 
 	KVSCF(lang)
@@ -909,7 +1031,7 @@ namespace KviKvsCoreFunctions
 		@syntax:
 			<string> $lf
 		@description:
-			Returns a line feed character
+			Returns a line feed character.
 		@seealso:
 			[fnc]$cr[/fnc], [fnc]$ascii[/fnc], [fnc]$char[/fnc]
 	*/
@@ -1010,7 +1132,7 @@ namespace KviKvsCoreFunctions
 		QString szText, szFlags;
 		KVSCF_PARAMETERS_BEGIN
 			KVSCF_PARAMETER("text",KVS_PT_STRING,KVS_PF_OPTIONAL,szText)
-			KVSM_PARAMETER("flags",KVS_PT_STRING,KVS_PF_OPTIONAL,szFlags)
+			KVSCF_PARAMETER("flags",KVS_PT_STRING,KVS_PF_OPTIONAL,szFlags)
 		KVSCF_PARAMETERS_END
 
 		bool bCaseSensitive = szFlags.indexOf('s',0,Qt::CaseInsensitive) != -1;

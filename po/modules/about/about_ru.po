@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: about_ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 03:05+0200\n"
+"POT-Creation-Date: 2011-05-29 17:59+0200\n"
 "PO-Revision-Date: 2010-01-24 11:05+0400\n"
 "Last-Translator: Igor Govorov <govorov.igor at gmail.com>\n"
 "Language-Team:  <ru@li.org>\n"
@@ -105,7 +105,8 @@ msgstr "Информация времени выполнения"
 msgid "Sources Date"
 msgstr "Дата исходных текстов программы"
 
-#: src/modules/about/AboutDialog.cpp:124 src/modules/about/AboutDialog.cpp:155
+#: src/modules/about/AboutDialog.cpp:124
+#: src/modules/about/AboutDialog.cpp:155
 msgid "System Name"
 msgstr "Система"
 

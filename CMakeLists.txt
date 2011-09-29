@@ -29,13 +29,16 @@ SET(PACKAGE "kvirc")
 SET(NICENAME "KVIrc")
 SET(VERSION_MAJOR "4")
 SET(VERSION_BRANCH "4.1")
-SET(VERSION_RELEASE "4.1.1")
+SET(VERSION_RELEASE "4.1.3")
+SET(VERSION_CODENAME "Equilibrium")
+# REMINDER: "Aria" is a candidate
 
 STRING(REGEX MATCH "[0-9]+$" VERSION_MINOR ${VERSION_BRANCH})
 
 SET(CMAKE_KVIRC_VERSION_MAJOR ${VERSION_MAJOR})
 SET(CMAKE_KVIRC_VERSION_BRANCH ${VERSION_BRANCH})
 SET(CMAKE_KVIRC_VERSION_RELEASE ${VERSION_RELEASE})
+SET(CMAKE_KVIRC_VERSION_CODENAME ${VERSION_CODENAME})
 SET(CMAKE_KVIRC_BUILD_COMMAND ${CMAKE_COMMAND})
 SET(CMAKE_KVIRC_BUILD_FLAGS)
 SET(CMAKE_KVIRC_BUILD_SYSTEM ${CMAKE_SYSTEM})
@@ -579,42 +582,10 @@ ELSE()
 ENDIF()
 
 ############################################################################
-# Crypto++ support: an alternative to openssl
-############################################################################
-
-OPTION(WANT_CRYPTOPP "Whether to use Crypto++ library" OFF)
-OPTION(WANT_OPENSSL "Whether to use OpenSSL library" ON)
-
-IF(WANT_CRYPTOPP)
-	FIND_PACKAGE(PkgConfig)
-
-	# for every os/distribution
-	pkg_check_modules(CRYPTOPP cryptopp>=5.6.0)
-
-	# for Debian and derivates
-	pkg_check_modules(CRYPTOPP libcrypto++>=5.6.0)
-	IF(CRYPTOPP_FOUND)
-		LIST(APPEND LIBS "-l${CRYPTOPP_LIBRARIES}")
-		INCLUDE_DIRECTORIES(${CRYPTOPP_INCLUDE_DIR})
-		SET(COMPILE_CRYPTOPP_SUPPORT 1)
-		SET(CMAKE_STATUS_CRYPTOPP_SUPPORT "Yes")
-	ELSE()
-		LIST(APPEND LIBS "-lcryptopp")
-		MESSAGE("     WARNING: YOU ENABLED WITH_CRYPTOPP BUT YOUR SYSTEM DOESN'T PROVIDE")
-		MESSAGE("              A .pc FILE FOR Crypto++.")
-		MESSAGE("              THIS BUILD MIGHT FAIL, MAKE SURE Crypto++ IS INSTALLED AND IT CAN")
-		MESSAGE("              BE LINKED AGAINST IT WITH -lcryptopp.")
-		SET(COMPILE_CRYPTOPP_SUPPORT 1)
-		SET(CMAKE_STATUS_CRYPTOPP_SUPPORT "Yes (library not found)")
-	ENDIF()
-	ADD_DEFINITIONS("-fexceptions")
-ELSE()
-	SET(CMAKE_STATUS_CRYPTOPP_SUPPORT "No")
-ENDIF()
-
-############################################################################
 # OpenSSL support (Secure Sockets, Certificates, Digests etc...)
 ############################################################################
+
+OPTION(WANT_OPENSSL "Whether to compile OpenSSL support" ON)
 
 IF(WANT_OPENSSL)
 	FIND_PACKAGE(OpenSSL)
@@ -1271,7 +1242,7 @@ MESSAGE(STATUS "   X11 Support                 : ${CMAKE_STATUS_X11_SUPPORT}")
 #MESSAGE(STATUS "   PCH Support                : ${CMAKE_STATUS_PCH_SUPPORT}")
 MESSAGE(STATUS "   Qt-DBus Support             : ${CMAKE_STATUS_QTDBUS_SUPPORT}")
 MESSAGE(STATUS "   Qt-WebKit Support           : ${CMAKE_STATUS_QTWEBKIT_SUPPORT}")
-MESSAGE(STATUS "   Qt-Svg Support           : ${CMAKE_STATUS_QTSVG_SUPPORT}")
+MESSAGE(STATUS "   Qt-Svg Support              : ${CMAKE_STATUS_QTSVG_SUPPORT}")
 MESSAGE(STATUS "   KDE4 Support                : ${CMAKE_STATUS_KDE4_SUPPORT}")
 MESSAGE(STATUS "   IPv6 Support                : ${CMAKE_STATUS_IPV6_SUPPORT}")
 MESSAGE(STATUS "   Pseudo-Transparency Support : ${CMAKE_STATUS_TRANSPARENCY_SUPPORT}")
@@ -1280,7 +1251,6 @@ MESSAGE(STATUS "   Audio Backends              : ${CMAKE_STATUS_AUDIO_BACKENDS}"
 MESSAGE(STATUS "Cryptography:")
 MESSAGE(STATUS "   Crypt Support And Engines   : ${CMAKE_STATUS_CRYPT_SUPPORT}")
 MESSAGE(STATUS "   OpenSSL Support             : ${CMAKE_STATUS_SSL_SUPPORT}")
-MESSAGE(STATUS "   Crypto++ Support            : ${CMAKE_STATUS_CRYPTOPP_SUPPORT}")
 MESSAGE(STATUS "Scripting:")
 MESSAGE(STATUS "   Perl Support                : ${CMAKE_STATUS_PERL_SUPPORT}")
 MESSAGE(STATUS "   Python Support              : ${CMAKE_STATUS_PYTHON_SUPPORT}")
@@ -1296,7 +1266,7 @@ MESSAGE(STATUS "   GetText Messages Tidying    : ${CMAKE_STATUS_MESSAGE_TIDY}")
 #MESSAGE(STATUS "   Generate int. help files    : ${CMAKE_STATUS_GEN_USERDOC}")
 MESSAGE(STATUS "   Doxygen Support             : ${CMAKE_STATUS_DOXYGEN_SUPPORT}")
 MESSAGE(STATUS " ")
-MESSAGE(STATUS "Build Date                  : ${CMAKE_KVIRC_BUILD_DATE}")
+MESSAGE(STATUS "Build Date                     : ${CMAKE_KVIRC_BUILD_DATE}")
 MESSAGE(STATUS " ")
 IF(MSVC)
 	MESSAGE(STATUS "I'm ready to build KVIrc for you: please type 'nmake' now...")
