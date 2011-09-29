@@ -142,7 +142,10 @@ void KviQueryWindow::getWindowListTipText(QString & szBuffer)
 {
 	QString szText;
 	if(!connection())
-		szBuffer = __tr2qs("[Dead Query]");
+	{
+		szBuffer = __tr2qs("[Dead query]");
+		return;
+	}
 
 	KviIrcUserEntry * pEntry = connection()->userDataBase()->find(m_szName);
 	if(pEntry)
@@ -191,10 +194,12 @@ QString KviQueryWindow::getInfoLabelText()
 
 				szTmp += "\n";
 
-				connection()->getCommonChannels(m_szName,szChans,0);
-				szTmp += __tr2qs("Common channels: %2").arg(szChans);
+				if(connection()->getCommonChannels(m_szName,szChans,0))
+					szTmp += __tr2qs("Common channels: %2").arg(szChans);
+				else
+					szTmp += __tr2qs("No common channels");
 			} else {
-				szTmp = __tr2qs("[Dead Query]");
+				szTmp = __tr2qs("[Dead query]");
 			}
 		}
 	}
@@ -257,9 +262,6 @@ void KviQueryWindow::loadProperties(KviConfigurationFile * pCfg)
 	def.append((iWidth * 25) / 100);
 	QList<int> sizes = pCfg->readIntListEntry("Splitter",def);
 	m_pSplitter->setSizes(sizes);
-	m_pIrcView->resize(sizes.at(0), m_pIrcView->height());
-	m_pUserListView->resize(sizes.at(1), m_pUserListView->height());
-	m_pSplitter->setStretchFactor(0,0);
 	m_pSplitter->setStretchFactor(0,1);
 
 	showListView(pCfg->readBoolEntry("UserListViewVisible",false));

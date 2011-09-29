@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: register_de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 03:05+0200\n"
+"POT-Creation-Date: 2011-05-29 17:59+0200\n"
 "PO-Revision-Date: 2010-08-12 23:57+0200\n"
 "Last-Translator: Markus Rennings <kvirc@mrmx.de>\n"
 "Language-Team: German <>\n"
@@ -224,21 +224,21 @@ msgstr "Alle Eigenschaften..."
 msgid "Avatar"
 msgstr "Avatar"
 
-#: src/modules/reguser/RegisteredUsersDialog.cpp:807
+#: src/modules/reguser/RegisteredUsersDialog.cpp:808
 msgid "Can't export the registered users database: Write error."
 msgstr ""
 "Kann die registrierte-Benutzer-Datenbank nicht exportieren: Schreibfehler."
 
-#: src/modules/reguser/RegisteredUsersDialog.cpp:920
+#: src/modules/reguser/RegisteredUsersDialog.cpp:921
 msgid "Can't import the registered users database: Read error."
 msgstr ""
 "Kann die registrierte-Benutzer-Datenbank nicht importieren: Lesefehler."
 
-#: src/modules/reguser/RegisteredUsersDialog.cpp:729
+#: src/modules/reguser/RegisteredUsersDialog.cpp:730
 msgid "Can't open file %Q for writing."
 msgstr "Kann Datei %Q nicht zum Schreiben öffnen."
 
-#: src/modules/reguser/RegisteredUsersDialog.cpp:833
+#: src/modules/reguser/RegisteredUsersDialog.cpp:834
 #, c-format
 msgid "Can't open file %s for reading."
 msgstr "Kann Datei %s nicht zum Lesen öffnen."
@@ -254,8 +254,8 @@ msgstr "Abbrechen"
 msgid "Channel: %1%2@%3"
 msgstr "Channel: %1%2@%3"
 
-#: src/modules/reguser/RegisteredUsersDialog.cpp:722
-#: src/modules/reguser/RegisteredUsersDialog.cpp:826
+#: src/modules/reguser/RegisteredUsersDialog.cpp:723
+#: src/modules/reguser/RegisteredUsersDialog.cpp:827
 msgid "Choose a Filename - KVIrc"
 msgstr "Dateinamen auswählen - KVIrc"
 
@@ -265,10 +265,10 @@ msgid "Comment:"
 msgstr "Kommentar:"
 
 #: src/modules/reguser/RegisteredUsersDialog.cpp:523
-#: src/modules/reguser/RegisteredUsersDialog.cpp:526
 #: src/modules/reguser/RegisteredUsersDialog.cpp:527
-#: src/modules/reguser/RegisteredUsersDialog.cpp:529
-#: src/modules/reguser/RegisteredUsersDialog.cpp:531
+#: src/modules/reguser/RegisteredUsersDialog.cpp:528
+#: src/modules/reguser/RegisteredUsersDialog.cpp:530
+#: src/modules/reguser/RegisteredUsersDialog.cpp:532
 msgid "Default"
 msgstr "Standard"
 
@@ -403,7 +403,7 @@ msgstr "Nickname:"
 msgid "No comment set"
 msgstr "Kein Kommentar eingegeben"
 
-#: src/modules/reguser/RegisteredUsersDialog.cpp:716
+#: src/modules/reguser/RegisteredUsersDialog.cpp:717
 msgid "No entries selected."
 msgstr "Keine Eintrge ausgewählt."
 
@@ -520,14 +520,14 @@ msgstr "Schritt 4: Benachrichtigungsliste"
 msgid "Store an avatar for this user"
 msgstr "Ein Avatar für diesen Benutzer speichern"
 
-#: src/modules/reguser/RegisteredUsersDialog.cpp:851
+#: src/modules/reguser/RegisteredUsersDialog.cpp:852
 #, c-format
 msgid "The file %s contains an invalid registered users database version."
 msgstr ""
 "Die Datei %s enthält eine ungltige Version der registrierte-Benutzer-"
 "Datenbank."
 
-#: src/modules/reguser/RegisteredUsersDialog.cpp:844
+#: src/modules/reguser/RegisteredUsersDialog.cpp:845
 #, c-format
 msgid "The file %s doesn't appear to be a valid registered users database."
 msgstr ""

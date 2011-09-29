@@ -43,12 +43,12 @@
 		virtual bool show();
 		virtual bool minimize();
 		virtual bool hide();
-		virtual bool prev() { notImplemented(); };
-		virtual bool next() { notImplemented(); };
-		virtual bool play() { notImplemented(); };
-		virtual bool stop() { notImplemented(); };
-		virtual bool pause() { notImplemented(); };
-		virtual QString mrl() { notImplemented(); };
+		virtual bool prev() { notImplemented(); return false; };
+		virtual bool next() { notImplemented(); return false; };
+		virtual bool play() { notImplemented(); return false; };
+		virtual bool stop() { notImplemented(); return false; };
+		virtual bool pause() { notImplemented(); return false; };
+		virtual QString mrl() { notImplemented(); return QString(); };
 		virtual MpInterface::PlayerStatus status();
 	protected:
 		QString get_window_title();

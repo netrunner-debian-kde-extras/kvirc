@@ -74,6 +74,7 @@
 #include <QDateTime>
 #include <QTextDocument>
 #include <QByteArray>
+#include <QLocale>
 
 extern KviNickServRuleSet * g_pNickServRuleSet;
 
@@ -900,7 +901,7 @@ void KviIrcServerParser::parseLiteralPrivmsg(KviIrcMessage *msg)
 			if(KVS_TRIGGER_EVENT_4_HALTED(KviEvent_OnQueryMessage,query,szNick,szUser,szHost,szMsgText))
 				msg->setHaltOutput();
 
-			if(!KVI_OPTION_STRING(KviOption_stringOnQueryMessageSound).isEmpty() && query!=g_pActiveWindow)
+			if(!KVI_OPTION_STRING(KviOption_stringOnQueryMessageSound).isEmpty() && !query->hasAttention())
 			{
 				// KviKvsScript does NOT take parameters ownership
 				KviKvsVariantList soundParams(new KviKvsVariant(KVI_OPTION_STRING(KviOption_stringOnQueryMessageSound)));
@@ -944,8 +945,7 @@ void KviIrcServerParser::parseLiteralPrivmsg(KviIrcMessage *msg)
 					msg->setHaltOutput();
 
 			// we don't have a query here!
-			//if(!KVI_OPTION_STRING(KviOption_stringOnQueryMessageSound).isEmpty() && query!=g_pActiveWindow)
-			if(!KVI_OPTION_STRING(KviOption_stringOnQueryMessageSound).isEmpty() && console!=g_pActiveWindow)
+			if(!KVI_OPTION_STRING(KviOption_stringOnQueryMessageSound).isEmpty() && !console->hasAttention())
 			{
 				// same as above
 				KviKvsVariantList soundParams(new KviKvsVariant(KVI_OPTION_STRING(KviOption_stringOnQueryMessageSound)));
@@ -1151,9 +1151,19 @@ void KviIrcServerParser::parseLiteralNotice(KviIrcMessage *msg)
 			{
 				if(query)
 					goto output_to_query_window; // use the query unconditionally
-			
-				KviWindow * pOut = KVI_OPTION_BOOL(KviOption_boolServicesNoticesToActiveWindow) ?
-					console->activeWindow() : (KviWindow *)(console);
+
+
+				KviWindow * pOut = (KviWindow *)(console);
+
+				if(KVI_OPTION_BOOL(KviOption_boolServicesNoticesToActiveWindow))
+				{
+					KviWindow* aWin = console->activeWindow();
+					if(aWin && (aWin->type() == KviWindow::Channel
+						|| aWin->type() == KviWindow::Console
+						|| aWin->type() == KviWindow::Query)
+					)
+						pOut = aWin;
+				}
 				pOut->output(KVI_OUT_NICKSERV,"\r!n\r%Q\r [%Q@\r!h\r%Q\r]: %Q",&szNick,&szUser,&szHost,&szMsgText);
 			}
 			// exec the rule
@@ -1176,8 +1186,18 @@ void KviIrcServerParser::parseLiteralNotice(KviIrcMessage *msg)
 				if(query)
 					goto output_to_query_window; // use the query unconditionally
 
-				KviWindow * pOut = KVI_OPTION_BOOL(KviOption_boolServicesNoticesToActiveWindow) ?
-					console->activeWindow() : (KviWindow *)(console);
+
+				KviWindow * pOut = (KviWindow *)(console);
+
+				if(KVI_OPTION_BOOL(KviOption_boolServicesNoticesToActiveWindow))
+				{
+					KviWindow* aWin = console->activeWindow();
+					if(aWin && (aWin->type() == KviWindow::Channel
+						|| aWin->type() == KviWindow::Console
+						|| aWin->type() == KviWindow::Query)
+					)
+						pOut = aWin;
+				}
 				pOut->output(KVI_OUT_NICKSERV,"\r!n\r%Q\r [%Q@\r!h\r%Q\r]: %Q",&szNick,&szUser,&szHost,&szMsgText);
 			}
 			return;
@@ -1194,8 +1214,18 @@ void KviIrcServerParser::parseLiteralNotice(KviIrcMessage *msg)
 				if(query)
 					goto output_to_query_window; // use the query unconditionally
 
-				KviWindow * pOut = KVI_OPTION_BOOL(KviOption_boolServicesNoticesToActiveWindow) ?
-					console->activeWindow() : (KviWindow *)(console);
+
+				KviWindow * pOut = (KviWindow *)(console);
+
+				if(KVI_OPTION_BOOL(KviOption_boolServicesNoticesToActiveWindow))
+				{
+					KviWindow* aWin = console->activeWindow();
+					if(aWin && (aWin->type() == KviWindow::Channel
+						|| aWin->type() == KviWindow::Console
+						|| aWin->type() == KviWindow::Query)
+					)
+						pOut = aWin;
+				}
 				pOut->output(KVI_OUT_CHANSERV,"\r!n\r%Q\r [%Q@\r!h\r%Q\r]: %Q",&szNick,&szUser,&szHost,&szMsgText);
 			}
 			return;
@@ -1212,8 +1242,18 @@ void KviIrcServerParser::parseLiteralNotice(KviIrcMessage *msg)
 				if(query)
 					goto output_to_query_window; // use the query unconditionally
 
-				KviWindow * pOut = KVI_OPTION_BOOL(KviOption_boolServicesNoticesToActiveWindow) ?
-					console->activeWindow() : (KviWindow *)(console);
+				KviWindow * pOut = (KviWindow *)(console);
+
+				if(KVI_OPTION_BOOL(KviOption_boolServicesNoticesToActiveWindow))
+				{
+					KviWindow* aWin = console->activeWindow();
+					if(aWin && (aWin->type() == KviWindow::Channel
+						|| aWin->type() == KviWindow::Console
+						|| aWin->type() == KviWindow::Query)
+					)
+						pOut = aWin;
+				}
+
 				pOut->output(KVI_OUT_MEMOSERV,"\r!n\r%Q\r [%Q@\r!h\r%Q\r]: %Q",&szNick,&szUser,&szHost,&szMsgText);
 			}
 			return;
@@ -1396,8 +1436,18 @@ output_to_query_window:
 			//UNKNOWN NOTICE TYPE
 			if(!msg->haltOutput())
 			{
-				KviWindow * pOut = KVI_OPTION_BOOL(KviOption_boolOperatorMessagesToActiveWindow) ?
-					console->activeWindow() : (KviWindow *)(console);
+				KviWindow * pOut = (KviWindow *)(console);
+
+				if(KVI_OPTION_BOOL(KviOption_boolExternalMessagesToActiveWindow))
+				{
+					KviWindow* aWin = console->activeWindow();
+					if(aWin && (aWin->type() == KviWindow::Channel
+						|| aWin->type() == KviWindow::Console
+						|| aWin->type() == KviWindow::Query)
+					)
+						pOut = aWin;
+				}
+
 				QString szBroad;
 				QString szMsgText = msg->connection()->decodeText(msg->safeTrailing());
 				szBroad = QString("[>> %1] %2").arg(szOriginalTarget,szMsgText);
@@ -1465,13 +1515,15 @@ void KviIrcServerParser::parseLiteralTopic(KviIrcMessage *msg)
 	switch(KVI_OPTION_UINT(KviOption_uintOutputDatetimeFormat))
 	{
 		case 0:
-			szTmp = date.toString();
+			// this is the equivalent to an empty date.toString() call, but it's needed
+			// to ensure qt4 will use the default() locale and not the system() one
+			szTmp = QLocale().toString(date, "ddd MMM d hh:mm:ss yyyy");
 			break;
 		case 1:
 			szTmp = date.toString(Qt::ISODate);
 			break;
 		case 2:
-			szTmp = date.toString(Qt::SystemLocaleDate);
+			szTmp = date.toString(Qt::SystemLocaleShortDate);
 			break;
 	}
 	chan->topicWidget()->setTopicSetAt(szTmp);
@@ -1534,6 +1586,9 @@ void KviIrcServerParser::parseLiteralNick(KviIrcMessage *msg)
 	{
 		if(console->connection())
 		{
+			if(!msg->haltOutput())
+				console->output(KVI_OUT_NICK,__tr2qs("You have changed your nickname to %Q"),&szNewNick);
+			
 			// just update all the captions : we have changed OUR nick
 			for(
 					KviQueryWindow * q = console->connection()->queryList()->first();

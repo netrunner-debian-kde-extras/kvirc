@@ -151,7 +151,7 @@ KviRegisteredUserDataBase::~KviRegisteredUserDataBase()
 
 KviRegisteredUser * KviRegisteredUserDataBase::addUser(const QString & name)
 {
-	if(name.isEmpty()) return false;
+	if(name.isEmpty()) return 0;
 	if(m_pUserDict->find(name))return 0;
 	KviRegisteredUser * u = new KviRegisteredUser(name);
 	m_pUserDict->replace(u->name(),u); //u->name() because we're NOT copying keys!
@@ -161,7 +161,7 @@ KviRegisteredUser * KviRegisteredUserDataBase::addUser(const QString & name)
 
 KviRegisteredUserGroup * KviRegisteredUserDataBase::addGroup(const QString & name)
 {
-	if(name.isEmpty()) return false;
+	if(name.isEmpty()) return 0;
 	if(m_pGroupDict->find(name))return 0;
 	KviRegisteredUserGroup * pGroup = new KviRegisteredUserGroup(name);
 	m_pGroupDict->replace(pGroup->name(),pGroup); //u->name() because we're NOT copying keys!
@@ -209,7 +209,7 @@ KviRegisteredUser * KviRegisteredUserDataBase::addMask(KviRegisteredUser * u,Kvi
 			if(*(m->mask()) == *mask)
 			{
 				delete mask;
-                mask = 0;
+				mask = 0;
 				return m->user();
 			}
 		}
@@ -226,7 +226,7 @@ KviRegisteredUser * KviRegisteredUserDataBase::addMask(KviRegisteredUser * u,Kvi
 				if(*(m->mask()) == *mask)
 				{
 					delete mask;
-                    mask = 0;
+					mask = 0;
 					return m->user();
 				}
 			}
@@ -240,7 +240,7 @@ KviRegisteredUser * KviRegisteredUserDataBase::addMask(KviRegisteredUser * u,Kvi
 			{
 				qDebug(" Ops...got an incoherent regusers action...recovered ?");
 				delete l;
-                l = 0;
+				l = 0;
 			} else {
 				append_mask_to_list(l,u,mask);
 				m_pMaskDict->insert(mask->nick(),l);
@@ -413,7 +413,7 @@ KviRegisteredUser * KviRegisteredUserDataBase::findMatchingUser(const QString & 
 KviRegisteredUserMask * KviRegisteredUserDataBase::findMatchingMask(const QString & nick,const QString &user,const QString & host)
 {
 	// first lookup the nickname in the maskDict
-	if(nick.isEmpty()) return false;
+	if(nick.isEmpty()) return 0;
 	KviRegisteredUserMaskList * l = m_pMaskDict->find(nick);
 	if(l)
 	{

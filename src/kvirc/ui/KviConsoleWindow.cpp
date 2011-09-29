@@ -124,6 +124,7 @@ KviConsoleWindow::KviConsoleWindow(KviMainWindow * lpFrm,int iFlags)
 
 	KviTalToolTip::add(m_pAddressEdit,__tr2qs("Current IRC URI"));
 	connect(m_pAddressEdit,SIGNAL(activated(const QString & )),this,SLOT(ircUriChanged(const QString & )));
+	connect(m_pAddressEdit,SIGNAL(returnPressed(const QString & )),this,SLOT(ircUriChanged(const QString & )));
 	connect(g_pApp,SIGNAL(recentUrlsChanged()),this,SLOT(recentUrlsChanged()));
 
 	m_pSplitter = new KviTalSplitter(Qt::Horizontal,this);
@@ -159,17 +160,19 @@ void KviConsoleWindow::recentUrlsChanged()
 		QStringList::Iterator it = KVI_OPTION_STRINGLIST(KviOption_stringlistRecentIrcUrls).begin();
 		it != KVI_OPTION_STRINGLIST(KviOption_stringlistRecentIrcUrls).end();
 		++it
-			) {
+	) {
 		m_pAddressEdit->addItem(*(g_pIconManager->getSmallIcon(KviIconManager::Url)),*it);
 	}
-//	m_pAddressEdit->setCurrentText(cur);
+
 	int i = m_pAddressEdit->findText(cur);
-    if (i != -1)m_pAddressEdit->setCurrentIndex(i);
-	else
+	if (i != -1)
 	{
-		if (m_pAddressEdit->isEditable())m_pAddressEdit->setEditText(cur);
+		m_pAddressEdit->setCurrentIndex(i);
+	} else {
+		if (m_pAddressEdit->isEditable())
+			m_pAddressEdit->setEditText(cur);
 		else
-	    m_pAddressEdit->setItemText(m_pAddressEdit->currentIndex(), cur);
+			m_pAddressEdit->setItemText(m_pAddressEdit->currentIndex(), cur);
 	}
 }
 
@@ -395,9 +398,6 @@ void KviConsoleWindow::loadProperties(KviConfigurationFile *cfg)
 	def.append((iWidth * 25) / 100);
 	QList<int> sizes=cfg->readIntListEntry("Splitter",def);
 	m_pSplitter->setSizes(sizes);
-	m_pIrcView->resize(sizes.at(0), m_pIrcView->height());
-	m_pNotifyListView->resize(sizes.at(1), m_pNotifyListView->height());
-	m_pSplitter->setStretchFactor(0,0);
 	m_pSplitter->setStretchFactor(0,1);
 
 	KviWindow::loadProperties(cfg);
@@ -417,12 +417,15 @@ KviWindow * KviConsoleWindow::activeWindow()
 	return this;
 }
 
-void KviConsoleWindow::ircUriChanged(const QString & text){
-	if(KviIrcUrl::run(text,KviIrcUrl::CurrentContext,this) & KviIrcUrl::InvalidProtocol)
+void KviConsoleWindow::ircUriChanged(const QString & text)
+{
+	int iStatus = KviIrcUrl::run(text,KviIrcUrl::CurrentContext,this);
+	if(iStatus & KviIrcUrl::InvalidProtocol || iStatus & KviIrcUrl::InvalidUrl)
 	{
 		KviMessageBox::warning(__tr2qs("KVIrc can accept only irc://, irc6://, ircs:// or irc6s:// URL's\n"
 				"Your URL is invalid. Check spelling and try again"));
 	}
+	m_pInput->setFocus();
 }
 
 void KviConsoleWindow::updateUri()
@@ -447,14 +450,16 @@ void KviConsoleWindow::updateUri()
 			}
 		}
 	}
-//	m_pAddressEdit->setCurrentText(uri);
+
 	int i = m_pAddressEdit->findText(uri);
-    if (i != -1)m_pAddressEdit->setCurrentIndex(i);
-	else
+	if (i != -1)
 	{
-		if (m_pAddressEdit->isEditable())m_pAddressEdit->setEditText(uri);
+		m_pAddressEdit->setCurrentIndex(i);
+	} else {
+		if (m_pAddressEdit->isEditable())
+			m_pAddressEdit->setEditText(uri);
 		else
-	    m_pAddressEdit->setItemText(m_pAddressEdit->currentIndex(), uri);
+			m_pAddressEdit->setItemText(m_pAddressEdit->currentIndex(), uri);
 	}
 }
 
@@ -544,7 +549,7 @@ void KviConsoleWindow::closeEvent(QCloseEvent *e)
 // internal helper for applyHighlighting
 int KviConsoleWindow::triggerOnHighlight(KviWindow * pWnd, int iType, const QString & szNick, const QString & szUser, const QString & szHost, const QString & szMsg, const QString & szTrigger)
 {
-	if(!KVI_OPTION_STRING(KviOption_stringOnHighlightedMessageSound).isEmpty() && pWnd != g_pActiveWindow)
+	if(!KVI_OPTION_STRING(KviOption_stringOnHighlightedMessageSound).isEmpty() && pWnd && !pWnd->hasAttention())
 		KviKvsScript::run("snd.play $0",0,new KviKvsVariantList(new KviKvsVariant(KVI_OPTION_STRING(KviOption_stringOnHighlightedMessageSound))));
 
 	QString szMessageType = QString("%1").arg(iType);
@@ -1227,13 +1232,15 @@ void KviConsoleWindow::getWindowListTipText(QString &buffer)
 		switch(KVI_OPTION_UINT(KviOption_uintOutputDatetimeFormat))
 		{
 			case 0:
-				szTmp = date.toString();
+				// this is the equivalent to an empty date.toString() call, but it's needed
+				// to ensure qt4 will use the default() locale and not the system() one
+				szTmp = QLocale().toString(date, "ddd MMM d hh:mm:ss yyyy");
 				break;
 			case 1:
 				szTmp = date.toString(Qt::ISODate);
 				break;
 			case 2:
-				szTmp = date.toString(Qt::SystemLocaleDate);
+				szTmp = date.toString(Qt::SystemLocaleShortDate);
 				break;
 		}
 
@@ -1260,7 +1267,7 @@ void KviConsoleWindow::getWindowListTipText(QString &buffer)
 		buffer += html_eofbold;
 		//buffer += html_spaceparclosed;
 
-		buffer += "</td></tr><tr><td bgcolor=\"#F0F0F0\">";
+		buffer += "</td></tr><tr><td bgcolor=\"#F0F0F0\"><font color=\"#000000\">";
 
 		tspan = KviTimeUtils::formatTimeInterval((unsigned int)(kvi_secondsSince(connection()->statistics()->lastMessageTime())),
 			KviTimeUtils::NoLeadingEmptyIntervals | KviTimeUtils::NoLeadingZeroes);
@@ -1269,7 +1276,8 @@ void KviConsoleWindow::getWindowListTipText(QString &buffer)
 		buffer += html_space;
 		buffer += html_bold;
 		buffer += tspan;
-		buffer += "</b></td></tr>";
+		buffer += html_eofbold;
+		buffer += "</font></td></tr>";
 	}
 
 	buffer += "</table>";

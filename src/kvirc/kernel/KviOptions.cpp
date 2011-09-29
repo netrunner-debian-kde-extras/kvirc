@@ -91,7 +91,7 @@ KviBoolOption g_boolOptionsTable[KVI_NUM_BOOL_OPTIONS]=
 	BOOL_OPTION("DisableBrokenEventHandlers",true,KviOption_sectFlagUserParser),
 	BOOL_OPTION("IgnoreCtcpClientinfo",false,KviOption_sectFlagCtcp),
 	BOOL_OPTION("IgnoreCtcpUserinfo",false,KviOption_sectFlagCtcp),
-	BOOL_OPTION("IgnoreCtcpFinger",false,KviOption_sectFlagCtcp),
+	BOOL_OPTION("IgnoreCtcpFinger",true,KviOption_sectFlagCtcp),
 	BOOL_OPTION("IgnoreCtcpSource",false,KviOption_sectFlagCtcp),
 	BOOL_OPTION("IgnoreCtcpTime",false,KviOption_sectFlagCtcp),
 	BOOL_OPTION("RequestMissingAvatars",true,KviOption_sectFlagAvatar),
@@ -328,7 +328,8 @@ KviBoolOption g_boolOptionsTable[KVI_NUM_BOOL_OPTIONS]=
 	BOOL_OPTION("UseKDENotifier",false,KviOption_sectFlagConnection),
 	BOOL_OPTION("CaseSensitiveHighlighting",false,KviOption_sectFlagIrcView),
 	BOOL_OPTION("MinimizeInTray",false,KviOption_sectFlagFrame | KviOption_resetUpdateGui),
-	BOOL_OPTION("DisplayNotifierOnPrimaryScreen",true,KviOption_sectFlagFrame)
+	BOOL_OPTION("DisplayNotifierOnPrimaryScreen",true,KviOption_sectFlagFrame),
+	BOOL_OPTION("ShowDialogOnChannelCtcpPage",false,KviOption_sectFlagCtcp)
 };
 
 #define STRING_OPTION(_txt,_val,_flags) KviStringOption(KVI_STRING_OPTIONS_PREFIX _txt,_val,_flags)
@@ -684,6 +685,18 @@ KviFontOption g_fontOptionsTable[KVI_NUM_FONT_OPTIONS]=
 	FONT_OPTION("TreeWindowList","Arial",9,KviOption_sectFlagWindowList | KviOption_resetUpdateWindowList),
 	FONT_OPTION("Notifier","Arial",9,KviOption_sectFlagNotifier | KviOption_resetUpdateGui),
 	FONT_OPTION("NotifierTitle","Arial",9,KviOption_sectFlagNotifier | KviOption_resetUpdateGui)
+#elif defined(COMPILE_ON_MAC)
+	//workaround qt4 font kerning issue under macosx using a monospaced font
+	FONT_OPTION("IrcView","Menlo",10,KviOption_sectFlagIrcView | KviOption_resetUpdateGui),
+	FONT_OPTION("Input","Menlo",12,KviOption_sectFlagInput | KviOption_resetUpdateGui),
+	FONT_OPTION("UserListView","Menlo",10,KviOption_sectFlagUserListView | KviOption_resetUpdateGui),
+	FONT_OPTION("Label","Menlo",10,KviOption_sectFlagLabel | KviOption_resetUpdateGui),
+	FONT_OPTION("Application","Menlo",10,KviOption_sectFlagGui | KviOption_resetUpdateAppFont),
+	FONT_OPTION("IrcToolBarApplet","Menlo",10,KviOption_sectFlagIrcToolBar | KviOption_resetUpdateGui),
+	FONT_OPTION("WindowList","Menlo",10,KviOption_sectFlagWindowList | KviOption_resetUpdateWindowList),
+	FONT_OPTION("TreeWindowList","Menlo",10,KviOption_sectFlagWindowList | KviOption_resetUpdateWindowList),
+	FONT_OPTION("Notifier","Menlo",9,KviOption_sectFlagNotifier | KviOption_resetUpdateNotifier),
+	FONT_OPTION("NotifierTitle","Menlo",9,KviOption_sectFlagNotifier | KviOption_resetUpdateNotifier)
 #else
 	FONT_OPTION("IrcView","Monospace",10,KviOption_sectFlagIrcView | KviOption_resetUpdateGui),
 	FONT_OPTION("Input","Sans Serif",12,KviOption_sectFlagInput | KviOption_resetUpdateGui),
@@ -1203,7 +1216,7 @@ namespace KviTheme
 
 		#undef READ_OPTIONS
 		#undef READ_ALL_OPTIONS
-		KVI_OPTION_STRING(KviOption_stringIconThemeSubdir).trimmed();
+		KVI_OPTION_STRING(KviOption_stringIconThemeSubdir) = KVI_OPTION_STRING(KviOption_stringIconThemeSubdir).trimmed();
 
 
 		// the pixmap options need special processing
@@ -1213,8 +1226,7 @@ namespace KviTheme
 			{
 				if(cfg.hasKey(g_pixmapOptionsTable[i].name))
 				{
-					QString szVal = cfg.readEntry(g_pixmapOptionsTable[i].name,"");
-					szVal.trimmed();
+					QString szVal = cfg.readEntry(g_pixmapOptionsTable[i].name,"").trimmed();
 					QString szBuffer;
 					if(!szVal.isEmpty())
 					{
@@ -1375,8 +1387,7 @@ bool KviApplication::setOptionValue(const QString &optName,const QString &value)
 	if(KviQString::equalCIN(optName,KVI_PIXMAP_OPTIONS_PREFIX,KVI_PIXMAP_OPTIONS_PREFIX_LEN))
 	{
 		// We lookup the image path (so we allow also relative paths for this option type)
-		QString szVal = value;
-		szVal.trimmed();
+		QString szVal = value.trimmed();
 		QString szBuffer;
 		if(!szVal.isEmpty())
 		{

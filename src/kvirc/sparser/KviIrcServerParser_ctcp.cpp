@@ -60,6 +60,7 @@
 #include <stdlib.h>
 
 #include <QDateTime>
+#include <QLocale>
 #include <QTextDocument>
 
 extern KVIRC_API KviSharedFilesManager * g_pSharedFilesManager;
@@ -156,7 +157,7 @@ extern KVIRC_API KviCtcpPageDialog * g_pCtcpPageDialog;
 		[b]'\C'[/b] (where C is a [b]CTCP valid ascii non digit character[/b]) that corresponds
 		literally to the character C discarding any other semantic that might be associated
 		with it (This will become clear later).
-		I've chosen the octal rappresentation just to follow a bit the old specification:
+		I've chosen the octal representation just to follow a bit the old specification:
 		the authors seemed to like it. This point could be discussed in
 		some mailing list or sth. The '\C' sequence is useful to include the backslash
 		character (escape sequence '\\').[br]
@@ -175,7 +176,7 @@ extern KVIRC_API KviCtcpPageDialog * g_pCtcpPageDialog;
 		Another one that naturally comes into my mind is to use the previously defined
 		quoting to define a "non-breaking space" character, because a space after a backslash
 		could lose its original semantic. Better yet, use the backslash followed by
-		the octal rappresentation of the space character ('\040').
+		the octal representation of the space character ('\040').
 		Anyway, to maintain compatibility with other popular IRC clients (such as mIRC),
 		let's include the '"' quotes in our standard: literal (unescaped) '"' quotes
 		define a single token string. To include a literal '"' character, escape it.
@@ -847,7 +848,7 @@ void KviIrcServerParser::parseCtcpRequest(KviCtcpMessage *msg)
 
 	for(int i=0;m_ctcpRequestParseProcTable[i].msgName;i++)
 	{
-		if(KviQString::equalCI(msg->szTag,m_ctcpRequestParseProcTable[i].msgName))
+		if(KviQString::equalCS(KviQString::upperISO88591(msg->szTag),m_ctcpRequestParseProcTable[i].msgName))
 		{
 			if(!(m_ctcpReplyParseProcTable[i].iFlags & KVI_CTCP_MESSAGE_PARSE_TRIGGERNOEVENT))
 			{
@@ -898,7 +899,7 @@ void KviIrcServerParser::parseCtcpReply(KviCtcpMessage *msg)
 
 	for(int i=0;m_ctcpReplyParseProcTable[i].msgName;i++)
 	{
-		if(KviQString::equalCI(msg->szTag,m_ctcpReplyParseProcTable[i].msgName))
+		if(KviQString::equalCS(KviQString::upperISO88591(msg->szTag),m_ctcpReplyParseProcTable[i].msgName))
 		{
 			if(!(m_ctcpReplyParseProcTable[i].iFlags & KVI_CTCP_MESSAGE_PARSE_TRIGGERNOEVENT))
 			{
@@ -1256,7 +1257,7 @@ void KviIrcServerParser::parseCtcpRequestClientinfo(KviCtcpMessage *msg)
 			KviCString szTag;
 			msg->pData = extractCtcpParameter(msg->pData,szTag,false);
 			szTag.trim();
-			szTag.toUpper();
+			szTag.toUpperISO88591();
 			if(szTag.isEmpty())
 			{
 				QString reply("KVIrc " KVI_VERSION " '" KVI_RELEASE_NAME "' " KVI_SOURCES_DATE " - http://www.kvirc.net - Supported tags: ");
@@ -1340,13 +1341,15 @@ void KviIrcServerParser::parseCtcpRequestTime(KviCtcpMessage *msg)
 			switch(KVI_OPTION_UINT(KviOption_uintOutputDatetimeFormat))
 			{
 				case 0:
-					szTmp = date.toString();
+					// this is the equivalent to an empty date.toString() call, but it's needed
+					// to ensure qt4 will use the default() locale and not the system() one
+					szTmp = QLocale().toString(date, "ddd MMM d hh:mm:ss yyyy");
 					break;
 				case 1:
 					szTmp = date.toString(Qt::ISODate);
 					break;
 				case 2:
-					szTmp = date.toString(Qt::SystemLocaleDate);
+					szTmp = date.toString(Qt::SystemLocaleShortDate);
 					break;
 			}
 			replyCtcp(msg,szTmp);
@@ -1367,7 +1370,11 @@ void KviIrcServerParser::parseCtcpRequestPage(KviCtcpMessage *msg)
 				KVI_OPTION_STRING(KviOption_stringCtcpPageReply) = KVI_DEFAULT_CTCP_PAGE_REPLY;
 
 			replyCtcp(msg,KVI_OPTION_STRING(KviOption_stringCtcpPageReply));
-			if(KVI_OPTION_BOOL(KviOption_boolShowDialogOnCtcpPage))
+
+			bool bIsChannel = !IS_ME(msg->msg,msg->szTarget);
+
+			if((KVI_OPTION_BOOL(KviOption_boolShowDialogOnCtcpPage) && !bIsChannel) ||
+				(KVI_OPTION_BOOL(KviOption_boolShowDialogOnChannelCtcpPage) && bIsChannel))
 			{
 				if(!g_pCtcpPageDialog)g_pCtcpPageDialog = new KviCtcpPageDialog();
 				KviCString szData8;

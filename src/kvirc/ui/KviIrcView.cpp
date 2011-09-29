@@ -169,7 +169,7 @@
 //this is mostly needed to avoid collapsing in slit view
 #define KVI_IRCVIEW_MINIMUM_HEIGHT 22
 #define KVI_IRCVIEW_PIXMAP_AND_SEPARATOR 20
-#define KVI_IRCVIEW_PIXMAP_SEPARATOR_AND_DOUBLEBORDER_WIDTH 28
+#define KVI_IRCVIEW_DOUBLEBORDER_WIDTH 8
 #define KVI_IRCVIEW_SIZEHINT_WIDTH 150
 #define KVI_IRCVIEW_SIZEHINT_HEIGHT 150
 
@@ -332,6 +332,9 @@ KviIrcView::KviIrcView(QWidget *parent,KviMainWindow *pFrm,KviWindow *pWnd)
 
 //	if(pWnd->input()) setFocusProxy(pWnd->input());
 
+	QSizePolicy oSizePolicy = sizePolicy();
+	oSizePolicy.setHorizontalPolicy(QSizePolicy::Expanding);
+	setSizePolicy(oSizePolicy);
 }
 
 static inline void delete_text_line(KviIrcViewLine * line,QHash<KviIrcViewLine*,KviAnimatedPixmap*>*  animatedSmiles)
@@ -938,15 +941,15 @@ void KviIrcView::fastScroll(int lines)
 	// It is the only one that needs to be repainted
 	int widgetWidth  = width() - m_pScrollBar->width();
 
-	if(widgetWidth < KVI_IRCVIEW_PIXMAP_SEPARATOR_AND_DOUBLEBORDER_WIDTH+10)
+	if(widgetWidth < KVI_IRCVIEW_PIXMAP_AND_SEPARATOR + KVI_IRCVIEW_DOUBLEBORDER_WIDTH + 10)
 		return; //can't show stuff here
 
 	int widgetHeight = height();
-	int maxLineWidth = widgetWidth;
+	int maxLineWidth = widgetWidth - KVI_IRCVIEW_DOUBLEBORDER_WIDTH;
 
 	if(KVI_OPTION_BOOL(KviOption_boolIrcViewShowImages))
 	{
-		maxLineWidth -= KVI_IRCVIEW_PIXMAP_SEPARATOR_AND_DOUBLEBORDER_WIDTH;
+		maxLineWidth -= KVI_IRCVIEW_PIXMAP_AND_SEPARATOR;
 	}
 
 
@@ -1081,14 +1084,14 @@ void KviIrcView::paintEvent(QPaintEvent *p)
 
 	// Have lines visible
 	int curBottomCoord = widgetHeight - KVI_IRCVIEW_VERTICAL_BORDER;
-	int maxLineWidth   = widgetWidth;
+	int maxLineWidth   = widgetWidth - KVI_IRCVIEW_DOUBLEBORDER_WIDTH;
 	int defLeftCoord   = KVI_IRCVIEW_HORIZONTAL_BORDER;
 	int lineWrapsHeight;
 
 	// if we draw an icon as a line preamble, we have to change borders geometry accordingly
 	if(KVI_OPTION_BOOL(KviOption_boolIrcViewShowImages))
 	{
-		maxLineWidth -= KVI_IRCVIEW_PIXMAP_SEPARATOR_AND_DOUBLEBORDER_WIDTH;
+		maxLineWidth -= KVI_IRCVIEW_PIXMAP_AND_SEPARATOR;
 		defLeftCoord += KVI_IRCVIEW_PIXMAP_AND_SEPARATOR;
 	}
 
@@ -1211,13 +1214,14 @@ void KviIrcView::paintEvent(QPaintEvent *p)
 					case KviControlCodes::Reset:
 						curBold            = false;
 						curUnderline       = false;
+						bacWasTransp       = false;
 						curFore            = defaultFore;
 						curBack            = defaultBack;
 						break;
 					case KviControlCodes::Reverse:
 						//this should be "reversed colors"
 						char aux       = curBack;
-						if(bacWasTransp == true)
+						if(bacWasTransp)
 						{
 							curBack = KviControlCodes::Transparent;
 						} else {
@@ -2015,7 +2019,16 @@ void KviIrcView::recalcFontVariables(const QFontMetrics &fm,const QFontInfo &fi)
 	if(m_iFontLineWidth < 1)
 		m_iFontLineWidth = 1;
 
-	m_iWrapMargin = m_pFm->width("wwww");
+	if(KVI_OPTION_BOOL(KviOption_boolIrcViewTimestamp))
+	{
+		QString szTimestamp;
+		QDateTime datetime=KVI_OPTION_BOOL(KviOption_boolIrcViewTimestampUTC) ? QDateTime::currentDateTime().toUTC(): QDateTime::currentDateTime();
+		szTimestamp=datetime.toString(KVI_OPTION_STRING(KviOption_stringIrcViewTimestampFormat));
+		szTimestamp.append(' ');
+		m_iWrapMargin = m_pFm->width(szTimestamp);
+	} else {
+		m_iWrapMargin = m_pFm->width("wwww");
+	}
 
 	m_iMinimumPaintWidth = (((int)(m_pFm->width('w'))) << 1) + m_iWrapMargin;
 
@@ -2206,10 +2219,13 @@ void KviIrcView::ensureLineVisible(KviIrcViewLine * pLineToShow)
 
 	// The cursor line is over the current line
 	// Here we're in trouble :D
-	int curBottomCoord = height() - KVI_IRCVIEW_VERTICAL_BORDER;
-	int maxLineWidth   = width();
+	int toolWidgetHeight = m_pToolWidget ? m_pToolWidget->sizeHint().height() : 0;
+	int scrollbarWidth = m_pScrollBar->width();
+	int curBottomCoord = height() - toolWidgetHeight - KVI_IRCVIEW_VERTICAL_BORDER;
+	int maxLineWidth   = width() - scrollbarWidth - KVI_IRCVIEW_DOUBLEBORDER_WIDTH;
+
 	if(KVI_OPTION_BOOL(KviOption_boolIrcViewShowImages))
-		maxLineWidth -= KVI_IRCVIEW_PIXMAP_SEPARATOR_AND_DOUBLEBORDER_WIDTH;
+		maxLineWidth -= KVI_IRCVIEW_PIXMAP_AND_SEPARATOR;
 	//Make sure that we have enough space to paint something...
 	if(maxLineWidth < m_iMinimumPaintWidth)return; // ugh
 	//And loop thru lines until we not run over the upper bound of the view
@@ -2503,7 +2519,8 @@ KviIrcViewWrappedBlock * KviIrcView::getLinkUnderMouse(int xPos,int yPos,QRect *
 	 */
 
 	KviIrcViewLine * l = m_pCurLine;
-	int iTop = height() + m_iFontDescent - KVI_IRCVIEW_VERTICAL_BORDER;
+	int toolWidgetHeight = m_pToolWidget ? m_pToolWidget->sizeHint().height() : 0;
+	int iTop = height() + m_iFontDescent - KVI_IRCVIEW_VERTICAL_BORDER - toolWidgetHeight;
 
 	// our current line begins after the mouse position... go on
 	while(iTop > yPos)
@@ -2643,12 +2660,12 @@ KviIrcViewWrappedBlock * KviIrcView::getLinkUnderMouse(int xPos,int yPos,QRect *
 							for(k = iLastEscapeBlock;; k++)
 							{
 								if(l->pBlocks[k].pChunk)
+								{
 									if(l->pBlocks[k].pChunk->type != KviControlCodes::UnEscape)
 										iRightBorder+=l->pBlocks[k].block_width;
 									else
 										break;
-								else
-								{
+								} else {
 									uLineWraps++;
 									bHadWordWraps=1;
 								}
@@ -2663,7 +2680,7 @@ KviIrcViewWrappedBlock * KviIrcView::getLinkUnderMouse(int xPos,int yPos,QRect *
 							if(linkCmd)
 							{
 								linkCmd->setUtf16(l->pBlocks[iLastEscapeBlock].pChunk->szPayload,kvi_wstrlen(l->pBlocks[iLastEscapeBlock].pChunk->szPayload));
-								linkCmd->trimmed();
+								*linkCmd = linkCmd->trimmed();
 								if((*linkCmd)=="nc") (*linkCmd)="n";
 							}
 							if(linkText)
@@ -2732,7 +2749,7 @@ KviIrcViewWrappedBlock * KviIrcView::getLinkUnderMouse(int xPos,int yPos,QRect *
 								QString tmp;
 								tmp.setUtf16(l->pBlocks[i].pChunk->szPayload,kvi_wstrlen(l->pBlocks[i].pChunk->szPayload));
 								linkCmd->append(tmp);
-								linkCmd->trimmed();
+								*linkCmd = linkCmd->trimmed();
 							}
 							if(linkText)
 							{

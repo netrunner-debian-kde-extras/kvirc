@@ -69,6 +69,7 @@ NotifierWindowTab::NotifierWindowTab(KviWindow * pWnd, QTabWidget * pParent)
 		m_pParent->addTab(this, m_szLabel);
 	}
 
+	setFocusPolicy(Qt::NoFocus);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
@@ -206,12 +207,10 @@ void NotifierWindowTab::paintEvent(QPaintEvent * e)
 			col.setAlphaF((float)((float)KVI_OPTION_UINT(KviOption_uintGlobalTransparencyChildFadeFactor) / (float)100));
 			pPainter->fillRect(e->rect(), col);
 			pPainter->restore();
-#if 0
 		} else if(g_pShadedChildGlobalDesktopBackground) // This doesn't work as the text doesn't actually use the right foreground color
 		{
 			QPoint pnt = mapToGlobal(e->rect().topLeft());
 			pPainter->drawTiledPixmap(e->rect(),*(g_pShadedChildGlobalDesktopBackground), pnt);
-#endif
 		} else {
 	#endif
 			QPixmap * pPix = KVI_OPTION_PIXMAP(KviOption_pixmapNotifierBackground).pixmap();

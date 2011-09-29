@@ -42,6 +42,7 @@
 #include <QFile>
 #include <QDateTime>
 #include <QTextCodec>
+#include <QLocale>
 
 void KviIrcView::stopLogging()
 {
@@ -52,13 +53,15 @@ void KviIrcView::stopLogging()
 		switch(KVI_OPTION_UINT(KviOption_uintOutputDatetimeFormat))
 		{
 			case 0:
-				szDate = date.toString();
+				// this is the equivalent to an empty date.toString() call, but it's needed
+				// to ensure qt4 will use the default() locale and not the system() one
+				szDate = QLocale().toString(date, "ddd MMM d hh:mm:ss yyyy");
 				break;
 			case 1:
 				szDate = date.toString(Qt::ISODate);
 				break;
 			case 2:
-				szDate = date.toString(Qt::SystemLocaleDate);
+				szDate = date.toString(Qt::SystemLocaleShortDate);
 				break;
 		}
 		
@@ -220,13 +223,15 @@ bool KviIrcView::startLogging(const QString& fname,bool bPrependCurBuffer)
 	switch(KVI_OPTION_UINT(KviOption_uintOutputDatetimeFormat))
 	{
 		case 0:
-			szDate = date.toString();
+			// this is the equivalent to an empty date.toString() call, but it's needed
+			// to ensure qt4 will use the default() locale and not the system() one
+			szDate = QLocale().toString(date, "ddd MMM d hh:mm:ss yyyy");
 			break;
 		case 1:
 			szDate = date.toString(Qt::ISODate);
 			break;
 		case 2:
-			szDate = date.toString(Qt::SystemLocaleDate);
+			szDate = date.toString(Qt::SystemLocaleShortDate);
 			break;
 	}
 	
@@ -273,7 +278,7 @@ void KviIrcView::add2Log(const QString &szBuffer,int iMsgType,bool bPrependDate)
 				szDate = date.toString(Qt::ISODate);
 			break;
 			case 2:
-				szDate = date.toString(Qt::SystemLocaleDate);
+				szDate = date.toString(Qt::SystemLocaleShortDate);
 			break;
 		}
 

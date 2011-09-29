@@ -68,7 +68,7 @@ namespace KviKvsCoreFunctions
 		@description:
 			Returns the [b]window ID[/b] of the active window
 			bound to the IRC context specified by <irc context id>.
-			If no window matches the specified IRC context, and invalid
+			If no window matches the specified IRC context, an invalid
 			window ID is returned (0).[br]
 			If no <irc context id> is specified, then
 			the application active window is returned (the window
@@ -172,7 +172,7 @@ namespace KviKvsCoreFunctions
 		@syntax:
 			$asciiToBase64(<ascii_string>)
 		@description:
-			Encodes an ASCII string to its base64 encoded rappresentation
+			Encodes an ASCII string to its base64 encoded representation
 			Please note that since KVS is UNICODE based, this function
 			will first encode the string in UTF8 and then base64-encode.
 			This means that it is substantially only 7bit safe (ASCII codes below 128).
@@ -214,7 +214,7 @@ namespace KviKvsCoreFunctions
 		@syntax:
 			<string> $asciiToHex(<ascii_string:string>)
 		@description:
-			Encodes an ASCII string to its hex encoded rappresentation.
+			Encodes an ASCII string to its hex encoded representation.
 			Please note that since KVS is UNICODE based, this function
 			will first encode the string in UTF8 and then hex-encode.
 			This means that it is substantially only 7bit safe (ASCII codes below 128).
@@ -477,7 +477,7 @@ namespace KviKvsCoreFunctions
 			<string> $certificate(<query:string>[,<param1:string>])
 		@description:
 			Returns the requested information about local certificate.[br]
-			Some queries can accept an optional parameter <param1>[br]
+			Some queries can accept an optional parameter <param1>.[br]
 			Available query strings are:[br]
 			[ul]
 			[li]signatureType[/li]
@@ -815,9 +815,9 @@ namespace KviKvsCoreFunctions
 		@syntax:
 			<int> $countStatusBarItems
 		@description:
-			Returns the number of items in the statusbar
+			Returns the number of items in the statusbar.
 		@seealso:
-			[class]widget class[/class]
+			[class]widget[/class]
 	*/
 
 	KVSCF(countStatusBarItems)
@@ -1178,10 +1178,11 @@ namespace KviKvsCoreFunctions
 	{
 		QString szData;
 		KVSCF_PARAMETERS_BEGIN
-			KVSCF_PARAMETER("text",KVS_PT_NONEMPTYSTRING,0,szData)
+			KVSCF_PARAMETER("text",KVS_PT_STRING,KVS_PF_OPTIONAL,szData)
 		KVSCF_PARAMETERS_END
 
-		KviQString::escapeKvs(&szData);
+		if(!szData.isEmpty())
+			KviQString::escapeKvs(&szData);
 
 		KVSCF_pRetBuffer->setString(szData);
 		return true;
@@ -1206,7 +1207,7 @@ namespace KviKvsCoreFunctions
 			have a variable that can assume boolean values it's
 			nicer to use [fnc]$true[/fnc] and $false instead of
 			the integer constants 1 and 0. The reader will
-			undestand immediately that the variable simply can't
+			understand immediately that the variable simply can't
 			assume any other value.
 		@examples:
 			[example]
@@ -1413,16 +1414,13 @@ namespace KviKvsCoreFunctions
 			Returns an array of items built from the passed arguments
 			with the following rules:[br]
 			[ul]
-				[li]If an argument is a scalar value then the argument itself
-					is appended to the result.[/li]
-				[li]If an argument is an array then each contained item
-					is appended to the result.[/li]
-				[li]If an argument is a hash then each contained value
-					is appended to the result.[/li]
+				[li]If an argument is a scalar value then the argument itself is appended to the result.[/li]
+				[li]If an argument is an array then each contained item is appended to the result.[/li]
+				[li]If an argument is a hash then each contained value is appended to the result.[/li]
 			[/ul]
 			A simple example of usage is to merge N arrays into a new one.
 			(Please note that for merging one array into another the
-			[doc:arrayconcatenation]<+ operator[/doc] is more efficient).
+			[doc:arrayconcatenation]array concatenation operator[/doc] is more efficient).
 	*/
 
 	KVSCF(flatten)
@@ -1490,7 +1488,7 @@ namespace KviKvsCoreFunctions
 			Returns a link formatted for the [cmd]echo[/cmd] command.[br]
 			If you pass the returned string to the echo command, the string will be displayed
 			as a link and will be highlighted when the user moves the mouse over it.[br]
-			If the user will leave the mouse for a few seconds over the link, the <tooltip_text>
+			If the user leaves the mouse for a few seconds over the link, the <tooltip_text>
 			will be displayed in a small tooltip window. If <tooltip_text> is not given,
 			then no tooltip will be shown.[br]
 			The <double_click_command> will be executed when the user will double click on the link.[br]

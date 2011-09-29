@@ -72,6 +72,7 @@ protected:
 	bool fontDescent(KviKvsObjectFunctionCall * c);
 	bool fontMetricsHeight(KviKvsObjectFunctionCall * c);
 	bool fontMetricsWidth(KviKvsObjectFunctionCall * c);
+	bool fontMetricsLineSpacing(KviKvsObjectFunctionCall * c);
 	bool foregroundColor(KviKvsObjectFunctionCall *c);
 	bool geometry(KviKvsObjectFunctionCall *c);
 	bool globalCursorX(KviKvsObjectFunctionCall *c);
@@ -92,7 +93,7 @@ protected:
 	bool repaint(KviKvsObjectFunctionCall *c);
 	bool insertIntoStatusBar(KviKvsObjectFunctionCall *c);
 	bool removeFromStatusBar(KviKvsObjectFunctionCall *c);
-        bool setParent(KviKvsObjectFunctionCall *c);
+	bool setParent(KviKvsObjectFunctionCall *c);
 	bool resize(KviKvsObjectFunctionCall *c);
 	bool screenResolution(KviKvsObjectFunctionCall * c);
 	bool setAttribute(KviKvsObjectFunctionCall *c);
@@ -110,7 +111,7 @@ protected:
 	bool setMinimumHeight(KviKvsObjectFunctionCall *c);
 	bool setMinimumWidth(KviKvsObjectFunctionCall *c);
 	bool setMouseTracking(KviKvsObjectFunctionCall *c);
-        bool setForegroundColor(KviKvsObjectFunctionCall *c);
+	bool setForegroundColor(KviKvsObjectFunctionCall *c);
 	bool setStyleSheet(KviKvsObjectFunctionCall *c);
 	bool setToolTip(KviKvsObjectFunctionCall *);
 	bool setWindowIcon(KviKvsObjectFunctionCall *c);
@@ -139,8 +140,6 @@ class KviKvsWidget : public QWidget
 	Q_PROPERTY(QSize sizeHint READ sizeHint)
 public:
 	KviKvsWidget(KvsObject_widget * ob,QWidget * par);
-
-
 	virtual ~KviKvsWidget();
 protected:
 	KvsObject_widget * m_pObject;

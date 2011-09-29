@@ -43,44 +43,7 @@
 	#include <KviSSL.h>
 	#include <openssl/evp.h>
 	#include <openssl/pem.h>
-#endif
-
-#ifdef COMPILE_CRYPTOPP_SUPPORT
-	// The preferred new implementation (until QCryptographicHash supports all
-	// hashes we want).
-	// As Crypto++ is concerned for security they warn about MD5 and friends,
-	// but we can ignore that and therefore silence the warnings.
-	#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
-	// Hashes (should cover most cases)
-	#include <cryptopp/md2.h>
-	#include <cryptopp/md4.h>
-	#include <cryptopp/md5.h>
-	#include <cryptopp/sha.h>
-	#include <cryptopp/ripemd.h>
-	#include <cryptopp/crc.h>
-	// Encoding
-	#include <cryptopp/hex.h>
-	// additional
-	#include <string>
-	// template function
-	template <typename T>
-	std::string CryptoPpStrHash(std::string szMessage){
-		T hash;
-		std::string szDigest;
-		CryptoPP::StringSource(szMessage,
-			true,
-			new CryptoPP::HashFilter(
-				hash,
-				new CryptoPP::HexEncoder(
-					new CryptoPP::StringSink(szDigest)
-				)
-			)
-		);
-		return szDigest;
-	}
-#endif
-
-#if !defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_CRYPTOPP_SUPPORT)
+#else
 	// The fallback we can always use, but with very limited set of
 	// functionality.
 	#include <QCryptographicHash>
@@ -511,7 +474,7 @@ static bool str_kvs_fnc_cmp(KviKvsModuleFunctionCall * c)
 		given as his second parameter, and will return the index where the nth ocurrence
 		given as the third parameter is found or -1 if it's not located. It starts
 		counting at 0. If occurence is not specified then the first occurence
-		is searched. WARNING: The occurente number starts from 1! (Yes, that's a bug, but
+		is searched. WARNING: The occurence number starts from 1! (Yes, that's a bug, but
 		for backward compatibility it must remain as it is :( ).[br]
 		FIXME: The semantics of this function are totally broken :(
 */
@@ -984,24 +947,31 @@ static bool str_kvs_fnc_urlencode(KviKvsModuleFunctionCall * c)
 	@short:
 		Returns the left part of a string until a given substring
 	@syntax:
-		<string> $str.lefttofirst(<string:string>,<substring:string>)
+		<string> $str.lefttofirst(<string:string>,<substring:string>[,<case:bool>])
 	@description:
 		This function returns the left part of the string given as the first parameter
-		from the start until the string given as the second parameter is found. It don't
-		include the substring of the second parameter in the returned value. If the second
-		parameter is not found, the entire string is returned.
-		The match is case insensitive.
+		from the start until the string given as the second parameter is found. It doesn't
+		include the substring of the second parameter in the returned value.
+		If the second parameter is not found, an empty string is returned.
+		If the third parameter is set to true, then the search is case sensitive; it defaults to false.
+	@examples:
+		[example]
+			%test = "Hello! My nickname is Pragma, my name is Szymon"
+			echo $str.lefttofirst(%test, my);	//  "Hello! "
+			echo $str.lefttofirst(%test, my, true);	//  "Hello! My nickname is Pragma, "
+		[/example]
 */
 static bool str_kvs_fnc_lefttofirst(KviKvsModuleFunctionCall * c)
 {
 	QString szString,szNewstr;
-	int where;
+	bool bCase;
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("string",KVS_PT_STRING,0,szString)
 		KVSM_PARAMETER("substring",KVS_PT_STRING,0,szNewstr)
+		KVSM_PARAMETER("case",KVS_PT_BOOL,KVS_PF_OPTIONAL,bCase)
 	KVSM_PARAMETERS_END(c)
-	where = szString.indexOf(szNewstr,Qt::CaseInsensitive);
-	if(where != -1) c->returnValue()->setString(szString.left(where));
+	int idx = bCase ? szString.indexOf(szNewstr,0) : szString.indexOf(szNewstr,0,Qt::CaseInsensitive);
+	if(idx != -1) c->returnValue()->setString(szString.left(idx));
 	else c->returnValue()->setString(szString);
 	return true;
 }
@@ -1015,23 +985,31 @@ static bool str_kvs_fnc_lefttofirst(KviKvsModuleFunctionCall * c)
 	@short:
 		Returns the left part of a string until the last ocurrence of a given substring
 	@syntax:
-		<string> $str.lefttolast(<string:string>,<substring:string>)
+		<string> $str.lefttolast(<string:string>,<substring:string>[,<case:bool>])
 	@description:
 		This function returns the left part of the string given as the first parameter
 		from the start until the last ocurrence of the string given as the second parameter
-		is found. It don't include the substring of the second parameter in the returned value.
-		If the second parameter is not found, the entire string is returned.
-		The match is case insensitive
+		is found. It doesn't include the substring of the second parameter in the returned value.
+		If the second parameter is not found, an empty string is returned.
+		If the third parameter is set to true, then the search is case sensitive; it defaults to false.
+	@examples:
+		[example]
+			%test = "Hello! My nickname is Pragma, my name is Szymon"
+			echo $str.lefttolast(%test, My);		//  "Hello! My nickname is Pragma, "
+			echo $str.lefttolast(%test, My, true);	//  "Hello! "
+		[/example]
 */
 static bool str_kvs_fnc_lefttolast(KviKvsModuleFunctionCall * c)
 {
 	QString szString,szNewstr;
+	bool bCase;
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("string",KVS_PT_STRING,0,szString)
 		KVSM_PARAMETER("substring",KVS_PT_STRING,0,szNewstr)
+		KVSM_PARAMETER("case",KVS_PT_BOOL,KVS_PF_OPTIONAL,bCase)
 	KVSM_PARAMETERS_END(c)
-	int where = szString.lastIndexOf(szNewstr,-1,Qt::CaseInsensitive);
-	if(where != -1) c->returnValue()->setString(szString.left(where));
+	int idx = bCase ? szString.lastIndexOf(szNewstr,-1) : szString.lastIndexOf(szNewstr,-1,Qt::CaseInsensitive);
+	if(idx != -1) c->returnValue()->setString(szString.left(idx));
 	else c->returnValue()->setString(szString);
 	return true;
 }
@@ -1045,22 +1023,30 @@ static bool str_kvs_fnc_lefttolast(KviKvsModuleFunctionCall * c)
 	@short:
 		Returns the right part of a string from the first ocurrence of a given substring
 	@syntax:
-		<string> $str.rightfromfirst(<string:string>,<substring:string>)
+		<string> $str.rightfromfirst(<string:string>,<substring:string>[,<case:bool>])
 	@description:
 		This function returns the right part of the string given as the first parameter
 		from the position where the first ocurrence of the string given as the second parameter
-		is found. It don't include the substring of the second parameter in the returned value.
-		If the second parameter is not found, an empty string is returned..
-		The match is case insensitive
+		is found. It doesn't include the substring of the second parameter in the returned value.
+		If the second parameter is not found, an empty string is returned.
+		If the third parameter is set to true, then the search is case sensitive; it defaults to false.
+	@examples:
+		[example]
+			%test = "Hello! My nickname is Pragma, my name is Szymon"
+			echo $str.rightfromfirst(%test, my);		//  " nickname is Pragma, my name is Szymon"
+			echo $str.rightfromfirst(%test, my, true);	//  " name is Szymon"
+		[/example]
 */
 static bool str_kvs_fnc_rightfromfirst(KviKvsModuleFunctionCall * c)
 {
 	QString szString,szNewstr;
+	bool bCase;
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("string",KVS_PT_STRING,0,szString)
 		KVSM_PARAMETER("substring",KVS_PT_STRING,0,szNewstr)
+		KVSM_PARAMETER("case",KVS_PT_BOOL,KVS_PF_OPTIONAL,bCase)
 	KVSM_PARAMETERS_END(c)
-	int idx = szString.indexOf(szNewstr,Qt::CaseInsensitive);
+	int idx = bCase ? szString.indexOf(szNewstr,0) : szString.indexOf(szNewstr,0,Qt::CaseInsensitive);
 	if(idx != -1) c->returnValue()->setString(szString.right(szString.length()-(idx+szNewstr.length())));
 	else c->returnValue()->setString("");
 	return true;
@@ -1075,22 +1061,30 @@ static bool str_kvs_fnc_rightfromfirst(KviKvsModuleFunctionCall * c)
 	@short:
 		Returns the right part of a string from the last ocurrence of a given substring
 	@syntax:
-		<string> $str.rightfromlast(<string:string>,<substring:string>)
+		<string> $str.rightfromlast(<string:string>,<substring:string>[,<case:bool>])
 	@description:
 		This function returns the right part of the string given as the first parameter
 		from the position where the last ocurrence of the string given as the second parameter
-		is found. It don't include the substring of the second parameter in the returned value.
-		If the second parameter is not found, an empty string is returned..
-		The match is case insensitive.
+		is found. It doesn't include the substring of the second parameter in the returned value.
+		If the second parameter is not found, an empty string is returned.
+		If the third parameter is set to true, then the search is case sensitive; it defaults to false.
+		@examples:
+		[example]
+			%test = "Hello! My nickname is Pragma, my name is Szymon"
+			echo $str.rightfromlast(%test, My);		//  " name is Szymon"
+			echo $str.rightfromlast(%test, My, true);	//  " nickname is Pragma, my name is Szymon"
+		[/example]
 */
 static bool str_kvs_fnc_rightfromlast(KviKvsModuleFunctionCall * c)
 {
 	QString szString,szNewstr;
+	bool bCase;
 	KVSM_PARAMETERS_BEGIN(c)
 		KVSM_PARAMETER("string",KVS_PT_STRING,0,szString)
 		KVSM_PARAMETER("substring",KVS_PT_STRING,0,szNewstr)
+		KVSM_PARAMETER("case",KVS_PT_BOOL,KVS_PF_OPTIONAL,bCase)
 	KVSM_PARAMETERS_END(c)
-	int idx = szString.lastIndexOf(szNewstr,-1,Qt::CaseInsensitive);
+	int idx = bCase ? szString.lastIndexOf(szNewstr,-1) : szString.lastIndexOf(szNewstr,-1,Qt::CaseInsensitive);
 	if(idx != -1) c->returnValue()->setString(szString.right(szString.length()-(idx+szNewstr.length())));
 	else c->returnValue()->setString("");
 	return true;
@@ -1364,8 +1358,7 @@ static bool str_kvs_fnc_chop(KviKvsModuleFunctionCall * c)
 	@description:
 		Calculates digest for given string using algorithm passed as 2nd argument.
 		Currently supported: md5, md4, md2, sha1, mdc2, ripemd160, dss1
-		Default is md5. Requires OpenSSL support or (better) Crypto++, but
-        offers a minimal set of hashes in any case.
+		Default is md5. Requires OpenSSL support, but offers a minimal set of hashes in any case.
 */
 static bool str_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 {
@@ -1375,7 +1368,7 @@ static bool str_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 		KVSM_PARAMETER("algorithm",KVS_PT_NONEMPTYSTRING,KVS_PF_OPTIONAL,szType)
 	KVSM_PARAMETERS_END(c)
 
-#if defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_CRYPTOPP_SUPPORT)
+#if defined(COMPILE_SSL_SUPPORT)
 	if(szType.isEmpty()) szType = "md5";
 
 	EVP_MD_CTX mdctx;
@@ -1409,56 +1402,6 @@ static bool str_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 	}
 
 	c->returnValue()->setString(szResult);
-#elif defined(COMPILE_CRYPTOPP_SUPPORT)
-	// Crypto++ implementation
-	std::string szDigest;
-	std::string szMsg = szString.toLocal8Bit().data();
-
-	if(szType.toLower() == "sha1" || szType.toLower() == "sha")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::SHA1>(szMsg);
-	} else if(szType.toLower() == "sha224")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::SHA224>(szMsg);
-	} else if(szType.toLower() == "sha256")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::SHA256>(szMsg);
-	} else if(szType.toLower() == "sha384")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::SHA384>(szMsg);
-	} else if(szType.toLower() == "sha512")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::SHA512>(szMsg);
-	} else if(szType.toLower() == "ripemd128")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::RIPEMD128>(szMsg);
-	} else if(szType.toLower() == "ripemd160")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::RIPEMD160>(szMsg);
-	} else if(szType.toLower() == "ripemd256")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::RIPEMD256>(szMsg);
-	} else if(szType.toLower() == "ripemd320")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::RIPEMD320>(szMsg);
-	} else if(szType.toLower() == "crc32")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::CRC32>(szMsg);
-	} else if(szType.toLower() == "md2")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::Weak::MD2>(szMsg);
-	} else if(szType.toLower() == "md4")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::Weak::MD4>(szMsg);
-	} else if(szType.toLower() == "md5")
-	{
-		szDigest = CryptoPpStrHash<CryptoPP::Weak::MD5>(szMsg);
-	} else {
-		c->warning(__tr2qs("Unsupported message digest."));
-		return true;
-	}
-
-	c->returnValue()->setString(QString(szDigest.c_str()));
 #else // fall back to QCryptographicHash
 	QCryptographicHash::Algorithm qAlgo;
 	if(szType.toLower() == "sha1")
@@ -1853,18 +1796,18 @@ static bool str_kvs_fnc_split(KviKvsModuleFunctionCall * c)
 		[tr][td][b]?d[/b][/td][td]The next parameter is evaluated as a signed integer and substituted in place of ?d[/td][/tr]
 		[tr][td][b]?i[/b][/td][td]Same as ?d[/td][/tr]
 		[tr][td][b]?u[/b][/td][td]The next parameter is evaluated as an unsigned signed integer and substituted in place of ?d[/td][/tr]
-		[tr][td][b]?x[/b][/td][td]The next parameter is evaluated as an unsigned integer and its hexadecimal rappresentation
+		[tr][td][b]?x[/b][/td][td]The next parameter is evaluated as an unsigned integer and its hexadecimal representation
 			is substituted in place of ?x[/td][/tr]
 		[tr][td][b]?h[/b][/td][td]Same as ?x[/td][/tr]
 		[tr][td][b]?X[/b][/td][td]Same as ?x but toUppercase hexadecimal digits are used[/td][/tr]
 		[tr][td][b]?H[/b][/td][td]Same as ?X[/td][/tr]
 		[tr][td][b]??[/b][/td][td]A literal question mark[/td][/tr]
 		[tr][td][b]?[.N]f[/b][/td][td]The next parameter is evaluated as a real floating point value
-			and its rappresentation substituted in place of ?f. The optional [.N] modifier,
-			where N is an unsigned integer, rappresents the desired precision.[/td][/tr]
+			and its representation substituted in place of ?f. The optional [.N] modifier,
+			where N is an unsigned integer, represents the desired precision.[/td][/tr]
 		[tr][td][b]?[.N]e[/b][/td][td]The next parameter is evaluated as a real floating point value
-			and its scientific rappresentation substituted in place of ?e. The optional [.N] modifier,
-			where N is an unsigned integer, rappresents the desired precision.[/td][/tr]
+			and its scientific representation substituted in place of ?e. The optional [.N] modifier,
+			where N is an unsigned integer, represents the desired precision.[/td][/tr]
 		[tr][td][b]?[.N]E[/b][/td][td]Same as ?e but an toUppercase E is used as the exponent prefix[/td][/tr]
 		[/table]
 	@examples:

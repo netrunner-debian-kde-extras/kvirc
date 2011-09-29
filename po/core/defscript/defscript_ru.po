@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 03:05+0200\n"
+"POT-Creation-Date: 2011-05-29 17:59+0200\n"
 "PO-Revision-Date: 2011-03-18 22:05+0600\n"
 "Last-Translator: Alexey \"DarthGandalf\" Sokolov <somebody shift-2 shellium "
 "org>\n"
@@ -411,10 +411,10 @@ msgstr "Писать в файл по умолчанию"
 msgid "Log To..."
 msgstr "Писать в..."
 
+#: data/defscript/popups.kvs:1401
 #: data/defscript/events.kvs:68
 #: data/defscript/events.kvs:76
 #: data/defscript/events.kvs:84
-#: data/defscript/popups.kvs:1401
 msgid "Logging"
 msgstr "Журналирование"
 

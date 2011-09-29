@@ -44,43 +44,8 @@
 #endif
 
 
-#if defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_CRYPTOPP_SUPPORT)
-	// The current implementation
+#if defined(COMPILE_SSL_SUPPORT)
 	#include <openssl/evp.h>
-#elif defined(COMPILE_CRYPTOPP_SUPPORT)
-	// The preferred new implementation (until QCryptographicHash supports all
-	// hashes we want).
-	// As Crypto++ is concerned for security they warn about MD5 and friends,
-	// but we can ignore that and therefore silence the warnings.
-	#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
-	// Hashes (should cover most cases)
-	#include <cryptopp/md2.h>
-	#include <cryptopp/md4.h>
-	#include <cryptopp/md5.h>
-	#include <cryptopp/sha.h>
-	#include <cryptopp/ripemd.h>
-	#include <cryptopp/crc.h>
-	// Encoding
-	#include <cryptopp/hex.h>
-	// additional
-	#include <cryptopp/files.h>
-	#include <string>
-	// template function
-	template <typename T>
-	std::string CryptoPpFileHash(std::string szFileName){
-		T hash;
-		std::string szDigest;
-		CryptoPP::FileSource(szFileName.c_str(),
-			true,
-			new CryptoPP::HashFilter(
-				hash,
-				new CryptoPP::HexEncoder(
-					new CryptoPP::StringSink(szDigest)
-				)
-			)
-		);
-		return szDigest;
-	}
 #else
 	// The fallback we can always use, but with very limited set of
 	// functionality.
@@ -585,7 +550,7 @@ static bool file_kvs_fnc_size(KviKvsModuleFunctionCall * c)
 	<array> $file.allSize(<dirname:string>)
 	@description:
 	Returns the size of each file in a specified directory as an array.[br]
-	This function is not recursive: it wont return the size of files in subdirectories of <dirname>.
+	This function is not recursive: it won't return the size of files in subdirectories of <dirname>.
 */
 static bool file_kvs_fnc_allSizes(KviKvsModuleFunctionCall * c)
 {
@@ -697,7 +662,7 @@ static bool file_kvs_fnc_ps(KviKvsModuleFunctionCall * c)
 		f: list files[br]
 		l: list symbolic links[br]
 		r: list readable files[br]
-		w: list writeable files[br]
+		w: list writable files[br]
 		x: list executable files[br]
 		h: list hidden files[br]
 		s: list system files[br]
@@ -798,10 +763,10 @@ static bool file_kvs_fnc_ls(KviKvsModuleFunctionCall * c)
 		The data read is returned as a string, so if the file contains binary data,
 		expect strange results.[br] If <size> is not specified, then KVIrc tries to read
 		the whole file up to the 1 MiB limit (so if you want to read a file that is
-		bigger thatn 1 MiB then you MUST specify the <size>).[br]
+		bigger than 1 MiB then you MUST specify the <size>).[br]
 		If you want read binary data (with null bytes inside) then take a look at [fnc]$file.readBytes[/fnc].
-		WARNING: always check the file size before attemting to read a whole file...
-		reading a CDROM iso image may sit down your system :) (and will prolly crash while
+		WARNING: always check the file size before attempting to read a whole file...
+		reading a CDROM iso image may sit down your system :) (and will probably crash while
 		allocating memory, before attempting to read anything)[br]
 		An empty string is returned if a serious error occures.[br]
 		The <filename> is adjusted according to the system that KVIrc is running on.[br]
@@ -891,10 +856,10 @@ static bool file_kvs_fnc_read(KviKvsModuleFunctionCall * c)
 		<size> is an upper limit but may be not reached if the real file is smaller.[br]
 		If <size> is not specified, then KVIrc tries to read
 		the whole file up to the 1 MiB limit (so if you want to read a file that is
-		bigger thatn 1 MiB then you MUST specify the <size>).[br]
+		bigger than 1 MiB then you MUST specify the <size>).[br]
 		If you want simple text data then take a look at [fnc]$file.read[/fnc].
 		WARNING: always check the file size before attemting to read a whole file...
-		reading a CDROM iso image may sit down your system :) (and will prolly crash while
+		reading a CDROM iso image may sit down your system :) (and will probably crash while
 		allocating memory, before attempting to read anything)[br]
 		An empty array (or just "nothing") is returned if a serious error occures.[br]
 		The <filename> is adjusted according to the system that KVIrc is running on.[br]
@@ -1157,7 +1122,7 @@ static bool file_kvs_cmd_writeLines(KviKvsModuleCommandCall * c)
 		<string> $file.localdir([relative_path:string])
 	@description:
 		Returns the path to the KVIrc local data directory.[br]
-		The KVIrc local data directory is always writeable and contains
+		The KVIrc local data directory is always writable and contains
 		the various subdirectories that KVIrc uses internally: audio, avatars,
 		config, help, incoming, log, modules, msgcolors and pics.[br]
 		If <relative_path> is passed, then it is appended to the directory path to
@@ -1298,7 +1263,7 @@ static bool file_kvs_fnc_cwd(KviKvsModuleFunctionCall * c)
 		$file.globaldir
 	@description:
 		Returns the path to the KVIrc global data directory.[br]
-		The KVIrc local data directory is always readable (but usually not writeable) and contains
+		The KVIrc local data directory is always readable (but usually not writable) and contains
 		the various subdirectories that KVIrc uses internally: audio, avatars,
 		config, help, incoming, log, modules, msgcolors and pics.[br]
 		If <relative_path> is passed, then it is appended to the directory path to
@@ -1446,8 +1411,7 @@ static bool file_kvs_fnc_diskSpace(KviKvsModuleFunctionCall * c)
 		Calculates a digest for the file identified by the given string using the algorithm
 		passed as 2nd argument.
 		Currently supported: md5 (default), md4, md2, sha1, mdc2, ripemd160 and dss1.
-		Requires OpenSSL support or (better) Crypto++, but offers a
-		minimal set of hashes in any case.
+		Requires OpenSSL support, but offers a minimal set of hashes in any case.
 */
 static bool file_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 {
@@ -1474,7 +1438,7 @@ static bool file_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 		return true;
 	}
 
-#if defined(COMPILE_SSL_SUPPORT) && !defined(COMPILE_CRYPTOPP_SUPPORT)
+#if defined(COMPILE_SSL_SUPPORT)
 	if(szAlgo.isEmpty()) szAlgo = "md5";
 
 	EVP_MD_CTX mdctx;
@@ -1506,56 +1470,6 @@ static bool file_kvs_fnc_digest(KviKvsModuleFunctionCall * c)
 #endif
 		szResult.append(cBuffer);
 	}
-#elif defined(COMPILE_CRYPTOPP_SUPPORT)
-	// Crypto++ implementation
-	std::string szDigest;
-	std::string szMsg = szFile.toLocal8Bit().data();
-
-	if(szAlgo.toLower() == "sha1" || szAlgo.toLower() == "sha")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::SHA1>(szMsg);
-	} else if(szAlgo.toLower() == "sha224")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::SHA224>(szMsg);
-	} else if(szAlgo.toLower() == "sha256")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::SHA256>(szMsg);
-	} else if(szAlgo.toLower() == "sha384")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::SHA384>(szMsg);
-	} else if(szAlgo.toLower() == "sha512")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::SHA512>(szMsg);
-	} else if(szAlgo.toLower() == "ripemd128")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::RIPEMD128>(szMsg);
-	} else if(szAlgo.toLower() == "ripemd160")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::RIPEMD160>(szMsg);
-	} else if(szAlgo.toLower() == "ripemd256")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::RIPEMD256>(szMsg);
-	} else if(szAlgo.toLower() == "ripemd320")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::RIPEMD320>(szMsg);
-	} else if(szAlgo.toLower() == "crc32")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::CRC32>(szMsg);
-	} else if(szAlgo.toLower() == "md2")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::Weak::MD2>(szMsg);
-	} else if(szAlgo.toLower() == "md4")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::Weak::MD4>(szMsg);
-	} else if(szAlgo.toLower() == "md5")
-	{
-		szDigest = CryptoPpFileHash<CryptoPP::Weak::MD5>(szMsg);
-	} else {
-		c->warning(__tr2qs("Unsupported message digest."));
-		return true;
-	}
-
-	szResult.append(szDigest.c_str());
 #else // fall back to QCryptographicHash
 	QCryptographicHash::Algorithm qAlgo;
 	if(szAlgo.toLower() == "sha1")
