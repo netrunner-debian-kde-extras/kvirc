@@ -6,7 +6,9 @@ kvirc (4:4.1.3+20110929.svn5980-1) UNRELEASED; urgency=low
   * debian/control:
     - Vcs-* fields updated.
     - Remove libcrypto++-dev from B-Ds, was dropped upstream.
+    - Bumped B-D on debhelper to >= 8.9.4.
   * debian/rules: Remove a now obsolete flag.
+  * debian/compat: Now at 9.
 
  -- Kai Wasserbäch <curan@debian.org>  Thu, 29 Sep 2011 13:54:39 +0200
 
