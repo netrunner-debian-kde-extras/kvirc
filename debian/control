@@ -1,8 +1,7 @@
 Source: kvirc
 Build-Depends: debhelper (>= 8), cmake, kdelibs5-dev, libperl-dev,
  pkg-kde-tools, zlib1g-dev, libx11-dev, libxrender-dev, libssl-dev,
- libqt4-dev, libcrypto++-dev, pkg-config, libxss-dev, python-dev,
- libqtwebkit-dev
+ libqt4-dev, pkg-config, libxss-dev, python-dev, libqtwebkit-dev
 Section: net
 Priority: optional
 Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>

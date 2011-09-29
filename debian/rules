@@ -20,7 +20,7 @@ NOT_INSTALLED := \
 override_dh_auto_configure:
 	dh_auto_configure --parallel -Skde -- -DWANT_COEXISTANCE=OFF \
 			-DWANT_ESD=OFF -DWANT_OSS=OFF \
-			-DWANT_CRYPTOPP=YES -DWANT_STRIP=OFF \
+			-DWANT_STRIP=OFF \
 			-DCMAKE_SHARED_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
 			-DCMAKE_MODULE_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
 			-DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
