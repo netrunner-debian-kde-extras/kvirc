@@ -9,6 +9,19 @@ kvirc (4:4.1.3+20110929.svn5980-1) UNRELEASED; urgency=low
     - Bumped B-D on debhelper to >= 8.9.4.
   * debian/rules: Remove a now obsolete flag.
   * debian/compat: Now at 9.
+  * Make KVIrc multiarch ready:
+    - debian/{kvirc,libkvilib4,kvirc-modules}.install: Split out binaries
+      under /usr/lib.
+    - debian/rules: Add -DLIB_SUFFIX to dh_auto_configure invocation.
+    - debian/control:
+      + Added new packages (needed for split).
+      + Added Multi-Arch fields
+      + Added Pre-Depends: multiarch-support and ${misc:Pre-Depends} where
+        needed.
+      + Bumped B-D on CMake.
+    - debian/{kvirc,libkvilib4,kvirc-modules}.lintian-overrides: Moved and
+      updated overrides to match new locations (one could be dropped in the
+      process).
 
  -- Kai Wasserbäch <curan@debian.org>  Thu, 29 Sep 2011 13:54:39 +0200
 

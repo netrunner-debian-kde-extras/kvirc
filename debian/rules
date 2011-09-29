@@ -10,7 +10,7 @@ REV = $(shell echo $(UPVERSION) | sed -e 's/^.*svn//' -e 's/\+rc[0-9]$$//')
 # the following variable which gives us a cleaner buildd output (idea taken
 # from the mesa package).
 NOT_INSTALLED := \
-				usr/lib/libkvilib.so \
+				usr/lib/$(DEB_HOST_MULTIARCH)/libkvilib.so \
 				usr/bin/kvirc-config \
 				usr/share/kvirc/4.1/license/LICENSE-GPLV2 \
 				usr/share/kvirc/4.1/license/LICENSE-GPLV3 \
@@ -24,7 +24,8 @@ override_dh_auto_configure:
 			-DCMAKE_SHARED_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
 			-DCMAKE_MODULE_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
 			-DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined -Wl,--as-needed" \
-			-DMANUAL_REVISION=$(REV)
+			-DMANUAL_REVISION=$(REV) \
+			-DLIB_SUFFIX="/$(DEB_HOST_MULTIARCH)"
 
 override_dh_install:
 	set -e; for file in $(NOT_INSTALLED); do rm debian/tmp/$$file; done
