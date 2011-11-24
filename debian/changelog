@@ -1,3 +1,11 @@
+kvirc (4:4.1.3+20111124.svn5988-1) unstable; urgency=low
+
+  The "Land Equilibrium" release.
+
+  * Synced to upstream's SVN revision 5988.
+
+ -- Kai Wasserbäch <curan@debian.org>  Thu, 24 Nov 2011 13:26:20 +0100
+
 kvirc (4:4.1.3+20110929.svn5980-1) unstable; urgency=low
 
   The "Balance of Power" release.
