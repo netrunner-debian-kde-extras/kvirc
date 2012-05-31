@@ -1,5 +1,6 @@
-kvirc (4:4.1.3+20111124.svn5988-2) UNRELEASED; urgency=low
+kvirc (4:4.1.3+20120601.svn6178-1) UNRELEASED; urgency=low
 
+  * Synced to upstream's SVN revision 6178.
   * Updated debhelper build-depends to better cope with multiarch.
   * Fix "must not be "Multi-Arch: same"" kvirc is Multi-Arch: foreign
     (Closes: #658058)
