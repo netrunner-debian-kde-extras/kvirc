@@ -6,6 +6,7 @@ This paper describes how to successfully compile a working copy of KVIrc 4.x
 under Microsoft Windows operating systems.
 
 
+
 -------------------------------------------------------------------------------
 Prerequisites
 -------------------------------------------------------------------------------
@@ -108,23 +109,19 @@ Prerequisites
   Newer OpenSSL versions from www.slproweb.com need a specific version of
   Microsoft Visual Studio 2008 runtimes to work (this sucks): so if you plan
   to create a  redistributable kvirc package, our advice is to compile
-  OpenSSL by yourself using MinGW and then use your libs.
+  OpenSSL by yourself using MinGW/MSYS and then use your libs.
 
   To compile OpenSSL by yourself:
    - download the latest source from http://www.openssl.org
-   - unpack it somewhere (say C:\Devel\OpenSSL)
-   - open a command prompt and go to C:\Devel\OpenSSL
-   - run "perl ./Configure mingw shared"
-   - run "make"
-
-   If it complains about undefined DSSPUBKEY or CERT_STORE_SOMETHING_*
-   in e_capi.c or it complains about undefined references to
-   "CryptEnumProviders*" in the linking phase then open engines/e_capi.c
-   and put
-
-     #define OPENSSL_NO_CAPIENG 1
-   
-   at the top. Then restart "make".
+   - move it somewhere inside the msys root directory (C:\MinGW\msys\1.0\)
+   - open the MinGW shell and locate the package
+   - unpack the package (you need to do it from the MinGW shell since it
+     contains symlinks)
+   - enter in the created directory
+   - run "./config shared"
+   - run "make" and then "make install"
+   - grab the entire installation directory (eg: C:\MinGW\msys\1.0\local\ssl)
+     and copy it in a more accessible path (like C:\OpenSSL)
 
   Whatever way you choose, install OpenSSL somewhere (like C:\OpenSSL)
   and remember the path.
@@ -326,3 +323,5 @@ Common errors, pitfalls, ..
   In the compilation we call qt's moc to parse headers files and expand qt macros; 
   that warning simply means that moc found nothing to expand in that header file. We can fix this 
   removing headers that doesn't need to be moc-ed from the lists in CMakeLists.txt.
+
+- * Windows Vista and 7 Users * If you have UAC enabled (default setting) and KVIrc is installed in the Program Files folder and you have opted to use the portable setting, then KVIrc's data files will be found in the VirtualStore folder, typically: C:\Users\[UserName]\AppData\Local\VirtualStore\Program Files\KVIrc\ If you plan on using the portable setting, it is recommended that you install KVIrc in a non UAC protected folder.

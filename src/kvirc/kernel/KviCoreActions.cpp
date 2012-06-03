@@ -44,9 +44,9 @@
 #include "KviCoreActionNames.h"
 #include "KviIrcConnectionServerInfo.h"
 #include "KviKvsScript.h"
-#include "KviTalPopupMenu.h"
 
 #include <QObject>
+#include <QMenu>
 
 void register_core_actions(KviActionManager * m)
 {
@@ -166,17 +166,29 @@ void register_core_actions(KviActionManager * m)
 		KviAction::NeedsContext,
 		QString());
 
+#ifdef COMPILE_ON_MAC
 	SCRIPT_ACTION(
 		KVI_COREACTION_GENERALOPTIONS,
 		"options.dialog -t",
-		__tr2qs("Configure KVIrc..."),
+        "Configure KVIrc...",
 		__tr2qs("Shows the general options dialog"),
 		KviActionManager::categorySettings(),
-		"kvi_bigicon_settings.png",
-		KviIconManager::Options,
-		0,
+        "kvi_bigicon_settings.png",
+        -1,
+        0,
 		KVI_SHORTCUTS_OPTIONS);
-
+#else
+        SCRIPT_ACTION(
+            KVI_COREACTION_GENERALOPTIONS,
+            "options.dialog -t",
+            __tr2qs("Configure KVIrc..."),
+            __tr2qs("Shows the general options dialog"),
+            KviActionManager::categorySettings(),
+            "kvi_bigicon_settings.png",
+            KviIconManager::Options,
+            0,
+            KVI_SHORTCUTS_OPTIONS);
+#endif
 	SCRIPT_ACTION(
 		KVI_COREACTION_THEMEOPTIONS,
 		"options.dialog -t theme",
@@ -364,6 +376,60 @@ void register_core_actions(KviActionManager * m)
 		0,
 		QString());
 
+	SCRIPT_ACTION(
+		KVI_COREACTION_FILETRANSFER,
+		"filetransferwindow.open",
+		__tr2qs("Manage File &Transfers"),
+		__tr2qs("Shows a window that lists file transfers"),
+		KviActionManager::categoryGeneric(),
+		"kvi_bigicon_filetransfer.png",
+		KviIconManager::FileTransfer,
+		0,
+		QString());
+
+	SCRIPT_ACTION(
+		KVI_COREACTION_IOGRAPH,
+		"iograph.open",
+		__tr2qs("Show I/O &Traffic graph"),
+		__tr2qs("Shows a graph representing I/O bandwidth traffic"),
+		KviActionManager::categoryGeneric(),
+		"kvi_bigicon_sayicon.png",
+		KviIconManager::SayIcon,
+		0,
+		QString());
+
+	SCRIPT_ACTION(
+		KVI_COREACTION_LOGVIEWER,
+		"logview.open",
+		__tr2qs("Browse Log Files"),
+		__tr2qs("Shows a window that lists and filter log files"),
+		KviActionManager::categoryGeneric(),
+		"kvi_bigicon_log.png",
+		KviIconManager::Log,
+		0,
+		QString());
+
+	SCRIPT_ACTION(
+		KVI_COREACTION_SHAREDFILES,
+		"sharedfileswindow.open",
+		__tr2qs("Manage S&hared Files"),
+		__tr2qs("Shows a window that list shared siles"),
+		KviActionManager::categoryGeneric(),
+		"kvi_bigicon_sharedfiles.png",
+		KviIconManager::SharedFiles,
+		0,
+		QString());
+
+	SCRIPT_ACTION(
+		KVI_COREACTION_URLLIST,
+		"url.list",
+		__tr2qs("View URL list"),
+		__tr2qs("Shows a window that list catched urls"),
+		KviActionManager::categoryGeneric(),
+		"kvi_bigicon_url.png",
+		KviIconManager::Url,
+		0,
+		QString());
 
 	SLOT_ACTION(
 		KVI_COREACTION_CASCADEWINDOWS,
@@ -449,7 +515,7 @@ void KviIrcContextDisplayAction::setup()
 	connect(g_pMainWindow,SIGNAL(activeConnectionLagChanged()),this,SLOT(activeContextStateChanged()));
 }
 
-bool KviIrcContextDisplayAction::addToPopupMenu(KviTalPopupMenu *)
+bool KviIrcContextDisplayAction::addToPopupMenu(QMenu *)
 {
 	// QT4SUX: Widgets can be no longer added to popup menus.. what about labels ?
 	return true;
@@ -521,10 +587,10 @@ KviSeparatorAction::KviSeparatorAction(QObject * pParent)
 }
 
 
-bool KviSeparatorAction::addToPopupMenu(KviTalPopupMenu * p)
+bool KviSeparatorAction::addToPopupMenu(QMenu * p)
 {
 	if(!setupDone()) setup();
-	p->insertSeparator();
+    p->addSeparator();
 	return true;
 }
 
@@ -629,13 +695,11 @@ void KviConnectAction::activate()
 		c->connectOrDisconnect();
 }
 
-bool KviConnectAction::addToPopupMenu(KviTalPopupMenu *p)
+bool KviConnectAction::addToPopupMenu(QMenu *p)
 {
 	if(!setupDone())setup();
 	KviIrcContext * c = g_pMainWindow->activeContext();
-	int id;
-
-
+    QAction * pAction;
 	QString t;
 	if(c)
 	{
@@ -644,31 +708,31 @@ bool KviConnectAction::addToPopupMenu(KviTalPopupMenu *p)
 			case KviIrcContext::Idle:
 				t = m_szConnectString;
 				if(!m_szKeySequence.isEmpty())t += '\t' + m_szKeySequence;
-				p->insertItem(t,this,SLOT(activate()));
+				p->addAction(t,this,SLOT(activate()));
 			break;
 			case KviIrcContext::Connecting:
 			case KviIrcContext::LoggingIn:
 				t = m_szAbortConnectionString;
 				if(!m_szKeySequence.isEmpty())t += '\t' + m_szKeySequence;
-				p->insertItem(t,this,SLOT(activate()));
+				p->addAction(t,this,SLOT(activate()));
 			break;
 			case KviIrcContext::Connected:
 				t = m_szDisconnectString;
 				if(!m_szKeySequence.isEmpty())t += '\t' + m_szKeySequence;
-				p->insertItem(t,this,SLOT(activate()));
+				p->addAction(t,this,SLOT(activate()));
 			break;
 			default:
 				t = m_szConnectString;
 				if(!m_szKeySequence.isEmpty())t += '\t' + m_szKeySequence;
-				id = p->insertItem(t,this,SLOT(activate()));
-				p->setItemEnabled(id,false);
+                pAction = p->addAction(t,this,SLOT(activate()));
+                pAction->setEnabled(false);
 			break;
 		}
 	} else {
 		t = m_szConnectString;
 		if(!m_szKeySequence.isEmpty())t += '\t' + m_szKeySequence;
-		id = p->insertItem(t,this,SLOT(activate()));
-		p->setItemEnabled(id,false);
+        pAction = p->addAction(t,this,SLOT(activate()));
+        pAction->setEnabled(false);
 	}
 	return true;
 }
@@ -723,9 +787,9 @@ void KviSubmenuAction::setup()
 	KviKvsAction::setup();
 	if(!m_pPopup)
 	{
-		m_pPopup = new KviTalPopupMenu();
+        m_pPopup = new QMenu();
 		connect(m_pPopup,SIGNAL(aboutToShow()),this,SLOT(popupAboutToShow()));
-		connect(m_pPopup,SIGNAL(activated(int)),this,SLOT(popupActivated(int)));
+        connect(m_pPopup,SIGNAL(triggered(QAction *)),this,SLOT(popupActivated(QAction *)));
 	}
 }
 
@@ -733,15 +797,17 @@ void KviSubmenuAction::popupAboutToShow()
 {
 }
 
-void KviSubmenuAction::popupActivated(int)
+void KviSubmenuAction::popupActivated(QAction *)
 {
 }
 
-bool KviSubmenuAction::addToPopupMenu(KviTalPopupMenu *p)
+bool KviSubmenuAction::addToPopupMenu(QMenu *p)
 {
 	if(!setupDone()) setup();
-	int id = p->insertItem(*(smallIcon()),visibleName(),m_pPopup);
-	if(!isEnabled()) p->setItemEnabled(id,false);
+    QAction *pAction = p->addAction(*(smallIcon()),visibleName());
+    pAction->setMenu(m_pPopup);
+    if(!isEnabled())
+        pAction->setEnabled(false);
 	return true;
 }
 
@@ -787,18 +853,18 @@ void KviJoinChannelAction::popupAboutToShow()
 
 	g_pApp->fillRecentChannelsPopup(m_pPopup,c);
 
-	m_pPopup->insertSeparator();
-	m_pPopup->insertItem(*(smallIcon()),__tr2qs("Other..."));
-	m_pPopup->insertSeparator();
-	m_pPopup->insertItem(__tr2qs("Clear Recent Channels List"));
+    m_pPopup->addSeparator();
+	m_pPopup->addAction(*(smallIcon()),__tr2qs("Other..."));
+    m_pPopup->addSeparator();
+	m_pPopup->addAction(__tr2qs("Clear Recent Channels List"));
 }
 
-void KviJoinChannelAction::popupActivated(int id)
+void KviJoinChannelAction::popupActivated(QAction *pAction)
 {
 	KviConsoleWindow * c = g_pActiveWindow->console();
 	if(!c)return;
 
-	QString szItemText = m_pPopup->text(id);
+    QString szItemText = pAction->text();
 	if(!szItemText.isEmpty())
 	{
 		QString szText;
@@ -842,19 +908,19 @@ void KviChangeNickAction::popupAboutToShow()
 
 	g_pApp->fillRecentNicknamesPopup(m_pPopup,c);
 
-	m_pPopup->insertSeparator();
-	m_pPopup->insertItem(*(smallIcon()),__tr2qs("Other..."));
+    m_pPopup->addSeparator();
+	m_pPopup->addAction(*(smallIcon()),__tr2qs("Other..."));
 
-	m_pPopup->insertSeparator();
-	m_pPopup->insertItem(*(smallIcon()),__tr2qs("Clear Recent Nicks List"));
+    m_pPopup->addSeparator();
+	m_pPopup->addAction(*(smallIcon()),__tr2qs("Clear Recent Nicks List"));
 }
 
-void KviChangeNickAction::popupActivated(int id)
+void KviChangeNickAction::popupActivated(QAction *pAction)
 {
 	KviConsoleWindow * c = g_pActiveWindow->console();
 	if(!c)return;
 
-	QString text = m_pPopup->text(id);
+    QString text = pAction->text();
 	if(!text.isEmpty())
 	{
 		QString szText;
@@ -890,18 +956,18 @@ KviConnectToServerAction::KviConnectToServerAction(QObject * pParent)
 void KviConnectToServerAction::popupAboutToShow()
 {
 	g_pApp->fillRecentServersPopup(m_pPopup);
-	m_pPopup->insertSeparator();
-	m_pPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Server)),__tr2qs("Other..."));
-	m_pPopup->insertSeparator();
-	m_pPopup->insertItem(__tr2qs("Clear Recent Servers List"));
+    m_pPopup->addSeparator();
+	m_pPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Server)),__tr2qs("Other..."));
+    m_pPopup->addSeparator();
+	m_pPopup->addAction(__tr2qs("Clear Recent Servers List"));
 }
 
-void KviConnectToServerAction::popupActivated(int id)
+void KviConnectToServerAction::popupActivated(QAction *pAction)
 {
 	KviConsoleWindow * c = g_pActiveWindow->console();
 	if(!c)return;
 
-	QString szItemText = m_pPopup->text(id);
+    QString szItemText = pAction->text();
 	if(!szItemText.isEmpty())
 	{
 		if(szItemText == __tr2qs("Other..."))
@@ -942,15 +1008,18 @@ void KviChangeUserModeAction::popupAboutToShow()
 	if(!c)return;
 
 	m_pPopup->clear();
-	int id;
+    QAction *pAction;
 	QString szModes = g_pActiveWindow->connection()->serverInfo()->supportedUserModes();
 
-	id = m_pPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::WallOps)),__tr2qs("Wallops (+w)"));
-	m_pPopup->setItemChecked(id,c->connection()->userInfo()->hasUserMode('w'));
-	id = m_pPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::ServerNotice)),__tr2qs("Server Notices (+s)"));
-	m_pPopup->setItemChecked(id,c->connection()->userInfo()->hasUserMode('s'));
-	id = m_pPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Invisible)),__tr2qs("Invisible (+i)"));
-	m_pPopup->setItemChecked(id,c->connection()->userInfo()->hasUserMode('i'));
+    pAction = m_pPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::WallOps)),__tr2qs("Wallops (+w)"));
+    pAction->setCheckable(true);
+    pAction->setChecked(c->connection()->userInfo()->hasUserMode('w'));
+    pAction = m_pPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::ServerNotice)),__tr2qs("Server Notices (+s)"));
+    pAction->setCheckable(true);
+    pAction->setChecked(c->connection()->userInfo()->hasUserMode('s'));
+    pAction = m_pPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Invisible)),__tr2qs("Invisible (+i)"));
+    pAction->setCheckable(true);
+    pAction->setChecked(c->connection()->userInfo()->hasUserMode('i'));
 
 	szModes.replace("w","");
 	szModes.replace("s","");
@@ -959,17 +1028,18 @@ void KviChangeUserModeAction::popupAboutToShow()
 	{
 		QChar ccc = szModes[0];
 		szModes.remove(0,1);
-		id = m_pPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Mode)),QString("+%1 Mode").arg(ccc));
-		m_pPopup->setItemChecked(id,c->connection()->userInfo()->hasUserMode(ccc.toLatin1()));
+        pAction = m_pPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Mode)),QString("+%1 Mode").arg(ccc));
+        pAction->setCheckable(true);
+        pAction->setChecked(c->connection()->userInfo()->hasUserMode(ccc.toLatin1()));
 	}
 }
 
-void KviChangeUserModeAction::popupActivated(int id)
+void KviChangeUserModeAction::popupActivated(QAction *pAction)
 {
 	KviConsoleWindow * c = g_pActiveWindow->console();
 	if(!c)return;
 
-	QString text = m_pPopup->text(id);
+    QString text = pAction->text();
 	if(!c->isConnected())return;
 	if(!text.isEmpty())
 	{
@@ -1074,11 +1144,11 @@ void KviGoAwayAction::setup()
 	connect(g_pMainWindow,SIGNAL(activeConnectionAwayStateChanged()),this,SLOT(activeContextStateChanged()));
 }
 
-bool KviGoAwayAction::addToPopupMenu(KviTalPopupMenu *p)
+bool KviGoAwayAction::addToPopupMenu(QMenu *p)
 {
 	if(!setupDone())setup();
 	KviIrcContext * c = g_pMainWindow->activeContext();
-	int id;
+    QAction *pAction;
 	QString t;
 	if(c)
 	{
@@ -1088,23 +1158,23 @@ bool KviGoAwayAction::addToPopupMenu(KviTalPopupMenu *p)
 			{
 				t = m_szBackString;
 				if(!m_szKeySequence.isEmpty())t += '\t' + m_szKeySequence;
-				p->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Away)),t,this,SLOT(activate()));
+				p->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Away)),t,this,SLOT(activate()));
 			} else {
 				t = m_szAwayString;
 				if(!m_szKeySequence.isEmpty())t += '\t' + m_szKeySequence;
-				p->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::NotAway)),t,this,SLOT(activate()));
+				p->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::NotAway)),t,this,SLOT(activate()));
 			}
 		} else {
 			t = m_szAwayString;
 			if(!m_szKeySequence.isEmpty())t += '\t' + m_szKeySequence;
-			id = p->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::NotAway)),t,this,SLOT(activate()));
-			p->setItemEnabled(id,false);
+            pAction = p->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::NotAway)),t,this,SLOT(activate()));
+            pAction->setEnabled(false);
 		}
 	} else {
 		t = m_szAwayString;
 		if(!m_szKeySequence.isEmpty())t += '\t' + m_szKeySequence;
-		id = p->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::NotAway)),t,this,SLOT(activate()));
-		p->setItemEnabled(id,false);
+        pAction = p->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::NotAway)),t,this,SLOT(activate()));
+        pAction->setEnabled(false);
 	}
 	return true;
 }
@@ -1153,7 +1223,7 @@ void KviIrcToolsAction::popupAboutToShow()
 	if(a)a->addToPopupMenu(m_pPopup);
 }
 
-void KviIrcToolsAction::popupActivated(int)
+void KviIrcToolsAction::popupActivated(QAction *)
 {
 }
 
@@ -1192,6 +1262,6 @@ void KviIrcOperationsAction::popupAboutToShow()
 	if(a)a->addToPopupMenu(m_pPopup);
 }
 
-void KviIrcOperationsAction::popupActivated(int)
+void KviIrcOperationsAction::popupActivated(QAction *)
 {
 }

@@ -37,7 +37,7 @@ class QScrollBar;
 class QLineEdit;
 class QFile;
 class QFontMetrics;
-class KviTalPopupMenu;
+class QMenu;
 
 class KviWindow;
 class KviMainWindow;
@@ -65,7 +65,7 @@ public:
 	friend class KviIrcViewToolTip;
 	friend class KviIrcViewToolWidget;
 public:
-	KviIrcView(QWidget *parent,KviMainWindow *pFrm,KviWindow *pWnd);
+	KviIrcView(QWidget *parent, KviWindow *pWnd);
 	~KviIrcView();
 public:
 	int dummyRead() const { return 0; };
@@ -94,7 +94,7 @@ private:
 	QPixmap                   * m_pPrivateBackgroundPixmap;
 	QScrollBar                * m_pScrollBar;
 	QToolButton               * m_pToolsButton;
-	KviTalPopupMenu           * m_pToolsPopup;
+	QMenu           * m_pToolsPopup;
 
 	KviIrcViewToolWidget      * m_pToolWidget;
 
@@ -225,8 +225,8 @@ private:
 	bool checkSelectionBlock(KviIrcViewLine * line,int bufIndex);
 	KviIrcViewWrappedBlock * getLinkUnderMouse(int xPos,int yPos,QRect * pRect = 0,QString * linkCmd = 0,QString * linkText = 0);
 	void doLinkToolTip(const QRect &rct,QString &linkCmd,QString &linkText);
-	void doMarkerToolTip(const QRect &rct);
-	bool checkMarkerArea(const QRect & area, const QPoint & mousePos);
+	void doMarkerToolTip();
+	bool checkMarkerArea(const QPoint & mousePos);
 	void addControlCharacter(KviIrcViewLineChunk *pC, QString & szSelectionText);
 public slots:
 	void flushLog();

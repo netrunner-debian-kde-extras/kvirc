@@ -298,7 +298,7 @@ KviBoolOption g_boolOptionsTable[KVI_NUM_BOOL_OPTIONS]=
 	BOOL_OPTION("EnableAnimatedAvatars",true,KviOption_sectFlagGui | KviOption_resetUpdateGui),
 	BOOL_OPTION("EnableAnimatedSmiles",true,KviOption_sectFlagGui | KviOption_resetUpdateGui),
 	BOOL_OPTION("PlaceNickWithNonAlphaCharsAtEnd",true,KviOption_sectFlagGui | KviOption_resetUpdateGui),
-	BOOL_OPTION("UseStartTlsIfAvailable",true,KviOption_sectFlagConnection),
+	BOOL_OPTION("UNUSED:UseStartTlsIfAvailable",true,KviOption_sectFlagConnection),
 	BOOL_OPTION("PasteLastLogOnChannelJoin",false,KviOption_sectFlagLogging),
 	BOOL_OPTION("PasteLastLogOnQueryJoin",false,KviOption_sectFlagLogging),
 	BOOL_OPTION("UseSpecifiedSmartColorForOwnNick",false,KviOption_sectFlagIrcView | KviOption_resetUpdateGui | KviOption_groupTheme),
@@ -311,7 +311,7 @@ KviBoolOption g_boolOptionsTable[KVI_NUM_BOOL_OPTIONS]=
 	BOOL_OPTION("PopupNotifierOnNewDccChatMessages",true,KviOption_sectFlagFrame),
 	BOOL_OPTION("UseAwayMessage",true,KviOption_sectFlagConnection),
 	BOOL_OPTION("DisableQuietBanListRequestOnJoin",true,KviOption_sectFlagConnection),
-	BOOL_OPTION("UseSaslIfAvailable",true,KviOption_sectFlagConnection),
+	BOOL_OPTION("UNUSED:UseSaslIfAvailable",true,KviOption_sectFlagConnection),
 	BOOL_OPTION("FrameIsMaximized",false,KviOption_sectFlagGeometry),
 	BOOL_OPTION("PrependNickColorInfoToRealname",true,KviOption_sectFlagConnection),
 	BOOL_OPTION("DontShowNotifierIfActiveWindowIsFullScreen",true,KviOption_sectFlagFrame),
@@ -337,7 +337,7 @@ KviBoolOption g_boolOptionsTable[KVI_NUM_BOOL_OPTIONS]=
 // FIXME: #warning "Remove the unused string options here!"
 
 #if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
-	#define RUN_THE_BROWSER "run \"cmd.exe /c start \\\"\\\" \\\"$0\\\"\""
+	#define RUN_THE_BROWSER "run cmd.exe /c start \"\" \"$0\""
 #else
 	#ifdef COMPILE_KDE_SUPPORT
 		#define RUN_THE_BROWSER "run xdg-open $0"
@@ -590,7 +590,7 @@ KviUIntOption g_uintOptionsTable[KVI_NUM_UINT_OPTIONS]=
 	UINT_OPTION("TotalConnectionTime",0,0),
 	UINT_OPTION("DccSocketTimeout",360,KviOption_sectFlagDcc),
 	UINT_OPTION("DccSendIdleStepInMSec",30,KviOption_sectFlagDcc),
-	UINT_OPTION("DccSendPacketSize",4096,KviOption_sectFlagDcc),
+	UINT_OPTION("DccSendPacketSize",16384,KviOption_sectFlagDcc),
 	UINT_OPTION("GlobalTransparencyParentFadeFactor",10,KviOption_sectFlagGui | KviOption_resetUpdatePseudoTransparency | KviOption_groupTheme),
 	UINT_OPTION("GlobalTransparencyChildFadeFactor",50,KviOption_sectFlagGui | KviOption_resetUpdatePseudoTransparency | KviOption_groupTheme),
 	UINT_OPTION("NotifyListCheckTimeInSecs",180,KviOption_sectFlagConnection),
@@ -686,17 +686,16 @@ KviFontOption g_fontOptionsTable[KVI_NUM_FONT_OPTIONS]=
 	FONT_OPTION("Notifier","Arial",9,KviOption_sectFlagNotifier | KviOption_resetUpdateGui),
 	FONT_OPTION("NotifierTitle","Arial",9,KviOption_sectFlagNotifier | KviOption_resetUpdateGui)
 #elif defined(COMPILE_ON_MAC)
-	//workaround qt4 font kerning issue under macosx using a monospaced font
-	FONT_OPTION("IrcView","Menlo",10,KviOption_sectFlagIrcView | KviOption_resetUpdateGui),
-	FONT_OPTION("Input","Menlo",12,KviOption_sectFlagInput | KviOption_resetUpdateGui),
-	FONT_OPTION("UserListView","Menlo",10,KviOption_sectFlagUserListView | KviOption_resetUpdateGui),
-	FONT_OPTION("Label","Menlo",10,KviOption_sectFlagLabel | KviOption_resetUpdateGui),
-	FONT_OPTION("Application","Menlo",10,KviOption_sectFlagGui | KviOption_resetUpdateAppFont),
-	FONT_OPTION("IrcToolBarApplet","Menlo",10,KviOption_sectFlagIrcToolBar | KviOption_resetUpdateGui),
-	FONT_OPTION("WindowList","Menlo",10,KviOption_sectFlagWindowList | KviOption_resetUpdateWindowList),
-	FONT_OPTION("TreeWindowList","Menlo",10,KviOption_sectFlagWindowList | KviOption_resetUpdateWindowList),
-	FONT_OPTION("Notifier","Menlo",9,KviOption_sectFlagNotifier | KviOption_resetUpdateNotifier),
-	FONT_OPTION("NotifierTitle","Menlo",9,KviOption_sectFlagNotifier | KviOption_resetUpdateNotifier)
+    FONT_OPTION("IrcView","Lucida Grande",12,KviOption_sectFlagIrcView | KviOption_resetUpdateGui),
+    FONT_OPTION("Input","Lucida Grande",12,KviOption_sectFlagInput | KviOption_resetUpdateGui),
+    FONT_OPTION("UserListView","Lucida Grande",12,KviOption_sectFlagUserListView | KviOption_resetUpdateGui),
+    FONT_OPTION("Label","Lucida Grande",12,KviOption_sectFlagLabel | KviOption_resetUpdateGui),
+    FONT_OPTION("Application","Lucida Grande",12,KviOption_sectFlagGui | KviOption_resetUpdateAppFont),
+    FONT_OPTION("IrcToolBarApplet","Lucida Grande",12,KviOption_sectFlagIrcToolBar | KviOption_resetUpdateGui),
+    FONT_OPTION("WindowList","Lucida Grande",12,KviOption_sectFlagWindowList | KviOption_resetUpdateWindowList),
+    FONT_OPTION("TreeWindowList","Lucida Grande",12,KviOption_sectFlagWindowList | KviOption_resetUpdateWindowList),
+    FONT_OPTION("Notifier","Lucida Grande",12,KviOption_sectFlagNotifier | KviOption_resetUpdateNotifier),
+    FONT_OPTION("NotifierTitle","Lucida Grande",12,KviOption_sectFlagNotifier | KviOption_resetUpdateNotifier)
 #else
 	FONT_OPTION("IrcView","Monospace",10,KviOption_sectFlagIrcView | KviOption_resetUpdateGui),
 	FONT_OPTION("Input","Sans Serif",12,KviOption_sectFlagInput | KviOption_resetUpdateGui),

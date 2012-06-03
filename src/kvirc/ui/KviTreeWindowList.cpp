@@ -29,11 +29,10 @@
 #include "KviMainWindow.h"
 #include "KviLocale.h"
 #include "KviOptions.h"
-#include "KviTalPopupMenu.h"
 #include "KviWindow.h"
 #include "KviTreeWindowList.h"
 #include "KviPixmapUtils.h"
-#include "KviDockExtension.h"
+#include "KviTrayIcon.h"
 
 #include <QHeaderView>
 #include <QMouseEvent>
@@ -43,6 +42,7 @@
 #include <QScrollBar>
 #include <QStyleOptionViewItemV4>
 #include <QStyle>
+#include <QMenu>
 
 #ifdef COMPILE_PSEUDO_TRANSPARENCY
 	extern QPixmap * g_pShadedChildGlobalDesktopBackground;
@@ -113,7 +113,7 @@ void KviTreeWindowListItem::unhighlight()
 	m_iHighlightLevel = 0;
 	setData(0, KVI_TTBID_HIGHLIGHT, m_iHighlightLevel);
 
-	if(g_pMainWindow->dockExtension())g_pMainWindow->dockExtension()->refresh();
+	if(g_pMainWindow->trayIcon())g_pMainWindow->trayIcon()->refresh();
 }
 
 void KviTreeWindowListItem::highlight(int iLevel)
@@ -123,8 +123,8 @@ void KviTreeWindowListItem::highlight(int iLevel)
 	m_iHighlightLevel = iLevel;
 	setData(0, KVI_TTBID_HIGHLIGHT, m_iHighlightLevel);
 
-	if(g_pMainWindow->dockExtension())
-		g_pMainWindow->dockExtension()->refresh();
+	if(g_pMainWindow->trayIcon())
+		g_pMainWindow->trayIcon()->refresh();
 }
 
 void KviTreeWindowListItem::setProgress(int progress)
@@ -272,9 +272,9 @@ void KviTreeWindowListTreeWidget::mousePressEvent(QMouseEvent *e)
 		//clicked on empty space
 		if(e->button() & Qt::RightButton)
 		{
-			KviTalPopupMenu* pPopup=new KviTalPopupMenu();
-			pPopup->insertItem(__tr2qs("Sort"),this,SLOT(sort()));
-			pPopup->insertItem(__tr2qs("Reverse Sort"),this,SLOT(reverseSort()));
+			QMenu* pPopup=new QMenu();
+			pPopup->addAction(__tr2qs("Sort"),this,SLOT(sort()));
+			pPopup->addAction(__tr2qs("Reverse Sort"),this,SLOT(reverseSort()));
 			pPopup->popup(QCursor::pos());
 		}
 	}
@@ -450,7 +450,7 @@ void KviTreeWindowList::setActiveItem(KviWindowListItem * it)
 		}
 
 		((KviTreeWindowListItem *)it)->setActive(true);
-		if(g_pMainWindow->dockExtension())g_pMainWindow->dockExtension()->refresh();
+		if(g_pMainWindow->trayIcon())g_pMainWindow->trayIcon()->refresh();
 	}
 }
 

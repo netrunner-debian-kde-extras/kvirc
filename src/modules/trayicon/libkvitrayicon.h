@@ -28,28 +28,27 @@
 
 #include "kvi_settings.h"
 #include "KviMainWindow.h"
-#include "KviDockExtension.h"
+#include "KviTrayIcon.h"
 
 #include <QSystemTrayIcon>
 #include <QLabel>
 
 class QPixmap;
 class QTimer;
-class KviTalPopupMenu;
+class QMenu;
 class KviDynamicToolTip;
 //class KviMainWindow;
 
-class TrayIcon : public QSystemTrayIcon, public KviDockExtension
+class KviTrayIconWidget : public QSystemTrayIcon, public KviTrayIcon
 {
 	Q_OBJECT
 public:
-	TrayIcon(KviMainWindow * win);
-	~TrayIcon();
+	KviTrayIconWidget();
+	~KviTrayIconWidget();
 protected:
-	KviMainWindow               * m_pFrm;
 	KviDynamicToolTip      * m_pTip;
-	KviTalPopupMenu        * m_pContextPopup;
-	KviTalPopupMenu        * m_pAwayPopup;
+	QMenu        * m_pContextPopup;
+	QMenu        * m_pAwayPopup;
 	QLabel                 * m_pTitleLabel;
 
 	QAction* m_pToggleFrame;
@@ -63,8 +62,6 @@ protected:
 	unsigned int m_iChannels;
 	unsigned int m_iQueries;
 	unsigned int m_iOther;
-public:
-	KviMainWindow * frame(){ return m_pFrm; };
 public:
 	virtual void refresh();
 	virtual void die();

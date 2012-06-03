@@ -33,7 +33,7 @@
 
 class KviFileTransfer;
 class KviWindow;
-class KviTalPopupMenu;
+class QMenu;
 class QPainter;
 
 // This is for the external extension
@@ -62,7 +62,7 @@ public:
 	KviWindow * transferWindow(){ return m_pTransferWindow; };
 	static KviFileTransferManager * instance();
 	KviPointerList<KviFileTransfer> * transferList(){ return m_pTransferList; };
-	void invokeTransferWindow(KviWindow * pWnd = 0,bool bCreateMinimized = false,bool bNoRaise = false);
+	void invokeTransferWindow(bool bCreateMinimized = false, bool bNoRaise = false);
 	void killAllTransfers();
 	void killTerminatedTransfers();
 signals:
@@ -90,7 +90,7 @@ public:
 	// this is just a convenience function : it's equivalent to !active()
 	bool terminated();
 	// This may be used to invoke the transfer window
-	void invokeTransferWindow(KviWindow * pWnd = 0,bool bCreateMinimized = false,bool bNoRaise = false);
+	void invokeTransferWindow(bool bCreateMinimized = false, bool bNoRaise = false);
 	KviFileTransferManager * manager(){ return KviFileTransferManager::instance(); };
 	// this returns the pointer to the transfer window : may be 0!
 	KviWindow * transferWindow(){ return manager()->transferWindow(); };
@@ -107,7 +107,7 @@ public:
 	virtual QString localFileName();
 	virtual QString retryCommand();
 	virtual int displayHeight(int iLineSpacing);
-	virtual void fillContextPopup(KviTalPopupMenu * m) = 0;
+	virtual void fillContextPopup(QMenu * m) = 0;
 	virtual void die();
 };
 

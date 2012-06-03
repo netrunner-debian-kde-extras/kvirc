@@ -42,7 +42,6 @@
 #include "KviIrcConnectionUserInfo.h"
 #include "KviHtmlGenerator.h"
 #include "KviTalToolTip.h"
-#include "KviTalPopupMenu.h"
 #include "KviThemedLabel.h"
 
 #include <QLineEdit>
@@ -53,6 +52,7 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QTextDocument> // for Qt::escape
+#include <QMenu>
 
 extern KviColorWindow * g_pColorWindow;
 
@@ -167,6 +167,7 @@ void KviTopicWidget::applyOptions()
 	m_pLabel->applyOptions();
 	QFont newFont(KVI_OPTION_FONT(KviOption_fontLabel));
 	newFont.setKerning(false);
+	newFont.setStyleStrategy(QFont::StyleStrategy(newFont.styleStrategy() | QFont::ForceIntegerMetrics));
 	setFont(newFont);
 	if(m_pCompletionBox)
 		m_pCompletionBox->setFont(newFont);
@@ -501,7 +502,7 @@ void KviTopicWidget::mousePressEvent(QMouseEvent * e)
 		return;
 	if(!m_pContextPopup)
 	{
-		m_pContextPopup = new KviTalPopupMenu(this);
+		m_pContextPopup = new QMenu(this);
 		connect(m_pContextPopup,SIGNAL(aboutToShow()),this,SLOT(contextPopupAboutToShow()));
 	}
 	m_pContextPopup->popup(mapToGlobal(e->pos()));
@@ -512,7 +513,7 @@ void KviTopicWidget::contextPopupAboutToShow()
 	if(!m_pContextPopup)
 		return; // hm ?
 	m_pContextPopup->clear();
-	m_pContextPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Copy)),__tr2qs("Copy to clipboard"),this,SLOT(copy()));
+	m_pContextPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Copy)),__tr2qs("Copy to clipboard"),this,SLOT(copy()));
 }
 
 void KviTopicWidget::copy()

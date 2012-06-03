@@ -29,7 +29,8 @@
 
 #include "KviLocale.h"
 #include "KviIconManager.h"
-#include "KviTalPopupMenu.h"
+
+#include <QMenu>
 /*
 	@doc:	toolbutton
 	@keyterms:
@@ -273,7 +274,7 @@ KVSO_CLASS_FUNCTION(toolButton,setPopup)
 		c->warning(__tr2qs_ctx("Can't add a non-popupmenu object","objects"));
 		return true;
 	}
-	((QToolButton *)widget())->setMenu(((KviTalPopupMenu  *)(ob->object())));
+	((QToolButton *)widget())->setMenu(((QMenu  *)(ob->object())));
 	return true;
 }
 

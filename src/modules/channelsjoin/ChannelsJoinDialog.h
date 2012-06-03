@@ -32,10 +32,10 @@
 
 #include "KviWindow.h"
 #include "KviCString.h"
-#include "KviTalPopupMenu.h"
 
 #include <QTreeWidget>
 #include <QDialog>
+#include <QMenu>
 
 class QCheckBox;
 class QPushButton;
@@ -62,7 +62,7 @@ public:
 			delete m_pJoinPopup;
 	};
 protected:
-	KviTalPopupMenu                   * m_pJoinPopup;
+	QMenu                   * m_pJoinPopup;
 	/**
 	* \brief Called when the user clicks on the list
 	* \param e mouse event descriptor
@@ -83,11 +83,10 @@ class ChannelsJoinDialog : public QDialog
 public:
 	/**
 	* \brief Constructs the channels join window
-	* \param par The parent widget
 	* \param name The name of the window
 	* \return ChannelsJoinDialog
 	*/
-	ChannelsJoinDialog(QWidget * par, const char * name);
+	ChannelsJoinDialog(const char * name);
 
 	/**
 	* \brief Destroys the channels join window

@@ -82,6 +82,8 @@ private:
 	QPixmap m_pIcon;
 	/// Caption as plain text.
 	QString m_szPlainCaption;
+	/// Our geometry when we're in a restored state.
+	QRect m_rNormalizedGeometry;
 private:
 	/**
 	* \brief Updates the caption of the child
@@ -90,7 +92,6 @@ private:
 	void updateCaption();
 
 public:
-
 	/**
 	* \brief Sets the client widget which is shown in the subwindow
 	* \param w The new client widget which is docked into our KviMdiChild
@@ -156,12 +157,24 @@ public:
 	* \return void
 	*/
 	void activate();
+
+	/**
+	* \brief Overrides parent implementation to return a correct value even when we're maximized or minimized
+	* \return QRect
+	*/
+	QRect normalGeometry() { return m_rNormalizedGeometry; };
 protected:
 	/**
-	* \brief Updates the widget background when moving
+	* \brief Updates the widget background when moving, and our normalGeometry
 	* \return void
 	*/
 	virtual void moveEvent(QMoveEvent * e);
+
+	/**
+	* \brief Updates our normalGeometry
+	* \return void
+	*/
+	virtual void resizeEvent(QResizeEvent * e);
 
 	/**
 	* \brief Hooks into close event to make user decisions possible
@@ -186,17 +199,6 @@ public slots:
 	* \return void
 	*/
 	void restore();
-
-	/**
-	* \brief Triggered when the state of a window changes
-	*
-	* This event is used to catch minmize event of the KviMdiSubWindow
-	* \param oldState The old state of the window
-	* \param newState The new state of the window
-	* \return void
-	*/
-	void windowStateChangedEvent( Qt::WindowStates oldState, Qt::WindowStates newState );
-
 private slots:
 	/**
 	* \brief Updates the system popup

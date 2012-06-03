@@ -68,7 +68,6 @@
 #include "KviKvsScript.h"
 #include "KviKvsEventTriggers.h"
 #include "KviTalHBox.h"
-#include "KviTalPopupMenu.h"
 #include "KviNickColors.h"
 
 #ifdef COMPILE_SSL_SUPPORT
@@ -82,8 +81,8 @@
 #include <QCloseEvent>
 #include <QTextDocument>
 #include <QRegExp>
-#include <QDebug>
 #include <QTextDocument> // for Qt::escape_command
+#include <QMenu>
 
 #define __KVI_DEBUG__
 #include "kvi_debug.h"
@@ -91,11 +90,11 @@
 extern KVIRC_API KviIrcServerDataBase           * g_pServerDataBase;
 extern KVIRC_API KviProxyDataBase               * g_pProxyDataBase;
 
-KviConsoleWindow::KviConsoleWindow(KviMainWindow * lpFrm,int iFlags)
+KviConsoleWindow::KviConsoleWindow(int iFlags)
 #ifdef COMPILE_ON_WINDOWS
-: KviWindow(KviWindow::Console,lpFrm,__tr2qs("CONSOLE"),0)
+: KviWindow(KviWindow::Console,__tr2qs("CONSOLE"),0)
 #else
-: KviWindow(KviWindow::Console,lpFrm,__tr2qs("CONSOLE"),this)
+: KviWindow(KviWindow::Console,__tr2qs("CONSOLE"),this)
 #endif
 {
 	m_pConsole = this;
@@ -131,7 +130,7 @@ KviConsoleWindow::KviConsoleWindow(KviMainWindow * lpFrm,int iFlags)
 	m_pSplitter->setObjectName("console_splitter");
 	m_pSplitter->setChildrenCollapsible(false);
 
-	m_pIrcView = new KviIrcView(m_pSplitter,lpFrm,this);
+	m_pIrcView = new KviIrcView(m_pSplitter, this);
 	connect(m_pIrcView,SIGNAL(rightClicked()),this,SLOT(textViewRightClicked()));
 
 	// FIXME: #warning "If notify list is disabled avoid to show this"
@@ -367,9 +366,7 @@ void KviConsoleWindow::executeInternalCommand(int index)
 void KviConsoleWindow::saveProperties(KviConfigurationFile *cfg)
 {
 	KviWindow::saveProperties(cfg);
-	QList<int> sizes;
-	sizes << m_pIrcView->width() << m_pNotifyListView->width();
-	cfg->writeEntry("Splitter",sizes);
+	cfg->writeEntry("Splitter", m_pNotifyViewButton->isChecked() ? m_pSplitter->sizes() : m_SplitterSizesList);
 	cfg->writeEntry("NotifyListViewVisible",m_pNotifyViewButton->isChecked());
 }
 
@@ -378,15 +375,23 @@ void KviConsoleWindow::getBaseLogFileName(QString &buffer)
 	buffer=QString("CONSOLE%1").arg(context()->id());
 }
 
-void KviConsoleWindow::showNotifyList(bool bShow)
+void KviConsoleWindow::showNotifyList(bool bShow, bool bIgnoreSizeChange)
 {
-	if(!bShow)
+	if(bShow)
 	{
-		m_pNotifyListView->hide();
-		if(m_pNotifyViewButton->isChecked())m_pNotifyViewButton->setChecked(false);
-	} else {
 		m_pNotifyListView->show();
-		if(!(m_pNotifyViewButton->isChecked()))m_pNotifyViewButton->setChecked(true);
+		if(!(m_pNotifyViewButton->isChecked()))
+			m_pNotifyViewButton->setChecked(true);
+
+		m_pSplitter->setSizes(m_SplitterSizesList);
+	} else {
+		if(!bIgnoreSizeChange)
+			m_SplitterSizesList = m_pSplitter->sizes();
+
+		m_pNotifyListView->hide();
+		if(m_pNotifyViewButton->isChecked())
+			m_pNotifyViewButton->setChecked(false);
+		
 	}
 }
 
@@ -396,12 +401,11 @@ void KviConsoleWindow::loadProperties(KviConfigurationFile *cfg)
 	QList<int> def;
 	def.append((iWidth * 75) / 100);
 	def.append((iWidth * 25) / 100);
-	QList<int> sizes=cfg->readIntListEntry("Splitter",def);
-	m_pSplitter->setSizes(sizes);
+	m_SplitterSizesList=cfg->readIntListEntry("Splitter",def);
 	m_pSplitter->setStretchFactor(0,1);
 
 	KviWindow::loadProperties(cfg);
-	showNotifyList(cfg->readBoolEntry("NotifyListViewVisible",false));
+	showNotifyList(cfg->readBoolEntry("NotifyListViewVisible",false), true);
 }
 
 void KviConsoleWindow::textViewRightClicked()
@@ -706,7 +710,7 @@ void KviConsoleWindow::outputPrivmsg(KviWindow *wnd,
 		if(type < 0)return; // event stopped the message!
 		if(type == KVI_OUT_HIGHLIGHT)
 		{
-			if(!wnd->hasAttention())
+			if(!wnd->hasAttention(KviWindow::MainWindowIsVisible))
 			{
 				if(KVI_OPTION_BOOL(KviOption_boolFlashWindowOnHighlightedMessages) &&
 					(!(iFlags & NoWindowFlashing)))

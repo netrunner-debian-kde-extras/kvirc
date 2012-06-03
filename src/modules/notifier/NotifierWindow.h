@@ -30,7 +30,6 @@
 #include "kvi_settings.h"
 #include "KviQString.h"
 #include "KviPointerList.h"
-#include "KviTalPopupMenu.h"
 #include "KviTimeUtils.h"
 
 #include <QBitmap>
@@ -44,6 +43,7 @@
 #include <QWidget>
 #include <QTabWidget>
 #include <QProgressBar>
+#include <QMenu>
 
 class QPainter;
 class KviWindow;
@@ -90,8 +90,8 @@ protected:
 	QPoint      m_pntPos;
 	QPoint      m_pntClick;
 	int         m_iBlinkCount;
-	KviTalPopupMenu     * m_pContextPopup;
-	KviTalPopupMenu     * m_pDisablePopup;
+	QMenu     * m_pContextPopup;
+	QMenu     * m_pDisablePopup;
 	KviWindow * m_pWindowToRaise;
 	kvi_time_t  m_tAutoHideAt;
 	kvi_time_t  m_tStartedAt;

@@ -31,9 +31,10 @@ SET(VERSION_MAJOR "4")
 SET(VERSION_BRANCH "4.1")
 SET(VERSION_RELEASE "4.1.3")
 SET(VERSION_CODENAME "Equilibrium")
-# REMINDER: "Aria" is a candidate
+# REMINDER: "Aria" is a candidate, trunk name "Quasar"
 
 STRING(REGEX MATCH "[0-9]+$" VERSION_MINOR ${VERSION_BRANCH})
+
 
 SET(CMAKE_KVIRC_VERSION_MAJOR ${VERSION_MAJOR})
 SET(CMAKE_KVIRC_VERSION_BRANCH ${VERSION_BRANCH})
@@ -61,20 +62,15 @@ SET(MANUAL_REVISION
 STRING(COMPARE EQUAL "${MANUAL_REVISION}" "" MANUAL_REVISION_UNSET)
 IF(MANUAL_REVISION_UNSET)
 	# No manually forced revision number, gotta guess one now
-	IF(EXISTS "${CMAKE_SOURCE_DIR}/.svn" AND IS_DIRECTORY "${CMAKE_SOURCE_DIR}/.svn")
-		# We're in a svn structure, let's get the revision number using subversion
-		FIND_PACKAGE(Subversion)
-		IF(Subversion_FOUND)
-			MESSAGE(STATUS "Found Subversion ${Subversion_VERSION_SVN}")
-			Subversion_WC_INFO(${PROJECT_SOURCE_DIR} KVIrc)
-			IF(DEFINED KVIrc_WC_REVISION)
-				SET(CMAKE_KVIRC_BUILD_REVISION ${KVIrc_WC_REVISION})
-				MESSAGE(STATUS "Current revision is ${KVIrc_WC_REVISION}")
-			ELSE()
-				MESSAGE(STATUS "No Subversion working copy found")
-			ENDIF()
+	FIND_PACKAGE(Subversion)
+	IF(Subversion_FOUND)
+		MESSAGE(STATUS "Found Subversion ${Subversion_VERSION_SVN}")
+		Subversion_WC_INFO(${PROJECT_SOURCE_DIR} KVIrc)
+		IF(DEFINED KVIrc_WC_REVISION)
+			SET(CMAKE_KVIRC_BUILD_REVISION ${KVIrc_WC_REVISION})
+			MESSAGE(STATUS "Current revision is ${KVIrc_WC_REVISION}")
 		ELSE()
-			MESSAGE("Subversion not found. No revision number will be used")
+			MESSAGE(STATUS "No Subversion working copy found")
 		ENDIF()
 	ELSE()
 		IF(EXISTS "${CMAKE_SOURCE_DIR}/.svnrevision")
@@ -117,7 +113,11 @@ TRY_RUN(TEST_DID_RUN TEST_DID_COMPILE "${CMAKE_BINARY_DIR}" "${CMAKE_CURRENT_SOU
 IF(TEST_DID_COMPILE)
 	STRING(REGEX MATCH "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9] [A-Z][A-Z][A-Z]" CMAKE_KVIRC_BUILD_DATE "${TEST_BUILD_DATE}")
 ELSE()
-	SET(CMAKE_KVIRC_BUILD_DATE "ERROR")
+	MESSAGE(STATUS " Test datetime program failed to compile:")
+	MESSAGE(STATUS " ----------------------------------------")
+	MESSAGE(STATUS "${TEST_BUILD_DATE}")
+	MESSAGE(STATUS " ----------------------------------------")
+	SET(CMAKE_KVIRC_BUILD_DATE "ERROR ")
 ENDIF()
 
 # Set var to link with, for later use
@@ -356,25 +356,6 @@ ELSE()
 ENDIF()
 
 ###############################################################################
-# Option for precompiled headers usage (currently broken because of bad gcc support)
-###############################################################################
-#
-#OPTION(WANT_PCH "Whether to use pre-compiled headers" ON)
-#IF(WANT_PCH)
-#	FIND_PACKAGE(PCHSupport)
-#	IF(PCHSupport_FOUND)
-#		SET(CMAKE_STATUS_PCH_SUPPORT "Yes")
-#		LIST(APPEND CMAKE_KVIRC_BUILD_FLAGS -DUSE_PCH=1)
-#	ELSE()
-#		SET(CMAKE_STATUS_PCH_SUPPORT "Not available")
-#	ENDIF()
-#ELSE()
-#	ADD_DEFINITIONS(-DUSE_PCH=0)
-#	SET(CMAKE_STATUS_PCH_SUPPORT "User disabled")
-#ENDIF()
-#
-
-###############################################################################
 #
 # Library and tool checks, in order. First the required ones
 # in order of dependancy, then the optional ones.
@@ -430,6 +411,12 @@ IF(QT4_FOUND)
 	SET(QT_USE_QTSQL true)
 	SET(QT_USE_QTXML true)
 	SET(QT_USE_QTNETWORK true)
+
+	# this is a bit fishy: we need qtmain for non-debug MSVC (/subsystem:windows), but probably not for MinGW.
+	# TODO: someone should check the impact on MinGW of qtmain.
+	IF(MSVC AND NOT WANT_DEBUG)
+		SET(QT_USE_QTMAIN true)
+	ENDIF()
 
 	# Qt-DBus support
 	OPTION(WANT_QTDBUS "Whether to compile Qt-DBus support" ON)
@@ -519,7 +506,11 @@ IF(WANT_PHONON)
 	FIND_PACKAGE(Phonon)
 	IF(PHONON_FOUND)
 		SET(COMPILE_PHONON_SUPPORT 1)
-	        LIST(APPEND LIBS ${PHONON_LIBRARY})
+			IF(COMPILE_DEBUG_MODE AND PHONON_DEBUG_LIBRARY)
+				LIST(APPEND LIBS ${PHONON_DEBUG_LIBRARY})
+			ELSE(COMPILE_DEBUG_MODE AND PHONON_DEBUG_LIBRARY)
+				LIST(APPEND LIBS ${PHONON_LIBRARY})
+			ENDIF(COMPILE_DEBUG_MODE AND PHONON_DEBUG_LIBRARY)
 		LIST(APPEND CMAKE_STATUS_AUDIO_BACKENDS "Phonon")
 	ENDIF()
 ENDIF()
@@ -592,7 +583,11 @@ IF(WANT_OPENSSL)
 	IF(OPENSSL_FOUND)
 		IF(WIN32)
 			# On windows/mingw we need libeay32 too...
-			FIND_LIBRARY(LIB_EAY NAMES libeay32MD eay libeay libeay32)
+			FIND_LIBRARY(LIB_EAY NAMES libeay32MD eay libeay libeay32
+									${_OPENSSL_ROOT_HINTS_AND_PATHS}
+									PATH_SUFFIXES
+									"lib"
+									"lib/MinGW")
 			IF(LIB_EAY)
 				INCLUDE_DIRECTORIES(${OPENSSL_INCLUDE_DIR})
 				# The following are here in order to pick the applink.c file
@@ -680,6 +675,8 @@ IF(WANT_PERL)
 		SET(ADDITIONAL_LINK_FLAGS "${ADDITIONAL_LINK_FLAGS} ${PERL_LINK_FLAGS}")
 		# Remove leading and trailing spaces (string strip)
 		STRING(REGEX REPLACE "(^( )+|( )+$)" "" ADDITIONAL_LINK_FLAGS "${ADDITIONAL_LINK_FLAGS}")
+		# Kill any possible --no-undefined flags
+		STRING(REPLACE "-Wl,--no-undefined" "" ADDITIONAL_LINK_FLAGS ${ADDITIONAL_LINK_FLAGS})
 	ELSE()
 		SET(CMAKE_STATUS_PERL_SUPPORT "No")
 	ENDIF()
@@ -694,19 +691,29 @@ ENDIF()
 # Check for Python support
 OPTION(WANT_PYTHON "Compile Python Support" ON)
 IF(WANT_PYTHON)
-	FIND_PACKAGE(Python)
-	IF(PYTHON_FOUND)
+	# this should ensure that cmake prefers python 2.7 over python 3
+	# it's not neede from cmake 2.8.8 onwards
+	SET(Python_ADDITIONAL_VERSIONS 2.7)
+	FIND_PACKAGE(PythonLibs)
+	IF(PYTHONLIBS_FOUND)
 		SET(COMPILE_PYTHON_SUPPORT 1)
 		SET(CMAKE_STATUS_PYTHON_SUPPORT "Yes")
 
 		#under win32/mingw, if no link flag is needed ${PYTHON_LFLAGS} is set to a braindead "None"
-		STRING(REPLACE "None" "" PYTHON_LFLAGS "${PYTHON_LFLAGS}")
-		SET(ADDITIONAL_LINK_FLAGS "${ADDITIONAL_LINK_FLAGS} ${PYTHON_LFLAGS}")
+#		STRING(REPLACE "None" "" PYTHON_LIBRARIES "${PYTHON_LIBRARIES}")
+#		SET(ADDITIONAL_LINK_FLAGS "${ADDITIONAL_LINK_FLAGS} ${PYTHON_LIBRARIES}")
                 # Remove leading and trailing spaces (string strip)
-		STRING(REGEX REPLACE "(^( )+|( )+$)" "" ADDITIONAL_LINK_FLAGS "${ADDITIONAL_LINK_FLAGS}")
-		LIST(APPEND LIBS ${PYTHON_LIBRARY})
+#		STRING(REGEX REPLACE "(^( )+|( )+$)" "" ADDITIONAL_LINK_FLAGS "${ADDITIONAL_LINK_FLAGS}")
+		# Kill any possible --no-undefined flags
+#		STRING(REPLACE "-Wl,--no-undefined" "" ADDITIONAL_LINK_FLAGS ${ADDITIONAL_LINK_FLAGS})
 
-		INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+		IF(WANT_DEBUG)
+			LIST(APPEND LIBS ${PYTHON_DEBUG_LIBRARIES})
+		ELSE()
+			LIST(APPEND LIBS ${PYTHON_LIBRARIES})
+		ENDIF()
+
+		INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
 	ELSE()
 		SET(CMAKE_STATUS_PYTHON_SUPPORT "No, not found.")
 	ENDIF()
@@ -907,19 +914,19 @@ ENDIF()
 
 IF(MINGW)
         LIST(APPEND LIBS -lshlwapi)
+        ADD_DEFINITIONS(-DMINGW)
 	IF(WANT_DEBUG)
                 SET(ADDITIONAL_LINK_FLAGS "${ADDITIONAL_LINK_FLAGS} -Wl,--enable-auto-import,--enable-runtime-pseudo-reloc -fno-exceptions")
-				ADD_DEFINITIONS(-DMINGW)
         ELSE()
                 SET(ADDITIONAL_LINK_FLAGS "${ADDITIONAL_LINK_FLAGS} -Wl,--enable-auto-import,--enable-runtime-pseudo-reloc -mwindows -fno-exceptions")
-				ADD_DEFINITIONS(-DMINGW -mwindows)
 	ENDIF()
         #remove leading and trailing spaces (string strip)
         STRING(REGEX REPLACE "(^( )+|( )+$)" "" ADDITIONAL_LINK_FLAGS "${ADDITIONAL_LINK_FLAGS}")
 ENDIF()
 
 IF(MSVC)
-	ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
+	ADD_DEFINITIONS(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES)
+	ADD_DEFINITIONS(-DMSVC)
 ENDIF()
 
 ############################################################################
@@ -943,6 +950,15 @@ IF(WANT_BEER)
 	MESSAGE(STATUS "Opening the beer... -  done")
 ENDIF()
 
+############################################################################
+# By default we disable QGtkStyle since it messes up with our theming
+# Some users wants it anyway, and we sometimes needs to check it
+############################################################################
+
+OPTION(WANT_GTKSTYLE "Enable QGtkStyle" OFF)
+IF(WANT_GTKSTYLE)
+	SET(COMPILE_ENABLE_GTKSTYLE 1)
+ENDIF()
 
 ###############################################################################
 #
@@ -1010,8 +1026,8 @@ ENDIF()
 #CMakeFindXCode.cmake
 #CheckLibraryExists.cmake
 
-# Search for subdirectories
-SUBDIRS(src data po scripts doc)
+# Search for subdirectories; under osx, data _MUST_ be before src (to get Info.plist installed before the main executable's fixup_bundle step)
+SUBDIRS(data doc po scripts src)
 
 #install additional resources for win32
 IF(WIN32)
@@ -1173,19 +1189,19 @@ LIST(APPEND LIBS "${ADDITIONAL_LINK_FLAGS}")
 # Binary path
 IF(UNIX)
 	IF(APPLE)
-		SET(KVIRC_BIN_PATH ${CMAKE_INSTALL_PREFIX}/Contents/MacOS/${KVIRC_BINARYNAME})
+		SET(KVIRC_BIN_PATH ${CMAKE_INSTALL_PREFIX}/Contents/MacOS/)
 	ELSE()
 		# Assume linux
-		SET(KVIRC_BIN_PATH ${CMAKE_INSTALL_PREFIX}/bin/${KVIRC_BINARYNAME})
+		SET(KVIRC_BIN_PATH ${CMAKE_INSTALL_PREFIX}/bin/)
 	ENDIF()
 ELSEIF(WIN32)
-	SET(KVIRC_BIN_PATH ${CMAKE_INSTALL_PREFIX}/${KVIRC_BINARYNAME})
+	SET(KVIRC_BIN_PATH ${CMAKE_INSTALL_PREFIX}/)
 ENDIF()
 
 # KviLib path
 IF(UNIX)
 	IF(APPLE)
-		SET(KVIRC_LIB_PATH ${CMAKE_INSTALL_PREFIX}/Contents/Frameworks/)
+		SET(KVIRC_LIB_PATH ${CMAKE_INSTALL_PREFIX}/Contents/MacOS/)
 	ELSE()
 		# Assume linux
 		SET(KVIRC_LIB_PATH ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/)
@@ -1197,19 +1213,19 @@ ENDIF()
 # Modules path
 IF(UNIX)
 	IF(APPLE)
-		SET(KVIRC_MOD_PATH ${CMAKE_INSTALL_PREFIX}/Contents/Frameworks/${KVIRC_BINARYNAME}/${VERSION_BRANCH}/)
+		SET(KVIRC_MOD_PATH ${CMAKE_INSTALL_PREFIX}/Contents/Resources/modules/)
 	ELSE()
 		# Assume linux
-		SET(KVIRC_MOD_PATH ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/${KVIRC_BINARYNAME}/${VERSION_BRANCH}/)
+		SET(KVIRC_MOD_PATH ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/kvirc/${VERSION_BRANCH}/modules/)
 	ENDIF()
 ELSEIF(WIN32)
-	SET(KVIRC_MOD_PATH ${CMAKE_INSTALL_PREFIX}/${KVIRC_BINARYNAME}/${VERSION_BRANCH}/)
+	SET(KVIRC_MOD_PATH ${CMAKE_INSTALL_PREFIX}/modules/)
 ENDIF()
 
 # Man path
 IF(UNIX)
 	IF(APPLE)
-		# does MacOS X use man pages?
+		# does MacOS X use man pages? <= yes!
 	ELSE()
 		# Assume linux
 		SET(KVIRC_MAN_PATH ${CMAKE_INSTALL_PREFIX}/${MANDIR_PREFIX}/)
@@ -1239,7 +1255,6 @@ MESSAGE(STATUS "   Memory Profile Support      : ${CMAKE_STATUS_MEMORY_PROFILE_S
 MESSAGE(STATUS "   Memory Checks Support       : ${CMAKE_STATUS_MEMORY_CHECKS_SUPPORT}")
 MESSAGE(STATUS "Features:")
 MESSAGE(STATUS "   X11 Support                 : ${CMAKE_STATUS_X11_SUPPORT}")
-#MESSAGE(STATUS "   PCH Support                : ${CMAKE_STATUS_PCH_SUPPORT}")
 MESSAGE(STATUS "   Qt-DBus Support             : ${CMAKE_STATUS_QTDBUS_SUPPORT}")
 MESSAGE(STATUS "   Qt-WebKit Support           : ${CMAKE_STATUS_QTWEBKIT_SUPPORT}")
 MESSAGE(STATUS "   Qt-Svg Support              : ${CMAKE_STATUS_QTSVG_SUPPORT}")
@@ -1274,5 +1289,9 @@ ELSEIF(MINGW)
 	MESSAGE(STATUS "I'm ready to build KVIrc for you: please type 'mingw32-make' now...")
 ELSE()
 	MESSAGE(STATUS "I'm ready to build KVIrc for you: please type 'make' now...")
+ENDIF()
+
+if(COMPILE_ENABLE_GTKSTYLE)
+	MESSAGE(STATUS "Warning: you forcibly enabled the GtkStyle engine, which is known to break KVIrc theming.")
 ENDIF()
 MESSAGE(STATUS " ")

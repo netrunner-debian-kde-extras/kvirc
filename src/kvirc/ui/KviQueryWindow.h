@@ -60,12 +60,11 @@ public:
 
 	/**
 	* \brief Constructs the query object
-	* \param lpFrm The parent frame
 	* \param lpConsole The associated console
 	* \param szNick The nickname with who we open a query
 	* \return KviQueryWindow
 	*/
-	KviQueryWindow(KviMainWindow * lpFrm, KviConsoleWindow * lpConsole, const QString & szNick);
+	KviQueryWindow(KviConsoleWindow * lpConsole, const QString & szNick);
 
 	/**
 	* \brief Destroys the query object
@@ -77,6 +76,7 @@ protected:
 	int                                   m_iFlags;
 	KviThemedLabel                      * m_pLabel;
 	QFrame                              * m_pButtonGrid;
+	QList<int>                            m_SplitterSizesList;
 public:
 	/**
 	* \brief Returns the userlist of the query (the remote peer)
@@ -211,9 +211,10 @@ public:
 	/**
 	* \brief Shows the userlist view
 	* \param bShow Whether to show or hide the view
+	* \param bIgnoreSizeChange Whether to ignore the size change
 	* \return void
 	*/
-	void showListView(bool bShow);
+	void showListView(bool bShow, bool bIgnoreSizeChange=false);
 
 	/**
 	* \brief Merges a query into the one we're using

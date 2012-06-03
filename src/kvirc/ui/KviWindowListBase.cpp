@@ -45,7 +45,7 @@
 #include "KviCString.h"
 #include "KviWindow.h"
 #include "KviWindowListBase.h"
-#include "KviDockExtension.h"
+#include "KviTrayIcon.h"
 
 // FIXME: #warning "The tree WindowList min width should be configurable"
 #include <QFontMetrics>
@@ -286,8 +286,10 @@ void KviWindowListButton::mousePressEvent(QMouseEvent *e)
 		{
 			m_pWindow->delayedClose();
 		} else {
-			if((g_pActiveWindow != m_pWindow)  || (m_pWindow->isMinimized()))g_pMainWindow->setActiveWindow(m_pWindow);
-			else m_pWindow->minimize();
+			if((g_pActiveWindow != m_pWindow)  || (m_pWindow->isMinimized()))
+				g_pMainWindow->setActiveWindow(m_pWindow);
+			else 
+				m_pWindow->minimize();
 		}
 	} else m_pWindow->contextPopup();
 }
@@ -496,8 +498,8 @@ void KviWindowListButton::unhighlight()
 	if(m_iHighlightLevel < 1)
 		return;
 	m_iHighlightLevel = 0;
-	if(g_pMainWindow->dockExtension())
-		g_pMainWindow->dockExtension()->refresh();
+	if(g_pMainWindow->trayIcon())
+		g_pMainWindow->trayIcon()->refresh();
 	update();
 }
 
@@ -508,8 +510,8 @@ void KviWindowListButton::highlight(int iLevel)
 	if(m_bActive && g_pMainWindow->isActiveWindow())
 		return;
 	m_iHighlightLevel = iLevel;
-	if(g_pMainWindow->dockExtension())
-		g_pMainWindow->dockExtension()->refresh();
+	if(g_pMainWindow->trayIcon())
+		g_pMainWindow->trayIcon()->refresh();
 	update();
 	if(m_bActive)
 		return;
@@ -633,8 +635,8 @@ KviWindowListItem * KviClassicWindowList::addItem(KviWindow * wnd)
 	insertButton(b);
 	b->show();
 	doLayout();
-	if(g_pMainWindow->dockExtension())
-		g_pMainWindow->dockExtension()->refresh();
+	if(g_pMainWindow->trayIcon())
+		g_pMainWindow->trayIcon()->refresh();
 /*	if(b->width() < m_pBase->width()) m_pBase->setMinimumWidth(b->width());
 	if(b->height() < m_pBase->height()) m_pBase->setMinimumWidth(b->height());*/
 	return b;
@@ -646,8 +648,8 @@ bool KviClassicWindowList::removeItem(KviWindowListItem * it)
 	{
 		m_pButtonList->removeRef((KviWindowListButton *)it);
 		doLayout();
-		if(g_pMainWindow->dockExtension())
-			g_pMainWindow->dockExtension()->refresh();
+		if(g_pMainWindow->trayIcon())
+			g_pMainWindow->trayIcon()->refresh();
 	}
 	return true;
 }
@@ -660,8 +662,8 @@ void KviClassicWindowList::setActiveItem(KviWindowListItem * it)
 		{
 			b->setActive(((KviWindowListButton *)it) == b);
 		}
-		if(g_pMainWindow->dockExtension())
-			g_pMainWindow->dockExtension()->refresh();
+		if(g_pMainWindow->trayIcon())
+			g_pMainWindow->trayIcon()->refresh();
 	}
 }
 

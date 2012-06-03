@@ -32,51 +32,21 @@
 
 #include <QSplitter>
 
-FileTransferWindow * g_pFileTransferWindow = 0;
+FileTransferWindow * g_pFileTransferWindow = NULL;
 
-static KviModuleExtension * filetransferwindow_extension_alloc(KviModuleExtensionAllocStruct * s)
+static FileTransferWindow * filetransferwindow_alloc(bool bCreateMinimized,bool bNoRaise)
 {
-	bool bCreateMinimized = false;
-	bool bNoRaise = false;
-
 	if(!g_pFileTransferWindow)
 	{
-		if(s->pParams)
-		{
-			if(QVariant * v = s->pParams->find("bCreateMinimized"))
-			{
-				if(v->isValid())
-				{
-					if(v->type() == QVariant::Bool)
-					{
-						bCreateMinimized = v->toBool();
-					}
-				}
-			}
-		}
-
-		g_pFileTransferWindow = new FileTransferWindow(s->pDescriptor,g_pMainWindow);
+		g_pFileTransferWindow = new FileTransferWindow();
 		g_pMainWindow->addWindow(g_pFileTransferWindow,!bCreateMinimized);
-		if(bCreateMinimized)g_pFileTransferWindow->minimize();
 		return g_pFileTransferWindow;
 	}
 
-	if(s->pParams)
-	{
-		if(QVariant * v = s->pParams->find("bNoRaise"))
-		{
-			if(v)
-			{
-				if(v->isValid() && v->type() == QVariant::Bool)
-					bNoRaise = v->toBool();
-			}
-		}
-	}
-
-	if(!bNoRaise)g_pFileTransferWindow->delayedAutoRaise();
+	if(!bNoRaise)
+		g_pFileTransferWindow->delayedAutoRaise();
 	return g_pFileTransferWindow;
 }
-
 
 /*
 	@doc: filetransferwindow.open
@@ -89,9 +59,9 @@ static KviModuleExtension * filetransferwindow_extension_alloc(KviModuleExtensio
 	@syntax:
 		filetransferwindow.open [-m] [-n]
 	@switches:
-		!sw: -m
+		!sw: -m | --minimized
 		Causes the window to be created as minimized
-		!sw: -n
+		!sw: -n | --noraise
 		Causes the window to be not raised if already open
 	@description:
 		Opens the file transfer window
@@ -99,33 +69,13 @@ static KviModuleExtension * filetransferwindow_extension_alloc(KviModuleExtensio
 
 static bool filetransferwindow_kvs_cmd_open(KviKvsModuleCommandCall * c)
 {
-	KviModuleExtensionDescriptor * d = c->module()->findExtensionDescriptor("tool",KVI_FILE_TRANSFER_WINDOW_EXTENSION_NAME);
+	filetransferwindow_alloc(c->hasSwitch('m',QString::fromAscii("minimized")),c->hasSwitch('n',QString::fromAscii("noraise")));
 
-	if(d)
-	{
-		KviPointerHashTable<QString,QVariant> dict(17,true);
-		dict.setAutoDelete(true);
-		QString dummy;
-		dict.replace("bCreateMinimized",new QVariant(c->hasSwitch('m',dummy)));
-		dict.replace("bNoRaise",new QVariant(c->hasSwitch('n',dummy)));
-
-		d->allocate(c->window(),&dict,0);
-	} else {
-		c->warning(__tr("Ops.. internal error"));
-	}
 	return true;
 }
 
 static bool filetransferwindow_module_init(KviModule * m)
 {
-	KviModuleExtensionDescriptor * d = m->registerExtension("tool",
-		KVI_FILE_TRANSFER_WINDOW_EXTENSION_NAME,
-		__tr2qs("Manage File &Transfers"),
-		filetransferwindow_extension_alloc);
-
-	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::FileTransfer)));
-
-
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"open",filetransferwindow_kvs_cmd_open);
 
 	return true;
@@ -148,10 +98,11 @@ KVIRC_MODULE(
 	"FileTransferWindow",
 	"4.0.0",
 	"Copyright (C) 2008 Szymon Stefanek (pragma at kvirc dot net)",
-	"Links window extension",
+	"File Transfer Window Extension",
 	filetransferwindow_module_init,
 	filetransferwindow_module_can_unload,
 	0,
 	filetransferwindow_module_cleanup,
 	"filetransferwindow"
 )
+

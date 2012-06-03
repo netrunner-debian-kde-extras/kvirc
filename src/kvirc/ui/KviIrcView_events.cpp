@@ -40,6 +40,7 @@
 #include "kvi_out.h"
 #include "KviTopicWidget.h"
 #include "KviQueryWindow.h"
+#include "KviMainWindow.h"
 #include "KviWindow.h"
 
 #include <QClipboard>
@@ -216,8 +217,7 @@ void KviIrcView::mouseDoubleClickEvent(QMouseEvent *e)
 			if(KviChannelWindow * c = console()->connection()->findChannel(szLinkTextPart))
 			{
 				// already there
-				c->raise();
-				c->setFocus();
+				g_pMainWindow->setActiveWindow(c);
 				return;
 			}
 
@@ -244,6 +244,12 @@ void KviIrcView::mouseDoubleClickEvent(QMouseEvent *e)
 		KviKvsScript::run(szKvsCommand,m_pKviWindow,&lParams);
 }
 
+
+bool KviIrcView::checkMarkerArea(const QPoint & mousePos)
+{
+	return (m_lineMarkArea.isValid() && m_lineMarkArea.contains(mousePos)) ? true : false;
+}
+
 void KviIrcView::mousePressEvent(QMouseEvent * e)
 {
 	if(m_pKviWindow->input())
@@ -258,7 +264,7 @@ void KviIrcView::mousePressEvent(QMouseEvent * e)
 	// Left button handler
 
 	// We are inside the line marker
-	if(checkMarkerArea(m_lineMarkArea,e->pos()))
+	if(checkMarkerArea(e->pos()))
 	{
 		scrollToMarker();
 	}
@@ -435,13 +441,19 @@ void KviIrcView::addControlCharacter(KviIrcViewLineChunk *pC, QString & szSelect
 			szSelectionText.append(QChar(pC->type));
 			if((pC->colors.fore != KviControlCodes::NoChange) && (pC->colors.fore != KviControlCodes::Transparent))
 			{
-				if(pC->colors.fore > 9)szSelectionText.append(QChar('1'));
+				if(pC->colors.fore > 9)
+					szSelectionText.append(QChar('1'));
+				else
+					szSelectionText.append(QChar('0'));
 				szSelectionText.append(QChar((pC->colors.fore%10)+'0'));
 			}
 			if((pC->colors.back != KviControlCodes::NoChange) && (pC->colors.back != KviControlCodes::Transparent) )
 			{
 				szSelectionText.append(QChar(','));
-				if(pC->colors.back > 9)szSelectionText.append(QChar('1'));
+				if(pC->colors.back > 9)
+					szSelectionText.append(QChar('1'));
+				else
+					szSelectionText.append(QChar('0'));
 				szSelectionText.append(QChar((pC->colors.back%10)+'0'));
 			}
 		break;
@@ -655,7 +667,7 @@ void KviIrcView::mouseReleaseEvent(QMouseEvent *e)
 
 void KviIrcView::mouseMoveEvent(QMouseEvent * e)
 {
-	bool bCursorOverMarker = checkMarkerArea(m_lineMarkArea,e->pos());
+	bool bCursorOverMarker = checkMarkerArea(e->pos());
 
 	if(m_bMouseIsDown && (e->buttons() & Qt::LeftButton)) // m_bMouseIsDown MUST BE true...(otherwise the mouse entered the window with the button pressed ?)
 	{
@@ -783,17 +795,9 @@ void KviIrcView::maybeTip(const QPoint &pnt)
 	QString linkCmd;
 	QString linkText;
 	QRect rctLink;
-	QRect markerArea;
 
-	// Check if the mouse is over the marker icon
-	// 16(width) + 5(border) = 21
-	int widgetWidth = width()-m_pScrollBar->width();
-	int x = widgetWidth - 21;
-	int y = KVI_IRCVIEW_VERTICAL_BORDER;
-
-	markerArea = QRect(QPoint(x,y),QSize(16,16));
-	if(checkMarkerArea(markerArea,pnt))
-		doMarkerToolTip(markerArea);
+	if(checkMarkerArea(pnt))
+		doMarkerToolTip();
 
 	// Check if the mouse is over a link
 	KviIrcViewWrappedBlock * linkUnderMouse = getLinkUnderMouse(pnt.x(),pnt.y(),&rctLink,&linkCmd,&linkText);
@@ -803,7 +807,7 @@ void KviIrcView::maybeTip(const QPoint &pnt)
 	else m_pLastLinkUnderMouse = 0;
 }
 
-void KviIrcView::doMarkerToolTip(const QRect &rct)
+void KviIrcView::doMarkerToolTip()
 {
 	QString tip;
 	tip = "<table width=\"100%\">" \
@@ -814,7 +818,7 @@ void KviIrcView::doMarkerToolTip(const QRect &rct)
 
 	if(tip.isEmpty())return;
 
-	m_pToolTip->doTip(rct,tip);
+	m_pToolTip->doTip(m_lineMarkArea,tip);
 }
 
 void KviIrcView::doLinkToolTip(const QRect &rct,QString &linkCmd,QString &linkText)

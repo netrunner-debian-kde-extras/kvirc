@@ -39,6 +39,7 @@
 #include <QPushButton>
 #include <QCursor>
 #include <QPainter>
+#include <QWidgetAction>
 
 #if !defined(COMPILE_ON_WINDOWS) && !defined(COMPILE_ON_MINGW)
 	#include <unistd.h> // symlink()
@@ -398,10 +399,10 @@ OptionsWidget_messageColors::OptionsWidget_messageColors(QWidget * parent)
 	m_pIconButton = new QToolButton(box);
 	connect(m_pIconButton,SIGNAL(clicked()),this,SLOT(iconButtonClicked()));
 
-	m_pIconPopup = new KviTalPopupMenu(this);
+    m_pIconPopup = new QMenu(this);
 	KviIconWidget * iw = new KviIconWidget(m_pIconPopup);
 	connect(iw,SIGNAL(selected(KviIconManager::SmallIcon)),this,SLOT(newIconSelected(KviIconManager::SmallIcon)));
-	m_pIconPopup->insertItem(iw);
+    m_pIconPopup->addAction(new QWidgetAction(iw));
 
 
 	m_pEnableLogging = new QCheckBox(__tr2qs_ctx("Log this","options"),box);
@@ -605,6 +606,7 @@ void OptionsWidget_messageColors::load()
 	//qDebug("ERRNO (%d)",errno);
 	int dummy; // make gcc happy
 	dummy = symlink(szGlobal.toLocal8Bit().data(),szLocal.toLocal8Bit().data());
+	Q_UNUSED(dummy);
 	// FIXME: Do it also on windows...
 #endif
 

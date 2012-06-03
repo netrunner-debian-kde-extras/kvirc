@@ -23,12 +23,13 @@
 //=============================================================================
 
 #include "KviFileTransfer.h"
+#include "KviKvsScript.h"
 #include "KviModuleExtension.h"
 #include "KviWindow.h"
 
 #include "KviApplication.h"
 
-#include "KviTalPopupMenu.h"
+#include <QMenu>
 
 static KviFileTransferManager * g_pFileTransferManager = 0;
 
@@ -89,20 +90,16 @@ void KviFileTransferManager::killTerminatedTransfers()
 	}
 }
 
-void KviFileTransferManager::invokeTransferWindow(KviWindow * pWnd,bool bCreateMinimized,bool bNoRaise)
+void KviFileTransferManager::invokeTransferWindow(bool bCreateMinimized, bool bNoRaise)
 {
 	if(!m_pTransferWindow)
 	{
-		KviPointerHashTable<QString,QVariant> d(7,false);
-		d.setAutoDelete(true);
-		d.replace("bCreateMinimized",new QVariant(bCreateMinimized));
-		d.replace("bNoRaise",new QVariant(bNoRaise));
-
-		KviModuleExtensionManager::instance()->allocateExtension(
-				"tool",
-				KVI_FILE_TRANSFER_WINDOW_EXTENSION_NAME,
-				pWnd,&d,0,
-				"filetransferwindow");
+		QString szScript("filetransferwindow.open");
+		if(bCreateMinimized)
+			szScript.append(" -m");
+		if(bNoRaise)
+			szScript.append(" -n");
+		KviKvsScript::run(szScript,g_pActiveWindow);
 	}
 }
 
@@ -159,9 +156,9 @@ KviWindow * KviFileTransfer::outputWindow()
 	return g_pActiveWindow;
 }
 
-void KviFileTransfer::invokeTransferWindow(KviWindow * pWnd,bool bCreateMinimized,bool bNoRaise)
+void KviFileTransfer::invokeTransferWindow(bool bCreateMinimized, bool bNoRaise)
 {
-	manager()->invokeTransferWindow(pWnd,bCreateMinimized,bNoRaise);
+	manager()->invokeTransferWindow(bCreateMinimized,bNoRaise);
 }
 
 QString KviFileTransfer::localFileName()

@@ -264,6 +264,7 @@ SET(kvirc_SRCS
 	kvs/tree/KviKvsTreeNodeObjectField.cpp
 	kvs/tree/KviKvsTreeNodeObjectFunctionCall.cpp
 	kvs/tree/KviKvsTreeNodeOperation.cpp
+	kvs/tree/KviKvsTreeNodeParameterCount.cpp
 	kvs/tree/KviKvsTreeNodeParameterReturn.cpp
 	kvs/tree/KviKvsTreeNodeRebindingSwitch.cpp
 	kvs/tree/KviKvsTreeNodeScopeOperator.cpp
@@ -342,10 +343,16 @@ ENDIF()
 
 IF(MSVC)
 	LIST(APPEND LIBS shlwapi.lib)
+	LIST(APPEND kvirc_SRCS ${CMAKE_SOURCE_DIR}/data/resources_win32/kvirc.rc)
 ENDIF()
 
 # Link libraries
-ADD_EXECUTABLE(${KVIRC_BINARYNAME} ${kvirc_SRCS} ${kvirc_MOC_SRCS})
+# don't mind the WIN32 flag, its needed to not show a console on non-debug windows builds and is ignored anywhere else.
+IF(NOT WANT_DEBUG)
+	ADD_EXECUTABLE(${KVIRC_BINARYNAME} WIN32 ${kvirc_SRCS} ${kvirc_MOC_SRCS})
+ELSE()
+	ADD_EXECUTABLE(${KVIRC_BINARYNAME} ${kvirc_SRCS} ${kvirc_MOC_SRCS})
+ENDIF()
 TARGET_LINK_LIBRARIES(${KVIRC_BINARYNAME} ${KVILIB_BINARYNAME} ${LIBS})
 SET_TARGET_PROPERTIES(${KVIRC_BINARYNAME} PROPERTIES LINK_FLAGS "${ADDITIONAL_LINK_FLAGS}")
 
@@ -369,13 +376,29 @@ IF(WANT_STRIP)
 ENDIF()
 
 # Installation directives
-IF(UNIX)
-	IF(APPLE)
-		INSTALL(TARGETS ${KVIRC_BINARYNAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/Contents/MacOS)
+INSTALL(TARGETS ${KVIRC_BINARYNAME} RUNTIME DESTINATION "${KVIRC_BIN_PATH}")
+
+IF(APPLE)
+	SET(plugin_dest_dir ${CMAKE_INSTALL_PREFIX}/Contents/Plugins)
+	SET(qtconf_dest_dir ${CMAKE_INSTALL_PREFIX}/Contents/Resources)
+
+	IF(WANT_DEBUG)
+		INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/" DESTINATION ${plugin_dest_dir} COMPONENT Runtime
+			FILES_MATCHING REGEX "(codecs|iconengines|imageformats|phonon_backend|sqldrivers)/.*_debug\\.dylib")
 	ELSE()
-		# Assume linux
-		INSTALL(TARGETS ${KVIRC_BINARYNAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+		INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/" DESTINATION ${plugin_dest_dir} COMPONENT Runtime
+			FILES_MATCHING REGEX "(codecs|iconengines|imageformats|phonon_backend|sqldrivers)/[^_]*\\.dylib")
 	ENDIF()
-ELSEIF(WIN32)
-	INSTALL(TARGETS ${KVIRC_BINARYNAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+	INSTALL(CODE "
+	    file(WRITE \"${qtconf_dest_dir}/qt.conf\" \"[Paths]
+Plugins = Plugins\")
+	    " COMPONENT Runtime)
+
+	INSTALL(CODE "
+	    file(GLOB_RECURSE QTPLUGINS
+	      \"${plugin_dest_dir}/*.dylib\")
+	    include(BundleUtilities)
+	    fixup_bundle(\"${CMAKE_INSTALL_PREFIX}\" \"\${QTPLUGINS}\" \"${QT_LIBRARY_DIR}\")
+	    " COMPONENT Runtime)
 ENDIF()

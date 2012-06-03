@@ -1029,7 +1029,10 @@ namespace KviKvsCoreSimpleCommands
 			if(szNick.isEmpty())KVSCSC_pContext->warning(__tr2qs_ctx("Empty target specified","kvs"));
 			else {
 				query = KVSCSC_pWindow->connection()->findQuery(szNick);
-				if(!query) {
+				if(query) {
+					if(!KVSCSC_pSwitches->find('m',"minimized"))
+						g_pMainWindow->setActiveWindow(query);
+				} else {
 					query = KVSCSC_pWindow->connection()->createQuery(
 							szNick,
 							KVSCSC_pSwitches->find('i',"incoming") ?
@@ -1050,8 +1053,6 @@ namespace KviKvsCoreSimpleCommands
 					}
 					query->setTarget(szNick,user,host);
 				}
-				query->autoRaise();
-				query->setFocus();
 				if(!szText.isEmpty())query->ownMessage(szText);
 			}
 		}
@@ -1147,21 +1148,23 @@ namespace KviKvsCoreSimpleCommands
 		@syntax:
 			raise
 		@short:
-			Raises a KVIrc frame window
+			Raises the KVIrc frame window
 		@description:
-			Raises and activates the current KVIrc frame window....assuming that your window manager supports it.[br]
+			Raises and activates the KVIrc frame window....assuming that your window manager supports it.[br]
 	*/
 
 	KVSCSC(raise)
 	{
 		Q_UNUSED(__pSwitches);
 		Q_UNUSED(__pParams);
-
-		if(!KVSCSC_pWindow->frame()->isVisible())KVSCSC_pWindow->frame()->show();
-		KVSCSC_pWindow->frame()->raise();
-		//KVSCSC_pWindow->frame()->setActiveWindow();
-		//KVSCSC_pWindow->frame()->setFocus();
-		((KviTalMainWindow *)KVSCSC_pWindow->frame())->activateWindow();
+		Q_UNUSED(__pContext);
+		
+		if(!g_pMainWindow->isVisible())
+			g_pMainWindow->show();
+		g_pMainWindow->raise();
+		//g_pMainWindow->setActiveWindow();
+		//g_pMainWindow->setFocus();
+		g_pMainWindow->activateWindow();
 		return true;
 	}
 

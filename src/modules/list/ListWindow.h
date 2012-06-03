@@ -31,12 +31,12 @@
 #include "KviIrcServerParser.h"
 #include "KviConsoleWindow.h"
 #include "KviIrcContext.h"
-#include "KviTalPopupMenu.h"
 #include "KviThemedTreeWidget.h"
 
 #include <QToolButton>
 #include <QLineEdit>
 #include <QItemDelegate>
+#include <QMenu>
 
 class KviThemedLabel;
 class KviThemedLineEdit;
@@ -93,7 +93,7 @@ class ListWindow : public KviWindow, public KviExternalServerDataParser
 {
 	Q_OBJECT
 public:
-	ListWindow(KviMainWindow * lpFrm, KviConsoleWindow * lpConsole);
+	ListWindow(KviConsoleWindow * lpConsole);
 	~ListWindow();
 protected:
 	QSplitter                                    * m_pVertSplitter;

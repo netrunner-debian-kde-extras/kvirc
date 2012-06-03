@@ -57,7 +57,7 @@
 	#include <QX11Info>
 #endif
 
-class KviTalPopupMenu;
+class QMenu;
 class KviTalListBox;
 class KviConsoleWindow;
 class KviConfigurationFile;
@@ -131,7 +131,7 @@ public:
 	// setup stuff (accessed from KviMain.cpp: consider private othwerise)
 	QString	                                   m_szConfigFile;        // setup
 	bool                                       m_bCreateConfig;      // setup
-	KviCString                                     m_szExecAfterStartup;
+	QString                                    m_szExecAfterStartup;
 	bool                                       m_bShowSplashScreen;
 protected:
 #ifdef COMPILE_KDE_SUPPORT
@@ -159,7 +159,6 @@ protected:
 #endif
 	QFont                                      m_fntDefaultFont;
 public:
-	void destroyFrame();
 	void setup();                                  // THIS SHOULD BE PRIVATE! (but is accessed from KviMain.cpp)
 
 #ifdef COMPILE_KDE_SUPPORT
@@ -175,6 +174,7 @@ public:
 
 	bool firstTimeRun() const { return m_bFirstTimeRun; };
 	bool kviClosingDown() const { return m_bClosingDown; };
+	void setKviClosingDown() { m_bClosingDown=true; };
 
 	inline bool supportsCompositing()
 	{
@@ -319,9 +319,9 @@ public:
 
 
 	void addRecentServer(const QString& server);
-	void fillRecentServersPopup(KviTalPopupMenu * m);
-	void fillRecentNicknamesPopup(KviTalPopupMenu * m,KviConsoleWindow * pConsole);
-	void fillRecentChannelsPopup(KviTalPopupMenu * m,KviConsoleWindow * pConsole);
+    void fillRecentServersPopup(QMenu * m);
+    void fillRecentNicknamesPopup(QMenu * m,KviConsoleWindow * pConsole);
+    void fillRecentChannelsPopup(QMenu * m,KviConsoleWindow * pConsole);
 //
 	void autoConnectToServers();
 

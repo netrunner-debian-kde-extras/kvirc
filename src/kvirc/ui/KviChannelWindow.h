@@ -145,12 +145,11 @@ public:
 
 	/**
 	* \brief Constructs the channel object
-	* \param lpFrm The parent frame object
 	* \param lpConsole The console of the context
 	* \param szName The name of the channel
 	* \return KviChannelWindow
 	*/
-	KviChannelWindow(KviMainWindow * lpFrm, KviConsoleWindow * lpConsole, const QString & szName);
+	KviChannelWindow(KviConsoleWindow * lpConsole, const QString & szName);
 
 	/**
 	* \brief Destroys the channel object
@@ -182,6 +181,7 @@ protected:
 	KviPointerList<KviChannelAction>         * m_pActionHistory;
 	kvi_time_t                                 m_tLastReceivedWhoReply;
 	QList<int>                                 m_VertSplitterSizesList;
+	QList<int>                                 m_SplitterSizesList;
 	KviTalHBox                               * m_pButtonContainer;
 public:
 	/**

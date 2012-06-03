@@ -32,10 +32,9 @@
 #include "KviKvsScript.h"
 #include "KviKvsRunTimeContext.h"
 
-#include "KviTalPopupMenu.h"
-
 #include <QLabel>
 #include <QPixmap>
+#include <QMenu>
 
 class KviKvsPopupMenu;
 
@@ -229,7 +228,7 @@ public:
 };
 
 
-class KVIRC_API KviKvsPopupMenu : public KviTalPopupMenu
+class KVIRC_API KviKvsPopupMenu : public QMenu
 {
 	friend class KviKvsPopupMenuItemMenu;
 	friend class KviKvsPopupManager;
@@ -260,7 +259,7 @@ public:
 	bool isHardLocked();
 	void lock(KviKvsPopupMenuTopLevelData::LockStatus eLock);
 	KviKvsPopupMenu * addPopup(const QString &szItemName,const QString &szText,const QString &szIcon,const QString &szCondition);
-	void addSeparator(const QString &szItemName,const QString &szCondition);
+    void addSeparator(const QString &szItemName,const QString &szCondition);
 	void addLabel(const QString &szItemName,const QString &szText,const QString &szIcon,const QString &szCondition);
 	void addItem(const QString &szItemName,const QString &szCode,const QString &szText,const QString &szIcon,const QString &szCondition);
 	void addExtPopup(const QString &szItemName,const QString &szPopupName,const QString &szText,const QString &szIcon,const QString &szCondition);
@@ -288,7 +287,7 @@ private slots:
 protected:
 	void clearMenuContents();
 protected slots:
-	void itemClicked(int itemId);
+    void itemClicked(QAction *pAction);
 signals:
 	void testModeItemClicked(KviKvsPopupMenuItem * it);
 };
