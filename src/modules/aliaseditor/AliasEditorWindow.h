@@ -27,7 +27,6 @@
 #include "KviWindow.h"
 #include "KviCString.h"
 #include "KviPointerList.h"
-#include "KviTalPopupMenu.h"
 #include "KviHeapObject.h"
 
 #include <QWidget>
@@ -36,7 +35,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QTreeWidget>
-
+#include <QMenu>
 
 class QSplitter;
 class KviScriptEditor;
@@ -96,7 +95,7 @@ public:
 	QPushButton                  * m_pRenameButton;
 	AliasEditorTreeWidgetItem * m_pLastEditedItem;
 	AliasEditorTreeWidgetItem * m_pLastClickedItem;
-	KviTalPopupMenu              * m_pContextPopup;
+	QMenu              * m_pContextPopup;
 	QSplitter                    * m_pSplitter;
 	QString                        m_szDir;
 	bool                           m_bSaving;
@@ -172,7 +171,7 @@ class AliasEditorWindow : public KviWindow
 {
 	Q_OBJECT
 public:
-	AliasEditorWindow(KviMainWindow * lpFrm);
+	AliasEditorWindow();
 	~AliasEditorWindow();
 protected:
 	AliasEditorWidget * m_pEditor;

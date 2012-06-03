@@ -714,21 +714,26 @@ static bool system_kvs_fnc_plugin_call(KviKvsModuleFunctionCall *c)
 }
 
 /*
-    @doc: system.runcmd
-    @type:
-        command
-    @title:
-        system.runcmd
-    @short:
-        Runs the specified command in a terminal
-    @syntax:
-        system.runcmd <command:string>
-    @description:
-        Tries to run the given command in the system's default (X)
-        terminal (emulator).
-        [br]
-        [br]
-        [b]Warning: Execute only harmless commands through this![/b]
+	@doc: system.runcmd
+	@type:
+		command
+	@title:
+		system.runcmd
+	@short:
+		Runs the specified command in a terminal
+	@syntax:
+		system.runcmd [-t <terminal:string>] <command:string>
+	@switches:
+		!sw: -t=<terminal> | --terminal=<terminal>
+		Use the specified terminal to launch the command instead
+		of the auto-detected one.
+	@description:
+		Tries to run the given command in the system's default (X)
+		terminal (emulator) or in the terminal specified by the -t
+		option.
+		[br]
+		[br]
+		[b]Warning: Execute only harmless commands through this![/b]
 	@examples:
 		[example]
 			system.runcmd "ping $0"
@@ -743,39 +748,60 @@ static bool system_kvs_cmd_runcmd(KviKvsModuleCommandCall *c)
 		KVSM_PARAMETER("command",KVS_PT_NONEMPTYSTRING,KVS_PF_APPENDREMAINING,szCommand)
 	KVSM_PARAMETERS_END(c)
 
-	// check for empty szCommand
-	if(!szCommand.isEmpty())
+	if(szCommand.isEmpty())
+		return c->error(__tr2qs("No command specified"));
+
+	QString szTerminal;
+	QStringList args;
+	QProcess oProc;
+
+#if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)           // Only »cmd.exe /k« in the list.
+	args << "/k" << szCommand;
+#elif defined(COMPILE_ON_MAC)
+	args << "-e" << QString("tell application \"Terminal\" to do script \"%1\"").arg(szCommand);
+#else
+	args << "-e" << szCommand;
+#endif // endif COMPILE_ON_WINDOWS
+
+	if(c->switches()->getAsStringIfExisting('t',"terminal",szTerminal))
 	{
-		QByteArray szCmd = szCommand.toLocal8Bit();
+		if(!oProc.startDetached(szTerminal,args))
+			return c->error(__tr2qs("Failed to start the terminal program"));
+		return true;
+	}
+
+
+
 #ifdef COMPILE_KDE_SUPPORT          // We have invokeTerminal().
-		KToolInvocation::invokeTerminal(szCmd.data());
+
+	KToolInvocation::invokeTerminal(szCommand.toLocal8Bit());
+
 #else                               // No invokeTerminal() for us, we'll use a
                                     // combination of QStringList and QProcess.
-
-		QProcess oProc;
-		QStringList args;
-		QStringList szTerminals;
+	QStringList szTerminals;
 #if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)           // Only »cmd.exe /k« in the list.
-		szTerminals.append("cmd.exe");
-		args << "/k" << szCommand;
+	szTerminals.append("cmd.exe");
+#elif defined(COMPILE_ON_MAC)
+	szTerminals.append("osascript");
 #else
-		// List: x-terminal-emulator, terminal, xterm
-		szTerminals.append("x-terminal-emulator");
-		szTerminals.append("terminal");
-		szTerminals.append("xterm");
-		args << "-e" << szCommand;
+	// Where the heck is xdg-terminal?
+	// List: gnome-terminal, x-terminal-emulator, terminal, xterm
+	szTerminals.append("gnome-terminal");
+	szTerminals.append("x-terminal-emulator");
+	szTerminals.append("terminal");
+	szTerminals.append("xterm");
 #endif                              // endif COMPILE_ON_WINDOWS
 
-		QString szTerm;
-		while(!szTerminals.isEmpty())
-		{
-			szTerm=szTerminals.takeFirst();
-			if (oProc.startDetached(szTerm, args))
-				break;
-		}
-#endif                              // endif COMPILE_KDE_SUPPORT
+	QString szTerm;
+	while(!szTerminals.isEmpty())
+	{
+		szTerm=szTerminals.takeFirst();
+		if(oProc.startDetached(szTerm, args))
+			return true;
 	}
-	return true;
+#endif                              // endif COMPILE_KDE_SUPPORT
+
+	return c->error(__tr2qs("Failed to start the terminal program"));
 }
 
 static bool system_module_init(KviModule * m)

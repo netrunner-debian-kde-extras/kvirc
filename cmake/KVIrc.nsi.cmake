@@ -4,6 +4,7 @@
 !include "MUI.nsh"
 !include "WinMessages.nsh"
 !include "LogicLib.nsh"
+!include "WinVer.nsh"
 
 Name "@NICENAME@"
 !define VERSION '@CMAKE_KVIRC_VERSION_RELEASE@'
@@ -36,6 +37,7 @@ Var LocalDir
 !define MUI_LANGDLL_REGISTRY_ROOT "HKCU"
 !define MUI_LANGDLL_REGISTRY_KEY "Software\KVIrc"
 !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
+!define MUI_LANGDLL_ALWAYSSHOW
 !define MUI_FINISHPAGE_RUN "$INSTDIR\@KVIRC_BINARYNAME@.exe"
 
 ; Pages
@@ -72,6 +74,7 @@ LangString MsgUninstallOldInstaller ${LANG_ENGLISH} "Previous versions of KVIrc 
 LangString KVIrcIsRunning ${LANG_ENGLISH} "An instance of KVIrc is currently running. Exit KVIrc and then try again."
 LangString WinampSection ${LANG_ENGLISH} "Winamp plugin"
 LangString WinampSectionDescr ${LANG_ENGLISH} "Install Winamp plugin"
+LangString WinVerUnsupported ${LANG_ENGLISH} "KVIrc does not support the currently running Windows Version.$\r$\nWindows XP or higher is required." 
 
 !include ".\translations\*.nsi"
 
@@ -185,6 +188,10 @@ SectionEnd
 
 
 Function .onInit
+    ${IfNot} ${AtLeastWinXP}
+      MessageBox MB_OK|MB_ICONSTOP "$(WinVerUnsupported)"
+      Quit
+    ${EndIf}
     !insertmacro MUI_LANGDLL_DISPLAY
 
     Call CloseKVIrcInstances

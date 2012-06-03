@@ -360,13 +360,13 @@ SetupWizard::SetupWizard()
 
 	m_pAgeCombo = new QComboBox(hb);
 
-	m_pAgeCombo->insertItem(0,__tr2qs("Unspecified"));
+    m_pAgeCombo->insertItem(0,__tr2qs("Unspecified"));
 	unsigned int i;
 	for(i=1;i<120;i++)
 	{
 		QString tmp;
 		tmp.setNum(i);
-		m_pAgeCombo->insertItem(m_pAgeCombo->count(),tmp);
+        m_pAgeCombo->insertItem(m_pAgeCombo->count(),tmp);
 	}
 
 	bool bOk;
@@ -387,9 +387,9 @@ SetupWizard::SetupWizard()
 
 	m_pGenderCombo = new QComboBox(hb);
 
-	m_pGenderCombo->insertItem(0,__tr2qs("Unspecified"));
-	m_pGenderCombo->insertItem(1,__tr2qs("Female"));
-	m_pGenderCombo->insertItem(2,__tr2qs("Male"));
+    m_pGenderCombo->insertItem(0,__tr2qs("Unspecified"));
+    m_pGenderCombo->insertItem(1,__tr2qs("Female"));
+    m_pGenderCombo->insertItem(2,__tr2qs("Male"));
 
 	if(KviQString::equalCI(KVI_OPTION_STRING(KviOption_stringCtcpUserInfoGender),"Male"))
 		m_pGenderCombo->setCurrentIndex(2);
@@ -991,6 +991,7 @@ void SetupWizard::accept()
 		unlink(QTextCodec::codecForLocale()->fromUnicode(localPath).data());
 		int dummy; // make gcc happy
 		dummy = symlink(QTextCodec::codecForLocale()->fromUnicode(g_pApp->m_szGlobalKvircDir).data(),QTextCodec::codecForLocale()->fromUnicode(localPath).data());
+		Q_UNUSED(dummy);
 #endif
 
 #ifdef COMPILE_KDE_SUPPORT

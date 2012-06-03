@@ -34,6 +34,7 @@
 #define _KVI_DEBUG_CHECK_RANGE_
 
 #include "kvi_debug.h"
+#include "kvi_out.h"
 #include "KviApplication.h"
 #include "KviWindow.h"
 #include "KviMainWindow.h"
@@ -41,7 +42,6 @@
 #include "KviMdiChild.h"
 #include "KviLocale.h"
 #include "KviIrcView.h"
-#include "kvi_out.h"
 #include "KviMemory.h"
 #include "KviInput.h"
 #include "KviFileUtils.h"
@@ -53,7 +53,6 @@
 #include "KviControlCodes.h"
 #include "KviWindowToolWidget.h"
 #include "KviKvsScript.h"
-#include "KviTalPopupMenu.h"
 #include "KviTalToolTip.h"
 #include "KviKvsScript.h"
 #include "KviKvsEventTriggers.h"
@@ -73,6 +72,7 @@
 #include <QCloseEvent>
 #include <QIcon>
 #include <QActionGroup>
+#include <QMenu>
 
 #ifdef COMPILE_CRYPT_SUPPORT
 	#include "KviCryptEngine.h"
@@ -89,18 +89,18 @@
 
 KVIRC_API KviWindow * g_pActiveWindow = 0;
 
-static KviTalPopupMenu * g_pMdiWindowSystemMainPopup = 0;
-static KviTalPopupMenu * g_pMdiWindowSystemTextEncodingPopup = 0;
-static KviTalPopupMenu * g_pMdiWindowSystemTextEncodingPopupStandard = 0;
-static KviTalPopupMenu * g_pMdiWindowSystemTextEncodingPopupSmart = 0;
-static KviTalPopupMenu * g_pMdiWindowSystemTextEncodingPopupSmartUtf8 = 0;
-static QActionGroup    * g_pMdiWindowSystemTextEncodingActionGroup = 0;
-static QAction         * g_pMdiWindowSystemTextEncodingCurrentAction = 0;
-static QAction         * g_pMdiWindowSystemTextEncodingDefaultAction = 0;
+static QMenu * g_pMdiWindowSystemMainPopup = 0;
+static QMenu * g_pMdiWindowSystemTextEncodingPopup = 0;
+static QMenu * g_pMdiWindowSystemTextEncodingPopupStandard = 0;
+static QMenu * g_pMdiWindowSystemTextEncodingPopupSmart = 0;
+static QMenu * g_pMdiWindowSystemTextEncodingPopupSmartUtf8 = 0;
+static QActionGroup * g_pMdiWindowSystemTextEncodingActionGroup = 0;
+static QAction * g_pMdiWindowSystemTextEncodingCurrentAction = 0;
+static QAction * g_pMdiWindowSystemTextEncodingDefaultAction = 0;
 
 unsigned long int g_uUniqueWindowId = 1;
 
-KviWindow::KviWindow(Type eType, KviMainWindow * lpFrm, const QString & szName, KviConsoleWindow * lpConsole)
+KviWindow::KviWindow(Type eType, const QString & szName, KviConsoleWindow * lpConsole)
 : QWidget(0)
 {
 	m_uId = g_uUniqueWindowId;
@@ -111,30 +111,26 @@ KviWindow::KviWindow(Type eType, KviMainWindow * lpFrm, const QString & szName, 
 
 	g_pApp->registerWindow(this);
 
-	m_eType                 = eType;
-	m_pFocusHandler         = 0;
-
-	m_pFrm = lpFrm; // FIXME: Should disappear!
-	m_pIrcView              = 0;
-	m_pInput                = 0;
-	m_pSplitter             = 0;
-	m_pButtonBox            = 0;
-	m_pConsole              = lpConsole;
-	m_pLastFocusedChild     = 0;
-	m_pTextCodec            = 0; // will be set by loadProperties
-	m_pTextEncodingButton   = 0;
-	m_pHideToolsButton      = 0;
-//	m_pEditorsContainer     = 0;
-	m_bIsDocked             = false;
-
+	m_eType                  = eType;
+	m_pFocusHandler          = 0;
+	m_pIrcView               = 0;
+	m_pInput                 = 0;
+	m_pSplitter              = 0;
+	m_pButtonBox             = 0;
+	m_pConsole               = lpConsole;
+	m_pLastFocusedChild      = 0;
+	m_pTextCodec             = 0; // will be set by loadProperties
+	m_pTextEncodingButton    = 0;
+	m_pHideToolsButton       = 0;
+//	m_pEditorsContainer       = 0;
+	m_bIsDocked              = false;
+	m_pWindowListItem        = 0;
 #ifdef COMPILE_CRYPT_SUPPORT
 	m_pCryptControllerButton = 0;
-	m_pCryptController = 0;
-	m_pCryptSessionInfo = 0;
+	m_pCryptController       = 0;
+	m_pCryptSessionInfo      = 0;
 #endif
-
-	m_pWindowListItem = 0;
-
+	
 	setMinimumSize(KVI_WINDOW_MIN_WIDTH,KVI_WINDOW_MIN_HEIGHT);
 	//setAutoFillBackground(false);
 	setFocusPolicy(Qt::StrongFocus);
@@ -184,78 +180,46 @@ void KviWindow::reloadImages()
 	updateIcon();
 }
 
-bool KviWindow::hasAttention()
+bool KviWindow::hasAttention(AttentionLevel eLevel)
 {
-	if(((QApplication *)g_pApp)->activeWindow() == 0)
-		return false; // no application window has the focus atm
-
 	if(mdiParent())
 	{
-		// This frame is not the active window but the
-		// active window still belongs to KVIrc.
-		// When the active window is derived from QDialog
-		// then it is probably a KVIrc's option dialog
-		// or something similar.
-		// In this case we assume that the user has the
-		// KVIrc window just below and can see it.
-		if(frame()->isActiveWindow())
-			return true;
-
-		// Handle the special case of the dialogs then
-		QWidget * pWidget = ((QApplication *)g_pApp)->activeWindow();
-		if(pWidget->inherits("QDialog"))
+		switch(eLevel)
 		{
-			// but make sure that the frame is visible at all!
-			if(!frame()->isVisible())
+			case VisibleAndActive:
+				return (g_pMainWindow->isActiveWindow() && g_pActiveWindow == this);
+				break;
+			case MainWindowIsVisible:
+				return g_pMainWindow->isActiveWindow();
+				break;
+			default:
 				return false;
-			return true;
+				break;
 		}
-		// any other class is so unfrequent that we ignore it
 	} else {
-		// when the window is undocked, instead
-		// it is likely to be covered by KVIrc or other windows...
+		// undocked window
 		if(isActiveWindow())
 			return true;
 	}
+
 	return false;
 }
 
 void KviWindow::demandAttention()
 {
-	if(mdiParent())
-	{
-		if(frame()->isActiveWindow())
-			return;
+	WId windowId = mdiParent() ? g_pMainWindow->winId() : winId();
+
 #if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
-		FLASHWINFO fwi;
-		fwi.cbSize = sizeof(fwi);
-		fwi.hwnd = (HWND)(frame()->winId());
-		fwi.dwFlags = FLASHW_TRAY | FLASHW_TIMERNOFG;
-		fwi.uCount = 20;
-		fwi.dwTimeout = 500;
-		FlashWindowEx(&fwi);
-#else
-	#ifdef COMPILE_KDE_SUPPORT
-		KWindowSystem::demandAttention(frame()->winId(),true);
-	#endif
+	FLASHWINFO fwi;
+	fwi.cbSize = sizeof(fwi);
+	fwi.hwnd = (HWND)windowId;
+	fwi.dwFlags = FLASHW_TRAY | FLASHW_TIMERNOFG;
+	fwi.uCount = 20;
+	fwi.dwTimeout = 500;
+	FlashWindowEx(&fwi);
+#elif defined(COMPILE_KDE_SUPPORT)
+	KWindowSystem::demandAttention(windowId,true);
 #endif
-	} else {
-		if(isActiveWindow())
-			return;
-#if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
-		FLASHWINFO fwi;
-		fwi.cbSize = sizeof(fwi);
-		fwi.hwnd = (HWND)winId();
-		fwi.dwFlags = FLASHW_TRAY | FLASHW_TIMERNOFG;
-		fwi.uCount = 20;
-		fwi.dwTimeout = 500;
-		FlashWindowEx(&fwi);
-#else
-	#ifdef COMPILE_KDE_SUPPORT
-		KWindowSystem::demandAttention(winId(),true);
-	#endif
-#endif
-	}
 }
 
 bool KviWindow::focusNextPrevChild(bool bNext)
@@ -607,9 +571,8 @@ void KviWindow::saveProperties(KviConfigurationFile * pCfg)
 			szCodec = KviQString::Empty; // store "default"
 	}
 
-	QString szKey = "TextEncoding_";
-	szKey += m_szName;
-	pCfg->writeEntry(szKey,szCodec);
+	if(!szCodec.isEmpty())
+		pCfg->writeEntry("TextEncoding",szCodec);
 	if(m_pInput)
 	{
 		pCfg->writeEntry("inputToolButtonsHidden",m_pInput->isButtonsHidden());
@@ -625,9 +588,16 @@ void KviWindow::saveProperties(KviConfigurationFile * pCfg)
 
 void KviWindow::loadProperties(KviConfigurationFile * pCfg)
 {
-	QString szKey = "TextEncoding_";
-	szKey += m_szName;
-	setTextEncoding(pCfg->readEntry(szKey,KviQString::Empty).toUtf8().data());
+	QString szCodec=pCfg->readEntry("TextEncoding",KviQString::Empty);
+	if(szCodec.isEmpty())
+	{
+		// try to load kvirc 4.0's entry
+		QString szKey = "TextEncoding_";
+		szKey += m_szName;
+		szCodec=pCfg->readEntry(szKey,KviQString::Empty);
+	}
+	
+	setTextEncoding(szCodec.toUtf8().data());
 	if(m_pInput)
 	{
 		m_pInput->setButtonsHidden(pCfg->readBoolEntry("inputToolButtonsHidden",KVI_OPTION_BOOL(KviOption_boolHideInputToolButtons)));
@@ -683,10 +653,10 @@ void KviWindow::createSystemTextEncodingPopup()
 	if(!g_pMdiWindowSystemTextEncodingPopup)
 	{
 		// first time called, create the menu
-		g_pMdiWindowSystemTextEncodingPopup = new KviTalPopupMenu();
-		g_pMdiWindowSystemTextEncodingPopupStandard = new KviTalPopupMenu();
-		g_pMdiWindowSystemTextEncodingPopupSmart = new KviTalPopupMenu();
-		g_pMdiWindowSystemTextEncodingPopupSmartUtf8 = new KviTalPopupMenu();
+        g_pMdiWindowSystemTextEncodingPopup = new QMenu();
+        g_pMdiWindowSystemTextEncodingPopupStandard = new QMenu();
+        g_pMdiWindowSystemTextEncodingPopupSmart = new QMenu();
+        g_pMdiWindowSystemTextEncodingPopupSmartUtf8 = new QMenu();
 		g_pMdiWindowSystemTextEncodingActionGroup = new QActionGroup(g_pMdiWindowSystemTextEncodingPopup);
 
 		//default action
@@ -714,11 +684,14 @@ void KviWindow::createSystemTextEncodingPopup()
 		g_pMdiWindowSystemTextEncodingCurrentAction->setVisible(false);
 		
 		// other first level menus
-		g_pMdiWindowSystemTextEncodingPopup->insertSeparator();
+        g_pMdiWindowSystemTextEncodingPopup->addSeparator();
 
-		g_pMdiWindowSystemTextEncodingPopup->insertItem(__tr2qs("Standard"),g_pMdiWindowSystemTextEncodingPopupStandard);
-		g_pMdiWindowSystemTextEncodingPopup->insertItem(__tr2qs("Smart (Send Local)"),g_pMdiWindowSystemTextEncodingPopupSmart);
-		g_pMdiWindowSystemTextEncodingPopup->insertItem(__tr2qs("Smart (Send UTF-8)"),g_pMdiWindowSystemTextEncodingPopupSmartUtf8);
+        QAction * pAction = g_pMdiWindowSystemTextEncodingPopup->addAction(__tr2qs("Standard"));
+        pAction->setMenu(g_pMdiWindowSystemTextEncodingPopupStandard);
+        pAction = g_pMdiWindowSystemTextEncodingPopup->addAction(__tr2qs("Smart (Send Local)"));
+        pAction->setMenu(g_pMdiWindowSystemTextEncodingPopupSmart);
+        pAction = g_pMdiWindowSystemTextEncodingPopup->addAction(__tr2qs("Smart (Send UTF-8)"));
+        pAction->setMenu(g_pMdiWindowSystemTextEncodingPopupSmartUtf8);
 
 		// second level menus (encoding groups)
 		QMenu * pPopupStandard[KVI_NUM_ENCODING_GROUPS];
@@ -1158,10 +1131,7 @@ void KviWindow::moveEvent(QMoveEvent * pEvent)
 void KviWindow::minimize()
 {
 	if(mdiParent())
-	{
-		if(!isMinimized())
-			mdiParent()->minimize();
-	}
+		mdiParent()->minimize();
 	else
 		showMinimized();
 }
@@ -1169,10 +1139,7 @@ void KviWindow::minimize()
 void KviWindow::maximize()
 {
 	if(mdiParent())
-	{
-		if(!isMaximized())
-			mdiParent()->maximize();
-	}
+		mdiParent()->maximize();
 	else
 		showMaximized();
 	autoRaise();
@@ -1201,15 +1168,6 @@ void KviWindow::restore()
 	else
 		showNormal();
 	autoRaise();
-}
-
-QRect KviWindow::externalGeometry()
-{
-#ifndef COMPILE_ON_MAC
-	return mdiParent() ? mdiParent()->geometry() : frameGeometry();
-#else
-	return mdiParent() ? mdiParent()->geometry() : geometry();
-#endif
 }
 
 void KviWindow::applyOptions()
@@ -1244,7 +1202,7 @@ void KviWindow::internalOutput(KviIrcView * pView, int iMsgType, const kvi_wchar
 
 	if(pView)
 	{
-		if((this != g_pActiveWindow) || (!isActiveWindow()))
+		if(!hasAttention())
 		{
 			iFlags |= KviIrcView::TriggersNotification;
 			if(!pView->hasLineMark())

@@ -33,6 +33,30 @@
 #include <QWebView>
 #include <QWebFrame>
 #include <QWebElement>
+#include <QMouseEvent>
+#include <QContextMenuEvent>
+
+class KvsObject_webView;
+class KviKvsWebView :  public QWebView
+{
+	Q_OBJECT
+public:
+	KviKvsWebView(QWidget * par,const char * name,KvsObject_webView *);
+	//void accept();
+	//void reject();
+	virtual ~KviKvsWebView();
+protected:
+	KvsObject_webView *m_pParentScript;
+protected:
+	virtual void	mouseMoveEvent( QMouseEvent * ev );
+	virtual void	contextMenuEvent(QContextMenuEvent *);
+	virtual bool	event(QEvent * e);
+/*protected slots:
+	void slotNextClicked();
+	void slotBackClicked();
+	*/
+};
+
 
 class KvsObject_webView : public KviKvsObject
 {
@@ -41,49 +65,63 @@ public:
 	KVSO_DECLARE_OBJECT(KvsObject_webView)
 protected:
 	KviKvsRunTimeContext          * m_pContext;
-	QHash<QString,QWebFrame *>      m_dictFrames;
+	int elementMapId;
+	int insertElement(const QWebElement &ele);
+	QWebElement getElement(int iIdx);
+	int getElementId(const QWebElement &);
+	QHash<int,QWebElement> m_elementMapper;
+	KviPointerList <KviKvsObject>  * lWebelement;
 	QHash<QString,QWebElement *>    m_dictCache;
 	KviPointerList<QNetworkReply> * m_pReplyList;
 	QNetworkAccessManager         * m_pNetworkManager;
 	QWebElementCollection           m_webElementCollection;
 	QWebElement                     m_currentElement;
 public:
+
 	QWidget * widget(){ return (QWidget *)object(); }
 protected:
-	void getFrames(QWebFrame * pFrame, KviKvsArray * pArray, kvs_uint_t & uIdx);
+	void getFrames(QWebFrame *pCurFrame, QStringList &szFramesNames);
+	QWebFrame * findFrame(QWebFrame *pCurFrame, QString &szFrameName);
 	virtual bool init(KviKvsRunTimeContext * pContext, KviKvsVariantList * pParams);
-
 	bool removeFromDocument(KviKvsObjectFunctionCall * c);
 	bool makePreview(KviKvsObjectFunctionCall * c);
 
 	bool removeClass(KviKvsObjectFunctionCall * c);
+	bool addClass(KviKvsObjectFunctionCall * c);
+
 	bool classes(KviKvsObjectFunctionCall * c);
 
-	bool rememberCurrent(KviKvsObjectFunctionCall * c);
-	bool moveTo(KviKvsObjectFunctionCall * c);
 
 	bool firstChild(KviKvsObjectFunctionCall * c);
+	bool lastChild(KviKvsObjectFunctionCall * c);
 	bool parentElement(KviKvsObjectFunctionCall * c);
 	bool nextSibling(KviKvsObjectFunctionCall * c);
 
 	bool toPlainText(KviKvsObjectFunctionCall * c);
 	bool setPlainText(KviKvsObjectFunctionCall * c);
 	bool load(KviKvsObjectFunctionCall * c);
+	bool setHtml(KviKvsObjectFunctionCall * c);
 	bool getDocumentElement(KviKvsObjectFunctionCall * c);
-	bool currentElementTagName(KviKvsObjectFunctionCall * c);
+	bool elementTagName(KviKvsObjectFunctionCall * c);
 	bool findAll(KviKvsObjectFunctionCall * c);
+	bool appendInside(KviKvsObjectFunctionCall * c);
+	bool appendOutside(KviKvsObjectFunctionCall * c);
+
 	bool findFirst(KviKvsObjectFunctionCall * c);
 	bool findText(KviKvsObjectFunctionCall * c);
 
-	bool moveToQueryResultsAt(KviKvsObjectFunctionCall * c);
-	bool queryResultsCount(KviKvsObjectFunctionCall * c);
+	bool hitTestContent(KviKvsObjectFunctionCall * c);
 
-	bool attributeNames(KviKvsObjectFunctionCall * c);
+	bool elementAttributeNames(KviKvsObjectFunctionCall * c);
 	bool setLinkDelegationPolicy(KviKvsObjectFunctionCall * c);
-	bool setAttribute(KviKvsObjectFunctionCall * c);
+	bool setElementAttribute(KviKvsObjectFunctionCall * c);
 	bool setWebSetting(KviKvsObjectFunctionCall * c);
-	bool attribute(KviKvsObjectFunctionCall * c);
+	bool elementAttribute(KviKvsObjectFunctionCall * c);
 	bool frames(KviKvsObjectFunctionCall * c);
+
+	bool setStyleProperty(KviKvsObjectFunctionCall * c);
+	bool styleProperty(KviKvsObjectFunctionCall * c);
+	bool appendWebViewActionToMenu(KviKvsObjectFunctionCall * c);
 
 	bool loadStartedEvent(KviKvsObjectFunctionCall * c);
 	bool linkClickedEvent(KviKvsObjectFunctionCall * c);
@@ -92,12 +130,28 @@ protected:
 	bool downloadCompletedEvent(KviKvsObjectFunctionCall * c);
 	bool downloadProgressEvent(KviKvsObjectFunctionCall * c);
 	bool downloadRequestEvent(KviKvsObjectFunctionCall * c);
+	bool addToJavaScriptWindowObject(KviKvsObjectFunctionCall * c);
+	bool evaluateJavaScript(KviKvsObjectFunctionCall * c);
+
+	//
+	bool setEventFilter(KviKvsObjectFunctionCall * c);
+	bool jsChangeEvent(KviKvsObjectFunctionCall * c);
+	bool jsSubmitEvent(KviKvsObjectFunctionCall * c);
+	bool jsClickEvent(KviKvsObjectFunctionCall * c);
+	bool jsMouseOverEvent(KviKvsObjectFunctionCall * c);
+	bool jsMouseOutEvent(KviKvsObjectFunctionCall * c);
 protected slots:
 	void slotLoadFinished(bool);
 	void slotLoadProgress(int);
 	void slotLoadStarted();
 	void slotDownloadRequest(const QNetworkRequest &);
 	void slotLinkClicked(const QUrl &);
+
+	void slotOnChange(QString );
+	void slotOnSubmit(QString );
+	void slotOnClick(QString );
+    void slotOnMouseOver(QString);
+	void slotOnMouseOut(QString);
 };
 
 class KviKvsDownloadHandler : public QObject
@@ -115,6 +169,7 @@ protected:
 protected slots:
 	void slotReadyRead();
 	void slotReplyFinished();
+
 };
 
 #endif // COMPILE_WEBKIT_SUPPORT

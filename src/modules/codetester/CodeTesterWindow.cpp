@@ -36,11 +36,11 @@
 #include "KviParameterList.h"
 #include "KviKvsScript.h"
 #include "KviKvsVariantList.h"
-#include "KviTalPopupMenu.h"
 
 #include <QPushButton>
 #include <QLayout>
 #include <QLabel>
+#include <QMenu>
 
 
 extern KviPointerList<CodeTesterWindow> * g_pCodeTesterWindowList;
@@ -82,8 +82,8 @@ void CodeTesterWidget::execute()
 	delete pSLParams;
 }
 
-CodeTesterWindow::CodeTesterWindow(KviMainWindow * lpFrm)
-: KviWindow(KviWindow::ScriptEditor,lpFrm,"codetester",0)
+CodeTesterWindow::CodeTesterWindow()
+: KviWindow(KviWindow::ScriptEditor,"codetester",0)
 {
 	g_pCodeTesterWindowList->append(this);
 

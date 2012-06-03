@@ -83,9 +83,9 @@
 #include "KviKvsEventTriggers.h"
 #include "kvi_sourcesdate.h"
 #include "KviPointerHashTable.h"
-#include "KviTalPopupMenu.h"
 #include "KviQueryWindow.h"
 
+#include <QMenu>
 
 #ifndef COMPILE_NO_IPC
 	#include "KviIpcSentinel.h"
@@ -149,7 +149,7 @@ KVIRC_API KviProxyDataBase              * g_pProxyDataBase              = 0;
 // Global windows
 KVIRC_API KviColorWindow                * g_pColorWindow                = 0;
 KVIRC_API KviTextIconWindow             * g_pTextIconWindow             = 0;
-KVIRC_API KviTalPopupMenu               * g_pInputPopup                 = 0;
+KVIRC_API QMenu               * g_pInputPopup                 = 0;
 KVIRC_API QStringList                   * g_pRecentTopicList            = 0;
 KVIRC_API KviPointerHashTable<QString,KviWindow>  * g_pGlobalWindowDict = 0;
 KVIRC_API KviMediaManager               * g_pMediaManager               = 0;
@@ -197,13 +197,6 @@ KviApplication::KviApplication(int &argc,char ** argv)
 	setOrganizationDomain("kvirc.net");
 	setOrganizationName("KVIrc");
 
-#ifdef COMPILE_ON_MAC
-	// Disable the native menubar on MacOSX as in Qt 4.6 it's quite buggy and
-	// *very* often crashes in QMenuBar::macUpdateMenuBar()->QAction::isVisible().
-	// FIXME: Check it with later Qt versions
-	KviEnvironment::setVariable("QT_MAC_NO_NATIVE_MENUBAR","1");
-#endif //COMPILE_ON_MAC
-
 	// Ok...everything begins here
 	g_pApp                  = this;
 	m_szConfigFile          = QString();
@@ -220,17 +213,23 @@ KviApplication::KviApplication(int &argc,char ** argv)
 	m_bSetupDone            = false;
 	m_bClosingDown          = false;
 	kvi_socket_flushTrafficCounters();
+	// don't let qt quit the application by itself
+	setQuitOnLastWindowClosed(false);
 #if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
 	m_bPortable = KviFileUtils::fileExists(g_pApp->applicationDirPath()+KVI_PATH_SEPARATOR_CHAR+"portable");
 	//workaround for #957
 	QApplication::setEffectEnabled(Qt::UI_FadeMenu, FALSE);
 #endif
+
+    //note: the early qApp->style() call leads to a crash on osx
+#if !defined(COMPILE_ENABLE_GTKSTYLE) && !defined(COMPILE_ON_MAC)
 	// workaround for gtk+ style forcing a crappy white background (ticket #777, #964, #1009, ..)
 	if(QString("QGtkStyle").compare(qApp->style()->metaObject()->className())==0)
 	{
 		setStyle(new QCleanlooksStyle());
 		setPalette(style()->standardPalette());
 	}
+#endif
 }
 
 void KviApplication::setup()
@@ -508,7 +507,7 @@ void KviApplication::setup()
 	//g_pGarbageCollector = new KviGarbageCollector();
 
 	// and the input popup
-	g_pInputPopup = new KviTalPopupMenu();
+    g_pInputPopup = new QMenu();
 
 	// create the server parser
 	g_pServerParser = new KviIrcServerParser();
@@ -592,18 +591,15 @@ KviApplication::~KviApplication()
 	destroyIpcSentinel();
 #endif
 
+    // if we still have a frame: kill it
+    if(g_pMainWindow)
+        delete g_pMainWindow;
+    g_pActiveWindow = 0; // .. but it should be already 0 anyway
+
 	if(g_pSplashScreen)
 		delete g_pSplashScreen;
 	if(g_pCtcpPageDialog)
 		delete g_pCtcpPageDialog;
-
-	// if we still have a frame: kill it
-	if(g_pMainWindow)
-		delete g_pMainWindow;
-	g_pActiveWindow = 0; // .. but it should be already 0 anyway
-
-	// execute pending deletes (this may still contain some UI elements)
-	//delete g_pGarbageCollector;
 
 	if(!m_bSetupDone)
 		return; // killed with IPC (nothing except the m_pFrameList was created yet)
@@ -1237,7 +1233,7 @@ void KviApplication::fileDownloadTerminated(bool bSuccess, const QString & szRem
 		{
 			if(!g_pActiveWindow)
 				return;
-			if(g_pActiveWindow->hasAttention())
+			if(g_pActiveWindow->hasAttention(KviWindow::MainWindowIsVisible))
 				return;
 			QString szMsg;
 			int iIconId;
@@ -1438,8 +1434,6 @@ void KviApplication::updatePseudoTransparency()
 	if(KVI_OPTION_BOOL(KviOption_boolUseGlobalPseudoTransparency))
 	{
 #if defined(COMPILE_ON_WINDOWS) || defined(COMPILE_ON_MINGW)
-		//TODO this has been tested only under mingw!
-		//TODO this needs winxp: #if (_WIN32_WINNT >= 0x0501)
 		if(KVI_OPTION_BOOL(KviOption_boolUseWindowsDesktopForTransparency))
 		{
 			QSize size = g_pApp->desktop()->screenGeometry(g_pApp->desktop()->primaryScreen()).size();
@@ -1751,15 +1745,17 @@ void KviApplication::autoConnectToServers()
 
 void KviApplication::createFrame()
 {
-	if(g_pMainWindow)
-		qDebug("WARNING: Creating the main frame twice!");
-	g_pMainWindow = new KviMainWindow();
+	Q_ASSERT(g_pMainWindow == 0);
+
+	new KviMainWindow();
+	
+	Q_ASSERT(g_pMainWindow != 0);
+
 	g_pMainWindow->createNewConsole(true);
 
-	if(m_szExecAfterStartup.hasData())
+	if(!m_szExecAfterStartup.isEmpty())
 	{
-		// FIXME, this should be a QString
-		KviKvsScript::run(m_szExecAfterStartup.ptr(),g_pMainWindow->firstConsole());
+		KviKvsScript::run(m_szExecAfterStartup,g_pMainWindow->firstConsole());
 		m_szExecAfterStartup = "";
 	}
 
@@ -1776,14 +1772,6 @@ void KviApplication::createFrame()
 		g_pMainWindow->showMinimized();
 	else
 		g_pMainWindow->show();
-}
-
-void KviApplication::destroyFrame()
-{
-	m_bClosingDown=true;
-	if(g_pMainWindow)
-		g_pMainWindow->deleteLater();
-	g_pActiveWindow = 0;
 }
 
 bool KviApplication::connectionExists(KviIrcConnection * pConn)
@@ -2106,7 +2094,7 @@ void KviApplication::addRecentServer(const QString & szServer)
 	merge_to_stringlist_option(szServer,KviOption_stringlistRecentServers,KVI_MAX_RECENT_SERVERS);
 }
 
-void KviApplication::fillRecentServersPopup(KviTalPopupMenu * pMenu)
+void KviApplication::fillRecentServersPopup(QMenu * pMenu)
 {
 	// FIXME: #warning "MAYBE DISABLE THE SERVERS THAT WE ARE ALREADY CONNECTED TO ?"
 	pMenu->clear();
@@ -2114,27 +2102,27 @@ void KviApplication::fillRecentServersPopup(KviTalPopupMenu * pMenu)
 	{
 		if(*it == "")
 			continue;
-		pMenu->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Server)),*it);
+		pMenu->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Server)),*it);
 	}
 }
 
-void KviApplication::fillRecentNicknamesPopup(KviTalPopupMenu * pMenu, KviConsoleWindow * pConsole)
+void KviApplication::fillRecentNicknamesPopup(QMenu * pMenu, KviConsoleWindow * pConsole)
 {
 	pMenu->clear();
-	int iId;
+    QAction *pAction;
 	bool bAlreadyFound = false;
 	for(QStringList::Iterator it = KVI_OPTION_STRINGLIST(KviOption_stringlistRecentNicknames).begin(); it != KVI_OPTION_STRINGLIST(KviOption_stringlistRecentNicknames).end(); ++it)
 	{
 		if(*it == "")
 			continue;
-		iId = pMenu->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Nick)),*it);
+        pAction= pMenu->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Nick)),*it);
 		if(!pConsole->isConnected())
-			pMenu->setItemEnabled(iId,false);
+            pAction->setEnabled(false);
 		else {
 			if(!bAlreadyFound)
 			{
 				bool bIsCurrent = KviQString::equalCS(pConsole->connection()->currentNickName(),*it);
-				pMenu->setItemEnabled(iId,!bIsCurrent);
+                pAction->setEnabled(!bIsCurrent);
 				if(bIsCurrent)
 					bAlreadyFound = true;
 			}
@@ -2142,9 +2130,10 @@ void KviApplication::fillRecentNicknamesPopup(KviTalPopupMenu * pMenu, KviConsol
 	}
 }
 
-void KviApplication::fillRecentChannelsPopup(KviTalPopupMenu * pMenu, KviConsoleWindow * pConsole)
+void KviApplication::fillRecentChannelsPopup(QMenu * pMenu, KviConsoleWindow * pConsole)
 {
 	pMenu->clear();
+    QAction *pAction;
 	QStringList * pList = recentChannelsForNetwork(pConsole->currentNetworkName());
 	if(pList)
 	{
@@ -2152,11 +2141,11 @@ void KviApplication::fillRecentChannelsPopup(KviTalPopupMenu * pMenu, KviConsole
 		{
 			if(*it == "")
 				continue; // ?
-			int iId = pMenu->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Channel)),*it);
+            pAction = pMenu->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Channel)),*it);
 			if(!pConsole->isConnected())
-				pMenu->setItemEnabled(iId,false);
+                pAction->setEnabled(false);
 			else
-				pMenu->setItemEnabled(iId,!(pConsole->connection()->findChannel(*it)));
+                pAction->setEnabled(!(pConsole->connection()->findChannel(*it)));
 		}
 	}
 }
@@ -2167,7 +2156,7 @@ void KviApplication::fillRecentServersListBox(KviTalListBox * l)
 {
 	l->clear();
 	for(QStringList::Iterator it = KVI_OPTION_STRINGLIST(KviOption_stringlistRecentServers).begin(); it != KVI_OPTION_STRINGLIST(KviOption_stringlistRecentServers).end(); ++it)
-		l->insertItem(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_SERVER)),*it);
+		l->addAction(*(g_pIconManager->getSmallIcon(KVI_SMALLICON_SERVER)),*it);
 }
 */
 

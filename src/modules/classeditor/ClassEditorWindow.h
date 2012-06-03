@@ -33,7 +33,6 @@
 #include "KviWindow.h"
 #include "KviCString.h"
 #include "KviPointerList.h"
-#include "KviTalPopupMenu.h"
 #include "KviHeapObject.h"
 #include "KviKvsObjectClass.h"
 
@@ -43,6 +42,7 @@
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QTreeWidget>
+#include <QMenu>
 
 class QLineEdit;
 class QStringList;
@@ -286,7 +286,7 @@ public:
 
 	ClassEditorTreeWidgetItem * m_pLastEditedItem;
 	ClassEditorTreeWidgetItem * m_pLastClickedItem;
-	KviTalPopupMenu              * m_pContextPopup;
+	QMenu              * m_pContextPopup;
 	QSplitter                    * m_pSplitter;
 	QString                        m_szDir;
 	bool                           m_bSaving;
@@ -474,10 +474,9 @@ class ClassEditorWindow : public KviWindow
 public:
 	/**
 	* \brief Constructs the class editor window
-	* \param pFrm The parent frame
 	* \return ClassEditorWindow
 	*/
-	ClassEditorWindow(KviMainWindow * pFrm);
+	ClassEditorWindow();
 	
 	/**
 	* \brief Destroys the class editor window

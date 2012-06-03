@@ -55,7 +55,7 @@ protected:
 	bool isCheckable(KviKvsObjectFunctionCall *c);
 	bool setChecked(KviKvsObjectFunctionCall *c);
 	bool isChecked(KviKvsObjectFunctionCall *c);
-        bool setFlags(KviKvsObjectFunctionCall *c);
+	bool setFlags(KviKvsObjectFunctionCall *c);
 
 public:
 	static kvs_hobject_t itemToHandle(QTreeWidgetItem * it);

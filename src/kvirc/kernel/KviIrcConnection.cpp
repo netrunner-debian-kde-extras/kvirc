@@ -289,7 +289,7 @@ void KviIrcConnection::serverInfoReceived(const QString & szServerName, const QS
 	serverInfo()->setSupportedUserModes(szUserModes);
 	serverInfo()->setSupportedChannelModes(szChanModes);
 	m_pConsole->updateCaption(); // for server name
-	m_pConsole->frame()->childConnectionServerInfoChange(this);
+	g_pMainWindow->childConnectionServerInfoChange(this);
 }
 
 const QString & KviIrcConnection::currentNetworkName()
@@ -365,11 +365,75 @@ void KviIrcConnection::linkEstabilished()
 
 		// FIXME: The PING method does NOT work with bouncers. We need a timeout here.
 
-		sendFmtData("CAP LS\r\nPING :%Q",&(target()->server()->hostName()));
+		if(sendFmtData("CAP LS\r\nPING :%Q",&(target()->server()->hostName())))
+			return;
+
+		m_pConsole->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs("Failed to send the CAP LS request. Server capabilities will not be detected."));
+	}
+
+	if(
+			(!link()->socket()->usingSSL()) &&
+			target()->server()->enabledSTARTTLS()
+		)
+	{
+#ifdef COMPILE_SSL_SUPPORT
+		// STARTTLS without CAP (forced request)
+
+		m_pStateData->setInsideInitialStartTls(true);
+		m_pStateData->setIgnoreOneYouHaveNotRegisteredError(true);
+
+		// STARTTLS requested but CAP not requested.
+		if(trySTARTTLS(true))
+			return; // STARTTLS negotiation in progress
+
+		m_pStateData->setInsideInitialStartTls(false);
+		m_pStateData->setIgnoreOneYouHaveNotRegisteredError(false);
+#endif
+	}
+
+	loginToIrcServer();
+}
+
+#ifdef COMPILE_SSL_SUPPORT
+bool KviIrcConnection::trySTARTTLS(bool bAppendPing)
+{
+	// Check if the server supports STARTTLS protocol and we want to
+	// connect through it
+	bool bRet = bAppendPing ? sendFmtData("STARTTLS\r\nPING :%Q",&(target()->server()->hostName())) : sendFmtData("STARTTLS");
+
+	if(!bRet)
+	{
+		// Cannot send command
+		m_pConsole->output(KVI_OUT_SOCKETERROR,__tr2qs("Impossible to send STARTTLS command to the IRC server. Your connection will NOT be encrypted"));
+		return false;
+	}
+
+	m_pStateData->setSentStartTls();
+	return true;
+}
+
+void KviIrcConnection::handleFailedInitialStartTls()
+{
+	m_pStateData->setInsideInitialStartTls(false);
+	loginToIrcServer();
+}
+
+void KviIrcConnection::enableStartTlsSupport(bool bEnable)
+{
+	m_pStateData->setInsideInitialStartTls(false);
+
+	if(bEnable)
+	{
+		// Ok, the server supports STARTTLS protocol
+		// ssl handshake e switch del socket
+		//qDebug("Starting SSL handshake...");
+		link()->socket()->enterSSLMode(); // FIXME: this should be forwarded through KviIrcLink, probably
 	} else {
-		loginToIrcServer();
+		// The server does not support STARTTLS
+		m_pConsole->output(KVI_OUT_SOCKETERROR,__tr2qs("The server does not support STARTTLS command. Your connection will NOT be encrypted"));
 	}
 }
+#endif // COMPILE_SSL_SUPPORT
 
 void KviIrcConnection::handleInitialCapLs()
 {
@@ -382,21 +446,22 @@ void KviIrcConnection::handleInitialCapLs()
 	// a full cap renegotiation
 #ifdef COMPILE_SSL_SUPPORT
 	if(
-		KVI_OPTION_BOOL(KviOption_boolUseStartTlsIfAvailable) &&
+		//KVI_OPTION_BOOL(KviOption_boolUseStartTlsIfAvailable) &&
 		(!link()->socket()->usingSSL()) &&
 		target()->server()->enabledSTARTTLS() &&
 		serverInfo()->supportedCaps().contains("tls",Qt::CaseInsensitive)
 	)
 	{
-		trySTARTTLS(); // FIXME: Shouldn't we be able to STARTTLS even without CAP support ?
-		return;
+		if(trySTARTTLS(false))
+			return; // STARTTLS negotiation in progress
 	}
 #endif
 
 	QString szRequests;
 
 	//SASL
-	if(KVI_OPTION_BOOL(KviOption_boolUseSaslIfAvailable) &&
+	if(
+		//KVI_OPTION_BOOL(KviOption_boolUseSaslIfAvailable) &&
 		target()->server()->enabledSASL() &&
 		serverInfo()->supportedCaps().contains("sasl",Qt::CaseInsensitive)
 	)
@@ -432,7 +497,8 @@ void KviIrcConnection::handleInitialCapAck()
 	bool bUsed=false;
 
 	//SASL
-	if(KVI_OPTION_BOOL(KviOption_boolUseSaslIfAvailable) &&
+	if(
+		//KVI_OPTION_BOOL(KviOption_boolUseSaslIfAvailable) &&
 		target()->server()->enabledSASL() &&
 		m_pStateData->enabledCaps().contains("sasl",Qt::CaseInsensitive)
 	)
@@ -503,6 +569,8 @@ void KviIrcConnection::endInitialCapNegotiation()
 
 void KviIrcConnection::handleFailedInitialCapLs()
 {
+	m_pConsole->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs("Extended Capabilities don't seem to be supported by the server"));
+
 	m_pStateData->setInsideInitialCapLs(false);
 	loginToIrcServer();
 }
@@ -622,12 +690,11 @@ KviChannelWindow * KviIrcConnection::createChannel(const QString & szName)
 		c->setAliveChan();
 		if(!KVI_OPTION_BOOL(KviOption_boolCreateMinimizedChannels))
 		{
-			c->raise();
-			c->setFocus();
+			g_pMainWindow->setActiveWindow(c);
 		}
 	} else {
-		c = new KviChannelWindow(m_pConsole->frame(),m_pConsole,szName);
-		m_pConsole->frame()->addWindow(c,!KVI_OPTION_BOOL(KviOption_boolCreateMinimizedChannels));
+		c = new KviChannelWindow(m_pConsole, szName);
+		g_pMainWindow->addWindow(c,!KVI_OPTION_BOOL(KviOption_boolCreateMinimizedChannels));
 
 		if(KVI_OPTION_BOOL(KviOption_boolPasteLastLogOnChannelJoin))
 			c->pasteLastLog();
@@ -668,12 +735,11 @@ KviQueryWindow * KviIrcConnection::createQuery(const QString & szNick,CreateQuer
 		q->setAliveQuery();
 		if(bShowIt)
 		{
-			q->raise();
-			q->setFocus();
+			g_pMainWindow->setActiveWindow(q);
 		}
 	} else {
-		q = new KviQueryWindow(m_pConsole->frame(),m_pConsole,szNick);
-		m_pConsole->frame()->addWindow(q,bShowIt);
+		q = new KviQueryWindow(m_pConsole, szNick);
+		g_pMainWindow->addWindow(q,bShowIt);
 	}
 	return q;
 }
@@ -972,7 +1038,7 @@ void KviIrcConnection::changeAwayState(bool bAway)
 	else m_pUserInfo->setBack();
 
 	m_pConsole->updateCaption();
-	m_pConsole->frame()->childConnectionAwayStateChange(this);
+	g_pMainWindow->childConnectionAwayStateChange(this);
 
 	emit awayStateChanged();
 }
@@ -1113,36 +1179,6 @@ void KviIrcConnection::hostNameLookupTerminated(KviDnsResolver *)
 	delete m_pLocalhostDns;
 	m_pLocalhostDns = 0;
 }
-
-#ifdef COMPILE_SSL_SUPPORT
-void KviIrcConnection::trySTARTTLS()
-{
-	// Check if the server supports STARTTLS protocol and we want to
-	// connect through it
-	//qDebug("Sending STARTTLS command...");
-	if(!sendFmtData("STARTTLS"))
-	{
-		// Cannot send command
-		m_pConsole->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs("Impossible to send STARTTLS command to the IRC server. Your connection will NOT be encrypted"));
-		return;
-	}
-	m_pStateData->setSentStartTls();
-}
-
-void KviIrcConnection::enableStartTlsSupport(bool bEnable)
-{
-	if(bEnable)
-	{
-		// Ok, the server supports STARTTLS protocol
-		// ssl handshake e switch del socket
-		//qDebug("Starting SSL handshake...");
-		link()->socket()->enterSSLMode(); // FIXME: this should be forwarded through KviIrcLink, probably
-	} else {
-		// The server does not support STARTTLS
-		m_pConsole->output(KVI_OUT_SYSTEMMESSAGE,__tr2qs("The server does not support STARTTLS command. Your connection will NOT be encrypted"));
-	}
-}
-#endif // COMPILE_SSL_SUPPORT
 
 void KviIrcConnection::useRealName(const QString &szRealName)
 {
@@ -1648,7 +1684,7 @@ void KviIrcConnection::nickChange(const QString & szNewNick)
 	m_pConsole->notifyListView()->nickChange(m_pUserInfo->nickName(),szNewNick);
 	m_pUserInfo->setNickName(szNewNick);
 	m_pConsole->updateCaption();
-	m_pConsole->frame()->childConnectionNickNameChange(this);
+	g_pMainWindow->childConnectionNickNameChange(this);
 	emit nickNameChanged();
 	g_pApp->addRecentNickname(szNewNick);
 }
@@ -1666,7 +1702,7 @@ bool KviIrcConnection::changeUserMode(char cMode, bool bSet)
 		m_pUserInfo->removeUserMode(cMode);
 	}
 	m_pConsole->updateCaption();
-	console()->frame()->childConnectionUserModeChange(this);
+	g_pMainWindow->childConnectionUserModeChange(this);
 	emit userModeChanged();
 	return true;
 }
@@ -1750,7 +1786,7 @@ void KviIrcConnection::loginComplete(const QString & szNickName)
 	restartLagMeter();
 
 	if(KVI_OPTION_BOOL(KviOption_boolShowChannelsJoinOnIrc))
-		m_pConsole->frame()->executeInternalCommand(KVI_INTERNALCOMMAND_CHANNELSJOIN_OPEN);
+		g_pMainWindow->executeInternalCommand(KVI_INTERNALCOMMAND_CHANNELSJOIN_OPEN);
 
 
 	// join saved channels
@@ -1807,8 +1843,6 @@ void KviIrcConnection::loginComplete(const QString & szNickName)
 				}
 				pQuery->setTarget(szNick,szUser,szHost);
 			}
-			pQuery->autoRaise();
-			pQuery->setFocus();
 		}
 		target()->server()->clearReconnectInfo();
 	}

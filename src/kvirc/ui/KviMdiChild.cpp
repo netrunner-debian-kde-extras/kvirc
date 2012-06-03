@@ -37,19 +37,16 @@
 #include "KviOptions.h"
 #include "kvi_settings.h"
 #include "KviIconManager.h"
+#include "KviMainWindow.h"
 #include "KviWindow.h"
-#include "KviTalPopupMenu.h"
 #include "KviIrcConnection.h"
 #include "KviIrcConnectionTarget.h"
 #include "KviIrcContext.h"
 #include "KviIrcNetwork.h"
 #include "KviKvsEventTriggers.h"
 
-#ifdef COMPILE_ON_MAC
-	#include "KviApplication.h"  //Needed for g_pApp
-#endif
-
 #include <QTimer>
+#include <QMenu>
 
 #ifdef COMPILE_PSEUDO_TRANSPARENCY
 	extern QPixmap * g_pShadedChildGlobalDesktopBackground;
@@ -63,11 +60,7 @@ KviMdiChild::KviMdiChild(KviMdiManager * par, const char * name)
 	m_pManager = par;
 	m_pClient = 0;
 
-	setGeometry(QRect(10,10,500,380));
-
 	connect(systemMenu(), SIGNAL(aboutToShow()), this, SLOT(updateSystemPopup()));
-	connect(this, SIGNAL(windowStateChanged(Qt::WindowStates, Qt::WindowStates)), this, SLOT(windowStateChangedEvent(Qt::WindowStates, Qt::WindowStates)));
-
 	QTimer::singleShot( 0, this, SLOT(transparencyWorkaround()));
 }
 
@@ -126,32 +119,6 @@ void KviMdiChild::setWindowTitle(const QString & plain)
 	QMdiSubWindow::setWindowTitle(plain);
 }
 
-void KviMdiChild::windowStateChangedEvent(Qt::WindowStates oldState, Qt::WindowStates newState)
-{
-	//qDebug("%s %d => %d", m_szPlainCaption.toUtf8().data(), (int) oldState, (int) newState);
-	Qt::WindowStates diffState = oldState ^ newState;
-
-	if(diffState.testFlag(Qt::WindowMinimized))
-	{
-		//minimized or unminimized
-		updateCaption();
-		if(newState.testFlag(Qt::WindowMinimized))
-		{
-			//i have just been minimized, but i want another window to get activation
-			m_pManager->focusPreviousTopChild();
-		}
-	}
-
-	if(newState.testFlag(Qt::WindowActive) &&
-		diffState.testFlag(Qt::WindowMaximized) &&
-		!newState.testFlag(Qt::WindowMinimized)
-	)
-	{
-		//i'm the active window and my maximized state has changed => update sdi mode
-		m_pManager->setIsInSDIMode(newState.testFlag(Qt::WindowMaximized));
-	}
-}
-
 void KviMdiChild::restore()
 {
 	if(isMinimized())
@@ -180,9 +147,11 @@ void KviMdiChild::restore()
 void KviMdiChild::maximize()
 {
 	if(isVisible())
+	{
 		showMaximized();
-	else
-		setWindowState(windowState() & Qt::WindowMaximized);
+	} else {
+		setWindowState(windowState() & Qt::WindowMaximized & ~Qt::WindowMaximized);
+	}
 }
 
 void KviMdiChild::minimize()
@@ -190,7 +159,7 @@ void KviMdiChild::minimize()
 	if(isVisible())
 		showMinimized();
 	else
-		setWindowState(windowState() & Qt::WindowMinimized);
+		setWindowState((windowState() & Qt::WindowMinimized) & ~Qt::WindowMaximized);
 }
 
 void KviMdiChild::updateCaption()
@@ -215,6 +184,23 @@ void KviMdiChild::moveEvent(QMoveEvent *e)
 	}
 #endif
 	QMdiSubWindow::moveEvent(e);
+
+	if(!(windowState() & (Qt::WindowMinimized | Qt::WindowMaximized)))
+	{
+		m_rNormalizedGeometry.moveTopLeft(e->pos());
+// 		qDebug("[%s] normalGeometry x=%d y=%d w=%d h=%d", m_szPlainCaption.toUtf8().data(), m_rNormalizedGeometry.x(), m_rNormalizedGeometry.y(), m_rNormalizedGeometry.width(), m_rNormalizedGeometry.height());
+	}
+}
+
+void KviMdiChild::resizeEvent(QResizeEvent *e)
+{
+	QMdiSubWindow::resizeEvent(e);
+
+	if(!(windowState() & (Qt::WindowMinimized | Qt::WindowMaximized)))
+	{
+		m_rNormalizedGeometry.setSize(e->size());
+// 		qDebug("[%s] normalGeometry x=%d y=%d w=%d h=%d", m_szPlainCaption.toUtf8().data(), m_rNormalizedGeometry.x(), m_rNormalizedGeometry.y(), m_rNormalizedGeometry.width(), m_rNormalizedGeometry.height());
+	}
 }
 
 void KviMdiChild::setClient(QWidget * w)

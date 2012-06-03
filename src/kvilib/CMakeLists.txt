@@ -33,7 +33,6 @@ SET(
 	tal/KviTalListWidget.h
 	tal/KviTalMainWindow.h
 	tal/KviTalMenuBar.h
-	tal/KviTalPopupMenu.h
 	tal/KviTalTabDialog.h
 	tal/KviTalTableWidget.h
 	tal/KviTalToolTip.h
@@ -133,7 +132,6 @@ SET(kvilib_SRCS
 	tal/KviTalListWidget.cpp
 	tal/KviTalMainWindow.cpp
 	tal/KviTalMenuBar.cpp
-	tal/KviTalPopupMenu.cpp
 	tal/KviTalSplitter.cpp
 	tal/KviTalTabDialog.cpp
 	tal/KviTalTableWidget.cpp
@@ -189,14 +187,8 @@ ENDIF()
 
 # Installation directives
 IF(UNIX)
-	IF(APPLE)
-		SET_TARGET_PROPERTIES(${KVILIB_BINARYNAME} PROPERTIES INSTALL_NAME_DIR "@executable_path/../Frameworks")
-		INSTALL(TARGETS ${KVILIB_BINARYNAME} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/Contents/Frameworks)
-	ELSE()
-		# Assume linux
-		INSTALL(TARGETS ${KVILIB_BINARYNAME} LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
-	ENDIF()
+	INSTALL(TARGETS ${KVILIB_BINARYNAME} LIBRARY DESTINATION "${KVIRC_LIB_PATH}")
 ELSEIF(WIN32)
 	# For DLL platforms the DLL part of a shared library is treated as a RUNTIME target and the corresponding import library is treated as an ARCHIVE target
-	INSTALL(TARGETS ${KVILIB_BINARYNAME} RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
+	INSTALL(TARGETS ${KVILIB_BINARYNAME} RUNTIME DESTINATION "${KVIRC_LIB_PATH}")
 ENDIF()

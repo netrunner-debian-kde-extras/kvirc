@@ -58,11 +58,11 @@ signals:
 	void rightButtonPressed(QTreeWidgetItem *, QPoint);
 };
 
-class LogViewWindow : public KviWindow, public KviModuleExtension
+class LogViewWindow : public KviWindow
 {
 	Q_OBJECT
 public:
-	LogViewWindow(KviModuleExtensionDescriptor * pDesc, KviMainWindow * pMain);
+	LogViewWindow();
 	~LogViewWindow();
 protected:
 	KviPointerList<LogFile> m_logList;
@@ -100,7 +100,7 @@ protected:
 	QString                 m_szLastGroup;
 	bool                    m_bAborted;
 	QTimer                * m_pTimer;
-	KviTalPopupMenu       * m_pExportLogPopup;
+	QMenu       * m_pExportLogPopup;
 public:
 	/**
 	* \brief Exports the log and creates the file in the selected format

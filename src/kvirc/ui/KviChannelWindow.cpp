@@ -54,7 +54,6 @@
 #include "KviPointerHashTable.h"
 #include "KviKvsScript.h"
 #include "KviKvsEventTriggers.h"
-#include "KviTalPopupMenu.h"
 
 #ifdef COMPILE_CRYPT_SUPPORT
 	#include "KviCryptEngine.h"
@@ -77,13 +76,14 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QTextDocument> // for Qt::escape_command
+#include <QMenu>
 
 // FIXME: #warning "+a Anonymous channel mode!"
 // FIXME: #warning "OnChannelFlood event...."
 
 
-KviChannelWindow::KviChannelWindow(KviMainWindow * lpFrm, KviConsoleWindow * lpConsole, const QString & szName)
-: KviWindow(KviWindow::Channel,lpFrm,szName,lpConsole)
+KviChannelWindow::KviChannelWindow(KviConsoleWindow * lpConsole, const QString & szName)
+: KviWindow(KviWindow::Channel,szName,lpConsole)
 {
 	// Init some member variables
 	m_pInput               = 0;
@@ -136,7 +136,7 @@ KviChannelWindow::KviChannelWindow(KviMainWindow * lpFrm, KviConsoleWindow * lpC
 	m_pVertSplitter->setSizePolicy(oPolicy);
 
 	// With the IRC view over
-	m_pIrcView = new KviIrcView(m_pVertSplitter,lpFrm,this);
+	m_pIrcView = new KviIrcView(m_pVertSplitter,this);
 	m_pIrcView->setObjectName(szName);
 	connect(m_pIrcView,SIGNAL(rightClicked()),this,SLOT(textViewRightClicked()));
 	// And the double view (that may be unused)
@@ -357,14 +357,12 @@ void KviChannelWindow::getConfigGroupName(QString & szBuffer)
 void KviChannelWindow::saveProperties(KviConfigurationFile * pCfg)
 {
 	KviWindow::saveProperties(pCfg);
-	pCfg->writeEntry("TopSplitter",m_pTopSplitter->sizes());
-	QList<int> sizes;
-	sizes << m_pIrcView->width() << m_pUserListView->width();
-	pCfg->writeEntry("Splitter",sizes);
-	int iTimeStamp= pCfg->readIntEntry("EntryTimestamp", 0);
-	qDebug("window %s, group %s, view %d==%d, ulist %d==%d timestamp %d",
-		m_szName.toUtf8().data(), pCfg->group().toUtf8().data(),
-		m_pIrcView->width(), sizes.at(0), m_pUserListView->width(), sizes.at(1), iTimeStamp);
+	pCfg->writeEntry("TopSplitter", m_pTopSplitter->sizes());
+	pCfg->writeEntry("Splitter", m_pUserListView->isHidden() ? m_SplitterSizesList : m_pSplitter->sizes());
+//	int iTimeStamp= pCfg->readIntEntry("EntryTimestamp", 0);
+// 	qDebug("window %s, group %s, view %d==%d, ulist %d==%d timestamp %d",
+// 		m_szName.toUtf8().data(), pCfg->group().toUtf8().data(),
+// 		m_pIrcView->width(), sizes.at(0), m_pUserListView->width(), sizes.at(1), iTimeStamp);
 	pCfg->writeEntry("VertSplitter",m_pMessageView ? m_pVertSplitter->sizes() : m_VertSplitterSizesList);
 	pCfg->writeEntry("PrivateBackground",m_privateBackground);
 	pCfg->writeEntry("DoubleView",m_pMessageView ? true : false);
@@ -388,8 +386,7 @@ void KviChannelWindow::loadProperties(KviConfigurationFile * pCfg)
 	def.clear();
 	def.append((iWidth * 75) / 100);
 	def.append((iWidth * 25) / 100);
-	QList<int> sizes = pCfg->readIntListEntry("Splitter",def);
-	m_pSplitter->setSizes(sizes);
+	m_SplitterSizesList = pCfg->readIntListEntry("Splitter",def);
 	m_pSplitter->setStretchFactor(0,1);
 
 	def.clear();
@@ -413,6 +410,8 @@ void KviChannelWindow::loadProperties(KviConfigurationFile * pCfg)
 		bool bHidden = pCfg->readBoolEntry("UserListHidden",0);
 		m_pUserListView->setHidden(bHidden);
 		m_pListViewButton->setChecked(!bHidden);
+		if(!bHidden)
+			m_pSplitter->setSizes(m_SplitterSizesList);
 		resizeEvent(0);
 	}
 
@@ -439,7 +438,7 @@ void KviChannelWindow::showDoubleView(bool bShow)
 		if(!bShow)
 			return;
 
-		m_pMessageView = new KviIrcView(m_pVertSplitter,m_pFrm,this);
+		m_pMessageView = new KviIrcView(m_pVertSplitter,this);
 		m_pVertSplitter->setSizes(m_VertSplitterSizesList);
 
 		//this is an hack to simulate qt3's ResizeMode = Stretch
@@ -479,6 +478,8 @@ void KviChannelWindow::toggleListView()
 {
 	if(m_pUserListView->isVisible())
 	{
+		m_SplitterSizesList = m_pSplitter->sizes();
+
 		m_pUserListView->hide();
 		if(m_pListViewButton->isChecked())
 			m_pListViewButton->setChecked(false);
@@ -486,6 +487,8 @@ void KviChannelWindow::toggleListView()
 		m_pUserListView->show();
 		if(!(m_pListViewButton->isChecked()))
 			m_pListViewButton->setChecked(true);
+
+		m_pSplitter->setSizes(m_SplitterSizesList);
 	}
 }
 

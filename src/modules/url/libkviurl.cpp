@@ -36,7 +36,6 @@
 #include "KviWindowListBase.h"
 #include "KviPointerList.h"
 #include "KviKvsEventManager.h"
-#include "KviTalPopupMenu.h"
 #include "KviWindow.h"
 #include "KviOptions.h"
 #include "KviQString.h"
@@ -50,8 +49,8 @@
 #include <QTextStream>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QMenu>
 
-static KviUrlAction * g_pUrlAction = 0;
 
 #ifdef COMPILE_PSEUDO_TRANSPARENCY
 	extern KVIRC_API QPixmap * g_pShadedChildGlobalDesktopBackground;
@@ -78,17 +77,10 @@ void loadUrlList();
 void saveBanList();
 void loadBanList();
 UrlDlgList * findFrame();
-bool urllist();
 void url_module_help();
 
 
 #define KVI_URL_EXTENSION_NAME "URL module extenstion"
-
-static KviModuleExtension * url_extension_alloc(KviModuleExtensionAllocStruct *)
-{
-	urllist();
-	return 0;
-}
 
 UrlDialogTreeWidget::UrlDialogTreeWidget(QWidget * par)
 : QTreeWidget(par)
@@ -139,28 +131,10 @@ void UrlDialogTreeWidget::paintEvent(QPaintEvent * event)
 	QTreeWidget::paintEvent(event);
 }
 
-KviUrlAction::KviUrlAction(QObject * pParent)
-: KviKvsAction(
-		pParent,
-		"url.list",
-		"url.list",
-		__tr2qs("Show URL List"),
-		__tr2qs("Shows the URL list window"),
-		KviActionManager::categoryGeneric(),
-		"kvi_bigicon_www.png",
-		QString("%1").arg(KviIconManager::Url)
-	)
-{
-}
-
-KviUrlAction::~KviUrlAction()
-{
-}
-
 // ---------------------------- CLASS URLDIALOG ------------------------begin //
 
 UrlDialog::UrlDialog(KviPointerList<KviUrl> *)
-	:KviWindow(KviWindow::Tool,g_pMainWindow,"URL List")
+	:KviWindow(KviWindow::Tool,"URL List")
 {
 	setAutoFillBackground(false);
 	
@@ -170,19 +144,19 @@ UrlDialog::UrlDialog(KviPointerList<KviUrl> *)
 	//m_pUrlList = new KviListView(this,"list");
 	KviConfigurationFile cfg(szConfigPath,KviConfigurationFile::Read);
 /*
-	KviTalPopupMenu *pop;
+    QMenu *pop;
 
-	pop = new KviTalPopupMenu(this);
-	pop->insertItem(__tr2qs("&Configure"),this,SLOT(config()));
-// 	pop->insertItem(__tr2qs("&Help"),this,SLOT(help()));
-	pop->insertItem(__tr2qs("Clo&se"),this,SLOT(close_slot()));
+    pop = new QMenu(this);
+	pop->addAction(__tr2qs("&Configure"),this,SLOT(config()));
+// 	pop->addAction(__tr2qs("&Help"),this,SLOT(help()));
+	pop->addAction(__tr2qs("Clo&se"),this,SLOT(close_slot()));
 	pop->setTitle(__tr2qs("&Module"));
 	m_pMenuBar->addMenu(pop);
 
-	pop = new KviTalPopupMenu(this);
-	pop->insertItem(__tr2qs("&Load"),this,SLOT(loadList()));
-	pop->insertItem(__tr2qs("&Save"),this,SLOT(saveList()));
-	pop->insertItem(__tr2qs("&Clear"),this,SLOT(clear()));
+    pop = new QMenu(this);
+	pop->addAction(__tr2qs("&Load"),this,SLOT(loadList()));
+	pop->addAction(__tr2qs("&Save"),this,SLOT(saveList()));
+	pop->addAction(__tr2qs("&Clear"),this,SLOT(clear()));
 	pop->setTitle(__tr2qs("&List"));
 	m_pMenuBar->addMenu(pop);
 */
@@ -317,11 +291,11 @@ void UrlDialog::dblclk_url(QTreeWidgetItem *item, int)
 void UrlDialog::popup(QTreeWidgetItem *item, const QPoint &point)
 {
 	m_szUrl = item->text(0);
-	KviTalPopupMenu p(0,"menu");
-	p.insertItem(__tr2qs("&Remove"),this,SLOT(remove()));
-// 	p.insertItem(__tr2qs("&Find Text"),this,SLOT(findtext()));
-	p.insertSeparator();
-	m_pListPopup = new KviTalPopupMenu(0,"list");
+    QMenu p("menu", 0);
+	p.addAction(__tr2qs("&Remove"),this,SLOT(remove()));
+// 	p.addAction(__tr2qs("&Find Text"),this,SLOT(findtext()));
+    p.addSeparator();
+    m_pListPopup = new QMenu("list", 0);
 
 	for(KviWindow *w=g_pMainWindow->windowList()->first();w;w=g_pMainWindow->windowList()->next())
 	{
@@ -332,15 +306,15 @@ void UrlDialog::popup(QTreeWidgetItem *item, const QPoint &point)
 			m_pListPopup->addAction(w->plainTextCaption());
 		}
 	}
-	p.insertItem(__tr2qs("&Say to Window"),m_pListPopup);
+    p.addAction(__tr2qs("&Say to Window"))->setMenu(m_pListPopup);
 	connect(m_pListPopup,SIGNAL(triggered(QAction *)), this, SLOT(sayToWin(QAction *)));
 	p.exec(point);
 }
 
 void UrlDialog::contextMenu(const QPoint &point)
 {
-	KviTalPopupMenu p(0,"contextmenu");
-	p.insertItem(__tr2qs("Configure"),this,SLOT(config()));
+    QMenu p("contextmenu", 0);
+	p.addAction(__tr2qs("Configure"),this,SLOT(config()));
 	p.exec(point);
 }
 
@@ -719,25 +693,6 @@ void loadBanList()
 
 static bool url_kvs_cmd_list(KviKvsModuleCommandCall *)
 {
-	urllist();
-	return true;
-}
-
-UrlDlgList *findFrame()
-{
-	UrlDlgList *tmpitem = g_pUrlDlgList->first();
-	if (!tmpitem) {
-		UrlDlgList *udl = new UrlDlgList();
-		udl->dlg = 0;
-		udl->menu_id = -1;
-		g_pUrlDlgList->append(udl);
-		tmpitem = g_pUrlDlgList->current();
-	}
-	return tmpitem;
-}
-
-bool urllist()
-{
 	UrlDlgList *tmpitem = findFrame();
 	if (tmpitem->dlg) return false;
 
@@ -753,6 +708,18 @@ bool urllist()
 	return true;
 }
 
+UrlDlgList *findFrame()
+{
+	UrlDlgList *tmpitem = g_pUrlDlgList->first();
+	if (!tmpitem) {
+		UrlDlgList *udl = new UrlDlgList();
+		udl->dlg = 0;
+		udl->menu_id = -1;
+		g_pUrlDlgList->append(udl);
+		tmpitem = g_pUrlDlgList->current();
+	}
+	return tmpitem;
+}
 
 /*
  	@doc: url.config
@@ -872,12 +839,6 @@ bool urllist_module_event_onUrl(KviKvsModuleEventCall * c)
 
 static bool url_module_init(KviModule *m)
 {
-	KviModuleExtensionDescriptor * d = m->registerExtension("tool",
-							KVI_URL_EXTENSION_NAME,
-							__tr2qs("View URL list"),
-							url_extension_alloc);
-	if(d)d->setIcon(*(g_pIconManager->getSmallIcon(KviIconManager::Url)));
-
 	g_pList = new KviPointerList<KviUrl>;
 	g_pList->setAutoDelete(true);
 
@@ -889,8 +850,6 @@ static bool url_module_init(KviModule *m)
 
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"list",url_kvs_cmd_list);
 	KVSM_REGISTER_SIMPLE_COMMAND(m,"config",url_kvs_cmd_config);
-	g_pUrlAction = new KviUrlAction(KviActionManager::instance());
-	KviActionManager::instance()->registerAction(g_pUrlAction);
 
 	m->kvsRegisterAppEventHandler(KviEvent_OnURL,urllist_module_event_onUrl);
 
@@ -922,8 +881,6 @@ static bool url_module_cleanup(KviModule *)
 
 	delete g_pUrlDlgList;
 	g_pUrlDlgList = 0;
-	delete g_pUrlAction;
-	g_pUrlAction = 0;
 
 	return true;
 }

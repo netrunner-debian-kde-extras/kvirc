@@ -83,7 +83,7 @@
 		!fn: $textAt(<index:uint>)
 		Returns item at given index.
 		!fn: $setCurrentItem(<index:uint>)
-                Sets the current combobox item. This is the item to be displayed on the combobox button.
+		Sets the current combobox item. This is the item to be displayed on the combobox button.
 		!fn: $activatedEvent(<index:integer>)
 		This function is called by the framework when a new item  has activated. The index value is the position of the new item.[br]
 		The default implementation emits the [classfnc]$activated[/classfnc]() signal,
@@ -151,7 +151,7 @@ KVSO_CLASS_FUNCTION(comboBox,insertItem)
 	if(c->paramCount()==1)
 		((QComboBox *)widget())->addItem(szItem);
 	else
-		((QComboBox *)widget())->insertItem( iIndex,szItem);
+        ((QComboBox *)widget())->insertItem( iIndex,szItem);
 	return true;
 }
 KVSO_CLASS_FUNCTION(comboBox,clear)

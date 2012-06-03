@@ -38,7 +38,7 @@
 #include <QScrollBar>
 
 class KviMainWindow;
-class KviTalPopupMenu;
+class QMenu;
 
 /**
 * \class KviMdiManager
@@ -58,11 +58,10 @@ public:
 	/**
 	* \brief Constructs the Mdi manager object
 	* \param pParent The parent widget
-	* \param pFrm The frame container
 	* \param pcName The name of the manager
 	* \return KviMdiManager
 	*/
-	KviMdiManager(QWidget * pParent, KviMainWindow * pFrm, const char * pcName);
+	KviMdiManager(QWidget * pParent, const char * pcName);
 
 	/**
 	* \brief Destroys the Mdi manager object
@@ -76,28 +75,20 @@ public:
 	bool eventFilter(QObject *obj, QEvent *event);
 private:
 	bool m_bInSDIMode;
+	bool m_bIgnoreSDIModeChange;
 protected:
 	/// Holds the specialized window popup
-	KviTalPopupMenu * m_pWindowPopup;
+	QMenu * m_pWindowPopup;
 	/// Holds the tiling popup
-	KviTalPopupMenu * m_pTileMethodPopup;
-	/// The frame where this KviMdiManager belongs to
-	KviMainWindow        * m_pFrm;
+	QMenu * m_pTileMethodPopup;
 public:
-	/**
-	* \brief Get the currently active window
-	* \return KviMdiChild *
-	*/
-	KviMdiChild * topChild();
- 
+
 	/**
 	* \brief Add an KviMdiChild to the area
 	* \param lpC The KviMdiChild
-	* \param bCascade Cascade window or not.
-	* \param setGeom Sets the windows geometry before shown
 	* \return void
 	*/
-	void manageChild(KviMdiChild * lpC, bool bCascade = true, QRect * setGeom = 0);
+	void manageChild(KviMdiChild * lpC);
 
 	/**
 	* \brief Show the KviMdiChild and bring it to the front
@@ -108,10 +99,10 @@ public:
 
 	/**
 	* \brief Returns the window popup
-	* \return KviTalPopupMenu *
+	* \return QMenu *
 	*/
-	inline KviTalPopupMenu * windowPopup() { return m_pWindowPopup; };
-
+	inline QMenu * windowPopup() { return m_pWindowPopup; };
+ 
 	/**
 	* \brief Move the focus the the previous active window
 	* \return void
@@ -124,13 +115,6 @@ public:
  	* \return void
  	*/
 	void destroyChild(KviMdiChild * lpC);
-
-	/**
-	* \brief Hides the specified child and focuses some other child
-	* \param lpC The KviMdiChild which will be hidden.
- 	* \return void
- 	*/
-	void hideChild(KviMdiChild * lpC);
 
 	/**
 	* \brief Get all visible subwindows
@@ -162,12 +146,11 @@ protected:
 
 private:
 	/**
- 	 * \brief Make sure that no KviMdiChild is maximized
+ 	 * \brief Ensure that no KviMdiChild is maximized
+	 * \param lpExclude a window to be excluded from the checks
 	 * \return void
-	 *
-	 * Goes trough all KviMdiChild objects and checks for maximized mode and restores that windows
 	 */
-	void ensureNoMaximized();
+	void ensureNoMaximized(KviMdiChild * lpExclude=0);
 
 	/**
 	 * \brief The internal member which provides the tiling methods
@@ -188,10 +171,10 @@ public slots:
 	void toggleAutoTile();
 	void tileAnodine();
 protected slots:
-	void menuActivated(int id);
-	void tileMethodMenuActivated(int id);
+    void menuActivated(QAction *pAction);
+    void tileMethodMenuActivated(QAction *pAction);
 	void fillWindowPopup();
-	void slotSubWindowActivated(QMdiSubWindow * pMdiChild);
+	void processWindowStateChanged(Qt::WindowStates oldState, Qt::WindowStates newState);
 };
 
 #endif //_KVI_MDIMANAGER_H_

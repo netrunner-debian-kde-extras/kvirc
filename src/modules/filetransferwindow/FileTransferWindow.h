@@ -29,15 +29,17 @@
 #include "KviIrcSocket.h"
 #include "KviIrcServerParser.h"
 #include "KviConsoleWindow.h"
+#if 0
 #include "KviModuleExtension.h"
+#endif
 #include "KviFileTransfer.h"
 #include "KviDynamicToolTip.h"
 #include "KviTalTableWidget.h"
-#include "KviTalPopupMenu.h"
 #include "KviTalIconAndRichTextItemDelegate.h"
 
 #include <QTimer>
 #include <QPixmap>
+#include <QMenu>
 
 class FileTransferItem;
 
@@ -85,21 +87,28 @@ public:
 	void paint ( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
 };
 
-class FileTransferWindow : public KviWindow, public KviModuleExtension
+class FileTransferWindow : public KviWindow
+#if 0
+	,public KviModuleExtension
+#endif
 {
 	friend class FileTransferItem;
 	friend class FileTransferItemDelegate;
 	Q_OBJECT
 public:
-	FileTransferWindow(KviModuleExtensionDescriptor * d,KviMainWindow * lpFrm);
+	FileTransferWindow(
+#if 0
+			KviModuleExtensionDescriptor * d
+#endif
+		);
 	~FileTransferWindow();
 protected:
 	QSplitter		* m_pVertSplitter;
 	FileTransferWidget	* m_pTableWidget;
 	QAbstractItemDelegate	* m_pItemDelegate;
-	KviTalPopupMenu		* m_pContextPopup;
-	KviTalPopupMenu		* m_pLocalFilePopup;
-	KviTalPopupMenu		* m_pOpenFilePopup;
+	QMenu		* m_pContextPopup;
+	QMenu		* m_pLocalFilePopup;
+	QMenu		* m_pOpenFilePopup;
 	QTimer			* m_pTimer;
 	int			m_iLineSpacing; // cached fm value
 public: // Methods
@@ -131,7 +140,7 @@ protected slots:
 	void openLocalFileWith();
 	void copyLocalFileToClipboard();
 	void openLocalFileFolder();
-	void openFilePopupActivated(int id);
+    void openFilePopupActivated(QAction *pAction);
 	void openLocalFileTerminal();
 	void deleteLocalFile();
 };

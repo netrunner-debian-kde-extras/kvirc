@@ -96,10 +96,9 @@
 #include "KviIrcConnection.h"
 #include "KviMdiManager.h"
 #include "KviUserInput.h"
-#include "KviTalPopupMenu.h"
 #include "KviAnimatedPixmap.h"
 #include "KviPixmapUtils.h"
-#include "KviDockExtension.h"
+#include "KviTrayIcon.h"
 
 #include <QBitmap>
 #include <QPainter>
@@ -113,6 +112,7 @@
 #include <QScrollBar>
 #include <QFontDialog>
 #include <QByteArray>
+#include <QMenu>
 
 #include <time.h>
 
@@ -211,7 +211,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-KviIrcView::KviIrcView(QWidget *parent,KviMainWindow *pFrm,KviWindow *pWnd)
+KviIrcView::KviIrcView(QWidget *parent, KviWindow *pWnd)
 : QWidget(parent)
 {
 	setObjectName("irc_view");
@@ -258,7 +258,6 @@ KviIrcView::KviIrcView(QWidget *parent,KviMainWindow *pFrm,KviWindow *pWnd)
 	m_bSkipScrollBarRepaint    = false;
 	m_pLogFile                 = 0;
 	m_pKviWindow               = pWnd;
-	m_pFrm                     = pFrm;
 
 	m_iUnprocessedPaintEventRequests = 0;
 	m_bPostedPaintEventPending = false;
@@ -422,6 +421,7 @@ void KviIrcView::setFont(const QFont &f)
 
 	QFont newFont(f);
 	newFont.setKerning(false);
+	newFont.setStyleStrategy(QFont::StyleStrategy(newFont.styleStrategy() | QFont::ForceIntegerMetrics));
 	QWidget::setFont(newFont);
 	update();
 }
@@ -510,9 +510,8 @@ void KviIrcView::clearUnreaded()
 	m_bHaveUnreadedHighlightedMessages = false;
 	m_bHaveUnreadedMessages = false;
 
-	if(m_pFrm)
-		if(m_pFrm->dockExtension())
-			m_pFrm->dockExtension()->refresh();
+	if(g_pMainWindow->trayIcon())
+		g_pMainWindow->trayIcon()->refresh();
 }
 
 void KviIrcView::setMaxBufferSize(int maxBufSize,bool bRepaint)
@@ -1007,7 +1006,7 @@ void KviIrcView::paintEvent(QPaintEvent *p)
 	}
 
 	int scrollbarWidth = m_pScrollBar->width();
-	int toolWidgetHeight = m_pToolWidget ? m_pToolWidget->sizeHint().height() : 0;
+	int toolWidgetHeight = (m_pToolWidget && m_pToolWidget->isVisible()) ? m_pToolWidget->sizeHint().height() : 0;
 	int widgetWidth  = width() - scrollbarWidth;
 	int widgetHeight = height() - toolWidgetHeight;
 
@@ -1138,17 +1137,6 @@ void KviIrcView::paintEvent(QPaintEvent *p)
 			int iPixId = KVI_OPTION_MSGTYPE(pCurTextLine->iMsgType).pixId();
 			if(iPixId > 0)
 				pa.drawPixmap(KVI_IRCVIEW_HORIZONTAL_BORDER,imageYPos,*(g_pIconManager->getSmallIcon(iPixId)));
-		}
-
-		if(m_pToolWidget)
-		{
-			if(!m_pToolWidget->messageEnabled(pCurTextLine->iMsgType))
-			{
-				// not in update rect... skip
-				curBottomCoord -= (m_iFontLineSpacing + m_iFontDescent);
-				pCurTextLine = pCurTextLine->pPrev;
-				continue;
-			}
 		}
 
 		// Initialize for drawing this line of text
@@ -1584,6 +1572,8 @@ no_selection_paint:
 				m_lineMarkArea = QRect(x,y,16,16);
 				pa.drawPixmap(x,y,16,16,*pIcon);
 				//pa.setRasterOp(CopyROP);
+			} else {
+				m_lineMarkArea = QRect();
 			}
 		}
 	}
@@ -2056,7 +2046,7 @@ void KviIrcView::resizeEvent(QResizeEvent *)
 	m_pToolsButton->setGeometry(iLeft,0,iScr,iScr);
 	m_pScrollBar->setGeometry(iLeft,iScr,iScr,height() - iScr);
 
-	if(m_pToolWidget)
+	if(m_pToolWidget && m_pToolWidget->isVisible())
 	{
 		int h = m_pToolWidget->sizeHint().height();
 		m_pToolWidget->setGeometry(0, height() - h, width() - iScr, h);
@@ -2072,25 +2062,21 @@ QSize KviIrcView::sizeHint() const
 void KviIrcView::showToolsPopup()
 {
 	if(!m_pToolsPopup)
-		m_pToolsPopup = new KviTalPopupMenu(this);
+	{
+        m_pToolsPopup = new QMenu(this);
 
-	m_pToolsPopup->clear();
+		m_pToolsPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Search)),__tr2qs("Toggle Search"),this,SLOT(toggleToolWidget()));
 
-	if(m_pToolWidget)
-		m_pToolsPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Search)),__tr2qs("Hide Filter"),this,SLOT(toggleToolWidget()));
-	else
-		m_pToolsPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Search)),__tr2qs("Show Filter"),this,SLOT(toggleToolWidget()));
-
-	m_pToolsPopup->insertSeparator();
-	m_pToolsPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Plus)),__tr2qs("Zoom In"),this,SLOT(increaseFontSize()));
-	m_pToolsPopup->insertItem(*(g_pIconManager->getSmallIcon(KviIconManager::Minus)),__tr2qs("Zoom Out"),this,SLOT(decreaseFontSize()));
-	m_pToolsPopup->insertItem(__tr2qs("Choose Temporary Font..."),this,SLOT(chooseFont()));
-	m_pToolsPopup->insertItem(__tr2qs("Choose Temporary Background..."),this,SLOT(chooseBackground()));
-	int id = m_pToolsPopup->insertItem(__tr2qs("Reset Temporary Background"),this,SLOT(resetBackground()));
-	m_pToolsPopup->setItemEnabled(id,m_pPrivateBackgroundPixmap != 0);
-	m_pToolsPopup->insertSeparator();
-	m_pToolsPopup->insertItem(__tr2qs("Clear Buffer"),this,SLOT(clearBuffer()));
-
+		m_pToolsPopup->addSeparator();
+		m_pToolsPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Plus)),__tr2qs("Zoom In"),this,SLOT(increaseFontSize()));
+		m_pToolsPopup->addAction(*(g_pIconManager->getSmallIcon(KviIconManager::Minus)),__tr2qs("Zoom Out"),this,SLOT(decreaseFontSize()));
+		m_pToolsPopup->addAction(__tr2qs("Choose Temporary Font..."),this,SLOT(chooseFont()));
+		m_pToolsPopup->addAction(__tr2qs("Choose Temporary Background..."),this,SLOT(chooseBackground()));
+		QAction * pAction = m_pToolsPopup->addAction(__tr2qs("Reset Temporary Background"),this,SLOT(resetBackground()));
+//		pAction->setEnabled(m_pPrivateBackgroundPixmap != 0);
+		m_pToolsPopup->addSeparator();
+		m_pToolsPopup->addAction(__tr2qs("Clear Buffer"),this,SLOT(clearBuffer()));
+	}
 	QSize s = m_pToolsPopup->sizeHint();
 
 	m_pToolsPopup->popup(m_pToolsButton->mapToGlobal(QPoint(m_pToolsButton->width() - s.width(),m_pToolsButton->height())));
@@ -2153,19 +2139,20 @@ void KviIrcView::resetBackground()
 
 void KviIrcView::toggleToolWidget()
 {
-	if(m_pToolWidget)
+	if(m_pToolWidget && m_pToolWidget->isVisible())
 	{
-		KviIrcViewToolWidget *pTmp=m_pToolWidget;
-		m_pToolWidget = 0;
-		delete pTmp;
+		m_pToolWidget->setVisible(false);
 		m_pCursorLine = 0;
 	} else {
-		m_pToolWidget = new KviIrcViewToolWidget(this);
+		if(!m_pToolWidget)
+			m_pToolWidget = new KviIrcViewToolWidget(this);
+
 		int h = m_pToolWidget->sizeHint().height();
 		int iScr = m_pScrollBar->sizeHint().width();
 		m_pToolWidget->setGeometry(0, height() - h, width() - iScr, h);
-		m_pToolWidget->show();
+		m_pToolWidget->setVisible(true);
 	}
+
 	repaint();
 }
 
@@ -2219,7 +2206,7 @@ void KviIrcView::ensureLineVisible(KviIrcViewLine * pLineToShow)
 
 	// The cursor line is over the current line
 	// Here we're in trouble :D
-	int toolWidgetHeight = m_pToolWidget ? m_pToolWidget->sizeHint().height() : 0;
+	int toolWidgetHeight = (m_pToolWidget && m_pToolWidget->isVisible()) ? m_pToolWidget->sizeHint().height() : 0;
 	int scrollbarWidth = m_pScrollBar->width();
 	int curBottomCoord = height() - toolWidgetHeight - KVI_IRCVIEW_VERTICAL_BORDER;
 	int maxLineWidth   = width() - scrollbarWidth - KVI_IRCVIEW_DOUBLEBORDER_WIDTH;
@@ -2378,7 +2365,7 @@ do_pPrev:
 KviIrcViewLine * KviIrcView::getVisibleLineAt(int yPos)
 {
 	KviIrcViewLine * l = m_pCurLine;
-	int toolWidgetHeight = m_pToolWidget ? m_pToolWidget->sizeHint().height() : 0;
+	int toolWidgetHeight = (m_pToolWidget && m_pToolWidget->isVisible()) ? m_pToolWidget->sizeHint().height() : 0;
 	int iTop = height() + m_iFontDescent - KVI_IRCVIEW_VERTICAL_BORDER - toolWidgetHeight;
 
 	while(iTop > yPos)
@@ -2404,7 +2391,7 @@ int KviIrcView::getVisibleCharIndexAt(KviIrcViewLine *, int xPos, int yPos)
 	 */
 
 	KviIrcViewLine * l = m_pCurLine;
-	int toolWidgetHeight = m_pToolWidget ? m_pToolWidget->sizeHint().height() : 0;
+	int toolWidgetHeight = (m_pToolWidget && m_pToolWidget->isVisible()) ? m_pToolWidget->sizeHint().height() : 0;
 	int iTop = height() + m_iFontDescent - KVI_IRCVIEW_VERTICAL_BORDER - toolWidgetHeight;
 
 	// our current line begins after the mouse position... go on
@@ -2519,7 +2506,7 @@ KviIrcViewWrappedBlock * KviIrcView::getLinkUnderMouse(int xPos,int yPos,QRect *
 	 */
 
 	KviIrcViewLine * l = m_pCurLine;
-	int toolWidgetHeight = m_pToolWidget ? m_pToolWidget->sizeHint().height() : 0;
+	int toolWidgetHeight = (m_pToolWidget && m_pToolWidget->isVisible()) ? m_pToolWidget->sizeHint().height() : 0;
 	int iTop = height() + m_iFontDescent - KVI_IRCVIEW_VERTICAL_BORDER - toolWidgetHeight;
 
 	// our current line begins after the mouse position... go on
@@ -2770,11 +2757,6 @@ KviIrcViewWrappedBlock * KviIrcView::getLinkUnderMouse(int xPos,int yPos,QRect *
 KviConsoleWindow * KviIrcView::console()
 {
 	return m_pKviWindow->console();
-}
-
-bool KviIrcView::checkMarkerArea(const QRect & area, const QPoint & mousePos)
-{
-	return (area.contains(mousePos)) ? true : false;
 }
 
 void KviIrcView::animatedIconChange()
