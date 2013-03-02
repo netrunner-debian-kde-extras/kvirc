@@ -16,4 +16,4 @@ Exec=${KVIRC_BINARYNAME} -m %u
 Icon=kvirc
 Type=Application
 MimeType=application/x-kva;application/x-kvt;
-Categories=Qt;Network;IRCClient;
+Categories=Qt;KDE;Network;IRCClient;

@@ -19,6 +19,9 @@ IF(UNIX)
 		# Assume linux
 		INSTALL(FILES ${iconapps} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/apps/)
 		INSTALL(FILES ${iconmime} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/32x32/mimetypes/)
+		# Install xpm for ${CMAKE_INSTALL_PREFIX}/share/menu/kvirc
+		FILE(GLOB files "*.xpm")
+		INSTALL(FILES ${files} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/pixmaps/)
 	ENDIF()
 ELSEIF(WIN32)
 	INSTALL(FILES ${iconapps} DESTINATION ${CMAKE_INSTALL_PREFIX}/icons/32x32/apps/)
