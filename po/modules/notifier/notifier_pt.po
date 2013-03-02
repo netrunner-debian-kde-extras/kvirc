@@ -1,0 +1,76 @@
+# Translation of KVIrc notifier messages to Portuguese
+# Copyright (C) 2010 the KVIrc's copyright holder
+# This file is distributed under the same license as the KVIrc package.
+#
+# Zé <ze@mandriva.org>, 2004-2007.
+# Zé <mmodem00@gmail.com>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: kvirc_notifier \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-10 15:55+0200\n"
+"PO-Revision-Date: 2010-03-10 03:11+0000\n"
+"Last-Translator: Zé <ze@mandriva.org>\n"
+"Language-Team: Portuguese\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/modules/notifier/NotifierWindow.cpp:975
+msgid "1 Hour"
+msgstr "1 Hora"
+
+#: src/modules/notifier/NotifierWindow.cpp:971
+msgid "1 Minute"
+msgstr "1 Minuto"
+
+#: src/modules/notifier/NotifierWindow.cpp:973
+msgid "15 Minutes"
+msgstr "15 Minutos"
+
+#: src/modules/notifier/NotifierWindow.cpp:974
+msgid "30 Minutes"
+msgstr "30 Minutos"
+
+#: src/modules/notifier/NotifierWindow.cpp:972
+msgid "5 Minutes"
+msgstr "5 Minutos"
+
+#: src/modules/notifier/NotifierWindow.cpp:980
+msgid "Disable"
+msgstr "Desactivar"
+
+#: src/modules/notifier/NotifierWindow.cpp:968
+msgid "Hide"
+msgstr "Esconder"
+
+#: src/modules/notifier/NotifierWindow.cpp:978
+msgid "Permanently (Until Explicitly Enabled)"
+msgstr "Permanentemente (Até Ser Activado Explicitamente)"
+
+#: src/modules/notifier/NotifierWindow.cpp:967
+msgid "Show/Hide input line"
+msgstr "Mostrar/Esconder linha de entrada"
+
+#: src/modules/notifier/libkvinotifier.cpp:153
+msgid "The -t switch expects a timeout in seconds"
+msgstr "A opção -t espera um intervalo de tempo em segundos"
+
+#: src/modules/notifier/libkvinotifier.cpp:150
+msgid "The specified timeout is not valid, assuming 0"
+msgstr "O intervalo de tempo indicado não é válido, a assumir 0"
+
+#: src/modules/notifier/libkvinotifier.cpp:136
+msgid "The specified window does not exist"
+msgstr "A janela indicada não existe"
+
+#: src/modules/notifier/NotifierWindow.cpp:977
+msgid "Until KVIrc is Restarted"
+msgstr "Até o KVIrc ser Reiniciado"
+
+#: src/modules/notifier/NotifierWindow.cpp:1055
+msgid "Write text or commands to window"
+msgstr "Escrever texto ou comandos para a janela"
