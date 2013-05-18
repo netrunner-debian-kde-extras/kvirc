@@ -1,8 +1,8 @@
-kvirc (4:4.2.0-2) UNRELEASED; urgency=low
+kvirc (4:4.2.0-2) unstable; urgency=low
 
-  * Upload to unstable
+  * Upload to unstable 
 
- -- Mark Purcell <msp@debian.org>  Sat, 18 May 2013 19:18:29 +1000
+ -- Mark Purcell <msp@debian.org>  Sat, 18 May 2013 19:36:33 +1000
 
 kvirc (4:4.2.0-1) experimental; urgency=low
 
